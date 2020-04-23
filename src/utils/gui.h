@@ -74,18 +74,14 @@ QMessageBox::StandardButton question(
     const QString &identifier = QStringLiteral("default"),
     QMessageBox::StandardButtons buttons =
         QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No),
-    QMessageBox::StandardButton defaultButton = QMessageBox::NoButton,
-    QMessageBox::StandardButtons skipOverrideButtons =
-        QMessageBox::StandardButtons(QMessageBox::No));
+    QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
 
 QMessageBox::StandardButton questionNoSkipOverride(
     QWidget *parent, const QString &title, const QString &text,
     const QString &identifier = QStringLiteral("default"),
     QMessageBox::StandardButtons buttons =
         QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No),
-    QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
-
-QMessageBox::StandardButton warning(
+    QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);QMessageBox::StandardButton warning(
     QWidget *parent, const QString &title, const QString &text,
     const QString &identifier = QStringLiteral("default"),
     QMessageBox::StandardButtons buttons =

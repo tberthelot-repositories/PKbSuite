@@ -242,17 +242,14 @@ QMessageBox::StandardButton Utils::Gui::information(
  * @param identifier
  * @param buttons
  * @param defaultButton
- * @param skipOverrideButtons
  * @return
  */
 QMessageBox::StandardButton Utils::Gui::question(
     QWidget *parent, const QString &title, const QString &text,
     const QString &identifier, QMessageBox::StandardButtons buttons,
-    QMessageBox::StandardButton defaultButton,
-    QMessageBox::StandardButtons skipOverrideButtons) {
+    QMessageBox::StandardButton defaultButton) {
     return showMessageBox(parent, QMessageBox::Icon::Question, title, text,
-                          identifier, buttons, defaultButton,
-                          skipOverrideButtons);
+                          identifier, buttons, defaultButton);
 }
 
 /**
@@ -395,7 +392,7 @@ QFont Utils::Gui::fontDialogGetFont(bool *ok, const QFont &initial,
                                     QFontDialog::FontDialogOptions options) {
 #ifdef Q_OS_MAC
     // there was a bug in Qt 5.11.2 with the native dialog
-    // see: https://github.com/pbek/QOwnNotes/issues/1033
+    // see: https://github.com/pbek/PKbSuite/issues/1033
     options |= QFontDialog::DontUseNativeDialog;
 #endif
 

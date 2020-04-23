@@ -22,8 +22,7 @@
 #include "entities/bookmark.h"
 #include "entities/notefolder.h"
 #include "entities/tag.h"
-#include "metricsservice.h"
-#include "widgets/qownnotesmarkdowntextedit.h"
+#include "widgets/pkbsuitemarkdowntextedit.h"
 #ifndef INTEGRATION_TESTS
 #include <mainwindow.h>
 #endif
@@ -44,7 +43,7 @@ static QString getIdentifier(QWebSocket *peer) {
 WebSocketServerService::WebSocketServerService(quint16 port, QObject *parent)
     : QObject(parent),
       m_pWebSocketServer(
-          new QWebSocketServer(QStringLiteral("QOwnNotes Server"),
+          new QWebSocketServer(QStringLiteral("PKbSuite Server"),
                                QWebSocketServer::NonSecureMode, this)) {
 #ifndef INTEGRATION_TESTS
     _webSocketTokenDialog = nullptr;
@@ -63,14 +62,14 @@ void WebSocketServerService::listen(quint16 port) {
     close();
 
     if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
-        Utils::Misc::printInfo(tr("QOwnNotes server listening on port %1")
+        Utils::Misc::printInfo(tr("PKbSuite server listening on port %1")
                                    .arg(QString::number(port)));
 
         connect(m_pWebSocketServer, SIGNAL(newConnection()), this,
                 SLOT(onNewConnection()));
         m_port = port;
     } else {
-        qWarning() << tr("Could not start QOwnNotes server on port %1!")
+        qWarning() << tr("Could not start PKbSuite server on port %1!")
                           .arg(QString::number(port));
     }
 }
@@ -116,7 +115,7 @@ void WebSocketServerService::onNewConnection() {
     }
 
     Utils::Misc::printInfo(
-        tr("%1 connected to QOwnNotes server!").arg(getIdentifier(pSocket)));
+        tr("%1 connected to PKbSuite server!").arg(getIdentifier(pSocket)));
     pSocket->setParent(this);
 
     connect(pSocket, &QWebSocket::textMessageReceived, this,
@@ -132,7 +131,6 @@ void WebSocketServerService::processMessage(const QString &message) {
     QJsonObject jsonObject = jsonResponse.object();
     QString type = jsonObject.value(QStringLiteral("type")).toString();
     auto *pSender = qobject_cast<QWebSocket *>(sender());
-    MetricsService::instance()->sendVisitIfEnabled("websocket/message/" + type);
     const QString token = jsonObject.value(QStringLiteral("token")).toString();
     QSettings settings;
     QString storedToken =
@@ -187,7 +185,7 @@ void WebSocketServerService::processMessage(const QString &message) {
 #ifndef INTEGRATION_TESTS
         //        pSender->sendTextMessage(
         //                R"({ "type": "bookmarks", "data": [ { "name": "Test1",
-        //                "url": "http://www.qownnotes.org" } ] })");
+        //                "url": "http://www.pkbsuite.org" } ] })");
 
         QString jsonText = getBookmarksJsonText();
 
@@ -349,7 +347,7 @@ void WebSocketServerService::socketDisconnected() {
     auto *pClient = qobject_cast<QWebSocket *>(sender());
 
     if (pClient != Q_NULLPTR) {
-        Utils::Misc::printInfo(tr("%1 was disconnected from QOwnNotes server")
+        Utils::Misc::printInfo(tr("%1 was disconnected from PKbSuite server")
                                    .arg(getIdentifier(pClient)));
 
         m_clients.removeAll(pClient);

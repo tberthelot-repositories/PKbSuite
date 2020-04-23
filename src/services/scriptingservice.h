@@ -33,7 +33,9 @@ class ScriptingService : public QObject {
     QQmlEngine *engine() const;
     void initComponents();
     QString callInsertMediaHook(QFile *file, QString markdownText);
-    QVariant callNoteTaggingHook(const Note &note, const QString &action,
+	QString callInsertPDFHook(QFile *file,
+							  QString markdownText);
+	QVariant callNoteTaggingHook(const Note &note, const QString &action,
                                  const QString &tagName = QString(),
                                  const QString &newTagName = QString());
     bool noteTaggingHookExists() const;
@@ -47,7 +49,6 @@ class ScriptingService : public QObject {
         QByteArray data = QByteArray()) const;
     Q_INVOKABLE QString currentNoteFolderPath();
     Q_INVOKABLE NoteApi *currentNote() const;
-    Q_INVOKABLE void log(QString text);
     Q_INVOKABLE QString downloadUrlToString(const QUrl &url);
     Q_INVOKABLE QString downloadUrlToMedia(const QUrl &url,
                                            bool returnUrlOnly = false);
@@ -71,9 +72,6 @@ class ScriptingService : public QObject {
     Q_INVOKABLE QString
     noteTextEditCurrentWord(bool withPreviousCharacters = false);
     Q_INVOKABLE void encryptionDisablePassword();
-    Q_INVOKABLE bool platformIsLinux();
-    Q_INVOKABLE bool platformIsOSX();
-    Q_INVOKABLE bool platformIsWindows();
     Q_INVOKABLE void tagCurrentNote(const QString &tagName);
     Q_INVOKABLE void addStyleSheet(const QString &stylesheet);
     Q_INVOKABLE void reloadScriptingEngine();
@@ -182,6 +180,8 @@ class ScriptingService : public QObject {
     QHash<int, QList<QVariant>> _settingsVariables;
     bool methodExistsForObject(QObject *object, const QString &method) const;
     QString callInsertMediaHookForObject(QObject *object, QFile *file,
+                                         const QString &markdownText);
+    QString callInsertPDFHookForObject(QObject *object, QFile *file,
                                          const QString &markdownText);
     QString callNoteToMarkdownHtmlHookForObject(QObject *object, Note *note,
                                                 const QString &html);

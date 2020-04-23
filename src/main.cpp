@@ -1,8 +1,6 @@
 #include <services/databaseservice.h>
-#include <services/metricsservice.h>
 #include <utils/misc.h>
 #include <utils/schema.h>
-#include <widgets/logwidget.h>
 
 #include <QApplication>
 #include <QFileDialog>
@@ -35,29 +33,29 @@
     QString appPath = QCoreApplication::applicationDirPath();                  \
     qtTranslator3.load("qt_" + locale, appPath + "/translations");             \
     app.installTranslator(&qtTranslator3);                                     \
-    translator1.load(appPath + "/../src/languages/QOwnNotes_" + locale);       \
+    translator1.load(appPath + "/../src/languages/PKbSuite_" + locale);       \
     app.installTranslator(&translator1);                                       \
-    translator2.load(appPath + "/../languages/QOwnNotes_" + locale);           \
+    translator2.load(appPath + "/../languages/PKbSuite_" + locale);           \
     app.installTranslator(&translator2);                                       \
-    translator3.load(appPath + "/languages/QOwnNotes_" + locale);              \
+    translator3.load(appPath + "/languages/PKbSuite_" + locale);              \
     app.installTranslator(&translator3);                                       \
-    translator4.load(appPath + "/QOwnNotes_" + locale);                        \
+    translator4.load(appPath + "/PKbSuite_" + locale);                        \
     app.installTranslator(&translator4);                                       \
-    translator5.load("../src/languages/QOwnNotes_" + locale);                  \
+    translator5.load("../src/languages/PKbSuite_" + locale);                  \
     app.installTranslator(&translator5);                                       \
-    translator6.load("../share/qt5/translations/QOwnNotes_" + locale);      \
+    translator6.load("../share/qt5/translations/PKbSuite_" + locale);      \
     app.installTranslator(&translator6);                                       \
-    translator7.load(appPath + "/../share/qt5/translations/QOwnNotes_" +    \
+    translator7.load(appPath + "/../share/qt5/translations/PKbSuite_" +    \
                      locale);                                                  \
     app.installTranslator(&translator7);                                       \
-    translatorLocal.load("QOwnNotes_" + locale);                               \
+    translatorLocal.load("PKbSuite_" + locale);                               \
     app.installTranslator(&translatorLocal);
 
 /**
  * Macro for loading the release translations
  */
 #define LOAD_RELEASE_TRANSLATIONS(app)                                   \
-    translatorRelease.load("/usr/share/qt5/translations/QOwnNotes_" + \
+    translatorRelease.load("/usr/share/qt5/translations/PKbSuite_" + \
                            locale);                                      \
     app.installTranslator(&translatorRelease);
 
@@ -65,9 +63,9 @@
  * Macro for loading the translations on OS X
  */
 #define LOAD_MAC_TRANSLATIONS(app)                                     \
-    translatorOSX.load(appPath + "/../Resources/QOwnNotes_" + locale); \
+    translatorOSX.load(appPath + "/../Resources/PKbSuite_" + locale); \
     app.installTranslator(&translatorOSX);                             \
-    translatorOSX2.load("../Resources/QOwnNotes_" + locale);           \
+    translatorOSX2.load("../Resources/PKbSuite_" + locale);           \
     app.installTranslator(&translatorOSX2);
 
 /**
@@ -76,7 +74,7 @@
  */
 bool mainStartupMisc(const QStringList &arguments) {
     QCommandLineParser parser;
-    parser.setApplicationDescription("QOwnNotes " + QString(VERSION));
+    parser.setApplicationDescription("PKbSuite " + QString(VERSION));
     const QCommandLineOption helpOption = parser.addHelpOption();
     const QCommandLineOption portableOption(
         QStringLiteral("portable"),
@@ -97,7 +95,7 @@ bool mainStartupMisc(const QStringList &arguments) {
         QStringLiteral("allow-multiple-instances"),
         QCoreApplication::translate(
             "main",
-            "Allows multiple instances of QOwnNotes to be started "
+            "Allows multiple instances of PKbSuite to be started "
             "even if disallowed in the settings."));
     parser.addOption(allowMultipleInstancesOption);
     const QCommandLineOption clearSettingsOption(
@@ -147,39 +145,17 @@ bool mainStartupMisc(const QStringList &arguments) {
 #endif
 
         if (QIcon::themeName().isEmpty() || internalIconTheme) {
-            QIcon::setThemeName(QStringLiteral("breeze-qownnotes"));
+            QIcon::setThemeName(QStringLiteral("breeze-pkbsuite"));
         }
 
         if (Utils::Misc::isDarkModeIconTheme()) {
-            QIcon::setThemeName(QStringLiteral("breeze-dark-qownnotes"));
+            QIcon::setThemeName(QStringLiteral("breeze-dark-pkbsuite"));
         }
     }
 
-    MetricsService *metricsService = MetricsService::createInstance();
-    metricsService->sendVisitIfEnabled(QStringLiteral("app/start"),
-                                       QStringLiteral("App Start"));
-    metricsService->sendEventIfEnabled(
-        QStringLiteral("app/qt-version-build"), QStringLiteral("app"),
-        QStringLiteral("qt version build"), QStringLiteral(QT_VERSION_STR));
-    metricsService->sendEventIfEnabled(
-        QStringLiteral("app/qt-version-runtime"), QStringLiteral("app"),
-        QStringLiteral("qt version runtime"), qVersion());
-    metricsService->sendEventIfEnabled(
-        QStringLiteral("app/theme"), QStringLiteral("app"),
-        QStringLiteral("theme"), QIcon::themeName());
-    metricsService->sendEventIfEnabled(
-        QStringLiteral("app/release"), QStringLiteral("app"),
-        QStringLiteral("release"), qApp->property("release").toString());
-    metricsService->sendEventIfEnabled(
-        QStringLiteral("app/portable"), QStringLiteral("app"),
-        QStringLiteral("portable"),
-        Utils::Misc::isInPortableMode() ? QStringLiteral("yes")
-                                        : QStringLiteral("no"));
-
-    if (qApp->property("snap").toBool()) {
-        metricsService->sendEventIfEnabled(
-            QStringLiteral("app/styles"), QStringLiteral("app"),
-            QStringLiteral("styles"), QStyleFactory::keys().join(QChar(' ')));
+    bool darkMode = settings.value("darkMode").toBool();
+    if (darkMode) {
+        QIcon::setThemeName("breeze-dark-pkbsuite");
     }
 
     QString productType;
@@ -189,10 +165,6 @@ bool mainStartupMisc(const QStringList &arguments) {
 #else
     productType += " Qt " + QString(QT_VERSION_STR);
 #endif
-
-    metricsService->sendEventIfEnabled(
-        QStringLiteral("app/product-type"), QStringLiteral("app"),
-        QStringLiteral("product-type"), productType);
 
     QString platform = QStringLiteral("other");
 #ifdef Q_OS_LINUX
@@ -209,13 +181,6 @@ bool mainStartupMisc(const QStringList &arguments) {
     // self-builds if nothing is already set
     Utils::Misc::presetDisableAutomaticUpdateDialog();
 
-    metricsService->sendEventIfEnabled(QStringLiteral("app/platform"),
-                                       QStringLiteral("app"),
-                                       QStringLiteral("platform"), platform);
-
-    // sends locale information
-    metricsService->sendLocaleEvent();
-
     // check legacy setting
     QString notesPath =
         settings.value(QStringLiteral("General/notesPath")).toString();
@@ -227,11 +192,6 @@ bool mainStartupMisc(const QStringList &arguments) {
     } else {
         // load the notes path
         notesPath = settings.value(QStringLiteral("notesPath")).toString();
-    }
-
-    if (!notesPath.isEmpty()) {
-        // prepend the portable data path if we are in portable mode
-        notesPath = Utils::Misc::prependPortableDataPathIfNeeded(notesPath);
     }
 
     QDir dir(notesPath);
@@ -261,7 +221,7 @@ bool mainStartupMisc(const QStringList &arguments) {
         settings.setValue(QStringLiteral("notesPath"), notesPath);
 
         // prepend the portable data path if we are in portable mode
-        notesPath = Utils::Misc::prependPortableDataPathIfNeeded(notesPath);
+        notesPath = notesPath;
         dir = QDir(notesPath);
     }
 
@@ -271,7 +231,7 @@ bool mainStartupMisc(const QStringList &arguments) {
     // if the notes path is empty or doesn't exist open the welcome dialog
     if (notesPath.isEmpty() || !dir.exists()) {
         WelcomeDialog welcomeDialog;
-        // exit QOwnNotes if the welcome dialog was canceled
+        // exit PKbSuite if the welcome dialog was canceled
         if (welcomeDialog.exec() != QDialog::Accepted) {
             settings.clear();
             DatabaseService::removeDiskDatabase();
@@ -283,13 +243,6 @@ bool mainStartupMisc(const QStringList &arguments) {
     // try to create note folders if they are missing
     NoteFolder::migrateToNoteFolders();
 
-    if (parser.isSet(dumpSettingsOption)) {
-        fprintf(
-            stdout, "%s\n",
-            Utils::Misc::generateDebugInformation().toLocal8Bit().constData());
-        exit(0);
-    }
-
     return true;
 }
 
@@ -297,7 +250,7 @@ bool mainStartupMisc(const QStringList &arguments) {
  * Shows the command line help
  */
 // void showHelp() {
-//    qWarning() << "\nQOwnNotes " << VERSION << "\n";
+//    qWarning() << "\nPKbSuite " << VERSION << "\n";
 //    qWarning() << QObject::tr("Application Options") << ":";
 //    qWarning() << "  --portable          " <<
 //                  QObject::tr("Runs the application in portable mode");
@@ -415,7 +368,7 @@ int main(int argc, char *argv[]) {
     //    portable = true;
 
     // disable QML caching in portable mode because the QML cache path cannot be
-    // configured see: https://github.com/pbek/QOwnNotes/issues/1284
+    // configured see: https://github.com/pbek/PKbSuite/issues/1284
     if (portable) {
         qputenv("QML_DISABLE_DISK_CACHE", "true");
     }
@@ -432,7 +385,7 @@ int main(int argc, char *argv[]) {
 
     QCoreApplication::setOrganizationDomain(QStringLiteral("PBE"));
     QCoreApplication::setOrganizationName(QStringLiteral("PBE"));
-    QCoreApplication::setApplicationName(QStringLiteral("QOwnNotes") +
+    QCoreApplication::setApplicationName(QStringLiteral("PKbSuite") +
                                          appNameAdd);
 
     QString appVersion = QStringLiteral(VERSION);
@@ -455,24 +408,12 @@ int main(int argc, char *argv[]) {
 
     QCoreApplication::setApplicationVersion(appVersion);
 
-    // set the settings format to ini format and the settings path inside the
-    // path of the application in portable mode
-    if (portable) {
-        QSettings::setDefaultFormat(QSettings::IniFormat);
-        QSettings::setPath(QSettings::IniFormat, QSettings::UserScope,
-                           Utils::Misc::portableDataPath());
-        QSettings settings;
-        qDebug() << "settings fileName: " << settings.fileName();
-    }
-
     // clear the settings if a --clear-settings parameter was provided
     if (clearSettings) {
         QSettings settings;
         settings.clear();
 
-        if (!portable) {
-            DatabaseService::removeDiskDatabase();
-        }
+        DatabaseService::removeDiskDatabase();
 
         qWarning("Your settings are now cleared!");
     }
@@ -539,7 +480,7 @@ int main(int argc, char *argv[]) {
             argc, argv, false, SingleApplication::Mode::User, 1000, []() {
                 qWarning() << QCoreApplication::translate(
                     "main",
-                    "Another instance of QOwnNotes was already started! "
+                    "Another instance of PKbSuite was already started! "
                     "You can turn off the single instance mode in the settings"
                     " or use the parameter --allow-multiple-instances.");
             });
@@ -573,7 +514,7 @@ int main(int argc, char *argv[]) {
         QObject::connect(&app, &SingleApplication::instanceStarted, [&] {
             qWarning() << QCoreApplication::translate(
                 "main",
-                "A second instance of QOwnNotes was attempted to be "
+                "A second instance of PKbSuite was attempted to be "
                 "started!");
 
             w.show();
