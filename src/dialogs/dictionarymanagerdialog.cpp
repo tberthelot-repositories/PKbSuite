@@ -25,7 +25,7 @@ DictionaryManagerDialog::DictionaryManagerDialog(QWidget *parent)
                      SLOT(slotReplyFinished(QNetworkReply *)));
 
     // you can add more dictionaries from
-    // https://github.com/qownnotes/dictionaries/tree/master
+    // https://github.com/pkbsuite/dictionaries/tree/master
     addDictionaryItem(tr("Afrikaans"), QStringLiteral("af_ZA"));
     addDictionaryItem(tr("Amharic"), QStringLiteral("am_ET"));
     addDictionaryItem(tr("Ancient Greek"), QStringLiteral("grc_GR"));
@@ -196,7 +196,7 @@ void DictionaryManagerDialog::addDictionaryItem(const QString &name,
     auto *item = new QTreeWidgetItem();
     item->setText(0, name);
     item->setData(0, Qt::UserRole,
-                  QStringLiteral("https://raw.githubusercontent.com/qownnotes/"
+                  QStringLiteral("https://raw.githubusercontent.com/pkbsuite/"
                                  "dictionaries/master/") +
                       pathPart + QStringLiteral("/") + fileNamePart);
     ui->remoteDictionaryTreeWidget->addTopLevelItem(item);

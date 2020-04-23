@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2.2)
 
-project(QOwnNotes)
+project(PKbSuite)
 
 add_subdirectory(src)

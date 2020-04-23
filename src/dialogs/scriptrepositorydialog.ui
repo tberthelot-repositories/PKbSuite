@@ -281,8 +281,8 @@
                  <string>Install</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="document-save" resource="../breeze-qownnotes.qrc">
-                  <normaloff>:/icons/breeze-qownnotes/16x16/document-save.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-save.svg</iconset>
+                 <iconset theme="document-save" resource="../breeze-pkbsuite.qrc">
+                  <normaloff>:/icons/breeze-pkbsuite/16x16/document-save.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-save.svg</iconset>
                 </property>
                 <property name="shortcut">
                  <string notr="true">Ctrl+I</string>
@@ -444,8 +444,8 @@
            <string>Load more scripts</string>
           </property>
           <property name="icon">
-           <iconset theme="edit-download" resource="../breeze-qownnotes.qrc">
-            <normaloff>:/icons/breeze-qownnotes/16x16/edit-download.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-download.svg</iconset>
+           <iconset theme="edit-download" resource="../breeze-pkbsuite.qrc">
+            <normaloff>:/icons/breeze-pkbsuite/16x16/edit-download.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-download.svg</iconset>
           </property>
          </widget>
         </item>
@@ -464,7 +464,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
  </resources>
  <connections/>
 </ui>

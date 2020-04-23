@@ -17,7 +17,7 @@
 #include <QtWidgets/QMessageBox>
 
 #include "ui_orphanedattachmentsdialog.h"
-#include "widgets/qownnotesmarkdowntextedit.h"
+#include "widgets/pkbsuitemarkdowntextedit.h"
 
 OrphanedAttachmentsDialog::OrphanedAttachmentsDialog(QWidget *parent)
     : MasterDialog(parent), ui(new Ui::OrphanedAttachmentsDialog) {
@@ -199,7 +199,7 @@ void OrphanedAttachmentsDialog::on_insertButton_clicked() {
         return;
     }
 
-    QOwnNotesMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
+    PKbSuiteMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
     Note note = mainWindow->getCurrentNote();
 
     // insert all selected attachments

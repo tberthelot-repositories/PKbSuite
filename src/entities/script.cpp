@@ -15,8 +15,6 @@
 #include "script.h"
 
 #include <libraries/versionnumber/versionnumber.h>
-#include <services/metricsservice.h>
-#include <services/updateservice.h>
 #include <utils/misc.h>
 #include <version.h>
 
@@ -30,7 +28,7 @@
 #include <QtCore/QJsonArray>
 
 const QString Script::ScriptRepositoryRawContentUrlPrefix = QStringLiteral(
-    "https://raw.githubusercontent.com/qownnotes/scripts/master/");
+    "https://raw.githubusercontent.com/pkbsuite/scripts/master/");
 
 Script::Script()
     : id{0},
@@ -107,8 +105,7 @@ bool Script::create(const QString &name, QString scriptPath) {
     // make the path relative to the portable data path if we are in
     // portable mode
     query.bindValue(QStringLiteral(":scriptPath"),
-                    Utils::Misc::makePathRelativeToPortableDataPathIfNeeded(
-                        std::move(scriptPath)));
+                        std::move(scriptPath));
 
     return query.exec();
 }
@@ -246,9 +243,6 @@ bool Script::remove() const {
         if (isFromRepository && !path.isEmpty()) {
             QDir dir(path);
             dir.removeRecursively();
-
-            MetricsService::instance()->sendVisitIfEnabled(
-                QStringLiteral("script-repository/remove/") + identifier);
         }
 
         return true;
@@ -272,8 +266,8 @@ bool Script::fillFromQuery(const QSqlQuery &query) {
     this->enabled = query.value(QStringLiteral("enabled")).toBool();
 
     // prepend the portable data path if we are in portable mode
-    this->scriptPath = Utils::Misc::prependPortableDataPathIfNeeded(
-        query.value(QStringLiteral("script_path")).toString(), true);
+    this->scriptPath =
+        query.value(QStringLiteral("script_path")).toString();
 
     return true;
 }
@@ -335,8 +329,7 @@ bool Script::store() {
     // make the path relative to the portable data path if we are in
     // portable mode
     query.bindValue(QStringLiteral(":scriptPath"),
-                    Utils::Misc::makePathRelativeToPortableDataPathIfNeeded(
-                        this->scriptPath));
+                        this->scriptPath);
 
     if (!query.exec()) {
         // on error
@@ -475,7 +468,7 @@ QUrl Script::remoteFileUrl(const QString &fileName) const {
 
     return QUrl(
         QStringLiteral(
-            "https://raw.githubusercontent.com/qownnotes/scripts/master/") +
+            "https://raw.githubusercontent.com/pkbsuite/scripts/master/") +
         identifier + QStringLiteral("/") + fileName);
 }
 
@@ -559,23 +552,17 @@ ScriptInfoJson::ScriptInfoJson(const QJsonObject &jsonObject) {
         platformList << platform;
     }
     if (platformList.isEmpty()) {
-        platformList << QStringLiteral("linux") << QStringLiteral("macos")
-                     << QStringLiteral("windows");
+        platformList << QStringLiteral("linux");
     }
     QHash<QString, QString> platformHash;
     platformHash[QStringLiteral("linux")] = QStringLiteral("Linux");
-    platformHash[QStringLiteral("macos")] = QStringLiteral("macOS");
-    platformHash[QStringLiteral("windows")] = QStringLiteral("Windows");
     foreach (QString platform, platformList) {
         if (platformHash.contains(platform)) {
             richPlatformList << platformHash[platform];
         }
     }
-    QString currentPlatform = QStringLiteral(PLATFORM);
-    if (currentPlatform == QStringLiteral("macosx")) {
-        currentPlatform = QStringLiteral("macos");
-    }
-    platformSupported = platformList.contains(currentPlatform);
+
+    platformSupported = true;
     richPlatformText = richPlatformList.join(QStringLiteral(", "));
 
     // get the resources file names

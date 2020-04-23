@@ -20,8 +20,8 @@
    <string>Add a new tag</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="tag" resource="../breeze-qownnotes.qrc">
-    <normaloff>:/icons/breeze-qownnotes/16x16/tag.svg</normaloff>:/icons/breeze-qownnotes/16x16/tag.svg</iconset>
+   <iconset theme="tag" resource="../breeze-pkbsuite.qrc">
+    <normaloff>:/icons/breeze-pkbsuite/16x16/tag.svg</normaloff>:/icons/breeze-pkbsuite/16x16/tag.svg</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -51,7 +51,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
  </resources>
  <connections>
   <connection>

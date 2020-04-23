@@ -55,7 +55,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QOwnNotesMarkdownTextEdit" name="textEdit"/>
+        <widget class="PKbSuiteMarkdownTextEdit" name="textEdit"/>
        </item>
        <item>
         <widget class="QFrame" name="searchFrame">
@@ -122,9 +122,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QOwnNotesMarkdownTextEdit</class>
+   <class>PKbSuiteMarkdownTextEdit</class>
    <extends>QPlainTextEdit</extends>
-   <header location="global">widgets/qownnotesmarkdowntextedit.h</header>
+   <header location="global">widgets/pkbsuitemarkdowntextedit.h</header>
   </customwidget>
   <customwidget>
    <class>NotePreviewWidget</class>

@@ -14,8 +14,8 @@
    <string>Link an url or note</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="insert-link" resource="../breeze-qownnotes.qrc">
-    <normaloff>:/icons/breeze-qownnotes/16x16/insert-link.svg</normaloff>:/icons/breeze-qownnotes/16x16/insert-link.svg</iconset>
+   <iconset theme="insert-link" resource="../breeze-pkbsuite.qrc">
+    <normaloff>:/icons/breeze-pkbsuite/16x16/insert-link.svg</normaloff>:/icons/breeze-pkbsuite/16x16/insert-link.svg</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -185,7 +185,7 @@
   <tabstop>notesListWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
  </resources>
  <connections>
   <connection>

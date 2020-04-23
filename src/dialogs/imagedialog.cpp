@@ -133,7 +133,7 @@ void ImageDialog::on_buttonBox_accepted() {
         _imageWasDownloaded ||
         ui->widthSpinBox->value() != _basePixmap.width()) {
         _tempFile = new QTemporaryFile(QDir::tempPath() + QDir::separator() +
-                                       "qownnotes-media-XXXXXX.png");
+                                       "pkbsuite-media-XXXXXX.png");
 
         if (_tempFile->open()) {
             // save temporary png image

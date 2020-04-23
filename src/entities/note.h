@@ -223,21 +223,9 @@ class Note {
 
     bool isSameFile(const Note &note) const;
 
-    QString getShareUrl() const;
-
-    void setShareUrl(QString url);
-
-    int getShareId() const;
-
-    void setShareId(int id);
-
-    unsigned int getSharePermissions() const;
-
     bool isShareEditAllowed() const;
 
-    void setSharePermissions(unsigned int permissions);
-
-    bool isShared() const;
+    QString relativeNoteFilePath(QString separator = "");
 
     static Note fetchByShareId(int shareId);
 
@@ -262,7 +250,10 @@ class Note {
     QString getInsertAttachmentMarkdown(QFile *file,
                                         QString fileName = QString(),
                                         bool returnUrlOnly = false);
-
+	
+	static QString getInsertPDFMarkdown(QFile *file,
+								 bool addNewLine = true);
+	
     static bool scaleDownImageFileIfNeeded(QFile &file);
 
     QString downloadUrlToMedia(const QUrl &url, bool returnUrlOnly = false);
@@ -337,7 +328,7 @@ class Note {
     static QString urlEncodeNoteUrl(const QString &url);
 
     static QString urlDecodeNoteUrl(QString url);
-
+	
    protected:
     QString name;
     QString fileName;
@@ -345,8 +336,7 @@ class Note {
     QString _noteTextHtmlConversionHash;
     QString noteText;
     QString decryptedNoteText;
-    QString cryptoPassword;
-    QString shareUrl;
+    bool hasDirtyData;
     QDateTime fileCreated;
     QDateTime fileLastModified;
     QDateTime created;
@@ -355,9 +345,8 @@ class Note {
     qint64 cryptoKey;
     int id;
     int noteSubFolderId;
-    int shareId;
-    unsigned int sharePermissions;
-    bool hasDirtyData;
+	QString cryptoPassword;
+    QRegularExpression getEncryptedNoteTextRegularExpression();
 
     QRegularExpression getEncryptedNoteTextRegularExpression() const;
     QString getEncryptedNoteText() const;

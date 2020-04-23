@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2.2)
-project(QOwnNotes)
+project(PKbSuite)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_AUTOMOC ON)
@@ -40,7 +40,6 @@ endif(CCACHE_FOUND)
 qt5_wrap_ui(dialogs/ui_settingsdialog.h settingsdialog.ui)
 qt5_wrap_ui(dialogs/ui_tododialog.h tododialog.ui)
 qt5_wrap_ui(dialogs/ui_aboutdialog.h aboutdialog.ui)
-qt5_wrap_ui(widgets/ui_logwidget.h logwidget.ui)
 qt5_wrap_ui(dialogs/ui_trashdialog.h trashdialog.ui)
 qt5_wrap_ui(dialogs/ui_localtrashdialog.h localtrashdialog.ui)
 qt5_wrap_ui(dialogs/ui_linkdialog.h linkdialog.ui)
@@ -48,15 +47,12 @@ qt5_wrap_ui(dialogs/ui_updatedialog.h updatedialog.ui)
 qt5_wrap_ui(dialogs/ui_notediffdialog.h notediffdialog.ui)
 qt5_wrap_ui(dialogs/ui_versiondialog.h versiondialog.ui)
 qt5_wrap_ui(dialogs/ui_welcomedialog.h welcomedialog.ui)
-qt5_wrap_ui(dialogs/ui_issueassistantdialog.h issueassistantdialog.ui)
 qt5_wrap_ui(dialogs/ui_tagadddialog.h tagadddialog.ui)
 qt5_wrap_ui(widgets/ui_fontcolorwidget.h fontcolorwidget.ui)
 qt5_wrap_ui(widgets/ui_evernoteimportdialog.h ui_evernoteimportdialog.ui)
-qt5_wrap_ui(widgets/ui_serverbookmarksimportdialog.h ui_serverbookmarksimportdialog.ui)
 qt5_wrap_ui(widgets/ui_layoutwidget.ui ui_layoutwidget.ui)
 qt5_wrap_ui(dialogs/ui_orphanedimagesdialog.h orphanedimagesdialog.ui)
 qt5_wrap_ui(dialogs/ui_orphanedattachmentsdialog.h orphanedattachmentsdialog.ui)
-qt5_wrap_ui(dialogs/ui_actiondialog.h actiondialog.ui)
 qt5_wrap_ui(dialogs/ui_tabledialog.h tabledialog.ui)
 qt5_wrap_ui(dialogs/ui_notedialog.h notedialog.ui)
 qt5_wrap_ui(dialogs/ui_websockettokendialog.h websockettokendialog.ui)
@@ -67,9 +63,9 @@ qt5_wrap_ui(libraries/qttoolbareditor/src/toolbar_editor.hpp
         libraries/qttoolbareditor/src/toolbar_editor.ui)
 
 set(RESOURCE_FILES
-        breeze-qownnotes.qrc
-        breeze-dark-qownnotes.qrc
-        qownnotes.qrc
+        breeze-pkbsuite.qrc
+        breeze-dark-pkbsuite.qrc
+        pkbsuite.qrc
         demonotes.qrc
         images.qrc
         texts.qrc
@@ -85,9 +81,6 @@ set(SOURCE_FILES
     dialogs/welcomedialog.cpp
     dialogs/welcomedialog.h
     dialogs/welcomedialog.ui
-    dialogs/issueassistantdialog.cpp
-    dialogs/issueassistantdialog.h
-    dialogs/issueassistantdialog.ui
     dialogs/aboutdialog.cpp
     dialogs/aboutdialog.h
     dialogs/aboutdialog.ui
@@ -123,15 +116,6 @@ set(SOURCE_FILES
     dialogs/tagadddialog.cpp
     dialogs/tagadddialog.h
     dialogs/tagadddialog.ui
-    dialogs/sharedialog.cpp
-    dialogs/sharedialog.h
-    dialogs/sharedialog.ui
-    dialogs/evernoteimportdialog.cpp
-    dialogs/evernoteimportdialog.h
-    dialogs/evernoteimportdialog.ui
-    dialogs/serverbookmarksimportdialog.cpp
-    dialogs/serverbookmarksimportdialog.h
-    dialogs/serverbookmarksimportdialog.ui
     dialogs/orphanedimagesdialog.cpp
     dialogs/orphanedimagesdialog.h
     dialogs/orphanedimagesdialog.ui
@@ -176,8 +160,6 @@ set(SOURCE_FILES
     entities/notehistory.h
     entities/notefolder.cpp
     entities/notefolder.h
-    entities/cloudconnection.cpp
-    entities/cloudconnection.h
     entities/tag.cpp
     entities/tag.h
     entities/script.cpp
@@ -186,12 +168,10 @@ set(SOURCE_FILES
     helpers/flowlayout.h
     helpers/htmlentities.cpp
     helpers/htmlentities.h
-    helpers/clientproxy.cpp
-    helpers/clientproxy.h
     helpers/toolbarcontainer.cpp
     helpers/toolbarcontainer.h
-    helpers/qownnotesmarkdownhighlighter.cpp
-    helpers/qownnotesmarkdownhighlighter.h
+    helpers/pkbsuitemarkdownhighlighter.cpp
+    helpers/pkbsuitemarkdownhighlighter.h
     helpers/LanguageCache.h
     helpers/qownspellchecker.cpp
     helpers/qownspellchecker.h
@@ -234,16 +214,8 @@ set(SOURCE_FILES
     libraries/qtcsv/src/sources/reader.cpp
     libraries/qtcsv/src/sources/filechecker.h
     libraries/qtcsv/src/sources/symbols.h
-    libraries/fakevim/fakevim/fakevimactions.h
-    libraries/fakevim/fakevim/fakevimhandler.h
-    libraries/fakevim/fakevim/fakevimactions.cpp
-    libraries/fakevim/fakevim/fakevimhandler.cpp
-    libraries/fakevim/fakevim/utils/qtcassert.h
-    libraries/fakevim/fakevim/utils/qtcassert.cpp
     services/databaseservice.cpp
     services/databaseservice.h
-    services/owncloudservice.cpp
-    services/owncloudservice.h
     services/updateservice.cpp
     services/updateservice.h
     services/metricsservice.cpp
@@ -291,8 +263,8 @@ set(SOURCE_FILES
     libraries/qhotkey/QHotkey/qhotkey_p.h
     libraries/qhotkey/QHotkey/qhotkey_x11.cpp
 
-    widgets/qownnotesmarkdowntextedit.cpp
-    widgets/qownnotesmarkdowntextedit.h
+    widgets/pkbsuitemarkdowntextedit.cpp
+    widgets/pkbsuitemarkdowntextedit.h
     widgets/navigationwidget.cpp
     widgets/navigationwidget.h
     widgets/notepreviewwidget.cpp
@@ -308,9 +280,6 @@ set(SOURCE_FILES
     widgets/fontcolorwidget.ui
     widgets/fontcolorwidget.cpp
     widgets/fontcolorwidget.h
-    widgets/logwidget.cpp
-    widgets/logwidget.h
-    widgets/logwidget.ui
     widgets/label.cpp
     widgets/label.h
     widgets/lineedit.cpp
@@ -329,8 +298,6 @@ set(SOURCE_FILES
     widgets/layoutwidget.ui
     utils/misc.cpp
     utils/misc.h
-    utils/git.cpp
-    utils/git.h
     utils/gui.cpp
     utils/gui.h
     utils/schema.cpp
@@ -342,8 +309,6 @@ set(SOURCE_FILES
     mainwindow.ui
     release.h
     version.h
-    helpers/fakevimproxy.h
-    helpers/fakevimproxy.cpp
     services/websocketserverservice.cpp
     services/websocketserverservice.h
     entities/bookmark.h entities/bookmark.cpp)
@@ -414,69 +379,8 @@ endif()
 
 # Translation files
 SET(QON_TS_FILES
-    languages/QOwnNotes_en.ts
-    languages/QOwnNotes_de.ts
-    languages/QOwnNotes_fr.ts
-    languages/QOwnNotes_pl.ts
-    languages/QOwnNotes_zh_CN.ts
-    languages/QOwnNotes_zh_TW.ts
-    languages/QOwnNotes_ru.ts
-    languages/QOwnNotes_pt_BR.ts
-    languages/QOwnNotes_pt_PT.ts
-    languages/QOwnNotes_es.ts
-    languages/QOwnNotes_nl.ts
-    languages/QOwnNotes_hu.ts
-    languages/QOwnNotes_ja.ts
-    languages/QOwnNotes_it.ts
-    languages/QOwnNotes_ar.ts
-    languages/QOwnNotes_uk.ts
-    languages/QOwnNotes_cs.ts
-    languages/QOwnNotes_hr.ts
-    languages/QOwnNotes_ca.ts
-    languages/QOwnNotes_sv.ts
-    languages/QOwnNotes_id.ts
-    languages/QOwnNotes_bn.ts
-    languages/QOwnNotes_tr.ts
-    languages/QOwnNotes_tl.ts
-    languages/QOwnNotes_fil.ts
-    languages/QOwnNotes_ceb.ts
-    languages/QOwnNotes_hi.ts
-    languages/QOwnNotes_hil.ts
-    languages/QOwnNotes_ur.ts
-    languages/QOwnNotes_fi.ts
-    languages/QOwnNotes_el.ts
-    languages/QOwnNotes_gl.ts
-    languages/QOwnNotes_no.ts
-    languages/QOwnNotes_da.ts
-    languages/QOwnNotes_ro.ts
-    languages/QOwnNotes_sl.ts
-    languages/QOwnNotes_sk.ts
-    languages/QOwnNotes_eu.ts
-    languages/QOwnNotes_sr.ts
-    languages/QOwnNotes_fa.ts
-    languages/QOwnNotes_ha.ts
-    languages/QOwnNotes_bg.ts
-    languages/QOwnNotes_is.ts
-    languages/QOwnNotes_pa.ts
-    languages/QOwnNotes_sq.ts
-    languages/QOwnNotes_he.ts
-    languages/QOwnNotes_sn.ts
-    languages/QOwnNotes_km.ts
-    languages/QOwnNotes_si.ts
-    languages/QOwnNotes_zu.ts
-    languages/QOwnNotes_xh.ts
-    languages/QOwnNotes_ms.ts
-    languages/QOwnNotes_mi.ts
-    languages/QOwnNotes_ga.ts
-    languages/QOwnNotes_uz.ts
-    languages/QOwnNotes_vi.ts
-    languages/QOwnNotes_lv.ts
-    languages/QOwnNotes_ku.ts
-    languages/QOwnNotes_lt.ts
-    languages/QOwnNotes_bs.ts
-    languages/QOwnNotes_mk.ts
-    languages/QOwnNotes_ko.ts
-    languages/QOwnNotes_et.ts
+    languages/PKbSuite_en.ts
+    languages/PKbSuite_fr.ts
 )
 
 qt5_add_translation(QON_QM_FILES ${QON_TS_FILES})
@@ -498,7 +402,7 @@ endif()
 install(FILES ${QON_QM_FILES}
         DESTINATION ${QT_TRANSLATIONS_DIR})
 
-add_executable(QOwnNotes ${SOURCE_FILES} ${RESOURCE_ADDED} ${QON_QM_FILES})
+add_executable(PKbSuite ${SOURCE_FILES} ${RESOURCE_ADDED} ${QON_QM_FILES})
 
 
 # The Qt5Widgets_INCLUDES also includes the include directories for
@@ -531,13 +435,13 @@ set(CMAKE_CXX_FLAGS "${Qt5X11Extras_EXECUTABLE_COMPILE_FLAGS}")
 set(CMAKE_CXX_FLAGS "-std=c++0x")
 
 # The Qt5Widgets_LIBRARIES variable also includes QtGui and QtCore
-target_link_libraries(QOwnNotes ${Qt5Widgets_LIBRARIES} ${Qt5Sql_LIBRARIES}
+target_link_libraries(PKbSuite ${Qt5Widgets_LIBRARIES} ${Qt5Sql_LIBRARIES}
         ${Qt5Svg_LIBRARIES} ${Qt5Network_LIBRARIES}
         ${Qt5Xml_LIBRARIES} ${Qt5XmlPatterns_LIBRARIES}
         ${Qt5PrintSupport_LIBRARIES} ${Qt5WebSockets_LIBRARIES}
         ${Qt5Qml_LIBRARIES} ${Qt5X11Extras_LIBRARIES} ${X11_LIBRARIES})
 
-#qt5_use_modules(QOwnNotes Widgets Core Gui Sql Svg Network Script Xml PrintSupport)
+#qt5_use_modules(PKbSuite Widgets Core Gui Sql Svg Network Script Xml PrintSupport)
 
 # Sonnet support if we can get it to run in the future
 #find_package(KF5Sonnet)

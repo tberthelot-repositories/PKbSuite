@@ -1,7 +1,7 @@
 Markdown Cheatsheet
 ===================
 
-This cheatsheet is intended as a quick reference and showcase of the markdown syntax in [QOwnNotes](https://www.qownnotes.org).
+This cheatsheet is intended as a quick reference and showcase of the markdown syntax in [PKbSuite](https://www.pkbsuite.org).
 
 ## Headers
 
@@ -108,7 +108,7 @@ There are two ways to create links.
 URLs and URLs in angle brackets will automatically get turned into links in the preview. 
 http://www.example.com or <http://www.example.com>
 
-[1]: https://www.qownnotes.org
+[1]: https://www.pkbsuite.org
 ```
 
 [I'm an inline-style link](https://www.google.com)
@@ -120,7 +120,7 @@ http://www.example.com or <http://www.example.com>
 URLs and URLs in angle brackets will automatically get turned into links in the preview. 
 http://www.example.com or <http://www.example.com>
 
-[1]: https://www.qownnotes.org
+[1]: https://www.pkbsuite.org
 
 
 ## Inline code and code blocks
@@ -144,7 +144,7 @@ Blocks of code are either fenced by lines with three back-ticks, or are indented
 
 ## Tables
 
-Tables aren't part of the core Markdown spec, but the QOwnNotes preview supports them. 
+Tables aren't part of the core Markdown spec, but the PKbSuite preview supports them. 
 
 ```markdown
 Colons can be used to align columns.

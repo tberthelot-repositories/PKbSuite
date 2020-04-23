@@ -14,7 +14,7 @@
 #include <QtWidgets/QMessageBox>
 
 #include "ui_orphanedimagesdialog.h"
-#include "widgets/qownnotesmarkdowntextedit.h"
+#include "widgets/pkbsuitemarkdowntextedit.h"
 
 OrphanedImagesDialog::OrphanedImagesDialog(QWidget *parent)
     : MasterDialog(parent), ui(new Ui::OrphanedImagesDialog) {
@@ -180,7 +180,7 @@ void OrphanedImagesDialog::on_insertButton_clicked() {
         return;
     }
 
-    QOwnNotesMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
+    PKbSuiteMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
     Note note = mainWindow->getCurrentNote();
 
     // insert all selected images
