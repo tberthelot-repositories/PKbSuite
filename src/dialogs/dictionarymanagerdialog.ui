@@ -61,8 +61,8 @@
               <string>Cancel</string>
              </property>
              <property name="icon">
-              <iconset theme="dialog-cancel" resource="../breeze-qownnotes.qrc">
-               <normaloff>:/icons/breeze-qownnotes/16x16/dialog-cancel.svg</normaloff>:/icons/breeze-qownnotes/16x16/dialog-cancel.svg</iconset>
+              <iconset theme="dialog-cancel" resource="../breeze-pkbsuite.qrc">
+               <normaloff>:/icons/breeze-pkbsuite/16x16/dialog-cancel.svg</normaloff>:/icons/breeze-pkbsuite/16x16/dialog-cancel.svg</iconset>
              </property>
             </widget>
            </item>
@@ -89,8 +89,8 @@
            <string>Download dictionary</string>
           </property>
           <property name="icon">
-           <iconset theme="edit-download" resource="../breeze-qownnotes.qrc">
-            <normaloff>:/icons/breeze-qownnotes/16x16/edit-download.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-download.svg</iconset>
+           <iconset theme="edit-download" resource="../breeze-pkbsuite.qrc">
+            <normaloff>:/icons/breeze-pkbsuite/16x16/edit-download.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-download.svg</iconset>
           </property>
          </widget>
         </item>
@@ -183,8 +183,8 @@
            <string>Delete selected dictionaries</string>
           </property>
           <property name="icon">
-           <iconset theme="edit-delete" resource="../breeze-qownnotes.qrc">
-            <normaloff>:/icons/breeze-qownnotes/16x16/edit-delete.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-delete.svg</iconset>
+           <iconset theme="edit-delete" resource="../breeze-pkbsuite.qrc">
+            <normaloff>:/icons/breeze-pkbsuite/16x16/edit-delete.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-delete.svg</iconset>
           </property>
          </widget>
         </item>
@@ -204,7 +204,7 @@
   <tabstop>deleteLocalDictionaryButton</tabstop>
  </tabstops>
  <resources>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -159,7 +159,7 @@ void AttachmentDialog::slotReplyFinished(QNetworkReply *reply) {
     }
 
     auto *tempFile =
-        new QTemporaryFile(QDir::tempPath() + "/QOwnNotes-XXXXXX." + suffix);
+        new QTemporaryFile(QDir::tempPath() + "/PKbSuite-XXXXXX." + suffix);
 
     // we want to keep the file to be used in the update process
     tempFile->setAutoRemove(false);

@@ -220,8 +220,8 @@
          <string>&amp;Crop</string>
         </property>
         <property name="icon">
-         <iconset theme="transform-crop" resource="../breeze-qownnotes.qrc">
-          <normaloff>:/icons/breeze-qownnotes/16x16/transform-crop.svg</normaloff>:/icons/breeze-qownnotes/16x16/transform-crop.svg</iconset>
+         <iconset theme="transform-crop" resource="../breeze-pkbsuite.qrc">
+          <normaloff>:/icons/breeze-pkbsuite/16x16/transform-crop.svg</normaloff>:/icons/breeze-pkbsuite/16x16/transform-crop.svg</iconset>
         </property>
        </widget>
       </item>
@@ -261,7 +261,7 @@
   <tabstop>graphicsView</tabstop>
  </tabstops>
  <resources>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
  </resources>
  <connections>
   <connection>

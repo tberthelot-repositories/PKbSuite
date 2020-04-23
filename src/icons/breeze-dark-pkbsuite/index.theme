@@ -1,0 +1,8 @@
+[Icon Theme]
+Name=Breeze Dark PKbSuite
+Comment=Breeze Dark Icon Theme for PKbSuite
+Inherits=breeze-pkbsuite
+Directories=16x16
+ 
+[16x16]
+Size=16

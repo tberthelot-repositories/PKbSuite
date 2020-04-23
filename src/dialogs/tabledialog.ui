@@ -169,8 +169,8 @@
           <string>Select file</string>
          </property>
          <property name="icon">
-          <iconset theme="document-open" resource="../breeze-qownnotes.qrc">
-           <normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</iconset>
+          <iconset theme="document-open" resource="../breeze-pkbsuite.qrc">
+           <normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</iconset>
          </property>
         </widget>
        </item>
@@ -197,8 +197,8 @@
           <string>Import clipboard</string>
          </property>
          <property name="icon">
-          <iconset theme="edit-paste" resource="../breeze-qownnotes.qrc">
-           <normaloff>:/icons/breeze-qownnotes/16x16/edit-paste.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-paste.svg</iconset>
+          <iconset theme="edit-paste" resource="../breeze-pkbsuite.qrc">
+           <normaloff>:/icons/breeze-pkbsuite/16x16/edit-paste.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-paste.svg</iconset>
          </property>
         </widget>
        </item>
@@ -295,7 +295,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
  </resources>
  <connections>
   <connection>

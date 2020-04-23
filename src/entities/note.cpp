@@ -1,6 +1,5 @@
 #include "entities/note.h"
 
-#include <services/owncloudservice.h>
 #include <services/scriptingservice.h>
 #include <utils/gui.h>
 #include <utils/misc.h>
@@ -36,13 +35,10 @@
 #include "trashitem.h"
 
 Note::Note() {
-    id = 0;
-    noteSubFolderId = 0;
-    shareId = 0;
-    sharePermissions = 0;
-    hasDirtyData = false;
-    fileSize = 0;
-    cryptoKey = 0;
+    this->id = 0;
+    this->noteSubFolderId = 0;
+    this->hasDirtyData = false;
+    this->fileSize = 0;
 }
 
 int Note::getId() const { return this->id; }
@@ -59,24 +55,12 @@ qint64 Note::getCryptoKey() const { return this->cryptoKey; }
 
 QString Note::getCryptoPassword() const { return this->cryptoPassword; }
 
-QString Note::getShareUrl() const { return this->shareUrl; }
-
-int Note::getShareId() const { return this->shareId; }
-
-unsigned int Note::getSharePermissions() const {
-    return this->sharePermissions;
-}
-
 /**
  * Check 2nd bit for edit permissions
  *
  * @return
  */
-bool Note::isShareEditAllowed() const { return sharePermissions & 2; }
-
 qint64 Note::getFileSize() const { return this->fileSize; }
-
-bool Note::isShared() const { return this->shareId > 0; }
 
 QString Note::getFileName() const { return this->fileName; }
 
@@ -112,14 +96,6 @@ void Note::setHasDirtyData(const bool hasDirtyData) {
 bool Note::getHasDirtyData() const { return this->hasDirtyData; }
 
 void Note::setName(QString text) { this->name = std::move(text); }
-
-void Note::setShareUrl(QString url) { this->shareUrl = std::move(url); }
-
-void Note::setShareId(int id) { this->shareId = id; }
-
-void Note::setSharePermissions(unsigned int permissions) {
-    this->sharePermissions = permissions;
-}
 
 void Note::setCryptoKey(const qint64 cryptoKey) { this->cryptoKey = cryptoKey; }
 
@@ -201,8 +177,7 @@ Note Note::fetchByFileName(const QString &fileName, int noteSubFolderId) {
 
 Note Note::fetchByFileName(const QString &fileName,
     const QString &noteSubFolderPathData) {
-    auto noteSubFolder = NoteSubFolder::fetchByPathData(noteSubFolderPathData,
-                                                        QStringLiteral("/"));
+    auto noteSubFolder = NoteSubFolder::fetchByPathData(noteSubFolderPathData);
 
     return fetchByFileName(fileName, noteSubFolder.getId());
 }
@@ -516,8 +491,7 @@ Note Note::fetchByShareId(int shareId) {
 
 Note Note::fetchByName(const QString &name,
                        const QString &noteSubFolderPathData) {
-    auto noteSubFolder = NoteSubFolder::fetchByPathData(noteSubFolderPathData,
-                                                        QStringLiteral("/"));
+    auto noteSubFolder = NoteSubFolder::fetchByPathData(noteSubFolderPathData);
 
     return fetchByName(name, noteSubFolder.getId());
 }
@@ -557,13 +531,9 @@ void Note::fillFromQuery(const QSqlQuery &query) {
     id = query.value(QStringLiteral("id")).toInt();
     name = query.value(QStringLiteral("name")).toString();
     fileName = query.value(QStringLiteral("file_name")).toString();
-    shareUrl = query.value(QStringLiteral("share_url")).toString();
-    shareId = query.value(QStringLiteral("share_id")).toInt();
-    sharePermissions = query.value(QStringLiteral("share_permissions")).toInt();
     noteSubFolderId = query.value(QStringLiteral("note_sub_folder_id")).toInt();
     noteText = query.value(QStringLiteral("note_text")).toString();
-    decryptedNoteText =
-        query.value(QStringLiteral("decrypted_note_text")).toString();
+    decryptedNoteText = query.value(QStringLiteral("decrypted_note_text")).toString();
     cryptoKey = query.value(QStringLiteral("crypto_key")).toLongLong();
     fileSize = query.value(QStringLiteral("file_size")).toLongLong();
     cryptoPassword = query.value(QStringLiteral("crypto_password")).toString();
@@ -1105,39 +1075,34 @@ bool Note::store() {
     }
 
     if (id > 0) {
-        query.prepare(
-            QStringLiteral("UPDATE note SET "
-                           "name = :name,"
-                           "share_url = :share_url,"
-                           "share_id = :share_id,"
-                           "share_permissions = :share_permissions,"
-                           "file_name = :file_name,"
-                           "file_size = :file_size,"
-                           "note_sub_folder_id = :note_sub_folder_id,"
-                           "note_text = :note_text,"
-                           "decrypted_note_text = :decrypted_note_text,"
-                           "has_dirty_data = :has_dirty_data, "
-                           "file_last_modified = :file_last_modified,"
-                           "file_created = :file_created,"
-                           "crypto_key = :crypto_key,"
-                           "crypto_password = :crypto_password,"
-                           "modified = :modified "
-                           "WHERE id = :id"));
+        query.prepare(QStringLiteral("UPDATE note SET "
+                              "name = :name,"
+                              "file_name = :file_name,"
+                              "file_size = :file_size,"
+                              "note_sub_folder_id = :note_sub_folder_id,"
+                              "note_text = :note_text,"
+                              "decrypted_note_text = :decrypted_note_text,"
+                              "has_dirty_data = :has_dirty_data, "
+                              "file_last_modified = :file_last_modified,"
+                              "file_created = :file_created,"
+                              "crypto_key = :crypto_key,"
+                              "crypto_password = :crypto_password,"
+                              "modified = :modified "
+                              "WHERE id = :id"));
         query.bindValue(QStringLiteral(":id"), id);
     } else {
-        query.prepare(QStringLiteral(
-            "INSERT INTO note"
-            "(name, share_url, share_id, share_permissions, file_name, "
-            "file_size, note_text, has_dirty_data, "
-            "file_last_modified, file_created, crypto_key,"
-            "modified, crypto_password, decrypted_note_text, "
-            "note_sub_folder_id) "
-            "VALUES (:name, :share_url, :share_id, :share_permissions, "
-            ":file_name, :file_size, :note_text,"
-            ":has_dirty_data, :file_last_modified,"
-            ":file_created, :crypto_key, :modified,"
-            ":crypto_password, :decrypted_note_text,"
-            ":note_sub_folder_id)"));
+        query.prepare(QStringLiteral("INSERT INTO note"
+                              "(name, file_name, "
+                              "file_size, note_text, has_dirty_data, "
+                              "file_last_modified, file_created, crypto_key,"
+                              "modified, crypto_password, decrypted_note_text, "
+                              "note_sub_folder_id) "
+                              "VALUES (:name, "
+                              ":file_name, :file_size, :note_text,"
+                              ":has_dirty_data, :file_last_modified,"
+                              ":file_created, :crypto_key, :modified,"
+                              ":crypto_password, :decrypted_note_text,"
+                              ":note_sub_folder_id)"));
     }
 
     const QDateTime modified = QDateTime::currentDateTime();
@@ -1147,9 +1112,6 @@ bool Note::store() {
     fileSize = bytes.size();
 
     query.bindValue(QStringLiteral(":name"), name);
-    query.bindValue(QStringLiteral(":share_url"), shareUrl);
-    query.bindValue(QStringLiteral(":share_id"), shareId);
-    query.bindValue(QStringLiteral(":share_permissions"), sharePermissions);
     query.bindValue(QStringLiteral(":file_name"), fileName);
     query.bindValue(QStringLiteral(":file_size"), fileSize);
     query.bindValue(QStringLiteral(":note_sub_folder_id"), noteSubFolderId);
@@ -1515,8 +1477,8 @@ QString Note::getFullFilePathForFile(const QString &fileName) {
     const QSettings settings;
 
     // prepend the portable data path if we are in portable mode
-    const QString notesPath = Utils::Misc::prependPortableDataPathIfNeeded(
-        settings.value(QStringLiteral("notesPath")).toString());
+    const QString notesPath =
+        settings.value(QStringLiteral("notesPath")).toString();
 
     const QString path = Utils::Misc::removeIfEndsWith(std::move(notesPath),
                                          QStringLiteral("/")) +
@@ -1758,7 +1720,6 @@ void Note::createFromFile(QFile &file, int noteSubFolderId,
         fileInfo.setFile(file);
 
         // create a nicer name by removing the extension
-        // TODO(pbek): make sure name is ownCloud Notes conform
         QString name = fileInfo.fileName();
 
         const int lastPoint = name.lastIndexOf(QLatin1Char('.'));
@@ -2199,17 +2160,11 @@ QString Note::textToMarkdownHtml(QString str, const QString &notesPath,
     Utils::Misc::transformRemotePreviewImages(result, maxImageWidth,
                                               externalImageHash());
 
-    if (OwnCloudService::isOwnCloudSupportEnabled()) {
-        // transform Nextcloud preview image tags
-        Utils::Misc::transformNextcloudPreviewImages(result, maxImageWidth,
-                                                     externalImageHash());
-    }
-
     // transform images without "file://" urls to file-urls
     // Note: this is currently handled above in markdown
     //       if we want to activate this code again we need to take care of
     //       remote http(s) links to images! see:
-    //       https://github.com/pbek/QOwnNotes/issues/1286
+    //       https://github.com/pbek/PKbSuite/issues/1286
     /*
         const QString subFolderPath = getNoteSubFolder().relativePath("/");
         const QString notePath = notesPath + (subFolderPath.isEmpty() ? "" : "/"
@@ -2953,7 +2908,7 @@ void Note::handleNoteMoving(const Note &oldNote) const {
     const QString oldUrl = getNoteURL(oldNote.getName());
     const QString newUrl = getNoteURL(name);
 
-    if (Utils::Gui::questionNoSkipOverride(
+    if (Utils::Gui::question(
             Q_NULLPTR, QObject::tr("Note file path changed"),
             QObject::tr("A change of the note path was detected. Would you "
                         "like to replace all occurrences of "
@@ -3253,6 +3208,29 @@ QString Note::importMediaFromBase64(QString &data, const QString &imageSuffix) {
     delete tempFile;
 
     return markdownCode;
+}
+
+QString Note::getInsertPDFMarkdown(QFile *file, bool addNewLine) {
+    if (file->exists() && (file->size() > 0)) {
+        QDir PDFDir(NoteFolder::currentPDFPath());
+
+        // create the PDF folder if it doesn't exist
+        if (!PDFDir.exists()) {
+            PDFDir.mkpath(PDFDir.path());
+        }
+        
+        QFileInfo fileInfo(file->fileName());
+
+        // copy the file the the PDF folder
+        QString processedFilename = fileInfo.fileName().simplified().replace(" ", "_");
+        file->copy(PDFDir.path() + QDir::separator() + processedFilename);
+
+        // return the PDF link
+        // we add a "\n" in the end so that hoedown recognizes multiple PDF files
+        return "[" + fileInfo.baseName() + "](" + NoteFolder::currentPDFPath() + "/" + processedFilename + ")" + (addNewLine ? "\n" : "");
+    }
+
+    return "";
 }
 
 /**

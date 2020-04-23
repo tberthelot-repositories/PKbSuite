@@ -219,25 +219,9 @@ void LinkDialog::addFileUrl() {
         settings.value(QStringLiteral("LinkDialog/lastSelectedFileUrl"))
             .toUrl();
 
-    if (Utils::Misc::isInPortableMode()) {
-        fileUrl = QUrl(QStringLiteral("file://") +
-                       Utils::Misc::prependPortableDataPathIfNeeded(
-                           Utils::Misc::removeIfStartsWith(
-                               fileUrl.toLocalFile(), QStringLiteral("/"))));
-    }
-
     fileUrl = QFileDialog::getOpenFileUrl(this, tr("Select file to link to"),
                                           fileUrl);
     QString fileUrlString = fileUrl.toString(QUrl::FullyEncoded);
-
-    if (Utils::Misc::isInPortableMode()) {
-        fileUrlString =
-            QStringLiteral("file://") +
-            QUrl(QStringLiteral("../") +
-                 Utils::Misc::makePathRelativeToPortableDataPathIfNeeded(
-                     fileUrl.toLocalFile()))
-                .toString(QUrl::FullyEncoded);
-    }
 
     if (!fileUrlString.isEmpty()) {
         // store url for the next time
@@ -259,26 +243,9 @@ void LinkDialog::addDirectoryUrl() {
         settings.value(QStringLiteral("LinkDialog/lastSelectedDirectoryUrl"))
             .toUrl();
 
-    if (Utils::Misc::isInPortableMode()) {
-        directoryUrl =
-            QUrl(QStringLiteral("file://") +
-                 Utils::Misc::prependPortableDataPathIfNeeded(
-                     Utils::Misc::removeIfStartsWith(directoryUrl.toLocalFile(),
-                                                     QStringLiteral("/"))));
-    }
-
     directoryUrl = QFileDialog::getExistingDirectoryUrl(
         this, tr("Select directory to link to"), directoryUrl);
     QString directoryUrlString = directoryUrl.toString(QUrl::FullyEncoded);
-
-    if (Utils::Misc::isInPortableMode()) {
-        directoryUrlString =
-            QStringLiteral("file://") +
-            QUrl(QStringLiteral("../") +
-                 Utils::Misc::makePathRelativeToPortableDataPathIfNeeded(
-                     directoryUrl.toLocalFile()))
-                .toString(QUrl::FullyEncoded);
-    }
 
     if (!directoryUrlString.isEmpty()) {
         // store url for the next time
@@ -315,14 +282,14 @@ void LinkDialog::setupFileUrlMenu() {
     addFileAction->setIcon(QIcon::fromTheme(
         QStringLiteral("document-open"),
         QIcon(QStringLiteral(
-            ":icons/breeze-qownnotes/16x16/document-open.svg"))));
+            ":icons/breeze-pkbsuite/16x16/document-open.svg"))));
     connect(addFileAction, SIGNAL(triggered()), this, SLOT(addFileUrl()));
 
     QAction *addDirectoryAction =
         addMenu->addAction(tr("Select directory to link to"));
     addDirectoryAction->setIcon(QIcon::fromTheme(
         QStringLiteral("folder"),
-        QIcon(QStringLiteral(":icons/breeze-qownnotes/16x16/folder.svg"))));
+        QIcon(QStringLiteral(":icons/breeze-pkbsuite/16x16/folder.svg"))));
     connect(addDirectoryAction, SIGNAL(triggered()), this,
             SLOT(addDirectoryUrl()));
 

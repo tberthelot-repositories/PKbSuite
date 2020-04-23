@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Welcome to QOwnNotes</string>
+   <string>Welcome to PKbSuite</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
@@ -21,7 +21,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="subHeadlineLabel">
      <property name="text">
-      <string>plain-text file markdown note taking with ownCloud integration</string>
+      <string>the plain-text file notepad with markdown support and ownCloud integration</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -53,7 +53,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Welcome to QOwnNotes</string>
+      <string>Welcome to PKbSuite</string>
      </property>
     </widget>
    </item>
@@ -88,8 +88,8 @@
          <string>&amp;Back</string>
         </property>
         <property name="icon">
-         <iconset theme="go-previous" resource="../breeze-qownnotes.qrc">
-          <normaloff>:/icons/breeze-qownnotes/16x16/go-previous.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-previous.svg</iconset>
+         <iconset theme="go-previous" resource="../breeze-pkbsuite.qrc">
+          <normaloff>:/icons/breeze-pkbsuite/16x16/go-previous.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-previous.svg</iconset>
         </property>
        </widget>
       </item>
@@ -99,8 +99,8 @@
          <string>&amp;Next</string>
         </property>
         <property name="icon">
-         <iconset theme="go-next" resource="../breeze-qownnotes.qrc">
-          <normaloff>:/icons/breeze-qownnotes/16x16/go-next.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-next.svg</iconset>
+         <iconset theme="go-next" resource="../breeze-pkbsuite.qrc">
+          <normaloff>:/icons/breeze-pkbsuite/16x16/go-next.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-next.svg</iconset>
         </property>
        </widget>
       </item>
@@ -232,8 +232,8 @@
                 <string>Select folder</string>
                </property>
                <property name="icon">
-                <iconset theme="document-open" resource="../breeze-qownnotes.qrc">
-                 <normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</iconset>
+                <iconset theme="document-open" resource="../breeze-pkbsuite.qrc">
+                 <normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</iconset>
                </property>
               </widget>
              </item>
@@ -316,7 +316,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>If you want to be able to access your note versions and your trashed notes on your ownCloud server, you can configure QOwnNotes for it now. You can also do it at a later time.</string>
+             <string>If you want to be able to access your note versions and your trashed notes on your ownCloud server, you can configure PKbSuite for it now. You can also do it at a later time.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -388,7 +388,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>QOwnNotes will track anonymous usage data, that helps to decide what parts of QOwnNotes to improve next and to find and fix bugs. You can disable that behaviour in the settings.</string>
+             <string>PKbSuite will track anonymous usage data, that helps to decide what parts of PKbSuite to improve next and to find and fix bugs. You can disable that behaviour in the settings.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -426,7 +426,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

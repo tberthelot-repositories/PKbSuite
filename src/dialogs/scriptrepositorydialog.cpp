@@ -1,7 +1,6 @@
 #include "scriptrepositorydialog.h"
 
 #include <libraries/versionnumber/versionnumber.h>
-#include <services/metricsservice.h>
 #include <utils/gui.h>
 #include <utils/misc.h>
 
@@ -115,7 +114,7 @@ void ScriptRepositoryDialog::searchScript(int page) {
     QString query = QUrl::toPercentEncoding(_searchString);
     QUrl url(_codeSearchUrl + "?q=" + query +
              "+in:file+language:json"
-             "+repo:qownnotes/scripts&page=" +
+             "+repo:pkbsuite/scripts&page=" +
              QString::number(page));
     QNetworkRequest networkRequest(url);
     _page = page;
@@ -184,7 +183,7 @@ void ScriptRepositoryDialog::slotReplyFinished(QNetworkReply *reply) {
         qDebug() << "Reply from code search";
 
         parseCodeSearchReply(arr);
-    } else if (urlPath.startsWith(QLatin1String("/qownnotes/scripts/master"))) {
+    } else if (urlPath.startsWith(QLatin1String("/pkbsuite/scripts/master"))) {
         QByteArray arr = reply->readAll();
         qDebug() << "Reply from info.qml request";
 
@@ -385,7 +384,7 @@ void ScriptRepositoryDialog::reloadCurrentScriptInfo() {
                                             : tr("Supported platform")) +
                                        ":");
     ui->repositoryLinkLabel->setText(
-        "<a href=\"https://github.com/qownnotes/scripts/tree/master/" +
+        "<a href=\"https://github.com/pkbsuite/scripts/tree/master/" +
         infoJson.identifier + "\">" + tr("Open repository") + "</a>");
 
     Script script = Script::fetchByIdentifier(infoJson.identifier);
@@ -479,7 +478,7 @@ void ScriptRepositoryDialog::on_installButton_clicked() {
         QMessageBox::information(
             this, tr("Update app"),
             tr("Please don't forget to update your installation of "
-               "QOwnNotes to make this script work!"));
+               "PKbSuite to make this script work!"));
     }
 
     ui->installButton->setEnabled(false);
@@ -541,8 +540,6 @@ void ScriptRepositoryDialog::on_installButton_clicked() {
 
     if (filesWereDownloaded) {
         script.store();
-        MetricsService::instance()->sendVisitIfEnabled(
-            "script-repository/install/" + identifier);
         reloadCurrentScriptInfo();
         _lastInstalledScript = script;
 

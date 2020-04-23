@@ -1,0 +1,21 @@
+[Desktop Entry]
+Categories=Qt;TextEditor;Todo;
+Comment[fr_FR]=Plain text notepad and todo list manager with markdown support
+Comment=Plain text notepad and todo list manager with markdown support
+Encoding=UTF-8
+Exec=PKbSuite
+GenericName[fr_FR]=
+GenericName=
+Icon=/usr/share/pixmaps/PKbSuite.png
+MimeType=
+Name[fr_FR]=PKbSuite
+Name=PKbSuite
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=

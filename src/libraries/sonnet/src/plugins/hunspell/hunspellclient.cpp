@@ -80,7 +80,7 @@ HunspellClient::HunspellClient(QObject *parent)
             // for snap packages
             // note that ~/.local is not readable for snaps
             QString snapDictPath = QDir::homePath() + QStringLiteral("/hunspell/");
-            snapDictPath.remove(QRegularExpression(R"(snap\/qownnotes\/\w\d+\/)"));
+            snapDictPath.remove(QRegularExpression(R"(snap\/pkbsuite\/\w\d+\/)"));
             maybeAddPath(snapDictPath);
         #endif
         #ifdef Q_OS_MACOS

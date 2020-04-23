@@ -263,7 +263,7 @@ QMenu::item
 }
 
 /* icon-text-overlap fix for checkboxes and radio groups */
-/* see: https://github.com/pbek/QOwnNotes/issues/1221 */
+/* see: https://github.com/pbek/PKbSuite/issues/1221 */
 /* also see: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qmenu */
 QMenu::icon:checked {
     background: gray;
@@ -669,11 +669,10 @@ QPushButton:checked{
     border-color: #6A6969;
 }
 
-/* We don't want to set a color any more, since it also sets the foreground color in TextEdits in Qt 5.13 */
 QComboBox:hover,QPushButton:hover,QAbstractSpinBox:hover,QLineEdit:hover,QTextEdit:hover,QPlainTextEdit:hover,QAbstractView:hover,QTreeView:hover
 {
     border: 1px solid #78879b;
-/*    color: silver;*/
+    color: silver;
 }
 
 QComboBox:on

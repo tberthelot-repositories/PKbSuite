@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>About QOwnNotes</string>
+   <string>About PKbSuite</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="dialog-information" resource="../breeze-qownnotes.qrc">
-    <normaloff>:/icons/breeze-qownnotes/16x16/dialog-information.svg</normaloff>:/icons/breeze-qownnotes/16x16/dialog-information.svg</iconset>
+   <iconset theme="dialog-information" resource="../breeze-pkbsuite.qrc">
+    <normaloff>:/icons/breeze-pkbsuite/16x16/dialog-information.svg</normaloff>:/icons/breeze-pkbsuite/16x16/dialog-information.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -58,7 +58,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
  </resources>
  <connections>
   <connection>

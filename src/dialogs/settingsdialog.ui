@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1072</width>
+    <height>1202</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,8 +26,8 @@
    <string>Settings</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="configure" resource="../breeze-qownnotes.qrc">
-    <normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</iconset>
+   <iconset theme="configure" resource="../breeze-pkbsuite.qrc">
+    <normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -123,44 +123,8 @@
              <string notr="true">0</string>
             </property>
             <property name="icon">
-             <iconset theme="folder" resource="../breeze-qownnotes.qrc">
-              <normaloff>:/icons/breeze-qownnotes/16x16/folder.svg</normaloff>:/icons/breeze-qownnotes/16x16/folder.svg</iconset>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">ownCloud</string>
-            </property>
-            <property name="whatsThis">
-             <string notr="true">1</string>
-            </property>
-            <property name="icon">
-             <iconset theme="folder-cloud" resource="../breeze-qownnotes.qrc">
-              <normaloff>:/icons/breeze-qownnotes/16x16/folder-cloud.svg</normaloff>:/icons/breeze-qownnotes/16x16/folder-cloud.svg</iconset>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Network</string>
-            </property>
-            <property name="whatsThis">
-             <string notr="true">2</string>
-            </property>
-            <property name="icon">
-             <iconset theme="network-connect" resource="../breeze-qownnotes.qrc">
-              <normaloff>:/icons/breeze-qownnotes/16x16/network-connect.svg</normaloff>:/icons/breeze-qownnotes/16x16/network-connect.svg</iconset>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Todo</string>
-            </property>
-            <property name="whatsThis">
-             <string notr="true">3</string>
-            </property>
-            <property name="icon">
-             <iconset theme="view-calendar-tasks" resource="../breeze-qownnotes.qrc">
-              <normaloff>:/icons/breeze-qownnotes/16x16/view-calendar-tasks.svg</normaloff>:/icons/breeze-qownnotes/16x16/view-calendar-tasks.svg</iconset>
+             <iconset theme="folder" resource="../breeze-pkbsuite.qrc">
+              <normaloff>:/icons/breeze-pkbsuite/16x16/folder.svg</normaloff>:/icons/breeze-pkbsuite/16x16/folder.svg</iconset>
             </property>
            </item>
            <item>
@@ -168,22 +132,22 @@
              <string>Interface</string>
             </property>
             <property name="whatsThis">
-             <string notr="true">4</string>
+             <string notr="true">1</string>
             </property>
             <property name="icon">
-             <iconset theme="edit-guides" resource="../breeze-qownnotes.qrc">
-              <normaloff>:/icons/breeze-qownnotes/16x16/edit-guides.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-guides.svg</iconset>
+             <iconset theme="edit-guides" resource="../breeze-pkbsuite.qrc">
+              <normaloff>:/icons/breeze-pkbsuite/16x16/edit-guides.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-guides.svg</iconset>
             </property>
             <item>
              <property name="text">
               <string>Layout</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">18</string>
+              <string notr="true">11</string>
              </property>
              <property name="icon">
-              <iconset theme="window-duplicate" resource="../breeze-qownnotes.qrc">
-               <normaloff>:/icons/breeze-qownnotes/16x16/window-duplicate.svg</normaloff>:/icons/breeze-qownnotes/16x16/window-duplicate.svg</iconset>
+              <iconset theme="window-duplicate" resource="../breeze-pkbsuite.qrc">
+               <normaloff>:/icons/breeze-pkbsuite/16x16/window-duplicate.svg</normaloff>:/icons/breeze-pkbsuite/16x16/window-duplicate.svg</iconset>
              </property>
             </item>
             <item>
@@ -191,22 +155,22 @@
               <string>Editor</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">14</string>
+              <string notr="true">8</string>
              </property>
              <property name="icon">
-              <iconset theme="story-editor" resource="../breeze-qownnotes.qrc">
-               <normaloff>:/icons/breeze-qownnotes/16x16/story-editor.svg</normaloff>:/icons/breeze-qownnotes/16x16/story-editor.svg</iconset>
+              <iconset theme="story-editor" resource="../breeze-pkbsuite.qrc">
+               <normaloff>:/icons/breeze-pkbsuite/16x16/story-editor.svg</normaloff>:/icons/breeze-pkbsuite/16x16/story-editor.svg</iconset>
              </property>
              <item>
               <property name="text">
                <string>Editor fonts &amp; colors</string>
               </property>
               <property name="whatsThis">
-               <string notr="true">9</string>
+               <string notr="true">5</string>
               </property>
               <property name="icon">
-               <iconset theme="gtk-select-font" resource="../breeze-dark-qownnotes.qrc">
-                <normaloff>:/icons/breeze-dark-qownnotes/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-dark-qownnotes/16x16/gtk-select-font.svg</iconset>
+               <iconset theme="gtk-select-font" resource="../breeze-dark-pkbsuite.qrc">
+                <normaloff>:/icons/breeze-dark-pkbsuite/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-dark-pkbsuite/16x16/gtk-select-font.svg</iconset>
               </property>
              </item>
             </item>
@@ -215,11 +179,11 @@
               <string>Panels</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">16</string>
+              <string notr="true">9</string>
              </property>
              <property name="icon">
-              <iconset theme="window-duplicate" resource="../breeze-qownnotes.qrc">
-               <normaloff>:/icons/breeze-qownnotes/16x16/window-duplicate.svg</normaloff>:/icons/breeze-qownnotes/16x16/window-duplicate.svg</iconset>
+              <iconset theme="window-duplicate" resource="../breeze-pkbsuite.qrc">
+               <normaloff>:/icons/breeze-pkbsuite/16x16/window-duplicate.svg</normaloff>:/icons/breeze-pkbsuite/16x16/window-duplicate.svg</iconset>
              </property>
             </item>
             <item>
@@ -227,11 +191,11 @@
               <string>Preview</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">11</string>
+              <string notr="true">6</string>
              </property>
              <property name="icon">
-              <iconset theme="text-x-markdown" resource="../breeze-qownnotes.qrc">
-               <normaloff>:/icons/breeze-qownnotes/16x16/text-x-markdown.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-x-markdown.svg</iconset>
+              <iconset theme="text-x-markdown" resource="../breeze-pkbsuite.qrc">
+               <normaloff>:/icons/breeze-pkbsuite/16x16/text-x-markdown.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-x-markdown.svg</iconset>
              </property>
             </item>
             <item>
@@ -239,11 +203,11 @@
               <string>Toolbars</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">12</string>
+              <string notr="true">7</string>
              </property>
              <property name="icon">
-              <iconset theme="configure" resource="../breeze-qownnotes.qrc">
-               <normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</iconset>
+              <iconset theme="configure" resource="../breeze-pkbsuite.qrc">
+               <normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</iconset>
              </property>
             </item>
            </item>
@@ -252,11 +216,11 @@
              <string>Shortcuts</string>
             </property>
             <property name="whatsThis">
-             <string notr="true">5</string>
+             <string notr="true">2</string>
             </property>
             <property name="icon">
-             <iconset theme="configure-shortcuts" resource="../breeze-qownnotes.qrc">
-              <normaloff>:/icons/breeze-qownnotes/16x16/configure-shortcuts.svg</normaloff>:/icons/breeze-qownnotes/16x16/configure-shortcuts.svg</iconset>
+             <iconset theme="configure-shortcuts" resource="../breeze-pkbsuite.qrc">
+              <normaloff>:/icons/breeze-pkbsuite/16x16/configure-shortcuts.svg</normaloff>:/icons/breeze-pkbsuite/16x16/configure-shortcuts.svg</iconset>
             </property>
            </item>
            <item>
@@ -264,11 +228,11 @@
              <string>Scripting</string>
             </property>
             <property name="whatsThis">
-             <string notr="true">6</string>
+             <string notr="true">3</string>
             </property>
             <property name="icon">
-             <iconset theme="code-context" resource="../breeze-qownnotes.qrc">
-              <normaloff>:/icons/breeze-qownnotes/16x16/code-context.svg</normaloff>:/icons/breeze-qownnotes/16x16/code-context.svg</iconset>
+             <iconset theme="code-context" resource="../breeze-pkbsuite.qrc">
+              <normaloff>:/icons/breeze-pkbsuite/16x16/code-context.svg</normaloff>:/icons/breeze-pkbsuite/16x16/code-context.svg</iconset>
             </property>
            </item>
            <item>
@@ -276,11 +240,11 @@
              <string>Browser extension</string>
             </property>
             <property name="whatsThis">
-             <string notr="true">19</string>
+             <string notr="true">12</string>
             </property>
             <property name="icon">
-             <iconset resource="../breeze-qownnotes.qrc">
-              <normaloff>:/icons/breeze-qownnotes/16x16/text-html.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-html.svg</iconset>
+             <iconset resource="../breeze-pkbsuite.qrc">
+              <normaloff>:/icons/breeze-pkbsuite/16x16/text-html.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-html.svg</iconset>
             </property>
            </item>
            <item>
@@ -288,70 +252,22 @@
              <string>General</string>
             </property>
             <property name="whatsThis">
-             <string notr="true">7</string>
+             <string notr="true">4</string>
             </property>
             <property name="icon">
-             <iconset resource="../breeze-qownnotes.qrc">
-              <normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</iconset>
+             <iconset resource="../breeze-pkbsuite.qrc">
+              <normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</iconset>
             </property>
-            <item>
-             <property name="text">
-              <string>Portable mode</string>
-             </property>
-             <property name="whatsThis">
-              <string notr="true">10</string>
-             </property>
-             <property name="icon">
-              <iconset theme="drive-removable-media" resource="../breeze-qownnotes.qrc">
-               <normaloff>:/icons/breeze-qownnotes/16x16/drive-removable-media.svg</normaloff>:/icons/breeze-qownnotes/16x16/drive-removable-media.svg</iconset>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Git versioning</string>
-             </property>
-             <property name="whatsThis">
-              <string notr="true">15</string>
-             </property>
-             <property name="icon">
-              <iconset theme="appointment-new" resource="../breeze-qownnotes.qrc">
-               <normaloff>:/icons/breeze-qownnotes/16x16/appointment-new.svg</normaloff>:/icons/breeze-qownnotes/16x16/appointment-new.svg</iconset>
-             </property>
-            </item>
             <item>
              <property name="text">
               <string>Local trash</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">17</string>
+              <string notr="true">10</string>
              </property>
              <property name="icon">
-              <iconset theme="trash-empty" resource="../breeze-qownnotes.qrc">
-               <normaloff>:/icons/breeze-qownnotes/16x16/trash-empty.svg</normaloff>:/icons/breeze-qownnotes/16x16/trash-empty.svg</iconset>
-             </property>
-            </item>
-           </item>
-           <item>
-            <property name="text">
-             <string>Debug</string>
-            </property>
-            <property name="whatsThis">
-             <string notr="true">8</string>
-            </property>
-            <property name="icon">
-             <iconset theme="face-smile" resource="../breeze-qownnotes.qrc">
-              <normaloff>:/icons/breeze-qownnotes/16x16/face-smile.svg</normaloff>:/icons/breeze-qownnotes/16x16/face-smile.svg</iconset>
-            </property>
-            <item>
-             <property name="text">
-              <string>Debug options</string>
-             </property>
-             <property name="whatsThis">
-              <string notr="true">13</string>
-             </property>
-             <property name="icon">
-              <iconset theme="configure" resource="../breeze-qownnotes.qrc">
-               <normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</iconset>
+              <iconset theme="trash-empty" resource="../breeze-pkbsuite.qrc">
+               <normaloff>:/icons/breeze-pkbsuite/16x16/trash-empty.svg</normaloff>:/icons/breeze-pkbsuite/16x16/trash-empty.svg</iconset>
              </property>
             </item>
            </item>
@@ -397,7 +313,7 @@
          <item>
           <widget class="QStackedWidget" name="settingsStackedWidget">
            <property name="currentIndex">
-            <number>0</number>
+            <number>12</number>
            </property>
            <widget class="QWidget" name="noteFoldersPage">
             <layout class="QGridLayout" name="gridLayout_19">
@@ -495,8 +411,8 @@
                          <string>&amp;Add folder</string>
                         </property>
                         <property name="icon">
-                         <iconset theme="folder-new" resource="../breeze-qownnotes.qrc">
-                          <normaloff>:/icons/breeze-qownnotes/16x16/folder-new.svg</normaloff>:/icons/breeze-qownnotes/16x16/folder-new.svg</iconset>
+                         <iconset theme="folder-new" resource="../breeze-pkbsuite.qrc">
+                          <normaloff>:/icons/breeze-pkbsuite/16x16/folder-new.svg</normaloff>:/icons/breeze-pkbsuite/16x16/folder-new.svg</iconset>
                         </property>
                        </widget>
                       </item>
@@ -519,8 +435,8 @@
                          <string>&amp;Remove folder</string>
                         </property>
                         <property name="icon">
-                         <iconset theme="edit-delete" resource="../breeze-qownnotes.qrc">
-                          <normaloff>:/icons/breeze-qownnotes/16x16/edit-delete.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-delete.svg</iconset>
+                         <iconset theme="edit-delete" resource="../breeze-pkbsuite.qrc">
+                          <normaloff>:/icons/breeze-pkbsuite/16x16/edit-delete.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-delete.svg</iconset>
                         </property>
                        </widget>
                       </item>
@@ -545,7 +461,62 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_22">
-                   <item row="12" column="0" colspan="2">
+                   <item row="2" column="0" colspan="2">
+                    <widget class="QCheckBox" name="noteFolderActiveCheckBox">
+                     <property name="text">
+                      <string>Use as active note folder</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0" colspan="2">
+                    <widget class="QCheckBox" name="noteFolderShowSubfoldersCheckBox">
+                     <property name="toolTip">
+                      <string>Be aware that the ownCloud notes app doesn't support sub-folders!</string>
+                     </property>
+                     <property name="text">
+                      <string>Use note sub-folders</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="1">
+                    <widget class="QPushButton" name="noteFolderLocalPathButton">
+                     <property name="toolTip">
+                      <string>Click here to select your local note path</string>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="icon">
+                      <iconset theme="document-open" resource="../breeze-pkbsuite.qrc">
+                       <normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0" colspan="2">
+                    <widget class="QCheckBox" name="allowDifferentNoteFileNameCheckBox">
+                     <property name="toolTip">
+                      <string>Allow the note file name to be different from the headline.&lt;br&gt;Beware that ownCloud Notes needs the file name to be the same as the headline!</string>
+                     </property>
+                     <property name="text">
+                      <string>Allow note file name to be different from headline</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0" colspan="2">
+                    <widget class="QLabel" name="label_13">
+                     <property name="text">
+                      <string>Note folder path:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0" colspan="2">
+                    <widget class="QLabel" name="label_12">
+                     <property name="text">
+                      <string>Name:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="7" column="0" colspan="2">
                     <widget class="QFrame" name="noteFolderRemotePathTreeWidgetFrame">
                      <property name="frameShape">
                       <enum>QFrame::NoFrame</enum>
@@ -566,7 +537,7 @@
                       <property name="bottomMargin">
                        <number>0</number>
                       </property>
-                      <item row="2" column="0">
+                      <item row="0" column="0">
                        <widget class="QFrame" name="frame_3">
                         <property name="frameShape">
                          <enum>QFrame::NoFrame</enum>
@@ -584,76 +555,39 @@
                          <property name="bottomMargin">
                           <number>0</number>
                          </property>
-                         <item row="0" column="1">
-                          <widget class="QPushButton" name="useOwnCloudPathButton">
-                           <property name="toolTip">
-                            <string>Click here to use the selected folder from your server as note folder</string>
-                           </property>
-                           <property name="text">
-                            <string>&amp;Use as ownCloud path</string>
-                           </property>
-                           <property name="icon">
-                            <iconset theme="document-open" resource="../breeze-qownnotes.qrc">
-                             <normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</iconset>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="0">
-                          <spacer name="horizontalSpacer_2">
-                           <property name="orientation">
-                            <enum>Qt::Horizontal</enum>
-                           </property>
-                           <property name="sizeHint" stdset="0">
-                            <size>
-                             <width>40</width>
-                             <height>20</height>
-                            </size>
-                           </property>
-                          </spacer>
-                         </item>
                         </layout>
-                       </widget>
-                      </item>
-                      <item row="1" column="0">
-                       <widget class="QTreeWidget" name="noteFolderRemotePathTreeWidget">
-                        <attribute name="headerVisible">
-                         <bool>false</bool>
-                        </attribute>
-                        <column>
-                         <property name="text">
-                          <string>path</string>
-                         </property>
-                        </column>
-                       </widget>
-                      </item>
-                      <item row="0" column="0">
-                       <widget class="QLabel" name="noteFolderRemotePathListLabel">
-                        <property name="text">
-                         <string>Please select your note folder on your ownCloud server:</string>
-                        </property>
                        </widget>
                       </item>
                      </layout>
                     </widget>
                    </item>
-                   <item row="8" column="0" colspan="2">
-                    <widget class="QLabel" name="noteFolderCloudConnectionLabel">
-                     <property name="text">
-                      <string>Cloud connection:</string>
+                   <item row="4" column="0">
+                    <widget class="QLineEdit" name="noteFolderLocalPathLineEdit">
+                     <property name="readOnly">
+                      <bool>true</bool>
+                     </property>
+                     <property name="placeholderText">
+                      <string>Path where your notes are stored locally</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="9" column="0" colspan="2">
-                    <widget class="QComboBox" name="noteFolderCloudConnectionComboBox"/>
-                   </item>
-                   <item row="10" column="0" colspan="2">
-                    <widget class="QLabel" name="noteFolderRemotePathLabel">
+                   <item row="1" column="0" colspan="2">
+                    <widget class="QLineEdit" name="noteFolderNameLineEdit">
+                     <property name="toolTip">
+                      <string>This name will be viewed in all the menus.</string>
+                     </property>
                      <property name="text">
-                      <string>Path on your ownCloud server:</string>
+                      <string/>
+                     </property>
+                     <property name="placeholderText">
+                      <string>Note folder name</string>
+                     </property>
+                     <property name="clearButtonEnabled">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
-                   <item row="13" column="0">
+                   <item row="8" column="0">
                     <widget class="QFrame" name="noteFolderVerticalSpacerFrame">
                      <property name="frameShape">
                       <enum>QFrame::NoFrame</enum>
@@ -693,1388 +627,11 @@
                      </layout>
                     </widget>
                    </item>
-                   <item row="3" column="0" colspan="2">
-                    <widget class="QLabel" name="label_13">
-                     <property name="text">
-                      <string>Note folder path:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="0" colspan="2">
-                    <widget class="QCheckBox" name="noteFolderGitCommitCheckBox">
-                     <property name="toolTip">
-                      <string>You need to have git installed to make this work!</string>
-                     </property>
-                     <property name="text">
-                      <string>Use git to keep a local history of your notes</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0" colspan="2">
-                    <widget class="QCheckBox" name="noteFolderActiveCheckBox">
-                     <property name="text">
-                      <string>Use as active note folder</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="0" colspan="2">
-                    <widget class="QCheckBox" name="noteFolderShowSubfoldersCheckBox">
-                     <property name="toolTip">
-                      <string>Be aware that the ownCloud notes app doesn't support sub-folders!</string>
-                     </property>
-                     <property name="text">
-                      <string>Use note sub-folders</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="11" column="1">
-                    <widget class="QPushButton" name="noteFolderRemotePathButton">
-                     <property name="toolTip">
-                      <string>Click here to select your remote note path on your ownCloud server</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="icon">
-                      <iconset theme="document-open" resource="../breeze-qownnotes.qrc">
-                       <normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</iconset>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
-                    <widget class="QLineEdit" name="noteFolderLocalPathLineEdit">
-                     <property name="readOnly">
-                      <bool>true</bool>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Path where your notes are stored locally</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0" colspan="2">
-                    <widget class="QLineEdit" name="noteFolderNameLineEdit">
-                     <property name="toolTip">
-                      <string>This name will be viewed in all the menus.</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Note folder name</string>
-                     </property>
-                     <property name="clearButtonEnabled">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0" colspan="2">
-                    <widget class="QLabel" name="label_12">
-                     <property name="text">
-                      <string>Name:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="1">
-                    <widget class="QPushButton" name="noteFolderLocalPathButton">
-                     <property name="toolTip">
-                      <string>Click here to select your local note path</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="icon">
-                      <iconset theme="document-open" resource="../breeze-qownnotes.qrc">
-                       <normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</iconset>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="11" column="0">
-                    <widget class="QLineEdit" name="noteFolderRemotePathLineEdit">
-                     <property name="toolTip">
-                      <string>Set the ownCloud path where the note folder path will be synced to on your ownCloud server.</string>
-                     </property>
-                     <property name="placeholderText">
-                      <string extracomment="&quot;Notes&quot; should not be translated">&quot;Notes&quot; path on your server</string>
-                     </property>
-                     <property name="clearButtonEnabled">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="7" column="0" colspan="2">
-                    <widget class="QCheckBox" name="allowDifferentNoteFileNameCheckBox">
-                     <property name="toolTip">
-                      <string>Allow the note file name to be different from the headline.&lt;br&gt;Beware that ownCloud Notes needs the file name to be the same as the headline!</string>
-                     </property>
-                     <property name="text">
-                      <string>Allow note file name to be different from headline</string>
-                     </property>
-                    </widget>
-                   </item>
                   </layout>
                  </widget>
                 </item>
                </layout>
               </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="ownCloudPage">
-            <layout class="QGridLayout" name="gridLayout_3">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QGroupBox" name="ownCloudSupportGroupBox">
-               <property name="title">
-                <string>ownCloud support</string>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_14">
-                <item>
-                 <widget class="QCheckBox" name="ownCloudSupportCheckBox">
-                  <property name="text">
-                   <string>Enable ownCloud support</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QGroupBox" name="ownCloudGroupBox">
-               <property name="font">
-                <font>
-                 <weight>50</weight>
-                 <bold>false</bold>
-                 <kerning>true</kerning>
-                </font>
-               </property>
-               <property name="title">
-                <string>Your ownCloud server</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-               </property>
-               <property name="flat">
-                <bool>false</bool>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_4">
-                <item row="1" column="1">
-                 <layout class="QVBoxLayout" name="verticalLayout">
-                  <item>
-                   <widget class="Label" name="installInfoTextLabel1">
-                    <property name="text">
-                     <string>Please install the latest version of &lt;a href=&quot;https://github.com/pbek/qownnotesapi&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;QOwnNotesAPI&lt;/span&gt;&lt;/a&gt; (at least version QOWNNOTESAPI_MIN_VERSION) on your ownCloud server if you want QOwnNotes to be able to access note versions and trashed notes.</string>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                    <property name="openExternalLinks">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="Label" name="installInfoTextLabel2">
-                    <property name="text">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You also need to have the two ownCloud core apps &lt;span style=&quot; font-weight:600;&quot;&gt;Versions&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;Deleted files&lt;/span&gt; enabled on your ownCloud server (that should be the default).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                    <property name="openExternalLinks">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="Label" name="installInfoTextLabel3">
-                    <property name="text">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You will still need the &lt;a href=&quot;https://owncloud.org/&quot;&gt;&lt;span style=&quot; font-weight:600&quot;&gt;ownCloud sync client&lt;/span&gt;&lt;/a&gt; (or another desktop sync client) to sync your notes!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                    <property name="openExternalLinks">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="ownCloudServerAppPageButton">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Opens your ownCloud server &lt;span style=&quot; font-weight:600;&quot;&gt;App configuration&lt;/span&gt; page in your webbrowser to install or update QOwnNotesAPI and to enable the core apps &lt;span style=&quot; font-weight:600;&quot;&gt;Versions&lt;/span&gt; and &lt;span style=&quot; font-weight:600;&quot;&gt;Deleted files&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="text">
-                     <string>Open your ownCloud server &amp;Apps page</string>
-                    </property>
-                    <property name="icon">
-                     <iconset theme="text-html" resource="../breeze-qownnotes.qrc">
-                      <normaloff>:/icons/breeze-qownnotes/16x16/text-html.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-html.svg</iconset>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="ownCloudServerAppPasswordPageButton">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="toolTip">
-                     <string>Opens your ownCloud server App Password page in your webbrowser to create a new app password for the application</string>
-                    </property>
-                    <property name="text">
-                     <string>Open your ownCloud server App Password page</string>
-                    </property>
-                    <property name="icon">
-                     <iconset theme="text-html" resource="../breeze-qownnotes.qrc">
-                      <normaloff>:/icons/breeze-qownnotes/16x16/text-html.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-html.svg</iconset>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="verticalSpacer_3">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item row="2" column="0" colspan="2">
-                 <widget class="QLabel" name="connectionTestLabel">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <weight>50</weight>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color: rgb(255, 0, 0)</string>
-                  </property>
-                  <property name="text">
-                   <string>Error Message</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                  <property name="textInteractionFlags">
-                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <layout class="QFormLayout" name="formLayout">
-                  <item row="1" column="0" colspan="2">
-                   <widget class="QFrame" name="cloudConnectionSelectionFrame">
-                    <layout class="QHBoxLayout" name="horizontalLayout_13">
-                     <property name="leftMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="bottomMargin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="QComboBox" name="cloudConnectionComboBox">
-                       <property name="toolTip">
-                        <string>Select a connection to edit</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QToolButton" name="cloudConnectionAddButton">
-                       <property name="toolTip">
-                        <string>Add connection</string>
-                       </property>
-                       <property name="text">
-                        <string>Add connection</string>
-                       </property>
-                       <property name="icon">
-                        <iconset theme="list-add" resource="../breeze-qownnotes.qrc">
-                         <normaloff>:/icons/breeze-qownnotes/16x16/list-add.svg</normaloff>:/icons/breeze-qownnotes/16x16/list-add.svg</iconset>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QToolButton" name="cloudConnectionRemoveButton">
-                       <property name="toolTip">
-                        <string>Remove connection</string>
-                       </property>
-                       <property name="text">
-                        <string>Remove connection</string>
-                       </property>
-                       <property name="icon">
-                        <iconset theme="list-remove" resource="../breeze-qownnotes.qrc">
-                         <normaloff>:/icons/breeze-qownnotes/16x16/list-remove.svg</normaloff>:/icons/breeze-qownnotes/16x16/list-remove.svg</iconset>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item row="3" column="0">
-                   <widget class="QLabel" name="ownCloudServerUrlLabel_2">
-                    <property name="text">
-                     <string>Connection name:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="1">
-                   <widget class="QLineEdit" name="cloudServerConnectionNameLineEdit">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>300</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="clearButtonEnabled">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="0">
-                   <widget class="QLabel" name="ownCloudServerUrlLabel">
-                    <property name="text">
-                     <string>ownCloud server url:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="1">
-                   <widget class="QLineEdit" name="serverUrlEdit">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>300</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Please enter the URL of your ownCloud server, for example: &lt;span style=&quot; font-style:italic;&quot;&gt;https://cloud.yourserver.com&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="placeholderText">
-                     <string notr="true">https://your.owncloud.server</string>
-                    </property>
-                    <property name="clearButtonEnabled">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="5" column="0">
-                   <widget class="QLabel" name="label_3">
-                    <property name="text">
-                     <string>Username:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="5" column="1">
-                   <widget class="QLineEdit" name="userNameEdit">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>300</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Please enter the username on your ownCloud server.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="placeholderText">
-                     <string>Your ownCloud username</string>
-                    </property>
-                    <property name="clearButtonEnabled">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="6" column="0">
-                   <widget class="QLabel" name="label_5">
-                    <property name="text">
-                     <string>Password:</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="6" column="1">
-                   <widget class="QLineEdit" name="passwordEdit">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>300</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Please enter the password for your username.&lt;br/&gt;Currently the password will be stored encrypted with the other settings, but is not very secure.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="echoMode">
-                     <enum>QLineEdit::Password</enum>
-                    </property>
-                    <property name="placeholderText">
-                     <string>Your ownCloud password</string>
-                    </property>
-                    <property name="clearButtonEnabled">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="7" column="1">
-                   <widget class="QPushButton" name="connectButton">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>0</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click here to test the connection to your ownCloud server.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">QPushButton { font-weight: bold; }</string>
-                    </property>
-                    <property name="text">
-                     <string>&amp;Connect to ownCloud server</string>
-                    </property>
-                    <property name="icon">
-                     <iconset theme="network-connect" resource="../breeze-qownnotes.qrc">
-                      <normaloff>:/icons/breeze-qownnotes/16x16/network-connect.svg</normaloff>:/icons/breeze-qownnotes/16x16/network-connect.svg</iconset>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="9" column="1">
-                   <widget class="QLabel" name="okLabelStatus">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">font-weight: bold;</string>
-                    </property>
-                    <property name="text">
-                     <string>Connection status</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="10" column="0">
-                   <widget class="QLabel" name="ok1Label">
-                    <property name="text">
-                     <string>unknown</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="10" column="1">
-                   <widget class="QLabel" name="check1Label">
-                    <property name="text">
-                     <string>connection to web server</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="11" column="0">
-                   <widget class="QLabel" name="ok2Label">
-                    <property name="text">
-                     <string>unknown</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="11" column="1">
-                   <widget class="QLabel" name="check2Label">
-                    <property name="text">
-                     <string>ownCloud server detected</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="12" column="0">
-                   <widget class="QLabel" name="ok3Label">
-                    <property name="text">
-                     <string>unknown</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="12" column="1">
-                   <widget class="QLabel" name="check3Label">
-                    <property name="text">
-                     <string>username and password correct</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="13" column="0">
-                   <widget class="QLabel" name="ok4Label">
-                    <property name="text">
-                     <string>unknown</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="13" column="1">
-                   <widget class="QLabel" name="check4Label">
-                    <property name="text">
-                     <string>connection to QOwnNotesAPI</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="14" column="0">
-                   <widget class="QLabel" name="ok6Label">
-                    <property name="text">
-                     <string>unknown</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="14" column="1">
-                   <widget class="QLabel" name="check6Label">
-                    <property name="text">
-                     <string>versions app enabled on server</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="15" column="0">
-                   <widget class="QLabel" name="ok7Label">
-                    <property name="text">
-                     <string>unknown</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="15" column="1">
-                   <widget class="QLabel" name="check7Label">
-                    <property name="text">
-                     <string>trash app enabled on server</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="16" column="0">
-                   <widget class="QLabel" name="ok8Label">
-                    <property name="text">
-                     <string>unknown</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="16" column="1">
-                   <widget class="QLabel" name="check8Label">
-                    <property name="text">
-                     <string>notes path found on server</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="17" column="1">
-                   <spacer name="verticalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>5</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item row="8" column="1">
-                   <spacer name="verticalSpacer_18">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Fixed</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>15</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="networkPage">
-            <layout class="QGridLayout" name="gridLayout_17">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0" colspan="2">
-              <widget class="QGroupBox" name="proxyGroupBox">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="title">
-                <string>Proxy Settings</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_16">
-                <item row="0" column="0">
-                 <widget class="QRadioButton" name="noProxyRadioButton">
-                  <property name="text">
-                   <string>No Proxy</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QRadioButton" name="systemProxyRadioButton">
-                  <property name="text">
-                   <string>Use system proxy</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QRadioButton" name="manualProxyRadioButton">
-                  <property name="text">
-                   <string>Specify proxy manually as</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QComboBox" name="typeComboBox">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0" colspan="2">
-                 <widget class="QWidget" name="manualSettings" native="true">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_9">
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_4">
-                     <item>
-                      <widget class="QLabel" name="hostLabel">
-                       <property name="text">
-                        <string>Host</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="hostLineEdit">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string/>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_11">
-                       <property name="text">
-                        <string notr="true">:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QSpinBox" name="portSpinBox">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="minimum">
-                        <number>1</number>
-                       </property>
-                       <property name="maximum">
-                        <number>65535</number>
-                       </property>
-                       <property name="value">
-                        <number>8080</number>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="authRequiredcheckBox">
-                     <property name="enabled">
-                      <bool>false</bool>
-                     </property>
-                     <property name="text">
-                      <string>Proxy server requires authentication</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QWidget" name="authWidgets" native="true">
-                     <property name="enabled">
-                      <bool>false</bool>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_5">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QLineEdit" name="userLineEdit">
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="clearButtonEnabled">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="passwordLineEdit">
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="echoMode">
-                         <enum>QLineEdit::Password</enum>
-                        </property>
-                        <property name="clearButtonEnabled">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QGroupBox" name="groupBox_12">
-               <property name="title">
-                <string>SSL Settings</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_18">
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="ignoreSSLErrorsCheckBox">
-                  <property name="text">
-                   <string>Ignore SSL errors</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="Label" name="letsEncryptInfoLabel">
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You might want to consider getting a free SSL certificate from &lt;a href=&quot;https://letsencrypt.org/&quot;&gt;Let's encrypt&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                  <property name="openExternalLinks">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="2" column="1" rowspan="2">
-              <widget class="QGroupBox" name="appMetricsGroupBox">
-               <property name="title">
-                <string>App metrics</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_11">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="appMetricsLabel">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Anonymous usage data helps to decide what parts of QOwnNotes to improve next and to find and fix bugs. Please disable it only if you really can't live with it.</string>
-                  </property>
-                  <property name="scaledContents">
-                   <bool>false</bool>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QCheckBox" name="appMetricsCheckBox">
-                  <property name="text">
-                   <string>Disable tracking of usage data</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="appMetricsLabel_3">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>This data includes anonymous information about what features of the app are used.</string>
-                  </property>
-                  <property name="scaledContents">
-                   <bool>false</bool>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="appMetricsLabel_4">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Usage tracking is done on a private Piwik server.</string>
-                  </property>
-                  <property name="scaledContents">
-                   <bool>false</bool>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <spacer name="verticalSpacer_8">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>5</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QGroupBox" name="appMetricsGroupBox_2">
-               <property name="title">
-                <string>App heartbeat</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_15">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="appMetricsLabel_2">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>A small heartbeat request is sent periodically while QOwnNotes is running. Make a developer happy by letting him know that someone is using QOwnNotes.</string>
-                  </property>
-                  <property name="scaledContents">
-                   <bool>false</bool>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QCheckBox" name="appHeartbeatCheckBox">
-                  <property name="text">
-                   <string>Disable heartbeat</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <spacer name="verticalSpacer_9">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>5</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="todoPage">
-            <layout class="QVBoxLayout" name="verticalLayout_6">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QGroupBox" name="groupBox_35">
-               <property name="title">
-                <string>Todo settings</string>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_28">
-                <item>
-                 <widget class="QCheckBox" name="todoCalendarSupportCheckBox">
-                  <property name="text">
-                   <string>Enable todo calendar support</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="calendarBackendGroupBox">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>150</height>
-                </size>
-               </property>
-               <property name="title">
-                <string>Which calendar backend do you want to use?</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_40">
-                <item row="3" column="0">
-                 <widget class="QRadioButton" name="calDavCalendarRadioButton">
-                  <property name="text">
-                   <string>Other CalDAV server</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QRadioButton" name="legacyOwnCloudCalendarRadioButton">
-                  <property name="toolTip">
-                   <string>For older versions of ownCloud where the default setting doesn't work</string>
-                  </property>
-                  <property name="text">
-                   <string>Legacy ownCloud calendar</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QRadioButton" name="calendarPlusRadioButton">
-                  <property name="text">
-                   <string notr="true">Calendar Plus</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QRadioButton" name="defaultOwnCloudCalendarRadioButton">
-                  <property name="toolTip">
-                   <string>For most current ownCloud and Nextcloud installations</string>
-                  </property>
-                  <property name="text">
-                   <string>Default ownCloud calendar</string>
-                  </property>
-                  <property name="checked">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="calDavCalendarGroupBox">
-               <property name="title">
-                <string>CalDAV server settings</string>
-               </property>
-               <layout class="QFormLayout" name="formLayout_2">
-                <property name="fieldGrowthPolicy">
-                 <enum>QFormLayout::ExpandingFieldsGrow</enum>
-                </property>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_19">
-                  <property name="text">
-                   <string>Calendar base url:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="calDavServerUrlEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>300</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="toolTip">
-                   <string>Please enter the CalDAV base url to your calendar.</string>
-                  </property>
-                  <property name="placeholderText">
-                   <string>Your CalDAV calendar base url</string>
-                  </property>
-                  <property name="clearButtonEnabled">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_15">
-                  <property name="text">
-                   <string>Username:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QLineEdit" name="calDavUsernameEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>300</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="toolTip">
-                   <string>Please enter the username of your CalDAV server.</string>
-                  </property>
-                  <property name="placeholderText">
-                   <string>Your CalDAV username</string>
-                  </property>
-                  <property name="clearButtonEnabled">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_16">
-                  <property name="text">
-                   <string>Password:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QLineEdit" name="calDavPasswordEdit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>300</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="toolTip">
-                   <string>Please enter the password for your CalDAV username.&lt;br/&gt;Currently the password will be stored encrypted with the other settings, but is not very secure.</string>
-                  </property>
-                  <property name="echoMode">
-                   <enum>QLineEdit::Password</enum>
-                  </property>
-                  <property name="placeholderText">
-                   <string>Your CalDAV password</string>
-                  </property>
-                  <property name="clearButtonEnabled">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="calendarCloudConnectionGroupBox">
-               <property name="title">
-                <string>Which cloud connection do you want to use?</string>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_27">
-                <item>
-                 <widget class="QComboBox" name="calendarCloudConnectionComboBox"/>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="todoCalendarGroupBox">
-               <property name="title">
-                <string>Select the calendars you want to use for the Todo list</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_7">
-                <item row="2" column="3">
-                 <spacer name="horizontalSpacer_8">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item row="0" column="0" colspan="4">
-                 <widget class="QListWidget" name="todoCalendarListWidget"/>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QPushButton" name="emptyCalendarCachePushButton">
-                  <property name="toolTip">
-                   <string>This causes all todo list items to be reloaded from your server the next time you open your todo dialog.</string>
-                  </property>
-                  <property name="text">
-                   <string>Empty calendar item cache</string>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="trash-empty" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/trash-empty.svg</normaloff>:/icons/breeze-qownnotes/16x16/trash-empty.svg</iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QPushButton" name="reloadCalendarListButton">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="toolTip">
-                   <string>Click here to reload the list of calendars from your calendar server.</string>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true"/>
-                  </property>
-                  <property name="text">
-                   <string>&amp;Reload calendar list</string>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="network-connect" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/network-connect.svg</normaloff>:/icons/breeze-qownnotes/16x16/network-connect.svg</iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0" colspan="4">
-                 <widget class="QCheckBox" name="ignoreNonTodoCalendarsCheckBox">
-                  <property name="text">
-                   <string>Ignore calendars that don't support todo items</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="todoListSettingsGroupBox">
-               <property name="title">
-                <string>Todo list settings</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_60">
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="closeTodoListAfterSaveCheckBox">
-                  <property name="text">
-                   <string>Saving an item also closes the Todo list</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_7">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
              </item>
             </layout>
            </widget>
@@ -2130,7 +687,7 @@
                      <item row="3" column="0">
                       <widget class="Label" name="label_8">
                        <property name="text">
-                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you want to help to translate QOwnNotes or update an existing translation please read: &lt;a href=&quot;http://www.qownnotes.org/Knowledge-base/How-can-I-help-to-translate-QOwnNotes&quot;&gt;How can I help to translate QOwnNotes?&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you want to help to translate PKbSuite or update an existing translation please read: &lt;a href=&quot;http://www.pkbsuite.org/Knowledge-base/How-can-I-help-to-translate-PKbSuite&quot;&gt;How can I help to translate PKbSuite?&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                        </property>
                        <property name="wordWrap">
                         <bool>true</bool>
@@ -3090,8 +1647,8 @@
                         <string notr="true">…</string>
                        </property>
                        <property name="icon">
-                        <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
-                         <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
+                        <iconset theme="edit-clear" resource="../breeze-pkbsuite.qrc">
+                         <normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</iconset>
                        </property>
                       </widget>
                      </item>
@@ -3104,8 +1661,8 @@
                         <string notr="true">…</string>
                        </property>
                        <property name="icon">
-                        <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
-                         <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
+                        <iconset theme="edit-clear" resource="../breeze-pkbsuite.qrc">
+                         <normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</iconset>
                        </property>
                       </widget>
                      </item>
@@ -3349,8 +1906,8 @@
                          <string>&amp;Add script…</string>
                         </property>
                         <property name="icon">
-                         <iconset theme="document-new" resource="../breeze-qownnotes.qrc">
-                          <normaloff>:/icons/breeze-qownnotes/16x16/document-new.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-new.svg</iconset>
+                         <iconset theme="document-new" resource="../breeze-pkbsuite.qrc">
+                          <normaloff>:/icons/breeze-pkbsuite/16x16/document-new.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-new.svg</iconset>
                         </property>
                        </widget>
                       </item>
@@ -3360,8 +1917,8 @@
                          <string>&amp;Remove script</string>
                         </property>
                         <property name="icon">
-                         <iconset theme="edit-delete" resource="../breeze-qownnotes.qrc">
-                          <normaloff>:/icons/breeze-qownnotes/16x16/edit-delete.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-delete.svg</iconset>
+                         <iconset theme="edit-delete" resource="../breeze-pkbsuite.qrc">
+                          <normaloff>:/icons/breeze-pkbsuite/16x16/edit-delete.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-delete.svg</iconset>
                         </property>
                        </widget>
                       </item>
@@ -3439,8 +1996,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>430</width>
-                           <height>538</height>
+                           <width>545</width>
+                           <height>1033</height>
                           </rect>
                          </property>
                          <layout class="QGridLayout" name="gridLayout_55">
@@ -3642,8 +2199,8 @@
                                 <string/>
                                </property>
                                <property name="icon">
-                                <iconset theme="document-open" resource="../breeze-qownnotes.qrc">
-                                 <normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</iconset>
+                                <iconset theme="document-open" resource="../breeze-pkbsuite.qrc">
+                                 <normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</iconset>
                                </property>
                               </widget>
                              </item>
@@ -3778,7 +2335,7 @@
               <number>0</number>
              </property>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,0,0">
+              <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,0">
                <property name="leftMargin">
                 <number>0</number>
                </property>
@@ -4016,22 +2573,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                 </widget>
                </item>
                <item>
-                <widget class="QGroupBox" name="groupBox_10">
-                 <property name="title">
-                  <string>Update dialog</string>
-                 </property>
-                 <layout class="QGridLayout" name="gridLayout_14">
-                  <item row="0" column="0">
-                   <widget class="QCheckBox" name="disableAutomaticUpdateDialogCheckBox">
-                    <property name="text">
-                     <string>Don't show the update dialog automatically</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
                 <widget class="QGroupBox" name="groupBox_25">
                  <property name="minimumSize">
                   <size>
@@ -4110,8 +2651,8 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                      <string notr="true"/>
                     </property>
                     <property name="icon">
-                     <iconset theme="list-add" resource="../breeze-qownnotes.qrc">
-                      <normaloff>:/icons/breeze-qownnotes/16x16/list-add.svg</normaloff>:/icons/breeze-qownnotes/16x16/list-add.svg</iconset>
+                     <iconset theme="list-add" resource="../breeze-pkbsuite.qrc">
+                      <normaloff>:/icons/breeze-pkbsuite/16x16/list-add.svg</normaloff>:/icons/breeze-pkbsuite/16x16/list-add.svg</iconset>
                     </property>
                    </widget>
                   </item>
@@ -4124,8 +2665,8 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                      <string notr="true"/>
                     </property>
                     <property name="icon">
-                     <iconset theme="list-remove" resource="../breeze-qownnotes.qrc">
-                      <normaloff>:/icons/breeze-qownnotes/16x16/list-remove.svg</normaloff>:/icons/breeze-qownnotes/16x16/list-remove.svg</iconset>
+                     <iconset theme="list-remove" resource="../breeze-pkbsuite.qrc">
+                      <normaloff>:/icons/breeze-pkbsuite/16x16/list-remove.svg</normaloff>:/icons/breeze-pkbsuite/16x16/list-remove.svg</iconset>
                     </property>
                    </widget>
                   </item>
@@ -4212,8 +2753,8 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                      <string/>
                     </property>
                     <property name="icon">
-                     <iconset theme="document-open" resource="../breeze-qownnotes.qrc">
-                      <normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</iconset>
+                     <iconset theme="document-open" resource="../breeze-pkbsuite.qrc">
+                      <normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</iconset>
                     </property>
                    </widget>
                   </item>
@@ -4229,7 +2770,7 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                   <item>
                    <widget class="QLabel" name="label_7">
                     <property name="text">
-                     <string>This button allows you to clear all settings, remove the local todo database and exit QOwnNotes.</string>
+                     <string>This button allows you to clear all settings, remove the local todo database and exit PKbSuite.</string>
                     </property>
                     <property name="wordWrap">
                      <bool>true</bool>
@@ -4324,142 +2865,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="debugPage">
-            <layout class="QGridLayout" name="gridLayout_9">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QGroupBox" name="groupBox_5">
-               <property name="title">
-                <string>Debug information</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_8">
-                <item row="0" column="0" colspan="7">
-                 <widget class="Label" name="label">
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can &lt;span style=&quot; font-weight:600;&quot;&gt;copy and paste&lt;/span&gt; this text (or parts of this text) in an &lt;span style=&quot; font-weight:600;&quot;&gt;issue&lt;/span&gt; on the &lt;a href=&quot;https://github.com/pbek/QOwnNotes/issues&quot;&gt;QOwnNotes issues page&lt;/a&gt; if you have &lt;span style=&quot; font-weight:600;&quot;&gt;questions or troubles&lt;/span&gt; with QOwnNotes. Data that is too sensitive is hidden in this information.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                  <property name="openExternalLinks">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0" colspan="7">
-                 <widget class="QOwnNotesMarkdownTextEdit" name="debugInfoTextEdit">
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="plainText">
-                   <string/>
-                  </property>
-                  <property name="textInteractionFlags">
-                   <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0" colspan="7">
-                 <widget class="QLabel" name="label_9">
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The best way to post issues is to use the issue assistant by pressing the &lt;span style=&quot; font-weight:600;&quot;&gt;Open issue assistant&lt;/span&gt; button on the bottom.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="0" colspan="7">
-                 <widget class="QCheckBox" name="gitHubLineBreaksCheckBox">
-                  <property name="toolTip">
-                   <string>No two spaces to do a line break are added here if checked</string>
-                  </property>
-                  <property name="text">
-                   <string>Use GitHub line breaks</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0" colspan="7">
-                 <widget class="QFrame" name="debugInfoTextEditSearchFrame">
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
-                  </property>
-                  <property name="lineWidth">
-                   <number>0</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="6" column="0">
-                 <widget class="QPushButton" name="issueAssistantPushButton">
-                  <property name="toolTip">
-                   <string>This is the best way to open an issue</string>
-                  </property>
-                  <property name="text">
-                   <string>Open issue assistant</string>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="face-smile" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/face-smile.svg</normaloff>:/icons/breeze-qownnotes/16x16/face-smile.svg</iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item row="6" column="1">
-                 <widget class="QPushButton" name="copyDebugInfoButton">
-                  <property name="toolTip">
-                   <string>Please use this in the issue tracker</string>
-                  </property>
-                  <property name="text">
-                   <string>&amp;Copy debug information to clipboard</string>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="edit-copy" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/edit-copy.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-copy.svg</iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item row="6" column="2">
-                 <widget class="QPushButton" name="saveDebugInfoButton">
-                  <property name="toolTip">
-                   <string>Please don't use this in the issue tracker</string>
-                  </property>
-                  <property name="text">
-                   <string>&amp;Save debug information</string>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="document-save" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/document-save.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-save.svg</iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item row="6" column="3" colspan="4">
-                 <spacer name="horizontalSpacer_14">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </widget>
            <widget class="QWidget" name="editorFontColorPage">
             <layout class="QVBoxLayout" name="gridLayout">
              <property name="leftMargin">
@@ -4503,8 +2908,8 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                    <string>Set a new font</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="gtk-select-font" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-qownnotes/16x16/gtk-select-font.svg</iconset>
+                   <iconset theme="gtk-select-font" resource="../breeze-pkbsuite.qrc">
+                    <normaloff>:/icons/breeze-pkbsuite/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-pkbsuite/16x16/gtk-select-font.svg</iconset>
                   </property>
                  </widget>
                 </item>
@@ -4517,8 +2922,8 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                    <string notr="true">…</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
+                   <iconset theme="edit-clear" resource="../breeze-pkbsuite.qrc">
+                    <normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</iconset>
                   </property>
                  </widget>
                 </item>
@@ -4548,8 +2953,8 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset theme="gtk-select-font" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-qownnotes/16x16/gtk-select-font.svg</iconset>
+                   <iconset theme="gtk-select-font" resource="../breeze-pkbsuite.qrc">
+                    <normaloff>:/icons/breeze-pkbsuite/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-pkbsuite/16x16/gtk-select-font.svg</iconset>
                   </property>
                  </widget>
                 </item>
@@ -4562,8 +2967,8 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                    <string notr="true">…</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
+                   <iconset theme="edit-clear" resource="../breeze-pkbsuite.qrc">
+                    <normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</iconset>
                   </property>
                  </widget>
                 </item>
@@ -4577,33 +2982,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Raised</enum>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="portableModePage">
-            <layout class="QGridLayout" name="gridLayout_41">
-             <item row="0" column="0">
-              <widget class="QTextBrowser" name="portableModeInfoTextBrowser">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">* {
-	background-color: transparent;
-	border: none;
-}</string>
-               </property>
-               <property name="html">
-                <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:14pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:9pt;&quot;&gt;portable mode information will be loaded here&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="openExternalLinks">
-                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -4657,8 +3035,8 @@ p, li { white-space: pre-wrap; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset theme="gtk-select-font" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-qownnotes/16x16/gtk-select-font.svg</iconset>
+                   <iconset theme="gtk-select-font" resource="../breeze-pkbsuite.qrc">
+                    <normaloff>:/icons/breeze-pkbsuite/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-pkbsuite/16x16/gtk-select-font.svg</iconset>
                   </property>
                  </widget>
                 </item>
@@ -4671,8 +3049,8 @@ p, li { white-space: pre-wrap; }
                    <string notr="true">…</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
+                   <iconset theme="edit-clear" resource="../breeze-pkbsuite.qrc">
+                    <normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</iconset>
                   </property>
                  </widget>
                 </item>
@@ -4695,8 +3073,8 @@ p, li { white-space: pre-wrap; }
                    <string notr="true">…</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
+                   <iconset theme="edit-clear" resource="../breeze-pkbsuite.qrc">
+                    <normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</iconset>
                   </property>
                  </widget>
                 </item>
@@ -4709,8 +3087,8 @@ p, li { white-space: pre-wrap; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset theme="gtk-select-font" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-qownnotes/16x16/gtk-select-font.svg</iconset>
+                   <iconset theme="gtk-select-font" resource="../breeze-pkbsuite.qrc">
+                    <normaloff>:/icons/breeze-pkbsuite/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-pkbsuite/16x16/gtk-select-font.svg</iconset>
                   </property>
                  </widget>
                 </item>
@@ -4823,8 +3201,8 @@ p, li { white-space: pre-wrap; }
                 <string>Apply toolbar configuration</string>
                </property>
                <property name="icon">
-                <iconset theme="document-save" resource="../breeze-qownnotes.qrc">
-                 <normaloff>:/icons/breeze-qownnotes/16x16/document-save.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-save.svg</iconset>
+                <iconset theme="document-save" resource="../breeze-pkbsuite.qrc">
+                 <normaloff>:/icons/breeze-pkbsuite/16x16/document-save.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-save.svg</iconset>
                </property>
               </widget>
              </item>
@@ -4837,119 +3215,10 @@ p, li { white-space: pre-wrap; }
                 <string>Reset toolbars</string>
                </property>
                <property name="icon">
-                <iconset resource="../breeze-qownnotes.qrc">
-                 <normaloff>:/icons/breeze-qownnotes/16x16/window-close.svg</normaloff>:/icons/breeze-qownnotes/16x16/window-close.svg</iconset>
+                <iconset resource="../breeze-pkbsuite.qrc">
+                 <normaloff>:/icons/breeze-pkbsuite/16x16/window-close.svg</normaloff>:/icons/breeze-pkbsuite/16x16/window-close.svg</iconset>
                </property>
               </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="debugOptionPage">
-            <layout class="QGridLayout" name="gridLayout_46">
-             <item row="1" column="2">
-              <spacer name="horizontalSpacer_12">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="1" column="0">
-              <widget class="QCheckBox" name="fileLoggingCheckBox">
-               <property name="text">
-                <string>Enable logging to file</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="3">
-              <widget class="QPushButton" name="clearLogFileButton">
-               <property name="text">
-                <string>Clear log file</string>
-               </property>
-               <property name="icon">
-                <iconset theme="list-remove" resource="../breeze-qownnotes.qrc">
-                 <normaloff>:/icons/breeze-qownnotes/16x16/list-remove.svg</normaloff>:/icons/breeze-qownnotes/16x16/list-remove.svg</iconset>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0" colspan="4">
-              <widget class="QCheckBox" name="oldVersionNumberCheckBox">
-               <property name="text">
-                <string>Fake old version number to trigger update</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0" colspan="4">
-              <widget class="QFrame" name="logFileFrame">
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_7">
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label_22">
-                  <property name="text">
-                   <string>Log file path:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="logFileLabel">
-                  <property name="text">
-                   <string notr="true">&lt;log file&gt;</string>
-                  </property>
-                  <property name="textInteractionFlags">
-                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_11">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="3" column="0" colspan="4">
-              <spacer name="verticalSpacer_11">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
              </item>
             </layout>
            </widget>
@@ -4996,7 +3265,7 @@ p, li { white-space: pre-wrap; }
                 <item row="1" column="0" colspan="2">
                  <widget class="Label" name="label_14">
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You might want to take a look at all available &lt;a href=&quot;http://docs.qownnotes.org/en/latest/editor/time-formats/&quot;&gt;time formats&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You might want to take a look at all available &lt;a href=&quot;http://docs.pkbsuite.org/en/latest/editor/time-formats/&quot;&gt;time formats&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="openExternalLinks">
                    <bool>true</bool>
@@ -5081,7 +3350,7 @@ p, li { white-space: pre-wrap; }
                 <item row="5" column="0" colspan="4">
                  <widget class="QCheckBox" name="vimModeCheckBox">
                   <property name="text">
-                   <string>Enable Vim mode (some QOwnNotes shortcuts will not work)</string>
+                   <string>Enable Vim mode (some PKbSuite shortcuts will not work)</string>
                   </property>
                  </widget>
                 </item>
@@ -5114,8 +3383,8 @@ p, li { white-space: pre-wrap; }
                    <string notr="true">…</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
+                   <iconset theme="edit-clear" resource="../breeze-pkbsuite.qrc">
+                    <normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</iconset>
                   </property>
                  </widget>
                 </item>
@@ -5216,178 +3485,6 @@ p, li { white-space: pre-wrap; }
                    </spacer>
                   </item>
                  </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="gitPage">
-            <layout class="QGridLayout" name="gridLayout_48">
-             <item row="5" column="1">
-              <spacer name="verticalSpacer_13">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="3" column="1">
-              <widget class="QGroupBox" name="groupBox_22">
-               <property name="title">
-                <string>Commit interval</string>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_9">
-                <item>
-                 <widget class="QSpinBox" name="gitCommitIntervalTime">
-                  <property name="suffix">
-                   <string extracomment="seconds">sec</string>
-                  </property>
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>9999999</number>
-                  </property>
-                  <property name="value">
-                   <number>30</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="gitCommitIntervalTimeLabel">
-                  <property name="toolTip">
-                   <string>You might run into sync troubles with older versions of ownCloud sync when going far below 10 sec.
-Just test yourself if you get sync conflicts and set a higher value if so.</string>
-                  </property>
-                  <property name="text">
-                   <string>git commit interval time [sec]</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QGroupBox" name="groupBox_23">
-               <property name="title">
-                <string>External git log command to show the git versions of a note</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_50">
-                <item row="0" column="0">
-                 <widget class="QLineEdit" name="gitLogCommandLineEdit">
-                  <property name="placeholderText">
-                   <string extracomment="Please don't translate &quot;%notePath%&quot;">Enter a command to be used to show a git log (like for example &quot;gitk&quot;)</string>
-                  </property>
-                  <property name="clearButtonEnabled">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_25">
-                  <property name="text">
-                   <string extracomment="Please don't translate &quot;%notePath%&quot;">You optionally can use &quot;%notePath%&quot; for the path of the note.</string>
-                  </property>
-                  <property name="textInteractionFlags">
-                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_27">
-                  <property name="text">
-                   <string extracomment="Please don't translate &quot;%notePath%&quot;">If you use this setting you will get a new menu entry to show the git versions if you right-click a note.</string>
-                  </property>
-                  <property name="textInteractionFlags">
-                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="0" column="1" rowspan="2">
-              <widget class="QGroupBox" name="groupBox_20">
-               <property name="title">
-                <string>Git client</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_51">
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="gitPathLineEdit">
-                  <property name="placeholderText">
-                   <string>Path to git client, leave empty for default</string>
-                  </property>
-                  <property name="clearButtonEnabled">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_23">
-                  <property name="text">
-                   <string>Path to git executable:</string>
-                  </property>
-                  <property name="textFormat">
-                   <enum>Qt::AutoText</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QToolButton" name="setGitPathToolButton">
-                  <property name="toolTip">
-                   <string>set external editor</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="icon">
-                   <iconset theme="document-open" resource="../breeze-qownnotes.qrc">
-                    <normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0" colspan="2">
-                 <widget class="Label" name="label_24">
-                  <property name="text">
-                   <string notr="true">git config --global user.email &quot;your-email@domain.com&quot;
-git config --global user.name &quot;Your name&quot;</string>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                  <property name="textInteractionFlags">
-                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0" colspan="3">
-                 <widget class="Label" name="label_6">
-                  <property name="text">
-                   <string>Don't forget to enable git support for your note folders and to configure your name and email address for your git client, for example with these terminal commands:</string>
-                  </property>
-                  <property name="wordWrap">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="Label" name="gitDownloadLabel">
-                  <property name="text">
-                   <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download text entered in source code…&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="textFormat">
-                   <enum>Qt::RichText</enum>
-                  </property>
-                  <property name="openExternalLinks">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
                 </item>
                </layout>
               </widget>
@@ -5596,8 +3693,8 @@ git config --global user.name &quot;Your name&quot;</string>
                       <string notr="true">…</string>
                      </property>
                      <property name="icon">
-                      <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
-                       <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
+                      <iconset theme="edit-clear" resource="../breeze-pkbsuite.qrc">
+                       <normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</iconset>
                      </property>
                     </widget>
                    </item>
@@ -6056,8 +4153,8 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                       <string notr="true">…</string>
                      </property>
                      <property name="icon">
-                      <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
-                       <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
+                      <iconset theme="edit-clear" resource="../breeze-pkbsuite.qrc">
+                       <normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</iconset>
                      </property>
                     </widget>
                    </item>
@@ -6070,8 +4167,8 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                       <string notr="true">…</string>
                      </property>
                      <property name="icon">
-                      <iconset theme="view-refresh" resource="../breeze-qownnotes.qrc">
-                       <normaloff>:/icons/breeze-qownnotes/16x16/view-refresh.svg</normaloff>:/icons/breeze-qownnotes/16x16/view-refresh.svg</iconset>
+                      <iconset theme="view-refresh" resource="../breeze-pkbsuite.qrc">
+                       <normaloff>:/icons/breeze-pkbsuite/16x16/view-refresh.svg</normaloff>:/icons/breeze-pkbsuite/16x16/view-refresh.svg</iconset>
                      </property>
                     </widget>
                    </item>
@@ -6081,7 +4178,7 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                 <item row="0" column="0">
                  <widget class="Label" name="webCompannionLabel">
                   <property name="text">
-                   <string>Install the &lt;a href=&quot;%1&quot;&gt;Web Companion browser extension&lt;/a&gt; from the &lt;a href=&quot;%2&quot;&gt;Chrome Web Store&lt;/a&gt; or &lt;a href=&quot;%3&quot;&gt;Firefox Add-ons page&lt;/a&gt; to use QOwnNotes as web clipper.</string>
+                   <string>Install the &lt;a href=&quot;%1&quot;&gt;Web Companion browser extension&lt;/a&gt; from the &lt;a href=&quot;%2&quot;&gt;Chrome Web Store&lt;/a&gt; or &lt;a href=&quot;%3&quot;&gt;Firefox Add-ons page&lt;/a&gt; to use PKbSuite as web clipper.</string>
                   </property>
                   <property name="wordWrap">
                    <bool>true</bool>
@@ -6137,11 +4234,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QOwnNotesMarkdownTextEdit</class>
-   <extends>QPlainTextEdit</extends>
-   <header location="global">widgets/qownnotesmarkdowntextedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>Label</class>
    <extends>QLabel</extends>
    <header location="global">widgets/label.h</header>
@@ -6183,49 +4275,9 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
   <tabstop>noteFolderRemoveButton</tabstop>
   <tabstop>noteFolderLocalPathButton</tabstop>
   <tabstop>noteFolderLocalPathLineEdit</tabstop>
-  <tabstop>noteFolderRemotePathLineEdit</tabstop>
-  <tabstop>noteFolderRemotePathButton</tabstop>
-  <tabstop>useOwnCloudPathButton</tabstop>
-  <tabstop>noteFolderRemotePathTreeWidget</tabstop>
   <tabstop>noteFolderNameLineEdit</tabstop>
   <tabstop>noteFolderActiveCheckBox</tabstop>
-  <tabstop>noteFolderCloudConnectionComboBox</tabstop>
   <tabstop>noteFolderShowSubfoldersCheckBox</tabstop>
-  <tabstop>noteFolderGitCommitCheckBox</tabstop>
-  <tabstop>ownCloudSupportCheckBox</tabstop>
-  <tabstop>cloudConnectionComboBox</tabstop>
-  <tabstop>cloudConnectionAddButton</tabstop>
-  <tabstop>cloudConnectionRemoveButton</tabstop>
-  <tabstop>cloudServerConnectionNameLineEdit</tabstop>
-  <tabstop>serverUrlEdit</tabstop>
-  <tabstop>userNameEdit</tabstop>
-  <tabstop>passwordEdit</tabstop>
-  <tabstop>connectButton</tabstop>
-  <tabstop>ownCloudServerAppPageButton</tabstop>
-  <tabstop>noProxyRadioButton</tabstop>
-  <tabstop>systemProxyRadioButton</tabstop>
-  <tabstop>manualProxyRadioButton</tabstop>
-  <tabstop>typeComboBox</tabstop>
-  <tabstop>hostLineEdit</tabstop>
-  <tabstop>portSpinBox</tabstop>
-  <tabstop>authRequiredcheckBox</tabstop>
-  <tabstop>userLineEdit</tabstop>
-  <tabstop>passwordLineEdit</tabstop>
-  <tabstop>ignoreSSLErrorsCheckBox</tabstop>
-  <tabstop>appMetricsCheckBox</tabstop>
-  <tabstop>appHeartbeatCheckBox</tabstop>
-  <tabstop>calDavCalendarRadioButton</tabstop>
-  <tabstop>defaultOwnCloudCalendarRadioButton</tabstop>
-  <tabstop>calendarPlusRadioButton</tabstop>
-  <tabstop>legacyOwnCloudCalendarRadioButton</tabstop>
-  <tabstop>calDavServerUrlEdit</tabstop>
-  <tabstop>calDavUsernameEdit</tabstop>
-  <tabstop>calDavPasswordEdit</tabstop>
-  <tabstop>todoCalendarListWidget</tabstop>
-  <tabstop>emptyCalendarCachePushButton</tabstop>
-  <tabstop>reloadCalendarListButton</tabstop>
-  <tabstop>ignoreNonTodoCalendarsCheckBox</tabstop>
-  <tabstop>closeTodoListAfterSaveCheckBox</tabstop>
   <tabstop>languageListWidget</tabstop>
   <tabstop>darkModeTrayIconCheckBox</tabstop>
   <tabstop>darkModeCheckBox</tabstop>
@@ -6267,7 +4319,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
   <tabstop>notifyAllExternalModificationsCheckBox</tabstop>
   <tabstop>legacyLinkingCheckBox</tabstop>
   <tabstop>allowOnlyOneAppInstanceCheckBox</tabstop>
-  <tabstop>disableAutomaticUpdateDialogCheckBox</tabstop>
   <tabstop>searchEngineSelectionComboBox</tabstop>
   <tabstop>resetMessageBoxesButton</tabstop>
   <tabstop>addCustomNoteFileExtensionButton</tabstop>
@@ -6279,15 +4330,12 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
   <tabstop>importSettingsButton</tabstop>
   <tabstop>exportSettingsButton</tabstop>
   <tabstop>reinitializeDatabaseButton</tabstop>
-  <tabstop>gitHubLineBreaksCheckBox</tabstop>
-  <tabstop>debugInfoTextEdit</tabstop>
   <tabstop>noteTextEditFontLabel</tabstop>
   <tabstop>noteTextEditButton</tabstop>
   <tabstop>noteTextEditResetButton</tabstop>
   <tabstop>noteTextEditCodeFontLabel</tabstop>
   <tabstop>noteTextEditCodeButton</tabstop>
   <tabstop>noteTextEditCodeResetButton</tabstop>
-  <tabstop>portableModeInfoTextBrowser</tabstop>
   <tabstop>noteTextViewCodeButton</tabstop>
   <tabstop>noteTextViewResetButton</tabstop>
   <tabstop>noteTextViewCodeResetButton</tabstop>
@@ -6299,9 +4347,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
   <tabstop>noteTextViewUnderlineCheckBox</tabstop>
   <tabstop>applyToolbarButton</tabstop>
   <tabstop>resetToolbarPushButton</tabstop>
-  <tabstop>fileLoggingCheckBox</tabstop>
-  <tabstop>clearLogFileButton</tabstop>
-  <tabstop>oldVersionNumberCheckBox</tabstop>
   <tabstop>timeFormatLineEdit</tabstop>
   <tabstop>markdownHighlightingCheckBox</tabstop>
   <tabstop>fullyHighlightedBlockquotesCheckBox</tabstop>
@@ -6313,10 +4358,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
   <tabstop>editorWidthInDFMOnlyCheckBox</tabstop>
   <tabstop>highlightCurrentLineCheckBox</tabstop>
   <tabstop>disableCursorBlinkingCheckBox</tabstop>
-  <tabstop>gitCommitIntervalTime</tabstop>
-  <tabstop>gitLogCommandLineEdit</tabstop>
-  <tabstop>gitPathLineEdit</tabstop>
-  <tabstop>setGitPathToolButton</tabstop>
   <tabstop>noteEditCentralWidgetCheckBox</tabstop>
   <tabstop>disableSavedSearchesAutoCompletionCheckBox</tabstop>
   <tabstop>tagsPanelSortAlphabeticalRadioButton</tabstop>
@@ -6353,8 +4394,8 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
   <tabstop>enableSocketServerCheckBox</tabstop>
  </tabstops>
  <resources>
-  <include location="../breeze-dark-qownnotes.qrc"/>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-dark-pkbsuite.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
  </resources>
  <connections>
   <connection>

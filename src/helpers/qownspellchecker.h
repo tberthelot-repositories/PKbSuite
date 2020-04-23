@@ -10,7 +10,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  *
- * QOwnNotes Spell Check wrapper
+ * PKbSuite Spell Check wrapper
  */
 
 #ifndef QOWNSPELLCHECKER_H

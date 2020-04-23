@@ -6,8 +6,6 @@
 #include <QScreen>
 #include <QSettings>
 
-#include "services/metricsservice.h"
-
 MasterDialog::MasterDialog(QWidget *parent) : QDialog(parent) {
     installEventFilter(this);
 }
@@ -88,9 +86,6 @@ void MasterDialog::handleOpenDialog() {
             setWindowState(windowState() ^ Qt::WindowMaximized);
         }
     }
-
-    // send metrics
-    MetricsService::instance()->sendVisitIfEnabled("dialog/" + objectName());
 }
 
 void MasterDialog::setIgnoreReturnKey(bool ignore) {
