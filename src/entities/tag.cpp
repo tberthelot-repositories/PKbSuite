@@ -304,6 +304,24 @@ QList<Tag> Tag::fetchRecursivelyByParentId(const int parentId) {
     return tagList;
 }
 
+QStringList Tag::getParentTagNames() {
+    if (this->parentId == 0) {
+        return QStringList();
+    }
+
+    Tag parentTag = Tag::fetch(this->parentId);
+
+    if (!parentTag.isFetched()) {
+        return QStringList();
+    }
+
+    const QString tagName = parentTag.getName();
+    QStringList tagNames = {tagName};
+    tagNames << parentTag.getParentTagNames();
+
+    return tagNames;
+}
+
 /**
  * Checks if taggingShowNotesRecursively is set
  */
@@ -435,6 +453,35 @@ QStringList Tag::fetchAllNamesOfNote(const Note &note) {
     DatabaseService::closeDatabaseConnection(db, query);
 
     return tagNameList;
+}
+
+/**
+ * Fetches the ids of all linked tags of a note
+ */
+QSet<int> Tag::fetchAllIdsByNote(const Note &note) {
+    QSqlDatabase db = DatabaseService::getNoteFolderDatabase();
+    QSqlQuery query(db);
+    QSet<int> tagIdList;
+
+    query.prepare(
+        QStringLiteral("SELECT tag_id FROM noteTagLink "
+                       "WHERE note_file_name = :fileName AND "
+                       "note_sub_folder_path = :noteSubFolderPath"));
+    query.bindValue(QStringLiteral(":fileName"), note.getName());
+    query.bindValue(QStringLiteral(":noteSubFolderPath"),
+                    note.getNoteSubFolder().relativePath());
+
+    if (!query.exec()) {
+        qWarning() << __func__ << ": " << query.lastError();
+    } else {
+        for (int r = 0; query.next(); r++) {
+            tagIdList << query.value(QStringLiteral("tag_id")).toInt();
+        }
+    }
+
+    DatabaseService::closeDatabaseConnection(db, query);
+
+    return tagIdList;
 }
 
 /**
@@ -1224,6 +1271,42 @@ bool Tag::mergeFromDatabase(QSqlDatabase &db) {
     // TODO: try to merge
 
     return false;
+}
+
+/**
+ * Fetches a tag by its "breadcrumb list" of tag names.
+ * Element nameList[0] would be highest in the tree (with parentId: 0)
+ *
+ * @param nameList
+ * @param createMissing {bool} if true (default) all missing tags will be created
+ * @return Tag object of deepest tag of the name breadcrumb list
+ */
+Tag Tag::getTagByNameBreadcrumbList(const QStringList &nameList,
+                                    bool createMissing) {
+    int parentId = 0;
+    Tag tag;
+
+    foreach(const QString &tagName, nameList) {
+        tag = Tag::fetchByName(tagName, parentId);
+
+        if (!tag.isFetched()) {
+            if (!createMissing) {
+                return Tag();
+            }
+
+            tag.setName(tagName);
+            tag.setParentId(parentId);
+            tag.store();
+
+            if (!tag.isFetched()) {
+                return Tag();
+            }
+        }
+
+        parentId = tag.getId();
+    }
+
+    return tag;
 }
 
 bool Tag::operator==(const Tag &tag) const { return id == tag.id; }

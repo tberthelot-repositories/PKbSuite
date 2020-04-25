@@ -132,15 +132,22 @@ class Tag {
 
     static QStringList fetchAllNamesOfNote(const Note &note);
 
+    static QSet<int> fetchAllIdsByNote(const Note &note);
+
     static QStringList searchAllNamesByName(const QString &name);
 
     static QList<Tag> fetchRecursivelyByParentId(const int parentId);
+
+    QStringList getParentTagNames();
 
     static bool isTaggingShowNotesRecursively();
 
     static QList<Tag> fetchAllOfNotes(const QVector<Note> &notes);
 
     static bool mergeFromDatabase(QSqlDatabase &db);
+
+    static Tag getTagByNameBreadcrumbList(const QStringList &nameList,
+                                          bool createMissing);
 
    protected:
     int id;
