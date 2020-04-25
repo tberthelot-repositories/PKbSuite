@@ -26,13 +26,19 @@ isExecutable=false
 VersionControlSupport=kdevgit
 
 [QMake_Builder]
-Build_Folder=/home/thomas/projects/PKbSuite
+Build_Folder=/home/thomas/projects/_build/PKbSuite
 Build_Type=0
 Extra_Arguments=
 Install_Prefix=
 QMake_Binary=/bin/qmake
 
 [QMake_Builder][/home/thomas/projects/PKbSuite]
+Build_Type=0
+Extra_Arguments=
+Install_Prefix=
+QMake_Binary=/bin/qmake
+
+[QMake_Builder][/home/thomas/projects/_build/PKbSuite]
 Build_Type=0
 Extra_Arguments=
 Install_Prefix=
