@@ -1799,8 +1799,6 @@ QStringList ScriptingService::searchTagsByName(const QString &name) const {
  */
 TagApi *ScriptingService::getTagByNameBreadcrumbList(
     const QStringList &nameList, bool createMissing) const {
-    MetricsService::instance()->sendVisitIfEnabled(
-        QStringLiteral("scripting/") % QString(__func__));
 
     Tag tag = Tag::getTagByNameBreadcrumbList(nameList, createMissing);
     auto *tagApi = TagApi::fromTag(tag);

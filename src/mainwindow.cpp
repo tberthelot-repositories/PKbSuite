@@ -4239,7 +4239,7 @@ void MainWindow::removeSelectedTags() {
 			}
 
 			// take care that the tag is removed from all notes
-			handleScriptingNotesTagRemoving(tag.getName(), true);
+			handleScriptingNotesTagRemoving(tag, true);
 			
 			tag.remove();
 			qDebug() << "Removed tag " << tag.getName();
@@ -8000,7 +8000,7 @@ void MainWindow::linkTagNameToCurrentNote(const QString &tagName,
 
             // add the tag to the note text if defined via scripting engine
 
-			handleScriptingNoteTagging(_currentNote, tagName, false, false);
+			handleScriptingNoteTagging(_currentNote, tag, false, false);
         }
 
         reloadCurrentNoteTags();
@@ -8405,7 +8405,7 @@ void MainWindow::removeNoteTagClicked() {
             tag.removeLinkToNote(_currentNote);
 
             // remove the tag from the note text if defined via scripting engine
-            handleScriptingNoteTagging(_currentNote, tag.getName(), true);
+            handleScriptingNoteTagging(_currentNote, tag, true);
         } else {
             const auto selectedNotesList = selectedNotes();
             for (const Note &note : selectedNotesList) {
