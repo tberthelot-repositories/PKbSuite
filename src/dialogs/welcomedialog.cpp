@@ -16,16 +16,6 @@ WelcomeDialog::WelcomeDialog(QWidget *parent)
     ui->setupUi(this);
     ui->layoutWidget->setManualSettingsStoring(false);
 
-    // replace ownCloud text
-    ui->subHeadlineLabel->setText(
-        Utils::Misc::replaceOwnCloudText(ui->subHeadlineLabel->text()));
-    ui->groupBox_2->setTitle(
-        Utils::Misc::replaceOwnCloudText(ui->groupBox_2->title()));
-    ui->label->setText(Utils::Misc::replaceOwnCloudText(ui->label->text()));
-    ui->label_4->setText(Utils::Misc::replaceOwnCloudText(ui->label_4->text()));
-    ui->ownCloudSettingsButton->setText(
-        Utils::Misc::replaceOwnCloudText(ui->ownCloudSettingsButton->text()));
-
     // if note layout has already been set, we can finish settings in the first
     // step
     QSettings settings;
