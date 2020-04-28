@@ -2645,21 +2645,18 @@ void MainWindow::storeUpdatedNotesToDisk() {
             }
         }
 	
-		// Check if the note has @Tags not yet linked
-		QRegularExpression re = QRegularExpression("@[a-zA-Z0-9]*");
-		QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
-		while (reIterator.hasNext()) {
-			QRegularExpressionMatch reMatch = reIterator.next();
-			QString tag = reMatch.captured().right(reMatch.capturedLength() - 1);
-			
-			Tag tagTmp = Tag::fetchByName(tag);
-			if (!tagTmp.isFetched()) {
-				const QSignalBlocker blocker(noteDirectoryWatcher);
-				Q_UNUSED(blocker);
+        // Check if the note has @Tags not yet linked
+        QRegularExpression re = QRegularExpression("@[a-zA-Z0-9]*");
+        QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
+        while (reIterator.hasNext()) {
+            QRegularExpressionMatch reMatch = reIterator.next();
+            QString tag = reMatch.captured().right(reMatch.capturedLength() - 1);
+            
+            const QSignalBlocker blocker(noteDirectoryWatcher);
+            Q_UNUSED(blocker);
 
-				linkTagNameToCurrentNote(tag);
-			}
-		}
+            linkTagNameToCurrentNote(tag);
+        }
 
         if (noteWasRenamed) {
             // reload the directory list if note name has changed
