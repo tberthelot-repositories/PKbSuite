@@ -3665,7 +3665,10 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
                     Tag::fetchByName(ui->newNoteTagLineEdit->text(), true);
                 if (tag.isFetched()) {
                     linkTagNameToCurrentNote(tag.getName(), true);
-                }
+    
+					QTextCursor tc = ui->noteTextEdit->textCursor();
+					tc.insertText("@" + tag.getName());
+				}
 
                 return false;
             }
