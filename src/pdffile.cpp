@@ -60,7 +60,6 @@ bool PDFFile::hasAnnotations() const
                     QSizeF sizePage = pageProcessed->pageSizeF();
                     
                     QColor annotColor = listPageAnnotations.at(i)->style().color();
-                    int test = annotColor.red();
                     
                     if ((annotColor.red() == 255) & (annotColor.green() == 0) & (annotColor.blue() == 0)) {		// Rouge : résumé
                         Poppler::HighlightAnnotation* highlightAnnotation = (Poppler::HighlightAnnotation*) listPageAnnotations.at(i);
