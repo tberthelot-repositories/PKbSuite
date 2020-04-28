@@ -179,20 +179,6 @@ MainWindow::MainWindow(QWidget *parent)
         settings.setValue(QStringLiteral("guiFirstRunInit"), true);
     }
 
-#ifdef Q_OS_MAC
-    // add some different shortcuts for the note history on the mac
-    ui->action_Back_in_note_history->setShortcut(Qt::CTRL + Qt::ALT +
-                                                 Qt::Key_Left);
-    ui->action_Forward_in_note_history->setShortcut(Qt::CTRL + Qt::ALT +
-                                                    Qt::Key_Right);
-
-    // add another shortcut for the auto-completer
-    ui->actionAutocomplete->setShortcut(Qt::META + Qt::Key_Space);
-
-    // add another shortcut for inserting media
-    ui->actionPaste_image->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_V);
-#endif
-
     // adding some alternate shortcuts for changing the current note
     auto *shortcut =
         new QShortcut(QKeySequence(QStringLiteral("Ctrl+PgDown")), this);
@@ -1797,7 +1783,6 @@ void MainWindow::loadNoteDirectoryList() {
         NoteFolder::isCurrentNoteTreeEnabled();
     ui->noteTreeWidget->clear();
     //    ui->noteTreeWidget->setRootIsDecorated(isCurrentNoteTreeEnabled);
-    int itemCount;
 
     if (isCurrentNoteTreeEnabled) {
         auto *noteFolderItem = new QTreeWidgetItem();
@@ -1810,16 +1795,12 @@ void MainWindow::loadNoteDirectoryList() {
 
         buildNoteSubFolderTreeForParentItem(noteFolderItem);
         noteFolderItem->setExpanded(true);
-
-        itemCount = Note::countAll();
     } else {
         // load all notes and add them to the note list widget
         const QVector<Note> noteList = Note::fetchAll();
         for (const Note &note : noteList) {
             addNoteToNoteTreeWidget(note);
         }
-
-        itemCount = noteList.count();
     }
 
     // sort alphabetically again if necessary
@@ -2664,21 +2645,18 @@ void MainWindow::storeUpdatedNotesToDisk() {
             }
         }
 	
-		// Check if the note has @Tags not yet linked
-		QRegularExpression re = QRegularExpression("@[a-zA-Z0-9]*");
-		QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
-		while (reIterator.hasNext()) {
-			QRegularExpressionMatch reMatch = reIterator.next();
-			QString tag = reMatch.captured().right(reMatch.capturedLength() - 1);
-			
-			Tag tagTmp = Tag::fetchByName(tag);
-			if (!tagTmp.isFetched()) {
-				const QSignalBlocker blocker(noteDirectoryWatcher);
-				Q_UNUSED(blocker);
+        // Check if the note has @Tags not yet linked
+        QRegularExpression re = QRegularExpression("@[a-zA-Z0-9]*");
+        QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
+        while (reIterator.hasNext()) {
+            QRegularExpressionMatch reMatch = reIterator.next();
+            QString tag = reMatch.captured().right(reMatch.capturedLength() - 1);
+            
+            const QSignalBlocker blocker(noteDirectoryWatcher);
+            Q_UNUSED(blocker);
 
-				linkTagNameToCurrentNote(tag);
-			}
-		}
+            linkTagNameToCurrentNote(tag);
+        }
 
         if (noteWasRenamed) {
             // reload the directory list if note name has changed
@@ -7716,29 +7694,31 @@ void MainWindow::buildTagTreeForParentItem(QTreeWidgetItem *parent,
     const QList<Tag> tagList = Tag::fetchAllByParentId(parentId);
     for (const Tag &tag : tagList) {
         const int tagId = tag.getId();
-        QTreeWidgetItem *item = addTagToTagTreeWidget(parent, tag);
+		if (tag.countLinkedNoteFileNames(true, true) > 0) {
+			QTreeWidgetItem *item = addTagToTagTreeWidget(parent, tag);
 
-        // set the active item
-        if (activeTagId == tagId) {
-            const QSignalBlocker blocker(ui->tagTreeWidget);
-            Q_UNUSED(blocker)
+			// set the active item
+			if (activeTagId == tagId) {
+				const QSignalBlocker blocker(ui->tagTreeWidget);
+				Q_UNUSED(blocker)
 
-            ui->tagTreeWidget->setCurrentItem(item);
-        }
+				ui->tagTreeWidget->setCurrentItem(item);
+			}
 
-        // recursively populate the next level
-        buildTagTreeForParentItem(item);
+			// recursively populate the next level
+			buildTagTreeForParentItem(item);
 
-        // set expanded state
-        item->setExpanded(expandedList.contains(QString::number(tagId)));
+			// set expanded state
+			item->setExpanded(expandedList.contains(QString::number(tagId)));
 
-        if (settings.value(QStringLiteral("tagsPanelSort")).toInt() ==
-            SORT_ALPHABETICAL) {
-            item->sortChildren(
-                0,
-                toQtOrder(
-                    settings.value(QStringLiteral("tagsPanelOrder")).toInt()));
-        }
+			if (settings.value(QStringLiteral("tagsPanelSort")).toInt() ==
+				SORT_ALPHABETICAL) {
+				item->sortChildren(
+					0,
+					toQtOrder(
+						settings.value(QStringLiteral("tagsPanelOrder")).toInt()));
+			}
+		}
     }
 
     // update the UI

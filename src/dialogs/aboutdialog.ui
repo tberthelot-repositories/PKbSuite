@@ -67,7 +67,7 @@ p, li { white-space: pre-wrap; }
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>/home/thomas/projects/PKbSuite/src/images/pkbsuite.svg</pixmap>
+        <pixmap>/home/thomas/1. Projects/PKbSuite/src/images/pkbsuite.svg</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
