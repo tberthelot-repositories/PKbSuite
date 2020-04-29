@@ -6322,15 +6322,15 @@ bool MainWindow::insertPDF(QFile *file) {
         int iResult = dialog->exec();
         if (iResult == DropPDFDialog::idLink) {
             // If the annotations have not been processed, we just add a link to the PDF file
-            QString text = Note::getInsertPDFMarkdown(file);
+            QString text = _currentNote.getInsertPDFMarkdown(file);
             if (!text.isEmpty()) {
                 ScriptingService* scriptingService = ScriptingService::instance();
                 // attempts to ask a script for an other markdown text
                 text = scriptingService->callInsertPDFHook(file, text);
                 qDebug() << __func__ << " - 'text': " << text;
 
-        PKbSuiteMarkdownTextEdit* textEdit = activeNoteTextEdit();
-        QTextCursor c = textEdit->textCursor();
+                PKbSuiteMarkdownTextEdit* textEdit = activeNoteTextEdit();
+                QTextCursor c = textEdit->textCursor();
 
                 // if we try to insert PDF in the first line of the note (aka.
                 // note name) move the cursor to the last line
@@ -6365,6 +6365,9 @@ bool MainWindow::insertPDF(QFile *file) {
             else {
                 
                 // La note n'existe pas, on la crée
+                Note note = Note();
+                note.setName(pdfFileInfo.baseName());
+
                 QFile noteFile(LectureNoteDir.path() + pdfFileInfo.baseName() + ".md");
                 
                 QString noteText = ScriptingService::instance()->callHandleNewNoteHeadlineHook(pdfFileInfo.baseName() + " - Notes");
@@ -6383,7 +6386,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("```\n\n");
 
                 noteText.append("## ===== Document source =====  \n");
-                noteText.append("Fichier : " + Note::getInsertPDFMarkdown(file) + "  \n");
+                noteText.append("Fichier : " + note.getInsertPDFMarkdown(file) + "  \n");
                 noteText.append("Titre : " + pdfFile.title() + "  \n");
                 noteText.append("Auteur : " + pdfFile.author() + "  \n");
                 noteText.append("Sujet : " + pdfFile.subject() + "  \n");
@@ -6397,9 +6400,7 @@ bool MainWindow::insertPDF(QFile *file) {
 
                 NoteSubFolder noteSubFolder = NoteSubFolder::fetchByPathData(NoteFolder::currentLectureNotePath().right(NoteFolder::currentLectureNotePath().size() - NoteFolder::currentLectureNotePath().lastIndexOf("/") - 1), "/");
                 QString noteSubFolderPath = noteSubFolder.fullPath();
-                
-                Note note = Note();
-                note.setName(pdfFileInfo.baseName());
+
                 note.setNoteText(noteText);
                 note.setNoteSubFolderId(noteSubFolder.getId());
                 note.store();
@@ -6457,7 +6458,7 @@ bool MainWindow::insertPDF(QFile *file) {
             return false;
     } else {
         // If the annotations have not been processed, we just add a link to the PDF file
-        QString text = Note::getInsertPDFMarkdown(file);
+        QString text = _currentNote.getInsertPDFMarkdown(file);
         if (!text.isEmpty()) {
             ScriptingService* scriptingService = ScriptingService::instance();
             // attempts to ask a script for an other markdown text

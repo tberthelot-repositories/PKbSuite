@@ -61,7 +61,7 @@ bool PDFFile::hasAnnotations() const
                     
                     QColor annotColor = listPageAnnotations.at(i)->style().color();
                     
-                    if ((annotColor.red() == 255) & (annotColor.green() == 0) & (annotColor.blue() == 0)) {		// Rouge : résumé
+                    if ((annotColor.red() == 255) & (annotColor.green() == 255) & (annotColor.blue() == 0)) {		// Jaune : résumé
                         Poppler::HighlightAnnotation* highlightAnnotation = (Poppler::HighlightAnnotation*) listPageAnnotations.at(i);
                         for (int j = 0; j < highlightAnnotation->highlightQuads().size(); j++) {
                             Poppler::HighlightAnnotation::Quad quad = highlightAnnotation->highlightQuads().at(j);
@@ -72,7 +72,7 @@ bool PDFFile::hasAnnotations() const
                         while (_summary.text[_summary.text.size() -1] == ' ')
                             _summary.text.remove(_summary.text.size() - 1, 1);
                     }
-                    else {
+                    else if ((annotColor.red() == 255) & (annotColor.green() == 0) & (annotColor.blue() == 0)) {        // Rouge : citation
                         Citation* citation = new Citation();
                         citation->page = iPage + 1;
                         citation->link = "file://" + NoteFolder::currentPDFPath() + "/" + fileBase + "#" + QString::number(iPage + 1);

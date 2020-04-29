@@ -251,8 +251,8 @@ class Note {
                                         QString fileName = QString(),
                                         bool returnUrlOnly = false);
 	
-	static QString getInsertPDFMarkdown(QFile *file,
-								 bool addNewLine = true);
+    QString getInsertPDFMarkdown(QFile *file,
+                                 bool addNewLine = true);
 	
     static bool scaleDownImageFileIfNeeded(QFile &file);
 
