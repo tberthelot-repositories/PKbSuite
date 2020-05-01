@@ -1,5 +1,5 @@
 [Buildset]
-BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x06\x00s\x00r\x00c)
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 
 [Launch]
 Launch Configurations=Launch Configuration 0
@@ -17,7 +17,7 @@ Dependency Action=Nothing
 EnvironmentGroup=
 Executable=file:///home/thomas/1. Projects/PKbSuite/src
 External Terminal=konsole --noclose --workdir %workdir -e %exe
-Project Target=src,PKbSuite
+Project Target=PKbSuite,PKbSuite
 Use External Terminal=false
 Working Directory=
 isExecutable=false
@@ -26,13 +26,13 @@ isExecutable=false
 VersionControlSupport=kdevgit
 
 [QMake_Builder]
-Build_Folder=/home/thomas/1. Projects/PKbSuite/src/build
+Build_Folder=/home/thomas/1. Projects/_build/PKbSuite
 Build_Type=0
 Extra_Arguments=
 Install_Prefix=
 QMake_Binary=/bin/qmake
 
-[QMake_Builder][/home/thomas/1. Projects/PKbSuite/src/build]
+[QMake_Builder][/home/thomas/1. Projects/_build/PKbSuite]
 Build_Type=0
 Extra_Arguments=
 Install_Prefix=
