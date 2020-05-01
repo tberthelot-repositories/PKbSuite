@@ -6,12 +6,12 @@
 #include <utils/gui.h>
 
 #include <QDebug>
-#include <QDir>
 #include <QFileInfo>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
 #include <QTreeWidgetItem>
 #include <QtWidgets/QMessageBox>
+#include <QDirIterator>
 
 #include "ui_orphanedimagesdialog.h"
 #include "widgets/pkbsuitemarkdowntextedit.h"
@@ -21,17 +21,17 @@ OrphanedImagesDialog::OrphanedImagesDialog(QWidget *parent)
     ui->setupUi(this);
     ui->fileTreeWidget->installEventFilter(this);
 
-    QDir mediaDir(NoteFolder::currentMediaPath());
+	QStringList orphanedFiles;
 
-    if (!mediaDir.exists()) {
-        ui->progressBar->setValue(ui->progressBar->maximum());
-        return;
-    }
-
-    QStringList orphanedFiles = mediaDir.entryList(
-        QStringList(QStringLiteral("*")), QDir::Files, QDir::Time);
+	QDirIterator iterator(NoteFolder::currentLocalPath(), QDirIterator::Subdirectories);
+	while (iterator.hasNext()) {
+		iterator.next();
+		if (QFileInfo(iterator.filePath()).isFile())
+			if ((QFileInfo(iterator.filePath()).suffix() == "jpg") | (QFileInfo(iterator.filePath()).suffix() == "Jpg") | (QFileInfo(iterator.filePath()).suffix() == "JPG") | (QFileInfo(iterator.filePath()).suffix() == "jpeg") | (QFileInfo(iterator.filePath()).suffix() == "Jpeg") | (QFileInfo(iterator.filePath()).suffix() == "JPEG") | (QFileInfo(iterator.filePath()).suffix() == "png") | (QFileInfo(iterator.filePath()).suffix() == "Png") | (QFileInfo(iterator.filePath()).suffix() == "PNG"))
+				orphanedFiles << iterator.filePath();
+	}	
     orphanedFiles.removeDuplicates();
-
+	
     QVector<Note> noteList = Note::fetchAll();
     int noteListCount = noteList.count();
 
@@ -104,9 +104,11 @@ QString OrphanedImagesDialog::getFilePath(QTreeWidgetItem *item) {
     if (item == Q_NULLPTR) {
         return QString();
     }
+    
+	QStringList nameFilter(item->data(0, Qt::UserRole).toString());
+	QStringList itemFile = QDir(NoteFolder::currentLocalPath()).entryList(nameFilter);
 
-    QString fileName = NoteFolder::currentMediaPath() + QDir::separator() +
-                       item->data(0, Qt::UserRole).toString();
+    QString fileName = itemFile.at(0);
     return fileName;
 }
 
@@ -194,4 +196,19 @@ void OrphanedImagesDialog::on_insertButton_clicked() {
         textEdit->insertPlainText(imageLink);
         delete item;
     }
+}
+
+QStringList listMediaFiles(QDir folder) {
+	QDirIterator iterator(folder.absolutePath(), QDirIterator::Subdirectories);
+	QStringList listFiles;
+	
+	while (iterator.hasNext()) {
+		listMediaFiles(QDir(iterator.next()));
+	}
+	
+	QStringList filters;
+	filters << ".jpg" << "*.Jpg" << "*.JPG" << "*.jpeg" << "*.Jpeg" << "*.JPEG";
+	listFiles += folder.entryList(filters);	
+
+	return listFiles;
 }

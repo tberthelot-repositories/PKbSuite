@@ -302,14 +302,6 @@ QString NoteFolder::currentTrashPath() {
 }
 
 /**
- * Fetches the current media path
- */
-QString NoteFolder::currentMediaPath() {
-    return NoteFolder::currentLocalPath() + QDir::separator() +
-           QStringLiteral("media");
-}
-
-/**
  * Fetches the current attachments path
  */
 QString NoteFolder::currentAttachmentsPath() {

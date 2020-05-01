@@ -318,7 +318,7 @@ bool Note::copyToPath(const QString &destinationPath, QString noteFolderPath) {
                         // copy all images to the media folder inside
                         // destinationPath
                         for (const QString &fileName : mediaFileList) {
-                            QFile mediaFile(NoteFolder::currentMediaPath() +
+                            QFile mediaFile(this->fullNoteFilePath() + "/" + getName() +
                                             QDir::separator() + fileName);
 
                             if (mediaFile.exists()) {
@@ -2997,11 +2997,12 @@ QString Note::getInsertMediaMarkdown(QFile *file, bool addNewLine,
                                      bool returnUrlOnly, QString title) {
     // file->exists() is false on Arch Linux for QTemporaryFile!
     if (file->size() > 0) {
-        QDir mediaDir(NoteFolder::currentMediaPath());
+        // Test if note's embedment folder exists
+        const QDir dir(this->fullNoteFilePath() + "/" + getName());
 
-        // created the media folder if it doesn't exist
-        if (!mediaDir.exists()) {
-            mediaDir.mkpath(mediaDir.path());
+        // created the attachments folder if it doesn't exist
+        if (!dir.exists()) {
+            dir.mkpath(dir.path());
         }
 
         const QFileInfo fileInfo(file->fileName());
@@ -3022,7 +3023,7 @@ QString Note::getInsertMediaMarkdown(QFile *file, bool addNewLine,
             QString::number(qrand()) + QChar('.') + suffix;
 
         const QString newFilePath =
-            mediaDir.path() + QDir::separator() + newFileName;
+            dir.path() + QDir::separator() + newFileName;
 
         // copy the file to the media folder
         file->copy(newFilePath);
