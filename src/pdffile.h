@@ -49,6 +49,8 @@ public:
     ~PDFFile();
 
     bool hasAnnotations() const;
+	
+	void setDocumentFolder(const QString strFolder) {_sDocumentFolder = strFolder;}
     
     QString markdownSummary();
     QString markdownCitations();
@@ -62,6 +64,7 @@ public:
 
 private:
     QString _sFile;
+	QString _sDocumentFolder;
     Poppler::Document* _document;
     int _nSheetDocument;
     

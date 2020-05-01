@@ -3213,7 +3213,7 @@ QString Note::importMediaFromBase64(QString &data, const QString &imageSuffix) {
 QString Note::getInsertPDFMarkdown(QFile *file, bool addNewLine) {
     if (file->exists() && (file->size() > 0)) {
         // Test if note's embedment folder exists
-        const QDir dir(fullNoteFilePath() + "/" + getName());
+        const QDir dir(this->fullNoteFilePath() + "/" + getName());
 
         // created the attachments folder if it doesn't exist
         if (!dir.exists()) {
@@ -3228,7 +3228,7 @@ QString Note::getInsertPDFMarkdown(QFile *file, bool addNewLine) {
 
         // return the PDF link
         // we add a "\n" in the end so that hoedown recognizes multiple PDF files
-        return "[" + fileInfo.baseName() + "](" + dir.path() + QDir::separator() + processedFilename + ")" + (addNewLine ? "\n" : "");
+        return "[" + fileInfo.baseName() + "](file://" + dir.path() + QDir::separator() + processedFilename + ")" + (addNewLine ? "\n" : "");
     }
 
     return "";

@@ -45,8 +45,6 @@ class NoteFolder {
     static int currentNoteFolderId();
     static NoteFolder currentNoteFolder();
     static QString currentLocalPath();
-	static QString currentLectureNotePath();
-    static QString currentPDFPath();
     static QString currentRootFolderName(bool fullPath = false);
     static bool isCurrentHasSubfolders();
     static bool isCurrentShowSubfolders();

@@ -318,21 +318,6 @@ QString NoteFolder::currentAttachmentsPath() {
 }
 
 /**
- * Fetches the current PDF path
- */
-QString NoteFolder::currentPDFPath() {
-    return NoteFolder::currentLocalPath() + QDir::separator() + "PDF";
-}
-
-/**
- * Fetches the current lecture notes path
- */
-QString NoteFolder::currentLectureNotePath() {
-    QSettings settings;
-    return settings.value("notesPath").toString() + QDir::separator() + "Lecture Notes";
-}
-
-/**
  * Checks if there are note subfolders in the current note folder
  */
 bool NoteFolder::isCurrentHasSubfolders() {

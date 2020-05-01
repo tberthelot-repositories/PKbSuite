@@ -6343,22 +6343,10 @@ bool MainWindow::insertPDF(QFile *file) {
                 c.insertText(text);
             }
         } else if (iResult == DropPDFDialog::idCreateNote) {
-            QDir LectureNoteDir(NoteFolder::currentLectureNotePath());
-            
-            // create the PDF folder if it doesn't exist
-            if (!LectureNoteDir.exists()) {
-                LectureNoteDir.mkpath(LectureNoteDir.path());
-                
-                // rebuild the index of the note subfolders
-                buildNotesIndex();
-
-                // reload note subfolders
-                setupNoteSubFolders();
-            }
-            
             QFileInfo pdfFileInfo(file->fileName());
-
-            QFileInfo noteFileInfo(LectureNoteDir.path() + "/" + pdfFileInfo.baseName() + ".md");
+			NoteSubFolder noteSubFolder = NoteFolder::currentNoteFolder().getActiveNoteSubFolder();
+			
+            QFileInfo noteFileInfo(noteSubFolder.fullPath() + "/" + pdfFileInfo.baseName() + ".md");
             if (noteFileInfo.exists()) {
                 ;// TODO Gérer le cas où la note existe
             }
@@ -6367,9 +6355,9 @@ bool MainWindow::insertPDF(QFile *file) {
                 // La note n'existe pas, on la crée
                 Note note = Note();
                 note.setName(pdfFileInfo.baseName());
+				QString noteSubFolderPath = noteSubFolder.fullPath();
+                note.setNoteSubFolderId(noteSubFolder.getId());
 
-                QFile noteFile(LectureNoteDir.path() + pdfFileInfo.baseName() + ".md");
-                
                 QString noteText = ScriptingService::instance()->callHandleNewNoteHeadlineHook(pdfFileInfo.baseName() + " - Notes");
 
                 // check if a hook changed the text
@@ -6394,15 +6382,14 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("@TODO\n\n");
                 noteText.append("--- \n\n\n");
                 
+				pdfFile.setDocumentFolder(noteSubFolderPath);
+				
                 noteText.append(pdfFile.markdownSummary());
                 noteText.append(pdfFile.markdownCitations());
                 noteText.append(pdfFile.markdownComments());
-
-                NoteSubFolder noteSubFolder = NoteSubFolder::fetchByPathData(NoteFolder::currentLectureNotePath().right(NoteFolder::currentLectureNotePath().size() - NoteFolder::currentLectureNotePath().lastIndexOf("/") - 1), "/");
-                QString noteSubFolderPath = noteSubFolder.fullPath();
-
+				
                 note.setNoteText(noteText);
-                note.setNoteSubFolderId(noteSubFolder.getId());
+
                 note.store();
 
                 // workaround when signal block doesn't work correctly

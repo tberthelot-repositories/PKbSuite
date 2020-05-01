@@ -24,10 +24,13 @@
 #include <poppler/PDFDoc.h>
 #include <poppler/Page.h>
 #include <goo/GooString.h>
+#include <QFileInfo>
+#include <QDir>
 
 PDFFile::PDFFile(QString fileToProcess) {
     _sFile = fileToProcess.simplified();
     _sFile.replace(" ", "_");
+	_sDocumentFolder = "";
     _document = Poppler::Document::load(fileToProcess);
     if (!_document || _document->isLocked()) {
         delete _document;
@@ -46,13 +49,14 @@ bool PDFFile::hasAnnotations() const
     QSet<Poppler::Annotation::SubType> subtypes;  // Look for annotations
     subtypes.insert(Poppler::Annotation::AText);
     subtypes.insert(Poppler::Annotation::AHighlight);
-    QString fileBase = _sFile.right(_sFile.length() - _sFile.lastIndexOf("/"));
     
     for (int iPage = 0; iPage < _nSheetDocument; iPage++) { 
         Poppler::Page* pageProcessed = _document->page(iPage);
         
         if (pageProcessed) {
             QList<Poppler::Annotation*> listPageAnnotations = pageProcessed->annotations(subtypes);
+			QFileInfo fileInfo(_sFile);
+			QString strBaseName = fileInfo.baseName();
 
             // TODO A finaliser
             for (int i = 0; i < listPageAnnotations.size(); i++) {
@@ -75,7 +79,7 @@ bool PDFFile::hasAnnotations() const
                     else if ((annotColor.red() == 255) & (annotColor.green() == 0) & (annotColor.blue() == 0)) {        // Rouge : citation
                         Citation* citation = new Citation();
                         citation->page = iPage + 1;
-                        citation->link = "file://" + NoteFolder::currentPDFPath() + "/" + fileBase + "#" + QString::number(iPage + 1);
+                        citation->link = fileInfo.baseName() + "/" + fileInfo.fileName() + "#" + QString::number(iPage + 1);
                         
                         Poppler::HighlightAnnotation* highlightAnnotation = (Poppler::HighlightAnnotation*) listPageAnnotations.at(i);
                         for (int j = 0; j < highlightAnnotation->highlightQuads().size(); j++) {
@@ -93,7 +97,7 @@ bool PDFFile::hasAnnotations() const
                 else {
                     Comment* comment = new Comment();
                     comment->page = iPage + 1;
-                    comment->link = "file://" + NoteFolder::currentPDFPath() + "/" + NoteFolder::currentPDFPath() + "/" + fileBase + "#" + QString::number(iPage + 1);
+                    comment->link = fileInfo.baseName() + "/" + fileInfo.fileName() + "#" + QString::number(iPage + 1);
                     comment->text = listPageAnnotations.at(i)->contents() + "\n\n";
                     
                     _listComments.append(comment);
@@ -127,7 +131,7 @@ QString PDFFile::markdownCitations()
     for (int iCitation = 0; iCitation < _listCitations.size(); iCitation++) {
         sTmp.append("## Citation " + QString::number(iCitation + 1) + " \n");
         sTmp.append("Page : " + QString::number(_listCitations.at(iCitation)->page) + "   \n");
-        sTmp.append("[Lien](" + _listCitations.at(iCitation)->link + ")\n\n");
+        sTmp.append("[Lien](file://" + _sDocumentFolder + QDir::separator() + _listCitations.at(iCitation)->link + ")\n\n");
         sTmp.append("Extrait :\n\n");
         sTmp.append("*" + _listCitations.at(iCitation)->extract + "*\n\n");
         sTmp.append("*--- Fin ---*\n\n");
@@ -143,6 +147,7 @@ QString PDFFile::markdownComments()
     for (int iComment = 0; iComment < _listComments.size(); iComment++) {
         sTmp.append("## Commentaire " + QString::number(iComment + 1) + "   \n");
         sTmp.append("Page : " + QString::number(_listComments.at(iComment)->page) + "\n\n");
+        sTmp.append("[Lien](file://" + _sDocumentFolder + QDir::separator() + _listComments.at(iComment)->link + ")\n\n");
         sTmp.append("Commentaire :\n\n");
         sTmp.append(_listComments.at(iComment)->text + "\n\n");
         sTmp.append("*--- Fin ---*\n\n");
