@@ -3222,7 +3222,7 @@ QString Note::getInsertPDFMarkdown(QFile *file, bool addNewLine) {
         
         QFileInfo fileInfo(file->fileName());
 
-        // copy the file the the Note folder
+        // copy the file the the Note's embedment folder
         QString processedFilename = fileInfo.fileName().simplified().replace(" ", "_");
         file->copy(dir.path() + QDir::separator() + processedFilename);
 
