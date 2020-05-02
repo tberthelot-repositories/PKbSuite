@@ -1197,7 +1197,7 @@ QString ScriptingService::insertMediaFile(const QString &mediaFilePath,
         return QString();
     }
 
-    return _currentNote->getInsertMediaMarkdown(mediaFile, true, returnUrlOnly);
+    return _currentNote->getInsertMediaMarkdown(mediaFile, mediaType::image, true, returnUrlOnly);
 }
 
 /**

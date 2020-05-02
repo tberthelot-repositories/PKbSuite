@@ -6291,7 +6291,7 @@ void MainWindow::on_actionInsert_image_triggered() {
  */
 bool MainWindow::insertMedia(QFile *file, QString title) {
     QString text =
-        _currentNote.getInsertMediaMarkdown(file, true, false, std::move(title));
+        _currentNote.getInsertMediaMarkdown(file, mediaType::image, true, false, std::move(title));
 
     if (!text.isEmpty()) {
         ScriptingService *scriptingService = ScriptingService::instance();

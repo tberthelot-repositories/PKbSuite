@@ -39,10 +39,10 @@ OrphanedImagesDialog::OrphanedImagesDialog(QWidget *parent)
     ui->progressBar->show();
 
     Q_FOREACH (Note note, noteList) {
-        QStringList mediaFileList = note.getMediaFileList();
+        QStringList embeddedFileList = note.getEmbedmentFileList();
 
         // remove all found images from the orphaned files list
-        Q_FOREACH (QString fileName, mediaFileList) {
+        Q_FOREACH (QString fileName, embeddedFileList) {
             orphanedFiles.removeAll(fileName);
         }
 
@@ -104,12 +104,14 @@ QString OrphanedImagesDialog::getFilePath(QTreeWidgetItem *item) {
     if (item == Q_NULLPTR) {
         return QString();
     }
-    
+/*    
 	QStringList nameFilter(item->data(0, Qt::UserRole).toString());
 	QStringList itemFile = QDir(NoteFolder::currentLocalPath()).entryList(nameFilter);
 
     QString fileName = itemFile.at(0);
     return fileName;
+*/
+	return item->data(0, Qt::UserRole).toString();
 }
 
 /**
@@ -189,21 +191,21 @@ void OrphanedImagesDialog::on_insertButton_clicked() {
     Q_FOREACH (QTreeWidgetItem *item, ui->fileTreeWidget->selectedItems()) {
         QString filePath = getFilePath(item);
         QFileInfo fileInfo(filePath);
-        QString mediaUrlString =
-            note.mediaUrlStringForFileName(fileInfo.fileName());
+        QString embedmentUrlString =
+            note.embedmentUrlStringForFileName(fileInfo.fileName());
         QString imageLink =
-            "![" + fileInfo.baseName() + "](" + mediaUrlString + ")\n";
+            "![" + fileInfo.baseName() + "](" + embedmentUrlString + ")\n";
         textEdit->insertPlainText(imageLink);
         delete item;
     }
 }
 
-QStringList listMediaFiles(QDir folder) {
+QStringList listEmbeddedFiles(QDir folder) {
 	QDirIterator iterator(folder.absolutePath(), QDirIterator::Subdirectories);
 	QStringList listFiles;
 	
 	while (iterator.hasNext()) {
-		listMediaFiles(QDir(iterator.next()));
+		listEmbeddedFiles(QDir(iterator.next()));
 	}
 	
 	QStringList filters;

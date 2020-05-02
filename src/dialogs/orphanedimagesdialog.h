@@ -31,5 +31,5 @@ class OrphanedImagesDialog : public MasterDialog {
     Ui::OrphanedImagesDialog *ui;
 
     QString getFilePath(QTreeWidgetItem *item);
-	QStringList listMediaFiles(QDir folder);
+	QStringList listEmbeddedFiles(QDir folder);
 };
