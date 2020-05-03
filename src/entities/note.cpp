@@ -309,20 +309,20 @@ bool Note::copyToPath(const QString &destinationPath, QString noteFolderPath) {
                     const QDir noteEmbedmentDir(noteFolderPath + QDir::separator() +
                                         getName());
 
-                    // created the media folder if it doesn't exist
+                    // created the note embedment folder if it doesn't exist
                     if (!noteEmbedmentDir.exists()) {
                         noteEmbedmentDir.mkpath(noteEmbedmentDir.path());
                     }
 
                     if (noteEmbedmentDir.exists()) {
-                        // copy all images to the media folder inside
+                        // copy all images to the note embedment folder inside
                         // destinationPath
                         for (const QString &fileName : embedmentFileList) {
-                            QFile mediaFile(this->fullNoteFilePath() + "/" + getName() +
+                            QFile embeddedFile(this->fullNoteFilePath() + "/" + getName() +
                                             QDir::separator() + fileName);
 
-                            if (mediaFile.exists()) {
-                                mediaFile.copy(noteEmbedmentDir.path() +
+                            if (embeddedFile.exists()) {
+                                embeddedFile.copy(noteEmbedmentDir.path() +
                                                QDir::separator() + fileName);
                             }
                         }
@@ -379,37 +379,6 @@ QStringList Note::getEmbedmentFileList() {
     return fileList;
 }
 
-bool Note::updateRelativeMediaFileLinks() {
-    QRegularExpression re(QStringLiteral(R"((!\[.*?\])\((.*media/(.+?))\))"));
-    QRegularExpressionMatchIterator i = re.globalMatch(noteText);
-    bool textWasUpdated = false;
-    QString newText = getNoteText();
-
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        QString filePath = match.captured(2);
-
-        if (filePath.startsWith(QLatin1String("file://"))) {
-            continue;
-        }
-
-        const QString wholeLinkText = match.captured(0);
-        const QString titlePart = match.captured(1);
-        const QString fileName = match.captured(3);
-
-        filePath = embedmentUrlStringForFileName(fileName);
-        newText.replace(wholeLinkText,
-                        titlePart + QChar('(') + filePath + QChar(')'));
-        textWasUpdated = true;
-    }
-
-    if (textWasUpdated) {
-        storeNewText(std::move(newText));
-    }
-
-    return textWasUpdated;
-}
-
 /**
  * Returns a list of all linked attachments of the current note
  * @return
@@ -432,38 +401,6 @@ QStringList Note::getAttachmentsFileList() const {
     }
 
     return fileList;
-}
-
-bool Note::updateRelativeAttachmentFileLinks() {
-    const QRegularExpression re(
-        QStringLiteral(R"((\[.*?\])\((.*attachments/(.+?))\))"));
-    QRegularExpressionMatchIterator i = re.globalMatch(noteText);
-    bool textWasUpdated = false;
-    QString newText = getNoteText();
-
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        QString filePath = match.captured(2);
-
-        if (filePath.startsWith(QLatin1String("file://"))) {
-            continue;
-        }
-
-        const QString wholeLinkText = match.captured(0);
-        const QString titlePart = match.captured(1);
-        const QString fileName = match.captured(3);
-
-        filePath = embedmentUrlStringForFileName(fileName);
-        newText.replace(wholeLinkText,
-                        titlePart + QChar('(') + filePath + QChar(')'));
-        textWasUpdated = true;
-    }
-
-    if (textWasUpdated) {
-        storeNewText(std::move(newText));
-    }
-
-    return textWasUpdated;
 }
 
 /**
@@ -3029,11 +2966,11 @@ QString Note::getInsertMediaMarkdown(QFile *file, mediaType type, bool addNewLin
         QFile newFile(newFilePath);
         scaleDownImageFileIfNeeded(newFile);
 
-        const QString mediaUrlString = embedmentUrlStringForFileName(file->fileName());
+        const QString embedmentUrlString = embedmentUrlStringForFileName(file->fileName());
 
-        // check if we only want to return the media url string
+        // check if we only want to return the embedment url string
         if (returnUrlOnly) {
-            return mediaUrlString;
+            return embedmentUrlString;
         }
 
         if (title.isEmpty()) {
@@ -3043,7 +2980,7 @@ QString Note::getInsertMediaMarkdown(QFile *file, mediaType type, bool addNewLin
         // return the image link
         // we add a "\n" in the end so that hoedown recognizes multiple images
         return QStringLiteral("![") + title + QStringLiteral("](") +
-               mediaUrlString + QStringLiteral(")") +
+               embedmentUrlString + QStringLiteral(")") +
                (addNewLine ? QStringLiteral("\n") : QLatin1String(""));
     }
 
@@ -3103,7 +3040,7 @@ QString Note::getInsertAttachmentMarkdown(QFile *file, QString fileName,
  * @param returnUrlOnly
  * @return
  */
-QString Note::downloadUrlToMedia(const QUrl &url, bool returnUrlOnly) {
+QString Note::downloadUrlToEmbedment(const QUrl &url, bool returnUrlOnly) {
     // try to get the suffix from the url
     QString suffix = url.toString()
                          .split(QStringLiteral("."), QString::SkipEmptyParts)
@@ -3125,7 +3062,7 @@ QString Note::downloadUrlToMedia(const QUrl &url, bool returnUrlOnly) {
     if (tempFile->open()) {
         // download the image to the temporary file
         if (Utils::Misc::downloadUrlToFile(url, tempFile)) {
-            // copy image to media folder and generate markdown code for
+            // copy image to embedment folder and generate markdown code for
             // the image
             text = getInsertMediaMarkdown(tempFile, mediaType::image, true, returnUrlOnly);
         }

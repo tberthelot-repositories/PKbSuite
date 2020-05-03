@@ -9106,18 +9106,6 @@ void MainWindow::moveSelectedNotesToNoteSubFolder(
                 // handle the replacing of all note links from other notes
                 // because the note was moved
                 note.handleNoteMoving(oldNote);
-
-                // re-link images
-                const bool mediaFileLinksUpdated =
-                    note.updateRelativeMediaFileLinks();
-
-                // re-link attachments
-                const bool attachmentFileLinksUpdated =
-                    note.updateRelativeAttachmentFileLinks();
-
-                if (mediaFileLinksUpdated || attachmentFileLinksUpdated) {
-                    note.storeNoteTextFileToDisk();
-                }
             } else {
                 qWarning() << "Could not move note:" << note.getName();
             }
@@ -9196,18 +9184,6 @@ void MainWindow::copySelectedNotesToNoteSubFolder(
                 // tag the note again
                 for (const Tag &tag : tags) {
                     tag.linkToNote(note);
-                }
-
-                // re-link images
-                const bool mediaFileLinksUpdated =
-                    note.updateRelativeMediaFileLinks();
-
-                // re-link attachments
-                const bool attachmentFileLinksUpdated =
-                    note.updateRelativeAttachmentFileLinks();
-
-                if (mediaFileLinksUpdated || attachmentFileLinksUpdated) {
-                    note.storeNoteTextFileToDisk();
                 }
             } else {
                 qWarning() << "Could not copy note:" << note.getName();

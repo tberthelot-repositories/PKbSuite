@@ -260,7 +260,7 @@ class Note {
 	
     static bool scaleDownImageFileIfNeeded(QFile &file);
 
-    QString downloadUrlToMedia(const QUrl &url, bool returnUrlOnly = false);
+    QString downloadUrlToEmbedment(const QUrl &url, bool returnUrlOnly = false);
 
     QString importMediaFromBase64(
         QString &data, const QString &imageSuffix = QStringLiteral("dat"));
@@ -320,10 +320,6 @@ class Note {
     QString embedmentUrlStringForFileName(const QString &fileName) const;
 
     Note fetchByRelativeFileName(const QString &fileName) const;
-
-    bool updateRelativeMediaFileLinks();
-
-    bool updateRelativeAttachmentFileLinks();
 
     static Utils::Misc::ExternalImageHash *externalImageHash();
 
