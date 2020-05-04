@@ -15,6 +15,7 @@
 
 #include "ui_orphanedimagesdialog.h"
 #include "widgets/pkbsuitemarkdowntextedit.h"
+#include <QMimeDatabase>
 
 OrphanedImagesDialog::OrphanedImagesDialog(QWidget *parent)
     : MasterDialog(parent), ui(new Ui::OrphanedImagesDialog) {
@@ -26,9 +27,13 @@ OrphanedImagesDialog::OrphanedImagesDialog(QWidget *parent)
 	QDirIterator iterator(NoteFolder::currentLocalPath(), QDirIterator::Subdirectories);
 	while (iterator.hasNext()) {
 		iterator.next();
-		if (QFileInfo(iterator.filePath()).isFile())
-			if ((QFileInfo(iterator.filePath()).suffix() == "jpg") | (QFileInfo(iterator.filePath()).suffix() == "Jpg") | (QFileInfo(iterator.filePath()).suffix() == "JPG") | (QFileInfo(iterator.filePath()).suffix() == "jpeg") | (QFileInfo(iterator.filePath()).suffix() == "Jpeg") | (QFileInfo(iterator.filePath()).suffix() == "JPEG") | (QFileInfo(iterator.filePath()).suffix() == "png") | (QFileInfo(iterator.filePath()).suffix() == "Png") | (QFileInfo(iterator.filePath()).suffix() == "PNG"))
+		if (QFileInfo(iterator.filePath()).isFile()) {
+			QMimeDatabase db;
+			QMimeType type = db.mimeTypeForFile(iterator.filePath());
+			
+			if (type.name().contains("image"))
 				orphanedFiles << iterator.filePath();
+		}
 	}	
     orphanedFiles.removeDuplicates();
 	

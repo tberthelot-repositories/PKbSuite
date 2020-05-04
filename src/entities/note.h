@@ -247,13 +247,9 @@ class Note {
 
     static QString createNoteHeader(const QString &name);
 
-    QString getInsertMediaMarkdown(QFile *file, mediaType type, bool addNewLine = true,
+    QString getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNewLine = true,
                                    bool returnUrlOnly = false,
                                    QString title = QString());
-
-    QString getInsertAttachmentMarkdown(QFile *file,
-                                        QString fileName = QString(),
-                                        bool returnUrlOnly = false);
 	
     QString getInsertPDFMarkdown(QFile *file,
                                  bool addNewLine = true);

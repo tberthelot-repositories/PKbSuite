@@ -2881,8 +2881,7 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
             notesDir.entryList(QStringList{"*"}, QDir::Dirs, QDir::Time);
 
         // ignore some folders
-        const QStringList ignoreFolderList{".", "..", "media", "attachments",
-                                           "trash"};
+        const QStringList ignoreFolderList{".", "..", "trash"};
 
         QSettings settings;
         // ignore folders by regular expression
@@ -6291,7 +6290,7 @@ void MainWindow::on_actionInsert_image_triggered() {
  */
 bool MainWindow::insertMedia(QFile *file, QString title) {
     QString text =
-        _currentNote.getInsertMediaMarkdown(file, mediaType::image, true, false, std::move(title));
+        _currentNote.getInsertEmbedmentMarkdown(file, mediaType::image, true, false, std::move(title));
 
     if (!text.isEmpty()) {
         ScriptingService *scriptingService = ScriptingService::instance();
@@ -6489,7 +6488,7 @@ void MainWindow::insertNoteText(const QString &text) {
  * Inserts a file attachment into the current note
  */
 bool MainWindow::insertAttachment(QFile *file, const QString &title) {
-    QString text = _currentNote.getInsertAttachmentMarkdown(file, title);
+    QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::attachment, false, false, title);
 
     if (!text.isEmpty()) {
         qDebug() << __func__ << " - 'text': " << text;
@@ -7134,7 +7133,7 @@ void MainWindow::insertHtml(QString html) {
             showStatusBarMessage(tr("Downloading %1").arg(imageUrl.toString()));
 
             // download the image and get the media markdown code for it
-            markdownCode = _currentNote.downloadUrlToMedia(imageUrl);
+            markdownCode = _currentNote.downloadUrlToEmbedment(imageUrl);
         }
 
         if (!markdownCode.isEmpty()) {
