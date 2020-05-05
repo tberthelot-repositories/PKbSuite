@@ -49,7 +49,6 @@ class NoteFolder {
     static bool isCurrentHasSubfolders();
     static bool isCurrentShowSubfolders();
     static QString currentTrashPath();
-    static QString currentAttachmentsPath();
     static QString noteFoldersWebServiceJsonText();
     static bool isPathNoteFolder(const QString &path);
     static bool isCurrentNoteTreeEnabled();

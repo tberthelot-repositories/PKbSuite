@@ -18,7 +18,9 @@ class NoteSubFolder;
 
 typedef enum mediaType {
 	image,
-	attachment};
+	attachment,
+	pdf
+};
 	
 class Note {
    public:
@@ -246,13 +248,12 @@ class Note {
     void handleNoteMoving(const Note &oldNote) const;
 
     static QString createNoteHeader(const QString &name);
+	
+	QString currentEmbedmentFolder();
 
     QString getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNewLine = true,
                                    bool returnUrlOnly = false,
                                    QString title = QString());
-	
-    QString getInsertPDFMarkdown(QFile *file,
-                                 bool addNewLine = true);
 	
     static bool scaleDownImageFileIfNeeded(QFile &file);
 

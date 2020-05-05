@@ -364,14 +364,15 @@ QStringList Note::getEmbedmentFileList() {
     // or  ![media-qV920](notename/608766373.gif)
 	QString noteName = getName();
 
-    QRegularExpression re(QStringLiteral("![.*?](.*") + noteName + QStringLiteral("(.+?))"));
+    QRegularExpression re(QStringLiteral(R"(!\[.*?\]\(.*)") + noteName + QStringLiteral(R"(/(.+?)\))"));
     QRegularExpressionMatchIterator i = re.globalMatch(noteText);
 
     // remove all found images from the orphaned files list
+	const QString noteEmbedmentDir = getNoteSubFolder().fullPath() + QDir::separator() + getName() + QDir::separator();
     while (i.hasNext()) {
         QRegularExpressionMatch match = i.next();
         const QString fileName = match.captured(1);
-        fileList << fileName;
+        fileList << noteEmbedmentDir + fileName;
     }
 
     return fileList;
@@ -2928,6 +2929,15 @@ QString Note::createNoteHeader(const QString &name) {
 }
 
 /**
+ * Return the path of note's embedded item folder
+ */
+QString Note::currentEmbedmentFolder() {
+	QString strEmbedmentPath = fullNoteFileDirPath() + "/" + getName();
+	
+	return strEmbedmentPath.replace(" ", "_");
+}
+
+/**
  * Returns the markdown of the inserted object/file into a note
  */
 QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNewLine,
@@ -2935,7 +2945,7 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNe
     // file->exists() is false on Arch Linux for QTemporaryFile!
     if (file->size() > 0) {
         // Test if note's embedment folder exists
-        const QDir dir(this->fullNoteFileDirPath() + "/" + getName());
+        const QDir dir(currentEmbedmentFolder());
 
         // created the embedment folder if it doesn't exist
         if (!dir.exists()) {
@@ -2945,7 +2955,7 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNe
         const QFileInfo fileInfo(file->fileName());
 
         const QString newFilePath =
-            dir.path() + QDir::separator() + fileInfo.fileName();
+            dir.path() + QDir::separator() + fileInfo.fileName().replace(" ", "_");
 
         // copy the file to the embedment folder
         file->copy(newFilePath);
@@ -2973,9 +2983,12 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNe
 			}
 			break;
 			case mediaType::attachment: {
-				strEmbedmentCode = QStringLiteral("[") + fileName + QStringLiteral("](") + embedmentUrlString + QStringLiteral(")");
+				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](") + embedmentUrlString + QStringLiteral(")");
 			}
 			break;
+			case mediaType::pdf: {
+				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](file://") + dir.path() + QDir::separator() + embedmentUrlString + QStringLiteral(")") + (addNewLine ? "\n" : "");
+			}
 		}
 		
 		return strEmbedmentCode;
@@ -2985,7 +2998,9 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNe
 }
 
 QString Note::embedmentUrlStringForFileName(const QString &fileName) const {
-    return getName() + QDir::separator() + fileName;
+	QString tmpUrlString = getName() + QDir::separator() + fileName;
+	
+    return tmpUrlString.replace(" ", "_");
 }
 
 /**
@@ -3062,30 +3077,6 @@ QString Note::importMediaFromBase64(QString &data, const QString &imageSuffix) {
     delete tempFile;
 
     return markdownCode;
-}
-
-QString Note::getInsertPDFMarkdown(QFile *file, bool addNewLine) {
-    if (file->exists() && (file->size() > 0)) {
-        // Test if note's embedment folder exists
-        const QDir dir(this->fullNoteFilePath() + "/" + getName());
-
-        // created the attachments folder if it doesn't exist
-        if (!dir.exists()) {
-            dir.mkpath(dir.path());
-        }
-        
-        QFileInfo fileInfo(file->fileName());
-
-        // copy the file the the Note's embedment folder
-        QString processedFilename = fileInfo.fileName().simplified().replace(" ", "_");
-        file->copy(dir.path() + QDir::separator() + processedFilename);
-
-        // return the PDF link
-        // we add a "\n" in the end so that hoedown recognizes multiple PDF files
-        return "[" + fileInfo.baseName() + "](file://" + dir.path() + QDir::separator() + processedFilename + ")" + (addNewLine ? "\n" : "");
-    }
-
-    return "";
 }
 
 /**

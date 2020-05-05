@@ -58,13 +58,12 @@ OrphanedImagesDialog::OrphanedImagesDialog(QWidget *parent)
 
     Q_FOREACH (QString fileName, orphanedFiles) {
         QTreeWidgetItem *item = new QTreeWidgetItem();
-        item->setText(0, fileName);
-        item->setData(0, Qt::UserRole, fileName);
 
-        QString filePath = getFilePath(item);
-        QFileInfo info(filePath);
+        QFileInfo info(fileName);
         item->setToolTip(
             0, tr("Last modified at %1").arg(info.lastModified().toString()));
+        item->setData(0, Qt::UserRole, fileName);
+        item->setText(0, fileName.remove(0, fileName.lastIndexOf("/") + 1));
 
         ui->fileTreeWidget->addTopLevelItem(item);
     }

@@ -302,14 +302,6 @@ QString NoteFolder::currentTrashPath() {
 }
 
 /**
- * Fetches the current attachments path
- */
-QString NoteFolder::currentAttachmentsPath() {
-    return NoteFolder::currentLocalPath() + QDir::separator() +
-           QStringLiteral("attachments");
-}
-
-/**
  * Checks if there are note subfolders in the current note folder
  */
 bool NoteFolder::isCurrentHasSubfolders() {

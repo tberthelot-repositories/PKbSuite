@@ -25,7 +25,7 @@ OrphanedAttachmentsDialog::OrphanedAttachmentsDialog(QWidget *parent)
     ui->infoFrame->setEnabled(false);
     ui->fileTreeWidget->installEventFilter(this);
 
-    QDir attachmentsDir(NoteFolder::currentAttachmentsPath());
+    QDir attachmentsDir(NoteFolder::currentLocalPath());
 
     if (!attachmentsDir.exists()) {
         ui->progressBar->setValue(ui->progressBar->maximum());
@@ -61,7 +61,9 @@ OrphanedAttachmentsDialog::OrphanedAttachmentsDialog(QWidget *parent)
         item->setData(0, Qt::UserRole, fileName);
 
         QString filePath = getFilePath(item);
-        QFileInfo info(filePath);
+        item->setData(1, Qt::UserRole, filePath);
+		
+		QFileInfo info(filePath);
         item->setToolTip(
             0, tr("Last modified at %1").arg(info.lastModified().toString()));
 
@@ -123,10 +125,7 @@ QString OrphanedAttachmentsDialog::getFilePath(QTreeWidgetItem *item) {
         return QString();
     }
 
-    QString fileName = NoteFolder::currentAttachmentsPath() +
-                       QDir::separator() +
-                       item->data(0, Qt::UserRole).toString();
-    return fileName;
+    return item->data(1, Qt::UserRole).toString();
 }
 
 /**

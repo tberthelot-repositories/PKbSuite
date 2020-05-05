@@ -2882,6 +2882,12 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
 
         // ignore some folders
         const QStringList ignoreFolderList{".", "..", "trash"};
+		
+		// ignore note's embedment folders
+		const QStringList noteFolders =
+			notesDir.entryList(QStringList{"*.md"}, QDir::Files, QDir::Time);
+		noteFolders.replaceInStrings(" ", "_");
+		noteFolders.replaceInStrings(".md", "");
 
         QSettings settings;
         // ignore folders by regular expression
@@ -2896,7 +2902,11 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
             if (ignoreFolderList.contains(folder)) {
                 continue;
             }
-
+            
+            if (noteFolders.contains(folder)) {
+				continue;
+			}
+			
             // ignore folders by regular expression
             if (Utils::Misc::regExpInListMatches(folder,
                                                  ignoredFolderRegExpList)) {
@@ -6321,7 +6331,7 @@ bool MainWindow::insertPDF(QFile *file) {
         int iResult = dialog->exec();
         if (iResult == DropPDFDialog::idLink) {
             // If the annotations have not been processed, we just add a link to the PDF file
-            QString text = _currentNote.getInsertPDFMarkdown(file);
+            QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::pdf);
             if (!text.isEmpty()) {
                 ScriptingService* scriptingService = ScriptingService::instance();
                 // attempts to ask a script for an other markdown text
@@ -6373,7 +6383,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("```\n\n");
 
                 noteText.append("## ===== Document source =====  \n");
-                noteText.append("Fichier : " + note.getInsertPDFMarkdown(file) + "  \n");
+                noteText.append("Fichier : " + note.getInsertEmbedmentMarkdown(file, mediaType::pdf) + "  \n");
                 noteText.append("Titre : " + pdfFile.title() + "  \n");
                 noteText.append("Auteur : " + pdfFile.author() + "  \n");
                 noteText.append("Sujet : " + pdfFile.subject() + "  \n");
@@ -6444,7 +6454,7 @@ bool MainWindow::insertPDF(QFile *file) {
             return false;
     } else {
         // If the annotations have not been processed, we just add a link to the PDF file
-        QString text = _currentNote.getInsertPDFMarkdown(file);
+        QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::pdf);
         if (!text.isEmpty()) {
             ScriptingService* scriptingService = ScriptingService::instance();
             // attempts to ask a script for an other markdown text
