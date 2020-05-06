@@ -38,18 +38,12 @@ if(CCACHE_FOUND)
 endif(CCACHE_FOUND)
 
 qt5_wrap_ui(dialogs/ui_settingsdialog.h settingsdialog.ui)
-qt5_wrap_ui(dialogs/ui_tododialog.h tododialog.ui)
 qt5_wrap_ui(dialogs/ui_aboutdialog.h aboutdialog.ui)
-qt5_wrap_ui(dialogs/ui_trashdialog.h trashdialog.ui)
 qt5_wrap_ui(dialogs/ui_localtrashdialog.h localtrashdialog.ui)
 qt5_wrap_ui(dialogs/ui_linkdialog.h linkdialog.ui)
-qt5_wrap_ui(dialogs/ui_updatedialog.h updatedialog.ui)
-qt5_wrap_ui(dialogs/ui_notediffdialog.h notediffdialog.ui)
-qt5_wrap_ui(dialogs/ui_versiondialog.h versiondialog.ui)
 qt5_wrap_ui(dialogs/ui_welcomedialog.h welcomedialog.ui)
 qt5_wrap_ui(dialogs/ui_tagadddialog.h tagadddialog.ui)
 qt5_wrap_ui(widgets/ui_fontcolorwidget.h fontcolorwidget.ui)
-qt5_wrap_ui(widgets/ui_evernoteimportdialog.h ui_evernoteimportdialog.ui)
 qt5_wrap_ui(widgets/ui_layoutwidget.ui ui_layoutwidget.ui)
 qt5_wrap_ui(dialogs/ui_orphanedimagesdialog.h orphanedimagesdialog.ui)
 qt5_wrap_ui(dialogs/ui_orphanedattachmentsdialog.h orphanedattachmentsdialog.ui)
@@ -197,8 +191,6 @@ set(SOURCE_FILES
     libraries/qmarkdowntextedit/qplaintexteditsearchwidget.cpp
     libraries/qmarkdowntextedit/qplaintexteditsearchwidget.h
     libraries/qmarkdowntextedit/qplaintexteditsearchwidget.ui
-    libraries/simplecrypt/simplecrypt.cpp
-    libraries/simplecrypt/simplecrypt.h
     libraries/versionnumber/versionnumber.cpp
     libraries/versionnumber/versionnumber.h
     libraries/singleapplication/singleapplication.h
@@ -216,12 +208,6 @@ set(SOURCE_FILES
     libraries/qtcsv/src/sources/symbols.h
     services/databaseservice.cpp
     services/databaseservice.h
-    services/updateservice.cpp
-    services/updateservice.h
-    services/metricsservice.cpp
-    services/metricsservice.h
-    services/cryptoservice.cpp
-    services/cryptoservice.h
     services/scriptingservice.cpp
     services/scriptingservice.h
     libraries/piwiktracker/piwiktracker.h

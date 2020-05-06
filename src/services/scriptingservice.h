@@ -77,7 +77,6 @@ class ScriptingService : public QObject {
     Q_INVOKABLE int noteTextEditSelectionEnd();
     Q_INVOKABLE QString
     noteTextEditCurrentWord(bool withPreviousCharacters = false);
-    Q_INVOKABLE void encryptionDisablePassword();
     Q_INVOKABLE void tagCurrentNote(const QString &tagName);
     Q_INVOKABLE void addStyleSheet(const QString &stylesheet);
     Q_INVOKABLE void reloadScriptingEngine();
@@ -125,11 +124,6 @@ class ScriptingService : public QObject {
     QString callHandleNewNoteHeadlineHookForObject(QObject *object,
                                                    const QString &headline);
     QString callHandleNewNoteHeadlineHook(const QString &headline);
-    QString callEncryptionHookForObject(QObject *object, const QString &text,
-                                        const QString &password,
-                                        bool decrypt = false);
-    QString callEncryptionHook(const QString &text, const QString &password,
-                               bool decrypt = false);
     void callHandleNoteOpenedHook(Note *note);
     QString callHandleNoteNameHook(Note *note);
     bool callHandleNoteDoubleClickedHook(Note *note);

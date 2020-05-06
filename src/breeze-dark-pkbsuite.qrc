@@ -45,9 +45,6 @@
         <file alias="16x16/document-print.svg">icons/breeze-dark-pkbsuite/16x16/document-print.svg</file>
         <file alias="16x16/insert-image.svg">icons/breeze-dark-pkbsuite/16x16/insert-image.svg</file>
         <file alias="16x16/text-x-changelog.svg">icons/breeze-dark-pkbsuite/16x16/text-x-changelog.svg</file>
-        <file alias="16x16/document-decrypt.svg">icons/breeze-dark-pkbsuite/16x16/document-decrypt.svg</file>
-        <file alias="16x16/document-encrypted.svg">icons/breeze-dark-pkbsuite/16x16/document-encrypted.svg</file>
-        <file alias="16x16/document-edit-encrypt.svg">icons/breeze-dark-pkbsuite/16x16/document-edit-encrypt.svg</file>
         <file alias="16x16/story-editor.svg">icons/breeze-dark-pkbsuite/16x16/story-editor.svg</file>
         <file alias="16x16/text-x-markdown.svg">icons/breeze-dark-pkbsuite/16x16/text-x-markdown.svg</file>
         <file alias="16x16/gtk-select-font.svg">icons/breeze-dark-pkbsuite/16x16/gtk-select-font.svg</file>

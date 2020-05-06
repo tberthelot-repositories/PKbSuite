@@ -405,15 +405,9 @@ bool DatabaseService::setupTables() {
                        "file_size INT64 DEFAULT 0,"
                        "note_sub_folder_id int,"
                        "note_text TEXT,"
-                       "decrypted_note_text TEXT,"
                        "has_dirty_data INTEGER DEFAULT 0,"
                        "file_last_modified DATETIME,"
                        "file_created DATETIME,"
-                       "crypto_key INT64 DEFAULT 0,"
-                       "crypto_password VARCHAR(255),"
-                       "share_url VARCHAR(255),"
-                       "share_id int,"
-                       "share_permissions int,"
                        "created DATETIME default current_timestamp,"
                        "modified DATETIME default current_timestamp)"));
     queryMemory.exec(

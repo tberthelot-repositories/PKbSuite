@@ -225,9 +225,6 @@ void ScriptingService::reloadScriptComponents() {
     // clear the component cache
     _engine->clearComponentCache();
 
-    // enable the password dialog
-    qApp->setProperty("encryptionPasswordDisabled", false);
-
     // init the components again
     initComponents();
 }
@@ -828,63 +825,6 @@ QString ScriptingService::callPreNoteToMarkdownHtmlHook(
 }
 
 /**
- * Calls the encryptionHook function for an object
- *
- * @param object
- * @param text the text to encrypt or decrypt
- * @param password the password
- * @param decrypt if false encryption is demanded, if true decryption is
- * demanded
- * @return
- */
-QString ScriptingService::callEncryptionHookForObject(QObject *object,
-                                                      const QString &text,
-                                                      const QString &password,
-                                                      bool decrypt) {
-    if (methodExistsForObject(
-            object,
-            QStringLiteral("encryptionHook(QVariant,QVariant,QVariant)"))) {
-        QVariant result;
-        QMetaObject::invokeMethod(
-            object, "encryptionHook", Q_RETURN_ARG(QVariant, result),
-            Q_ARG(QVariant, text), Q_ARG(QVariant, password),
-            Q_ARG(QVariant, decrypt));
-        return result.toString();
-    }
-
-    return QString();
-}
-
-/**
- * Calls the encryptionHook function for all script components
- * This function is called when notes are encrypted or decrypted
- *
- * @param text
- * @param password the password
- * @param decrypt if false encryption is demanded, if true decryption is
- * demanded
- * @return
- */
-QString ScriptingService::callEncryptionHook(const QString &text,
-                                             const QString &password,
-                                             bool decrypt) {
-    QMapIterator<int, ScriptComponent> i(_scriptComponents);
-
-    while (i.hasNext()) {
-        i.next();
-        ScriptComponent scriptComponent = i.value();
-
-        QString result = callEncryptionHookForObject(scriptComponent.object,
-                                                     text, password, decrypt);
-        if (!result.isEmpty()) {
-            return result;
-        }
-    }
-
-    return QString();
-}
-
-/**
  * Calls the noteDoubleClickedHook function for all script components
  *
  * Returns true if hook was found
@@ -1336,13 +1276,6 @@ QString ScriptingService::clipboard(bool asHtml) {
     QClipboard *clipboard = QApplication::clipboard();
     const QMimeData *mimeData = clipboard->mimeData(QClipboard::Clipboard);
     return asHtml ? mimeData->html() : mimeData->text();
-}
-
-/**
- * Disables the note encryption password dialog
- */
-void ScriptingService::encryptionDisablePassword() {
-    qApp->setProperty("encryptionPasswordDisabled", true);
 }
 
 /**

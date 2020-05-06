@@ -28,7 +28,6 @@
 #include "libraries/botan/botanwrapper.h"
 #include "libraries/md4c/md2html/render_html.h"
 #include "libraries/md4c/md4c/md4c.h"
-#include "libraries/simplecrypt/simplecrypt.h"
 #include "notefolder.h"
 #include "notesubfolder.h"
 #include "tag.h"
@@ -50,10 +49,6 @@ QDateTime Note::getFileLastModified() const { return this->fileLastModified; }
 QDateTime Note::getFileCreated() const { return this->fileCreated; }
 
 QDateTime Note::getModified() const { return this->modified; }
-
-qint64 Note::getCryptoKey() const { return this->cryptoKey; }
-
-QString Note::getCryptoPassword() const { return this->cryptoPassword; }
 
 /**
  * Check 2nd bit for edit permissions
@@ -97,13 +92,7 @@ bool Note::getHasDirtyData() const { return this->hasDirtyData; }
 
 void Note::setName(QString text) { this->name = std::move(text); }
 
-void Note::setCryptoKey(const qint64 cryptoKey) { this->cryptoKey = cryptoKey; }
-
 void Note::setNoteText(QString text) { this->noteText = std::move(text); }
-
-void Note::setDecryptedNoteText(QString text) {
-    this->decryptedNoteText = std::move(text);
-}
 
 bool Note::addNote(const QString &name, const QString &fileName,
                    const QString &text) {
@@ -401,31 +390,6 @@ QStringList Note::getAttachmentsFileList() const {
     return fileList;
 }
 
-/**
- * Fetches a note by its share id
- *
- * @param shareId
- * @return
- */
-Note Note::fetchByShareId(int shareId) {
-    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
-    QSqlQuery query(db);
-
-    query.prepare(
-        QStringLiteral("SELECT * FROM note WHERE share_id = :share_id"));
-    query.bindValue(QStringLiteral(":share_id"), shareId);
-
-    if (!query.exec()) {
-        qWarning() << __func__ << ": " << query.lastError();
-    } else {
-        if (query.first()) {
-            return noteFromQuery(query);
-        }
-    }
-
-    return Note();
-}
-
 Note Note::fetchByName(const QString &name,
                        const QString &noteSubFolderPathData,
                        const QString& pathDataSeparator) {
@@ -472,10 +436,7 @@ void Note::fillFromQuery(const QSqlQuery &query) {
     fileName = query.value(QStringLiteral("file_name")).toString();
     noteSubFolderId = query.value(QStringLiteral("note_sub_folder_id")).toInt();
     noteText = query.value(QStringLiteral("note_text")).toString();
-    decryptedNoteText = query.value(QStringLiteral("decrypted_note_text")).toString();
-    cryptoKey = query.value(QStringLiteral("crypto_key")).toLongLong();
     fileSize = query.value(QStringLiteral("file_size")).toLongLong();
-    cryptoPassword = query.value(QStringLiteral("crypto_password")).toString();
     hasDirtyData = query.value(QStringLiteral("has_dirty_data")).toInt() == 1;
     fileCreated = query.value(QStringLiteral("file_created")).toDateTime();
     fileLastModified =
@@ -944,21 +905,6 @@ bool Note::storeNewText(QString text) {
     return this->store();
 }
 
-void Note::setDecryptedText(QString text) {
-    this->decryptedNoteText = std::move(text);
-}
-
-bool Note::storeNewDecryptedText(QString text) {
-    if (text == this->decryptedNoteText) {
-        return false;
-    }
-
-    this->decryptedNoteText = std::move(text);
-    this->hasDirtyData = true;
-
-    return this->store();
-}
-
 /**
  * Returns the default note file extension (`md`, `txt` or custom extensions)
  */
@@ -1020,12 +966,9 @@ bool Note::store() {
                               "file_size = :file_size,"
                               "note_sub_folder_id = :note_sub_folder_id,"
                               "note_text = :note_text,"
-                              "decrypted_note_text = :decrypted_note_text,"
                               "has_dirty_data = :has_dirty_data, "
                               "file_last_modified = :file_last_modified,"
                               "file_created = :file_created,"
-                              "crypto_key = :crypto_key,"
-                              "crypto_password = :crypto_password,"
                               "modified = :modified "
                               "WHERE id = :id"));
         query.bindValue(QStringLiteral(":id"), id);
@@ -1033,14 +976,12 @@ bool Note::store() {
         query.prepare(QStringLiteral("INSERT INTO note"
                               "(name, file_name, "
                               "file_size, note_text, has_dirty_data, "
-                              "file_last_modified, file_created, crypto_key,"
-                              "modified, crypto_password, decrypted_note_text, "
-                              "note_sub_folder_id) "
+                              "file_last_modified, file_created,"
+                              "modified, note_sub_folder_id) "
                               "VALUES (:name, "
                               ":file_name, :file_size, :note_text,"
                               ":has_dirty_data, :file_last_modified,"
-                              ":file_created, :crypto_key, :modified,"
-                              ":crypto_password, :decrypted_note_text,"
+                              ":file_created, :modified,"
                               ":note_sub_folder_id)"));
     }
 
@@ -1055,12 +996,9 @@ bool Note::store() {
     query.bindValue(QStringLiteral(":file_size"), fileSize);
     query.bindValue(QStringLiteral(":note_sub_folder_id"), noteSubFolderId);
     query.bindValue(QStringLiteral(":note_text"), noteText);
-    query.bindValue(QStringLiteral(":decrypted_note_text"), decryptedNoteText);
     query.bindValue(QStringLiteral(":has_dirty_data"), hasDirtyData ? 1 : 0);
     query.bindValue(QStringLiteral(":file_created"), fileCreated);
     query.bindValue(QStringLiteral(":file_last_modified"), fileLastModified);
-    query.bindValue(QStringLiteral(":crypto_key"), cryptoKey);
-    query.bindValue(QStringLiteral(":crypto_password"), cryptoPassword);
     query.bindValue(QStringLiteral(":modified"), modified);
 
     // on error
@@ -1132,13 +1070,6 @@ bool Note::storeNoteTextFileToDisk() {
 
         // handle the replacing of all note urls if a note was renamed
         handleNoteMoving(oldNote);
-    }
-
-    // if we find a decrypted text to encrypt, then we attempt encrypt it
-    if (!decryptedNoteText.isEmpty()) {
-        noteText = decryptedNoteText;
-        encryptNoteText();
-        decryptedNoteText = QLatin1String("");
     }
 
     // transform all types of newline to \n
@@ -1867,14 +1798,12 @@ bool Note::removeNoteFile() {
  * @return
  */
 QString Note::toMarkdownHtml(const QString &notesPath, int maxImageWidth,
-                             bool forExport, bool decrypt, bool base64Images) {
-    // get the decrypted note text (or the normal note text if there isn't any)
-    const QString str = decrypt ? getDecryptedNoteText() : getNoteText();
+                             bool forExport, bool base64Images) {
+    const QString str = getNoteText();
 
     // create a hash of the note text and the parameters
     const QString toHash = str + QString::number(maxImageWidth) +
                            (forExport ? QChar('1') : QChar('0')) +
-                           (decrypt ? QChar('1') : QChar('0')) +
                            (base64Images ? QChar('1') : QChar('0'));
     const QString hash = QString(
         QCryptographicHash::hash(toHash.toLocal8Bit(), QCryptographicHash::Sha1)
@@ -2383,224 +2312,6 @@ qint64 Note::qint64Hash(const QString &str) {
     qint64 a, b;
     stream >> a >> b;
     return a ^ b;
-}
-
-/**
- * Encrypts the note text with the note's crypto key
- */
-QString Note::encryptNoteText() {
-    // split the text into a string list
-    QStringList noteTextLines =
-        this->noteText.split(QRegExp(QStringLiteral(R"((\r\n)|(\n\r)|\r|\n)")));
-
-    // keep the first two lines unencrypted
-    noteText = noteTextLines.at(0) + QStringLiteral("\n") +
-               noteTextLines.at(1) + QStringLiteral("\n\n") +
-               QStringLiteral(NOTE_TEXT_ENCRYPTION_PRE_STRING) +
-               QStringLiteral("\n");
-
-    // remove the first two lines for encryption
-    noteTextLines.removeFirst();
-    noteTextLines.removeFirst();
-
-    // remove the 3rd line too if it is empty
-    if (noteTextLines.at(0).isEmpty()) {
-        noteTextLines.removeFirst();
-    }
-
-    // join the remaining lines
-    QString text = noteTextLines.join(QStringLiteral("\n"));
-
-    // empty notes will be detected as "can't be decrypted",
-    // so we will add a space
-    if (text.isEmpty()) {
-        text = QStringLiteral(" ");
-    }
-
-    // check if we have an external encryption method
-    QString encryptedText = ScriptingService::instance()->callEncryptionHook(
-        text, cryptoPassword, false);
-
-    // check if a hook changed the text
-    if (encryptedText.isEmpty()) {
-        // fallback to Botan
-        // encrypt the text
-        BotanWrapper botanWrapper;
-        botanWrapper.setPassword(cryptoPassword);
-        botanWrapper.setSalt(QStringLiteral(BOTAN_SALT));
-        encryptedText = botanWrapper.Encrypt(text);
-
-        //    SimpleCrypt *crypto = new
-        //    SimpleCrypt(static_cast<quint64>(cryptoKey)); QString
-        //    encryptedText = crypto->encryptToString(text);
-    }
-
-    // add the encrypted text to the new note text
-    noteText += encryptedText + QStringLiteral("\n") +
-                QStringLiteral(NOTE_TEXT_ENCRYPTION_POST_STRING);
-
-    // store note
-    store();
-
-    return noteText;
-}
-
-/**
- * Returns the regular expression to match encrypted text
- */
-QRegularExpression Note::getEncryptedNoteTextRegularExpression() const {
-    // match the encrypted string
-    QRegularExpression re(QRegularExpression::escape(
-                              QStringLiteral(NOTE_TEXT_ENCRYPTION_PRE_STRING)) +
-                          QStringLiteral("\\s+(.+)\\s+") +
-                          QRegularExpression::escape(QStringLiteral(
-                              NOTE_TEXT_ENCRYPTION_POST_STRING)));
-
-    re.setPatternOptions(QRegularExpression::MultilineOption |
-                         QRegularExpression::DotMatchesEverythingOption);
-
-    return re;
-}
-
-/**
- * Returns encrypted note text if it is encrypted
- */
-QString Note::getEncryptedNoteText() const {
-    const QString noteText = getNoteText();
-
-    // get regular expression for the encrypted string
-    const QRegularExpression re = getEncryptedNoteTextRegularExpression();
-
-    // check if we have an encrypted note text and return it if so
-    const QRegularExpressionMatch match = re.match(noteText);
-    return match.hasMatch() ? match.captured(1) : QLatin1String("");
-}
-
-/**
- * Returns encrypted note text if it is encrypted
- */
-bool Note::hasEncryptedNoteText() const {
-    return !getEncryptedNoteText().isEmpty();
-}
-
-/**
- * Checks if note text can be decrypted
- */
-bool Note::canDecryptNoteText() const {
-    const QString encryptedNoteText = getEncryptedNoteText();
-
-    if (encryptedNoteText.isEmpty()) {
-        return false;
-    }
-
-    // check if we have an external decryption method
-    QString decryptedNoteText =
-        ScriptingService::instance()->callEncryptionHook(encryptedNoteText,
-                                                         cryptoPassword, true);
-
-    // check if a hook changed the text
-    if (decryptedNoteText.isEmpty()) {
-        try {
-            // decrypt the note text with Botan
-            BotanWrapper botanWrapper;
-            botanWrapper.setPassword(cryptoPassword);
-            botanWrapper.setSalt(QStringLiteral(BOTAN_SALT));
-            decryptedNoteText = botanWrapper.Decrypt(encryptedNoteText);
-        } catch (Botan::Exception &) {
-            return false;
-        }
-
-        // fallback to SimpleCrypt
-        if (decryptedNoteText.isEmpty()) {
-            auto *crypto = new SimpleCrypt(static_cast<quint64>(cryptoKey));
-            decryptedNoteText = crypto->decryptToString(encryptedNoteText);
-            delete crypto;
-        }
-    }
-
-    return !decryptedNoteText.isEmpty();
-}
-
-/**
- * Sets the password to generate the cryptoKey
- */
-void Note::setCryptoPassword(const QString &password) {
-    cryptoKey = qint64Hash(password);
-    cryptoPassword = password;
-}
-
-/**
- * Returns decrypted note text if it is encrypted
- * The crypto key has to be set in the object
- */
-QString Note::getDecryptedNoteText() const {
-    QString noteText = getNoteText();
-    const QString encryptedNoteText = getEncryptedNoteText();
-
-    if (encryptedNoteText.isEmpty()) {
-        return noteText;
-    }
-
-    // check if we have an external decryption method
-    QString decryptedNoteText =
-        ScriptingService::instance()->callEncryptionHook(encryptedNoteText,
-                                                         cryptoPassword, true);
-
-    // check if a hook changed the text
-    if (decryptedNoteText.isEmpty()) {
-        // decrypt the note text
-        try {
-            BotanWrapper botanWrapper;
-            botanWrapper.setPassword(cryptoPassword);
-            botanWrapper.setSalt(QStringLiteral(BOTAN_SALT));
-            decryptedNoteText = botanWrapper.Decrypt(encryptedNoteText);
-        } catch (Botan::Exception &) {
-        }
-
-        // fallback to SimpleCrypt
-        if (decryptedNoteText.isEmpty()) {
-            auto *crypto = new SimpleCrypt(static_cast<quint64>(cryptoKey));
-            decryptedNoteText = crypto->decryptToString(encryptedNoteText);
-            delete crypto;
-        }
-    }
-
-    if (decryptedNoteText.isEmpty()) {
-        return noteText;
-    }
-
-    // get regular expression for the encrypted string
-    QRegularExpression re = getEncryptedNoteTextRegularExpression();
-
-    // replace the encrypted text with the decrypted text
-    noteText.replace(re, decryptedNoteText);
-    return noteText;
-}
-
-/**
- * Expire crypto keys in the database after 10min
- */
-bool Note::expireCryptoKeys() {
-    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
-    QSqlQuery query(db);
-
-    // 10min ago
-    QDateTime expiryDate = QDateTime::currentDateTime();
-    expiryDate = expiryDate.addSecs(-600);
-
-    // reset expired crypto keys
-    query.prepare(QStringLiteral(
-        "UPDATE note SET crypto_key = 0, crypto_password = '' WHERE "
-        "modified < :expiryDate AND crypto_key != 0"));
-    query.bindValue(QStringLiteral(":expiryDate"), expiryDate);
-
-    // on error
-    if (!query.exec()) {
-        qWarning() << __func__ << ": " << query.lastError();
-        return false;
-    }
-
-    return true;
 }
 
 /**
@@ -3366,9 +3077,7 @@ QString Note::getParsedBookmarksWebServiceJsonText() const {
  * @return
  */
 QVector<Bookmark> Note::getParsedBookmarks() const {
-    const QString text =
-        decryptedNoteText.isEmpty() ? noteText : decryptedNoteText;
-    return Bookmark::parseBookmarks(text);
+    return Bookmark::parseBookmarks(noteText);
 }
 
 void Note::resetNoteTextHtmlConversionHash() {

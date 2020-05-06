@@ -6,7 +6,6 @@
 #include <entities/script.h>
 #include <helpers/toolbarcontainer.h>
 #include <libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget.h>
-#include <services/cryptoservice.h>
 #include <services/scriptingservice.h>
 #include <services/websocketserverservice.h>
 #include <utils/gui.h>

@@ -12,8 +12,6 @@
 class Bookmark;
 class NoteSubFolder;
 
-#define NOTE_TEXT_ENCRYPTION_PRE_STRING "<!-- BEGIN ENCRYPTED TEXT --"
-#define NOTE_TEXT_ENCRYPTION_POST_STRING "-- END ENCRYPTED TEXT -->"
 #define BOTAN_SALT "Gj3%36/SmPoe12$snNAs-A-_.),?faQ1@!f32"
 
 typedef enum mediaType {
@@ -41,12 +39,6 @@ class Note {
     void setName(QString text);
 
     void setNoteText(QString text);
-
-    qint64 getCryptoKey() const;
-
-    QString getCryptoPassword() const;
-
-    void setCryptoKey(const qint64 cryptoKey);
 
     static bool addNote(const QString &name, const QString &fileName,
                         const QString &text);
@@ -139,8 +131,7 @@ class Note {
     bool remove(bool withFile = false);
 
     QString toMarkdownHtml(const QString &notesPath, int maxImageWidth = 980,
-                           bool forExport = false, bool decrypt = true,
-                           bool base64Images = false);
+                           bool forExport = false, bool base64Images = false);
 
     bool isFetched() const;
 
@@ -154,18 +145,6 @@ class Note {
 
     static qint64 qint64Hash(const QString &str);
 
-    QString encryptNoteText();
-
-    QString getDecryptedNoteText() const;
-
-    bool hasEncryptedNoteText() const;
-
-    void setCryptoPassword(const QString &password);
-
-    bool canDecryptNoteText() const;
-
-    static bool expireCryptoKeys();
-
     QUrl fullNoteFileUrl() const;
 
     QString fullNoteFilePath() const;
@@ -173,12 +152,6 @@ class Note {
     QString fullNoteFileDirPath() const;
 
     static QString encodeCssFont(const QFont &refFont);
-
-    void setDecryptedNoteText(QString text);
-
-    bool storeNewDecryptedText(QString text);
-
-    void setDecryptedText(QString text);
 
     QDateTime getFileLastModified() const;
 
@@ -232,11 +205,7 @@ class Note {
 
     bool isSameFile(const Note &note) const;
 
-    bool isShareEditAllowed() const;
-
     QString relativeNoteFilePath(QString separator = "");
-
-    static Note fetchByShareId(int shareId);
 
     qint64 getFileSize() const;
 
@@ -333,21 +302,14 @@ class Note {
     QString _noteTextHtml;
     QString _noteTextHtmlConversionHash;
     QString noteText;
-    QString decryptedNoteText;
     bool hasDirtyData;
     QDateTime fileCreated;
     QDateTime fileLastModified;
     QDateTime created;
     QDateTime modified;
     qint64 fileSize;
-    qint64 cryptoKey;
     int id;
     int noteSubFolderId;
-	QString cryptoPassword;
-    QRegularExpression getEncryptedNoteTextRegularExpression();
-
-    QRegularExpression getEncryptedNoteTextRegularExpression() const;
-    QString getEncryptedNoteText() const;
 
     static const QString getNoteURL(const QString &baseName);
 

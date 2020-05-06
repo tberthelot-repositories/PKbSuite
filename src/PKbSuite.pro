@@ -32,7 +32,6 @@ SOURCES += main.cpp\
     helpers/qownspellchecker.cpp \
         mainwindow.cpp \
     libraries/diff_match_patch/diff_match_patch.cpp \
-    libraries/simplecrypt/simplecrypt.cpp \
     libraries/versionnumber/versionnumber.cpp \
     libraries/botan/botanwrapper.cpp \
     libraries/md4c/md4c/md4c.c \
@@ -58,8 +57,6 @@ SOURCES += main.cpp\
     services/databaseservice.cpp \
     widgets/graphicsview.cpp \
     widgets/pkbsuitemarkdowntextedit.cpp \
-    dialogs/passworddialog.cpp \
-    services/cryptoservice.cpp \
     services/scriptingservice.cpp \
     services/websocketserverservice.cpp \
     dialogs/masterdialog.cpp \
@@ -104,7 +101,6 @@ HEADERS  += mainwindow.h \
     helpers/qownspellchecker.h \
     version.h \
     libraries/diff_match_patch/diff_match_patch.h \
-    libraries/simplecrypt/simplecrypt.h \
     libraries/versionnumber/versionnumber.h \
     libraries/botan/botanwrapper.h \
     libraries/md4c/md4c/md4c.h \
@@ -133,8 +129,6 @@ HEADERS  += mainwindow.h \
     release.h \
     widgets/graphicsview.h \
     widgets/pkbsuitemarkdowntextedit.h \
-    dialogs/passworddialog.h \
-    services/cryptoservice.h \
     dialogs/masterdialog.h \
     utils/misc.h \
     utils/gui.h \
@@ -181,7 +175,6 @@ FORMS    += mainwindow.ui \
     dialogs/settingsdialog.ui \
     dialogs/localtrashdialog.ui \
     dialogs/linkdialog.ui \
-    dialogs/passworddialog.ui \
     dialogs/welcomedialog.ui \
     dialogs/tagadddialog.ui \
     widgets/fontcolorwidget.ui \

@@ -6550,11 +6550,6 @@ Vous pouvez tester vous-même. Si vous avez des conflits de synchronisation, vou
         <translation>Merci d&apos;entrer l’url CalDAV de base de votre calendrier.</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.ui" line="1947"/>
-        <source>Please enter the password for your CalDAV username.&lt;br/&gt;Currently the password will be stored encrypted with the other settings, but is not very secure.</source>
-        <translation>Veuillez entrer le mot de passe pour votre nom d’utilisateur CalDAV. &lt;br/&gt; Actuellement, le mot de passe est stocké encrypté avec les autres paramètres, mais ce n’est pas très sécurisé.</translation>
-    </message>
-    <message>
         <location filename="../dialogs/settingsdialog.ui" line="2248"/>
         <source>Czech</source>
         <translation>Tchèque</translation>

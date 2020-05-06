@@ -30,7 +30,6 @@
 #include <entities/trashitem.h>
 #include <helpers/toolbarcontainer.h>
 #include <helpers/flowlayout.h>
-#include <services/cryptoservice.h>
 #include <services/scriptingservice.h>
 #include <utils/gui.h>
 #include <utils/misc.h>
@@ -89,7 +88,6 @@
 #include "dialogs/notediffdialog.h"
 #include "dialogs/orphanedattachmentsdialog.h"
 #include "dialogs/orphanedimagesdialog.h"
-#include "dialogs/passworddialog.h"
 #include "dialogs/settingsdialog.h"
 #include "helpers/pkbsuitemarkdownhighlighter.h"
 #include "libraries/diff_match_patch/diff_match_patch.h"
@@ -154,20 +152,13 @@ MainWindow::MainWindow(QWidget *parent)
     sortingOrder->addAction(ui->actionDescending);
     sortingOrder->setExclusive(true);
 
-    // hide the encrypted note text edit by default
-    ui->encryptedNoteTextEdit->hide();
-    ui->multiSelectActionFrame->hide();
-
     // set the search frames for the note text edits
     bool darkMode = settings.value(QStringLiteral("darkMode")).toBool();
     ui->noteTextEdit->initSearchFrame(ui->noteTextEditSearchFrame, darkMode);
-    ui->encryptedNoteTextEdit->initSearchFrame(ui->noteTextEditSearchFrame,
-                                               darkMode);
     ui->noteTextView->initSearchFrame(ui->noteTextViewSearchFrame, darkMode);
 
     // set the main window for accessing it's public methods
     ui->noteTextEdit->setMainWindow(this);
-    ui->encryptedNoteTextEdit->setMainWindow(this);
 
     // initialize the tag button scroll area
     initTagButtonScrollArea();
@@ -254,8 +245,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->noteTextView->viewport()->installEventFilter(this);
     ui->noteTextEdit->installEventFilter(this);
     ui->noteTextEdit->viewport()->installEventFilter(this);
-    ui->encryptedNoteTextEdit->installEventFilter(this);
-    ui->encryptedNoteTextEdit->viewport()->installEventFilter(this);
     ui->tagTreeWidget->installEventFilter(this);
     ui->newNoteTagLineEdit->installEventFilter(this);
     ui->selectedTagsToolButton->installEventFilter(this);
@@ -265,21 +254,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     // ignores note clicks in QMarkdownTextEdit in the note text edit
     ui->noteTextEdit->setIgnoredClickUrlSchemata(QStringList({"note", "task"}));
-    ui->encryptedNoteTextEdit->setIgnoredClickUrlSchemata(
-        QStringList({"note", "task"}));
 
     // handle note url externally in the note text edit
     connect(ui->noteTextEdit, &PKbSuiteMarkdownTextEdit::urlClicked, this,
             &MainWindow::openLocalUrl);
-    // also handle note url externally in the encrypted note text edit
-    connect(ui->encryptedNoteTextEdit, &PKbSuiteMarkdownTextEdit::urlClicked,
-            this, &MainWindow::openLocalUrl);
 
     // handle note text edit resize events
     connect(ui->noteTextEdit, &PKbSuiteMarkdownTextEdit::resize, this,
             &MainWindow::noteTextEditResize);
-    connect(ui->encryptedNoteTextEdit, &PKbSuiteMarkdownTextEdit::resize, this,
-            &MainWindow::encryptedNoteTextEditResize);
 
     // set the tab stop to the width of 4 spaces in the editor
     const int tabStop = 4;
@@ -289,11 +271,9 @@ MainWindow::MainWindow(QWidget *parent)
 #if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
     int width = tabStop * metrics.width(' ');
     ui->noteTextEdit->setTabStopWidth(width);
-    ui->encryptedNoteTextEdit->setTabStopWidth(width);
 #else
     int width = tabStop * metrics.horizontalAdvance(' ');
     ui->noteTextEdit->setTabStopDistance(width);
-    ui->encryptedNoteTextEdit->setTabStopDistance(width);
 #endif
 
     // called now in readSettingsFromSettingsDialog() line 494
@@ -398,11 +378,6 @@ MainWindow::MainWindow(QWidget *parent)
     // track cursor position changes for the line number label
     connect(ui->noteTextEdit, &PKbSuiteMarkdownTextEdit::cursorPositionChanged,
             this, &MainWindow::noteEditCursorPositionChanged);
-
-    // track cursor position changes for the line number label
-    connect(ui->encryptedNoteTextEdit,
-            &PKbSuiteMarkdownTextEdit::cursorPositionChanged, this,
-            &MainWindow::noteEditCursorPositionChanged);
 
     // restore the note tabs
     Utils::Gui::restoreNoteTabs(ui->noteEditTabWidget,
@@ -672,7 +647,6 @@ void MainWindow::initDockWidgets() {
 #ifdef Q_OS_LINUX
     if (_noteEditIsCentralWidget) {
         ui->noteTextEdit->setFrameShape(QFrame::StyledPanel);
-        ui->encryptedNoteTextEdit->setFrameShape(QFrame::StyledPanel);
     }
 #endif
 
@@ -811,7 +785,6 @@ void MainWindow::initEditorSoftWrap() {
                                              : QPlainTextEdit::NoWrap;
 
     ui->noteTextEdit->setLineWrapMode(pMode);
-    ui->encryptedNoteTextEdit->setLineWrapMode(pMode);
     ui->noteTextView->setLineWrapMode(mode);
 }
 
@@ -862,13 +835,6 @@ void MainWindow::initToolbars() {
     _insertingToolbar->addAction(ui->actionInsert_current_time);
     _insertingToolbar->setObjectName(QStringLiteral("insertingToolbar"));
     addToolBar(_insertingToolbar);
-
-    _encryptionToolbar = new QToolBar(tr("encryption toolbar"), this);
-    _encryptionToolbar->addAction(ui->action_Encrypt_note);
-    _encryptionToolbar->addAction(ui->actionEdit_encrypted_note);
-    _encryptionToolbar->addAction(ui->actionDecrypt_note);
-    _encryptionToolbar->setObjectName(QStringLiteral("encryptionToolbar"));
-    addToolBar(_encryptionToolbar);
 
     _windowToolbar = new QToolBar(tr("window toolbar"), this);
     updateWindowToolbar();
@@ -1256,7 +1222,6 @@ void MainWindow::initStyling() {
 
     if (!isInDistractionFreeMode()) {
         ui->noteTextEdit->setPaperMargins(0);
-        ui->encryptedNoteTextEdit->setPaperMargins(0);
     }
 
 #ifdef Q_OS_MAC
@@ -1280,9 +1245,6 @@ void MainWindow::initStyling() {
     // move the note view scrollbar when the note edit scrollbar was moved
     connect(ui->noteTextEdit->verticalScrollBar(), SIGNAL(valueChanged(int)),
             this, SLOT(noteTextSliderValueChanged(int)));
-    connect(ui->encryptedNoteTextEdit->verticalScrollBar(),
-            SIGNAL(valueChanged(int)), this,
-            SLOT(noteTextSliderValueChanged(int)));
 
     // move the note edit scrollbar when the note view scrollbar was moved
     connect(ui->noteTextView->verticalScrollBar(), SIGNAL(valueChanged(int)),
@@ -1445,7 +1407,6 @@ void MainWindow::setDistractionFreeMode(const bool enabled) {
     }
 
     ui->noteTextEdit->setPaperMargins();
-    ui->encryptedNoteTextEdit->setPaperMargins();
 }
 
 /**
@@ -2295,7 +2256,6 @@ void MainWindow::readSettingsFromSettingsDialog(const bool isAppLaunch) {
         _formattingToolbar->setIconSize(size);
         _customActionToolbar->setIconSize(size);
         _insertingToolbar->setIconSize(size);
-        _encryptionToolbar->setIconSize(size);
         _windowToolbar->setIconSize(size);
         _quitToolbar->setIconSize(size);
     }
@@ -2344,10 +2304,8 @@ void MainWindow::readSettingsFromSettingsDialog(const bool isAppLaunch) {
     // set the cursor width of the note text-edits
     int cursorWidth = settings.value(QStringLiteral("cursorWidth"), 1).toInt();
     ui->noteTextEdit->setCursorWidth(cursorWidth);
-    ui->encryptedNoteTextEdit->setCursorWidth(cursorWidth);
 
     ui->noteTextEdit->setPaperMargins();
-    ui->encryptedNoteTextEdit->setPaperMargins();
 
     if (_webSocketServerService == Q_NULLPTR) {
         QTimer::singleShot(250, this, SLOT(initWebSocketServerService()));
@@ -2414,7 +2372,6 @@ void MainWindow::updateNoteTextFromDisk(Note note) {
     note.updateNoteTextFromDisk();
     note.store();
     this->_currentNote = note;
-    updateEncryptNoteButtons();
 
     {
         const QSignalBlocker blocker(this->ui->noteTextEdit);
@@ -2819,11 +2776,6 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
         QTimer::singleShot(500, this, SLOT(jumpToWelcomeNote()));
     }
 
-    // get the current crypto key to set it again
-    // after all notes were read again
-    const qint64 cryptoKey = _currentNote.getCryptoKey();
-    const QString cryptoPassword = _currentNote.getCryptoPassword();
-
     if (!hasNoteSubFolder && forceRebuild) {
         // first delete all notes and note sub folders in the database if a
         // rebuild was forced
@@ -2892,13 +2844,6 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
     // re-fetch current note (because all the IDs have changed after the
     // buildNotesIndex()
     _currentNote.refetch();
-
-    if (cryptoKey != 0) {
-        // reset the old crypto key for the current note
-        _currentNote.setCryptoKey(cryptoKey);
-        _currentNote.setCryptoPassword(cryptoPassword);
-        _currentNote.store();
-    }
 
     // build the note sub folders
     const bool showSubfolders = NoteFolder::isCurrentHasSubfolders();
@@ -3365,8 +3310,6 @@ void MainWindow::setCurrentNote(Note note, bool updateNoteText,
         jumpToNoteSubFolder(note.getNoteSubFolderId());
     }
 
-    enableShowTrashButton();
-
     // update cursor position of previous note
     const int noteId = note.getId();
     if (_currentNote.exists() && (_currentNote.getId() != note.getId())) {
@@ -3414,12 +3357,9 @@ void MainWindow::setCurrentNote(Note note, bool updateNoteText,
 
         this->setNoteTextFromNote(&note);
 
-        // hide the encrypted note text edit by default and show the regular one
-        ui->encryptedNoteTextEdit->hide();
         ui->noteTextEdit->show();
     }
 
-    updateEncryptNoteButtons();
     // we also need to do this in on_noteTreeWidget_itemSelectionChanged
     // because of different timings
     reloadCurrentNoteTags();
@@ -3523,16 +3463,12 @@ void MainWindow::updateCurrentNoteTextHash() {
 
 /**
  * Sets the note text edit to readonly if the note does not exist or the
- * note file is not writable or the note is encrypted
+ * note file is not writable
  */
 void MainWindow::updateNoteTextEditReadOnly() {
     setNoteTextEditReadOnly(!(_currentNote.exists() &&
                               _currentNote.fileWriteable() &&
                               Utils::Misc::isNoteEditingAllowed()));
-
-    if (ui->noteTextEdit->isVisible() && _currentNote.hasEncryptedNoteText()) {
-        ui->noteTextEdit->setReadOnly(true);
-    }
 
     ui->noteTextEdit->setTextInteractionFlags(
         ui->noteTextEdit->textInteractionFlags() |
@@ -3546,14 +3482,10 @@ void MainWindow::updateNoteTextEditReadOnly() {
  */
 void MainWindow::setNoteTextEditReadOnly(bool readonly) const {
     ui->noteTextEdit->setReadOnly(readonly);
-    ui->encryptedNoteTextEdit->setReadOnly(readonly);
 
     ui->noteTextEdit->setTextInteractionFlags(
         ui->noteTextEdit->textInteractionFlags() |
         Qt::TextSelectableByKeyboard);
-    ui->encryptedNoteTextEdit->setTextInteractionFlags(
-            ui->encryptedNoteTextEdit->textInteractionFlags() |
-            Qt::TextSelectableByKeyboard);
 }
 
 /**
@@ -3613,9 +3545,6 @@ void MainWindow::removeCurrentNote() {
 
         const QSignalBlocker blocker3(ui->noteTextView);
         Q_UNUSED(blocker3)
-
-        const QSignalBlocker blocker4(ui->encryptedNoteTextEdit);
-        Q_UNUSED(blocker4)
 
         const QSignalBlocker blocker5(noteDirectoryWatcher);
         Q_UNUSED(blocker5)
@@ -3893,7 +3822,6 @@ void MainWindow::searchInNoteTextEdit(QString str) {
         doSearchInNote(str);
         ui->noteTextEdit->moveCursor(QTextCursor::Start);
         ui->noteTextView->moveCursor(QTextCursor::Start);
-        ui->encryptedNoteTextEdit->moveCursor(QTextCursor::Start);
         const QColor color = QColor(0, 180, 0, 100);
 
         // build the string list of the search string
@@ -3929,20 +3857,11 @@ void MainWindow::searchInNoteTextEdit(QString str) {
                 extra.cursor = ui->noteTextView->textCursor();
                 extraSelections2.append(extra);
             }
-
-            while (ui->encryptedNoteTextEdit->find(regExp)) {
-                QTextEdit::ExtraSelection extra = QTextEdit::ExtraSelection();
-                extra.format.setBackground(color);
-
-                extra.cursor = ui->encryptedNoteTextEdit->textCursor();
-                extraSelections3.append(extra);
-            }
         }
     }
 
     ui->noteTextEdit->setExtraSelections(extraSelections);
     ui->noteTextView->setExtraSelections(extraSelections2);
-    ui->encryptedNoteTextEdit->setExtraSelections(extraSelections3);
 }
 
 /**
@@ -3951,49 +3870,6 @@ void MainWindow::searchInNoteTextEdit(QString str) {
 void MainWindow::searchForSearchLineTextInNoteTextEdit() {
     QString searchString = ui->searchLineEdit->text();
     searchInNoteTextEdit(std::move(searchString));
-}
-
-/**
- * Asks for the password if the note is encrypted and can't be decrypted
- */
-void MainWindow::askForEncryptedNotePasswordIfNeeded(
-    const QString &additionalText) {
-    _currentNote.refetch();
-
-    // check if the note is encrypted and can't be decrypted
-    if (_currentNote.hasEncryptedNoteText() &&
-        !_currentNote.canDecryptNoteText()) {
-        QString labelText =
-            tr("Please enter the <strong>password</strong> "
-               "of this encrypted note.");
-
-        if (!additionalText.isEmpty()) {
-            labelText += QStringLiteral(" ") + additionalText;
-        }
-
-        auto *dialog = new PasswordDialog(this, labelText);
-        const int dialogResult = dialog->exec();
-
-        // if user pressed ok take the password
-        if (dialogResult == QDialog::Accepted) {
-            const QString password = dialog->password();
-            if (!password.isEmpty()) {
-                // set the password so it can be decrypted
-                // for the markdown view
-                _currentNote.setCryptoPassword(password);
-                _currentNote.store();
-            }
-
-            // warn if password is incorrect
-            if (!_currentNote.canDecryptNoteText()) {
-                QMessageBox::warning(
-                    this, tr("Note can't be decrypted!"),
-                    tr("It seems that your password is not valid!"));
-            }
-        }
-
-        delete (dialog);
-    }
 }
 
 /**
@@ -4028,10 +3904,9 @@ void MainWindow::setNoteTextFromNote(Note *note, bool updateNoteTextViewOnly,
 
     // update the preview text edit if the dock widget is visible
     if (_notePreviewDockWidget->isVisible() || ignorePreviewVisibility) {
-        const bool decrypt = ui->noteTextEdit->isHidden();
 
         const QString html = note->toMarkdownHtml(
-            NoteFolder::currentLocalPath(), getMaxImageWidth(), false, decrypt);
+            NoteFolder::currentLocalPath(), getMaxImageWidth(), false);
 
         // create a hash of the html (because
         const QString hash =
@@ -4159,9 +4034,6 @@ void MainWindow::removeSelectedNotes() {
 
         const QSignalBlocker blocker3(ui->noteTextView);
         Q_UNUSED(blocker3)
-
-        const QSignalBlocker blocker4(ui->encryptedNoteTextEdit);
-        Q_UNUSED(blocker4)
 
         // we try to fix problems with note subfolders
         directoryWatcherWorkaround(true);
@@ -4430,12 +4302,6 @@ void MainWindow::unsetCurrentNote() {
     Q_UNUSED(blocker2)
     ui->noteTextEdit->clear();
     ui->noteTextEdit->show();
-
-    // clear the encrypted note text edit
-    const QSignalBlocker blocker3(ui->encryptedNoteTextEdit);
-    Q_UNUSED(blocker3)
-    ui->encryptedNoteTextEdit->hide();
-    ui->encryptedNoteTextEdit->clear();
 
     // set the note text edits to readonly
     setNoteTextEditReadOnly(true);
@@ -4792,8 +4658,7 @@ bool MainWindow::showRestartNotificationIfNeeded() {
  * @brief Returns the active note text edit
  */
 PKbSuiteMarkdownTextEdit *MainWindow::activeNoteTextEdit() {
-    return ui->noteTextEdit->isHidden() ? ui->encryptedNoteTextEdit
-                                        : ui->noteTextEdit;
+    return ui->noteTextEdit;
 }
 
 /**
@@ -5126,7 +4991,6 @@ void MainWindow::noteTextEditTextWasUpdated() {
 
         ScriptingService::instance()->onCurrentNoteChanged(&_currentNote);
 
-        updateEncryptNoteButtons();
         handleNoteTextChanged();
     }
 }
@@ -6042,10 +5906,6 @@ void MainWindow::on_action_Settings_triggered() {
     openSettingsDialog();
 }
 
-void MainWindow::enableShowTrashButton() {
-    ui->actionShow_trash->setDisabled(false);
-}
-
 void MainWindow::on_actionSelect_all_notes_triggered() { selectAllNotes(); }
 
 /**
@@ -6055,16 +5915,6 @@ void MainWindow::on_actionSelect_all_notes_triggered() { selectAllNotes(); }
  */
 void MainWindow::on_noteTextEdit_customContextMenuRequested(const QPoint pos) {
     noteTextEditCustomContextMenuRequested(ui->noteTextEdit, pos);
-}
-
-/**
- * Creates the additional menu entries for the encrypted note text edit field
- *
- * @param pos
- */
-void MainWindow::on_encryptedNoteTextEdit_customContextMenuRequested(
-    const QPoint pos) {
-    noteTextEditCustomContextMenuRequested(ui->encryptedNoteTextEdit, pos);
 }
 
 /**
@@ -6303,10 +6153,9 @@ void MainWindow::on_action_Export_note_as_PDF_text_triggered() {
 }
 
 QTextDocument *MainWindow::getDocumentForPreviewExport() {
-    bool decrypt = ui->noteTextEdit->isHidden();
     QString html = _currentNote.toMarkdownHtml(
         NoteFolder::currentLocalPath(), getMaxImageWidth(),
-        Utils::Misc::useInternalExportStylingForPreview(), decrypt);
+        Utils::Misc::useInternalExportStylingForPreview());
     html = Utils::Misc::parseTaskList(html, false);
 
     auto doc = ui->noteTextView->document()->clone();
@@ -6647,141 +6496,6 @@ void MainWindow::on_action_Find_text_in_note_triggered() {
 }
 
 /**
- * Asks the user for a password and encrypts the note text with it
- */
-void MainWindow::on_action_Encrypt_note_triggered() {
-    _currentNote.refetch();
-
-    // return if there the note text is already encrypted
-    if (_currentNote.hasEncryptedNoteText()) {
-        return;
-    }
-
-    // the password dialog can be disabled by scripts
-    const bool dialogDisabled =
-        qApp->property("encryptionPasswordDisabled").toBool();
-
-    if (!dialogDisabled) {
-        const QString labelText = tr(
-            "Please enter your <strong>password</strong> to encrypt the note."
-            "<br />Keep in mind that you have to <strong>remember</strong> "
-            "your password to read the content of the note<br /> and that you "
-            "can <strong>only</strong> do that <strong>in PKbSuite</strong>!");
-        auto *dialog = new PasswordDialog(this, labelText, true);
-        const int dialogResult = dialog->exec();
-
-        // if the user didn't pressed ok return
-        if (dialogResult != QDialog::Accepted) {
-            return;
-        }
-
-        // take the password
-        const QString password = dialog->password();
-
-        // if password was empty return
-        if (password.isEmpty()) {
-            return;
-        }
-
-        // set the password
-        _currentNote.setCryptoPassword(password);
-        _currentNote.store();
-
-        delete (dialog);
-    }
-
-    // encrypt the note
-    const QString noteText = _currentNote.encryptNoteText();
-    ui->noteTextEdit->setPlainText(noteText);
-    updateNoteTextEditReadOnly();
-}
-
-/**
- * Enables or disables the encrypt note buttons
- */
-void MainWindow::updateEncryptNoteButtons() {
-    _currentNote.refetch();
-    const bool hasEncryptedNoteText = _currentNote.hasEncryptedNoteText();
-
-    ui->action_Encrypt_note->setEnabled(!hasEncryptedNoteText);
-    ui->actionEdit_encrypted_note->setEnabled(hasEncryptedNoteText);
-    ui->actionDecrypt_note->setEnabled(hasEncryptedNoteText);
-}
-
-/**
- * Attempt to decrypt note text
- */
-void MainWindow::on_actionDecrypt_note_triggered() {
-    _currentNote.refetch();
-    if (!_currentNote.hasEncryptedNoteText()) {
-        return;
-    }
-
-    if (QMessageBox::warning(
-            this, tr("Decrypt note and store it as plain text"),
-            tr("Your note will be decrypted and stored as plain text again. "
-               "Keep in mind that the unencrypted note will possibly be "
-               "synced to your server and sensitive text may be exposed!"
-               "<br />Do you want to decrypt your note?"),
-            tr("&Decrypt"), tr("&Cancel"), QString(), 0, 1) == 1) {
-        return;
-    }
-
-    askForEncryptedNotePasswordIfNeeded();
-
-    if (_currentNote.canDecryptNoteText()) {
-        ui->encryptedNoteTextEdit->hide();
-        ui->noteTextEdit->setText(_currentNote.getDecryptedNoteText());
-        ui->noteTextEdit->show();
-        ui->noteTextEdit->setFocus();
-        updateNoteTextEditReadOnly();
-    }
-}
-
-/**
- * Lets the user edit an encrypted note text in a 2nd text edit
- */
-void MainWindow::on_actionEdit_encrypted_note_triggered() {
-    _currentNote.refetch();
-    if (!_currentNote.hasEncryptedNoteText()) {
-        return;
-    }
-
-    askForEncryptedNotePasswordIfNeeded(
-        tr("<br />You will be able to edit your encrypted note."));
-
-    if (_currentNote.canDecryptNoteText()) {
-        const QSignalBlocker blocker(ui->encryptedNoteTextEdit);
-        Q_UNUSED(blocker)
-
-        ui->noteTextEdit->hide();
-        const auto text = _currentNote.getDecryptedNoteText();
-        _currentNote.setDecryptedText(text);
-        // for some reason this still triggers a "textChanged", so we will do a
-        // "_currentNote.setDecryptedText" and check if the text realy changed in
-        // "_currentNote.storeNewDecryptedText"
-        ui->encryptedNoteTextEdit->setText(text);
-        ui->encryptedNoteTextEdit->show();
-        ui->encryptedNoteTextEdit->setFocus();
-        _noteViewNeedsUpdate = true;
-        updateNoteTextEditReadOnly();
-    }
-}
-
-/**
- * Puts the encrypted text back to the note text edit
- */
-void MainWindow::on_encryptedNoteTextEdit_textChanged() {
-    // this also triggers when formatting is applied / syntax highlighting
-    // changes!
-    //    if
-    //    (_currentNote.storeNewDecryptedText(ui->encryptedNoteTextEdit->toPlainText()))
-    //    {
-    //        handleNoteTextChanged();
-    //    }
-}
-
-/**
  * Opens the current note in an external editor
  */
 void MainWindow::on_action_Open_note_in_external_editor_triggered() {
@@ -7021,7 +6735,6 @@ void MainWindow::dfmEditorWidthActionTriggered(QAction *action) {
                       action->whatsThis().toInt());
 
     ui->noteTextEdit->setPaperMargins();
-    ui->encryptedNoteTextEdit->setPaperMargins();
 }
 
 /**
@@ -7385,11 +7098,9 @@ void MainWindow::on_actionFormat_text_italic_triggered() {
 void MainWindow::on_action_Increase_note_text_size_triggered() {
     const int fontSize =
         ui->noteTextEdit->modifyFontSize(PKbSuiteMarkdownTextEdit::Increase);
-    ui->encryptedNoteTextEdit->setStyles();
 
     if (isInDistractionFreeMode()) {
         ui->noteTextEdit->setPaperMargins();
-        ui->encryptedNoteTextEdit->setPaperMargins();
     }
 
     showStatusBarMessage(tr("Increased font size to %1 pt").arg(fontSize),
@@ -7402,11 +7113,9 @@ void MainWindow::on_action_Increase_note_text_size_triggered() {
 void MainWindow::on_action_Decrease_note_text_size_triggered() {
     const int fontSize =
         ui->noteTextEdit->modifyFontSize(PKbSuiteMarkdownTextEdit::Decrease);
-    ui->encryptedNoteTextEdit->setStyles();
 
     if (isInDistractionFreeMode()) {
         ui->noteTextEdit->setPaperMargins();
-        ui->encryptedNoteTextEdit->setPaperMargins();
     }
 
     showStatusBarMessage(tr("Decreased font size to %1 pt").arg(fontSize),
@@ -7419,7 +7128,6 @@ void MainWindow::on_action_Decrease_note_text_size_triggered() {
 void MainWindow::on_action_Reset_note_text_size_triggered() {
     const int fontSize =
         ui->noteTextEdit->modifyFontSize(PKbSuiteMarkdownTextEdit::Reset);
-    ui->encryptedNoteTextEdit->setStyles();
     showStatusBarMessage(tr("Reset font size to %1 pt",
                             "Will be shown after "
                             "the font size is reset by 'Reset note text size'")
@@ -9699,8 +9407,7 @@ void MainWindow::on_actionExport_preview_HTML_triggered() {
             QTextStream out(&file);
             out.setCodec("UTF-8");
             out << _currentNote.toMarkdownHtml(NoteFolder::currentLocalPath(),
-                                              getMaxImageWidth(), true, true,
-                                              true);
+                                              getMaxImageWidth(), true, true);
             file.flush();
             file.close();
             Utils::Misc::openFolderSelect(fileName);
@@ -11534,11 +11241,6 @@ void MainWindow::noteTextEditResize(QResizeEvent *event) {
     ui->noteTextEdit->setPaperMargins();
 }
 
-void MainWindow::encryptedNoteTextEditResize(QResizeEvent *event) {
-    Q_UNUSED(event)
-    ui->encryptedNoteTextEdit->setPaperMargins();
-}
-
 void MainWindow::on_actionShow_local_trash_triggered() {
     auto *dialog = new LocalTrashDialog(this);
     dialog->exec();
@@ -11820,7 +11522,6 @@ void MainWindow::on_actionTypewriter_mode_toggled(bool arg1) {
     QSettings settings;
     settings.setValue(QStringLiteral("Editor/centerCursor"), arg1);
     ui->noteTextEdit->updateSettings();
-    ui->encryptedNoteTextEdit->updateSettings();
 
     if (arg1) {
         // center the cursor immediately if typewriter mode is turned on
@@ -11955,19 +11656,6 @@ void MainWindow::on_noteTextEdit_modificationChanged(bool arg1) {
 
     ui->noteTextEdit->document()->setModified(false);
     noteTextEditTextWasUpdated();
-}
-
-void MainWindow::on_encryptedNoteTextEdit_modificationChanged(bool arg1) {
-    if (!arg1) {
-        return;
-    }
-
-    ui->encryptedNoteTextEdit->document()->setModified(false);
-
-    if (_currentNote.storeNewDecryptedText(
-            ui->encryptedNoteTextEdit->toPlainText())) {
-        handleNoteTextChanged();
-    }
 }
 
 void MainWindow::on_actionEditorWidthCustom_triggered() {

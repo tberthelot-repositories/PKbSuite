@@ -265,14 +265,6 @@ class MainWindow : public QMainWindow {
 
     void on_action_Find_text_in_note_triggered();
 
-    void on_action_Encrypt_note_triggered();
-
-    void on_actionDecrypt_note_triggered();
-
-    void on_actionEdit_encrypted_note_triggered();
-
-    void on_encryptedNoteTextEdit_textChanged();
-
     void on_action_Open_note_in_external_editor_triggered();
 
     void on_action_Export_note_as_markdown_triggered();
@@ -506,11 +498,7 @@ class MainWindow : public QMainWindow {
 
     void noteTextEditResize(QResizeEvent *event);
 
-    void encryptedNoteTextEditResize(QResizeEvent *event);
-
     void on_actionShow_local_trash_triggered();
-
-    void on_encryptedNoteTextEdit_customContextMenuRequested(const QPoint pos);
 
     void on_actionJump_to_note_text_edit_triggered();
 
@@ -564,8 +552,6 @@ class MainWindow : public QMainWindow {
 
     void on_noteTextEdit_modificationChanged(bool arg1);
 
-    void on_encryptedNoteTextEdit_modificationChanged(bool arg1);
-
     void on_actionEditorWidthCustom_triggered();
 
     void on_actionShow_Hide_application_triggered();
@@ -614,7 +600,6 @@ private:
     QToolBar *_formattingToolbar;
     QToolBar *_customActionToolbar;
     QToolBar *_insertingToolbar;
-    QToolBar *_encryptionToolbar;
     QToolBar *_windowToolbar;
     QToolBar *_quitToolbar;
     bool _noteViewIsRegenerated;
@@ -746,11 +731,6 @@ private:
     void printNote(QTextEdit *textEdit);
 
     void printTextDocument(QTextDocument *textDocument);
-
-    void updateEncryptNoteButtons();
-
-    void askForEncryptedNotePasswordIfNeeded(
-        const QString &additionalText = QString());
 
     void showAppMetricsNotificationIfNeeded();
 

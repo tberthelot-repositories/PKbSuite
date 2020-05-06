@@ -678,8 +678,7 @@ bool PKbSuiteMarkdownTextEdit::eventFilter(QObject *obj, QEvent *event) {
     if (event->type() == QEvent::KeyPress) {
         auto *keyEvent = static_cast<QKeyEvent *>(event);
 
-        if (objectName() == QStringLiteral("encryptedNoteTextEdit") ||
-            objectName() == QStringLiteral("noteTextEdit")) {
+        if (objectName() == QStringLiteral("noteTextEdit")) {
             // deactivating the search widget has priority
             if ((keyEvent->key() == Qt::Key_Escape) &&
                 _searchWidget->isVisible()) {
