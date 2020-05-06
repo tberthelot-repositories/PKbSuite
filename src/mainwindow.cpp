@@ -113,7 +113,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
 
-    setWindowIcon(getSystemTrayIcon());
+#if QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
+    ui->noteEditTabWidget->setTabBarAutoHide(true);
+#endif
+
+	setWindowIcon(getSystemTrayIcon());
 
     // initialize the workspace combo box
     initWorkspaceComboBox();
@@ -400,6 +404,10 @@ MainWindow::MainWindow(QWidget *parent)
             &PKbSuiteMarkdownTextEdit::cursorPositionChanged, this,
             &MainWindow::noteEditCursorPositionChanged);
 
+    // restore the note tabs
+    Utils::Gui::restoreNoteTabs(ui->noteEditTabWidget,
+                                ui->noteEditTabWidgetLayout);
+
     // restore the note history of the current note folder
     noteHistory.restoreForCurrentNoteFolder();
 
@@ -596,7 +604,7 @@ void MainWindow::initDockWidgets() {
         _noteEditDockWidget = new QDockWidget(tr("Note edit"), this);
         _noteEditDockWidget->setObjectName(
             QStringLiteral("noteEditDockWidget"));
-        _noteEditDockWidget->setWidget(ui->noteEditFrame);
+        _noteEditDockWidget->setWidget(ui->noteEditTabWidget);
         _noteEditDockTitleBarWidget = _noteEditDockWidget->titleBarWidget();
         sizePolicy = _noteEditDockWidget->sizePolicy();
         sizePolicy.setHorizontalStretch(5);
@@ -653,12 +661,12 @@ void MainWindow::initDockWidgets() {
         QTimer::singleShot(250, this, SLOT(releaseDockWidgetSizes()));
     }
 
-    //    ui->noteEditFrame->setStyleSheet("* { border: none; }");
+    //    ui->noteEditTabWidget->setStyleSheet("* { border: none; }");
     //    ui->noteTextEdit->setStyleSheet("* { border: none; }");
-    //    ui->noteEditFrame->layout()->setContentsMargins(0, 0, 0, 0);
+    //    ui->noteEditTabWidget->layout()->setContentsMargins(0, 0, 0, 0);
 
     setDockNestingEnabled(true);
-    setCentralWidget(_noteEditIsCentralWidget ? ui->noteEditFrame : Q_NULLPTR);
+    setCentralWidget(_noteEditIsCentralWidget ? ui->noteEditTabWidget : Q_NULLPTR);
 
     // macOS and Windows will look better without this
 #ifdef Q_OS_LINUX
@@ -1257,7 +1265,7 @@ void MainWindow::initStyling() {
     ui->notesListFrame->setStyleSheet(QString());
     ui->noteListSubFrame->setStyleSheet(QString());
     ui->navigationFrame->setStyleSheet(QString());
-    ui->noteEditFrame->setStyleSheet(QString());
+    ui->noteEditTabWidget->setStyleSheet(QString());
     ui->noteViewFrame->setStyleSheet(QString());
 
     // add some margins in OS X to match the styling of the note list
@@ -1604,6 +1612,8 @@ void MainWindow::changeNoteFolder(const int noteFolderId,
     // store the note history of the old note folder
     noteHistory.storeForCurrentNoteFolder();
 
+    Utils::Gui::storeNoteTabs(ui->noteEditTabWidget);
+
     // recheck for broken tag note links
     resetBrokenTagNotesLinkFlag();
 
@@ -1655,12 +1665,24 @@ void MainWindow::changeNoteFolder(const int noteFolderId,
         // update the current folder tooltip
         updateCurrentFolderTooltip();
 
+        // restore the note tabs
+        Utils::Gui::restoreNoteTabs(ui->noteEditTabWidget,
+                                    ui->noteEditTabWidgetLayout);
+
         // restore the note history of the new note folder
         noteHistory.restoreForCurrentNoteFolder();
 
         // check if there is a note name set and jump to it
-        const QString noteName =
-            _activeNoteFolderNotePositions[noteFolderId].getNoteName();
+        QString noteName = _activeNoteFolderNotePositions[noteFolderId]
+                               .getNoteName();
+
+        // if there was no NoteHistory found try the note history
+        if (noteName.isEmpty()) {
+            _activeNoteFolderNotePositions[noteFolderId] =
+                noteHistory.getCurrentHistoryItem();
+            noteName = _activeNoteFolderNotePositions[noteFolderId].getNoteName();
+        }
+
         if (!noteName.isEmpty()) {
             jumpToNoteName(noteName);
 
@@ -1672,6 +1694,7 @@ void MainWindow::changeNoteFolder(const int noteFolderId,
 
     generateSystemTrayContextMenu();
     updateWindowTitle();
+    _lastNoteId = 0;
 }
 
 /*
@@ -2642,6 +2665,9 @@ void MainWindow::storeUpdatedNotesToDisk() {
             if (oldNoteName != _currentNote.getName()) {
                 // just to make sure the window title is set correctly
                 updateWindowTitle();
+
+                // update current tab name
+                updateCurrentTabData(currentNote);
             }
         }
 	
@@ -2878,7 +2904,7 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
     const bool showSubfolders = NoteFolder::isCurrentHasSubfolders();
     if (showSubfolders) {
         const QStringList folders =
-            notesDir.entryList(QStringList{"*"}, QDir::Dirs, QDir::Time);
+			notesDir.entryList(QStringList{"*"}, QDir::Dirs, QDir::Time);
 
         // ignore some folders
         const QStringList ignoreFolderList{".", "..", "trash"};
@@ -2910,6 +2936,9 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
             // ignore folders by regular expression
             if (Utils::Misc::regExpInListMatches(folder,
                                                  ignoredFolderRegExpList)) {
+
+        for (const QString &folder : folders) {
+            if (NoteSubFolder::willFolderBeIgnored(folder)) {
                 continue;
             }
 
@@ -3341,14 +3370,23 @@ void MainWindow::setCurrentNote(Note note, bool updateNoteText,
                                                      ui->noteTextEdit);
     }
 
+    this->_lastNoteId = this->_currentNote.getId();
     this->_currentNote = note;
 
     // for places we can't get the current note id, like the markdown
     // highlighter
-    qApp->setProperty("currentNoteId", note.getId());
+    qApp->setProperty("currentNoteId", noteId);
 
     const QString name = note.getName();
     updateWindowTitle();
+
+    // update current tab
+    if (!jumpToTab(note) && Utils::Gui::isTabWidgetTabSticky(
+           ui->noteEditTabWidget, ui->noteEditTabWidget->currentIndex())) {
+        openCurrentNoteInTab();
+    }
+
+    updateCurrentTabData(note);
 
     // find and set the current item
     if (updateSelectedNote) {
@@ -3427,6 +3465,45 @@ void MainWindow::setCurrentNote(Note note, bool updateNoteText,
 
     // clear external image cache
     Note::externalImageHash()->clear();
+}
+
+void MainWindow::updateCurrentTabData(const Note &note) const {
+    Utils::Gui::updateTabWidgetTabData(ui->noteEditTabWidget,
+                                       ui->noteEditTabWidget->currentIndex(),
+                                       note);
+}
+
+void MainWindow::closeOrphanedTabs() const {
+    const int maxIndex = ui->noteEditTabWidget->count() - 1;
+
+    for (int i = maxIndex; i >= 0; i--) {
+        const int noteId = Utils::Gui::getTabWidgetNoteId(
+            ui->noteEditTabWidget, i);
+
+        if (!Note::noteIdExists(noteId)) {
+            removeNoteTab(i);
+        }
+    }
+}
+
+bool MainWindow::jumpToTab(const Note &note) const {
+    const int noteId = note.getId();
+    const int tabIndexOfNote = Utils::Gui::getTabWidgetIndexByProperty(
+        ui->noteEditTabWidget, QStringLiteral("note-id"), noteId);
+
+    if (tabIndexOfNote == -1) {
+        return false;
+    }
+
+    ui->noteEditTabWidget->setCurrentIndex(tabIndexOfNote);
+    QWidget *widget = ui->noteEditTabWidget->currentWidget();
+
+    if (widget->layout() == nullptr) {
+        widget->setLayout(ui->noteEditTabWidgetLayout);
+        closeOrphanedTabs();
+    }
+
+    return true;
 }
 
 /**
@@ -3610,6 +3687,8 @@ void MainWindow::storeSettings() {
 
     // store the note history of the current note folder
     noteHistory.storeForCurrentNoteFolder();
+
+    Utils::Gui::storeNoteTabs(ui->noteEditTabWidget);
 }
 
 /*!
@@ -7734,29 +7813,45 @@ QTreeWidgetItem *MainWindow::addTagToTagTreeWidget(QTreeWidgetItem *parent,
     const int parentId =
         parent == nullptr ? 0 : parent->data(0, Qt::UserRole).toInt();
     const int tagId = tag.getId();
-
-    auto *item = new QTreeWidgetItem();
     const QString name = tag.getName();
+    QVector<int> linkedNoteIds;
+    const QList<Tag> tagListToCount = Tag::isTaggingShowNotesRecursively() ?
+        Tag::fetchRecursivelyByParentId(tagId) : QList<Tag>{tag};
+    const auto selectedSubFolderItems =
+        ui->noteSubFolderTreeWidget->selectedItems();
 
-    int linkCount = 0;
-    const auto items = ui->noteSubFolderTreeWidget->selectedItems();
-    if (items.count() > 1) {
-        for (QTreeWidgetItem *folderItem : items) {
-            int id = folderItem->data(0, Qt::UserRole).toInt();
-            const NoteSubFolder folder = NoteSubFolder::fetch(id);
-            if (folder.isFetched()) {
-                linkCount += tag.countLinkedNoteFileNamesForNoteFolder(
-                    folder,
+    for (const Tag &tagToCount : tagListToCount) {
+        if (selectedSubFolderItems.count() > 1) {
+            for (QTreeWidgetItem *folderItem : selectedSubFolderItems) {
+                int id = folderItem->data(0, Qt::UserRole).toInt();
+                const NoteSubFolder folder = NoteSubFolder::fetch(id);
+
+                if (!folder.isFetched()) {
+                    continue;
+                }
+
+                linkedNoteIds << tagToCount.fetchAllLinkedNoteIdsForFolder(
+                    folder, _showNotesFromAllNoteSubFolders,
                     NoteSubFolder::isNoteSubfoldersPanelShowNotesRecursively());
             }
+        } else {
+            linkedNoteIds << tagToCount.fetchAllLinkedNoteIds(
+                _showNotesFromAllNoteSubFolders,
+                NoteSubFolder::isNoteSubfoldersPanelShowNotesRecursively());
         }
-    } else {
-        linkCount = tag.countLinkedNoteFileNames(
-            _showNotesFromAllNoteSubFolders,
-            NoteSubFolder::isNoteSubfoldersPanelShowNotesRecursively());
     }
+
+    // remove duplicate note ids
+#if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+    const QSet<int> linkedNoteIdSet = linkedNoteIds.toList().toSet();
+#else
+    const QSet<int> linkedNoteIdSet(linkedNoteIds.begin(), linkedNoteIds.end());
+#endif
+
+    const int linkCount = linkedNoteIdSet.count();
     const QString toolTip = tr("show all notes tagged with '%1' (%2)")
                                 .arg(name, QString::number(linkCount));
+    auto *item = new QTreeWidgetItem();
     item->setData(0, Qt::UserRole, tagId);
     item->setText(0, name);
     item->setText(1, linkCount > 0 ? QString::number(linkCount) : QString());
@@ -8446,6 +8541,9 @@ void MainWindow::on_tagTreeWidget_itemChanged(QTreeWidgetItem *item,
         const QString oldName = tag.getName();
         const QString name = item->text(0);
 
+        // workaround when signal block doesn't work correctly
+        directoryWatcherWorkaround(true, true);
+
         if (!name.isEmpty()) {
             const QSignalBlocker blocker(this->noteDirectoryWatcher);
             Q_UNUSED(blocker)
@@ -8484,6 +8582,10 @@ void MainWindow::on_tagTreeWidget_itemChanged(QTreeWidgetItem *item,
         // we also have to reload the tag tree if we don't change the tag
         // name to get the old name back
         reloadTagTree();
+        reloadCurrentNoteTags();
+
+        // turn off the workaround again
+        directoryWatcherWorkaround(false, true);
     }
 }
 
@@ -8841,14 +8943,9 @@ void MainWindow::moveSelectedTagsToTagId(int tagId) {
     if (tagList.count() > 0) {
         const bool useScriptingEngine =
             ScriptingService::instance()->noteTaggingHookExists();
-        QVector<Note> notes;
 
         // workaround when signal block doesn't work correctly
         directoryWatcherWorkaround(true, true);
-
-        if (useScriptingEngine) {
-            notes = Note::fetchAll();
-        }
 
         // move tags
         for (Tag tag : Utils::asConst(tagList)) {
@@ -8859,8 +8956,9 @@ void MainWindow::moveSelectedTagsToTagId(int tagId) {
                 // check all tags we need to handle
                 for (const Tag &tagToHandle : tagsToHandle) {
                     // remove tag from all notes
-                    for (const Note &note : notes) {
-                        handleScriptingNoteTagging(note, tagToHandle, true, false);
+                    for (const Note &note : tagToHandle.fetchAllLinkedNotes()) {
+                        handleScriptingNoteTagging(
+                            note, tagToHandle, true, false);
                     }
                 }
             }
@@ -8875,8 +8973,9 @@ void MainWindow::moveSelectedTagsToTagId(int tagId) {
                 // check all tags we need to handle
                 for (const Tag &tagToHandle : tagsToHandle) {
                     // add tag to all notes
-                    for (const Note &note : notes) {
-                        handleScriptingNoteTagging(note, tagToHandle, false, false);
+                    for (const Note &note : tagToHandle.fetchAllLinkedNotes()) {
+                        handleScriptingNoteTagging(
+                            note, tagToHandle, false, false);
                     }
                 }
             }
@@ -9731,6 +9830,37 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
     searchForSearchLineTextInNoteTextEdit();
 }
 
+void MainWindow::openCurrentNoteInTab() {
+    // simulate a newly opened tab by updating the current tab with the last note
+    if (_lastNoteId > 0) {
+        auto previousNote = Note::fetch(_lastNoteId);
+        if (previousNote.isFetched()) {
+            updateCurrentTabData(previousNote);
+        }
+    }
+
+    const QString &noteName = currentNote.getName();
+    const int noteId = currentNote.getId();
+    int tabIndex = Utils::Gui::getTabWidgetIndexByProperty(
+        ui->noteEditTabWidget, QStringLiteral("note-id"), noteId);
+
+    if (tabIndex == -1) {
+        auto *widgetPage = new QWidget();
+        widgetPage->setLayout(ui->noteEditTabWidgetLayout);
+        widgetPage->setProperty("note-id", noteId);
+        tabIndex = ui->noteEditTabWidget->addTab(widgetPage, noteName);
+    } else {
+        ui->noteEditTabWidget->setTabText(tabIndex, noteName);
+    }
+
+    ui->noteEditTabWidget->setCurrentIndex(tabIndex);
+
+    // remove the tab initially created by the ui file
+    if (ui->noteEditTabWidget->widget(0)->property("note-id").isNull()) {
+        ui->noteEditTabWidget->removeTab(0);
+    }
+}
+
 void MainWindow::on_noteTreeWidget_customContextMenuRequested(
     const QPoint pos) {
     auto *item = ui->noteTreeWidget->itemAt(pos);
@@ -9748,11 +9878,10 @@ void MainWindow::on_noteTreeWidget_customContextMenuRequested(
 void MainWindow::openNotesContextMenu(const QPoint globalPos,
                                       bool multiNoteMenuEntriesOnly) {
     QMenu noteMenu;
-
-    QAction *createNoteAction = nullptr;
     QAction *renameAction = nullptr;
+
     if (!multiNoteMenuEntriesOnly) {
-        createNoteAction = noteMenu.addAction(tr("New note"));
+        auto *createNoteAction = noteMenu.addAction(tr("New note"));
         connect(createNoteAction, &QAction::triggered, this,
                 &MainWindow::on_action_New_note_triggered);
 
@@ -9868,6 +9997,10 @@ void MainWindow::openNotesContextMenu(const QPoint globalPos,
 
     if (!multiNoteMenuEntriesOnly) {
         noteMenu.addSeparator();
+        auto *openNoteInTabAction = noteMenu.addAction(tr("Open note in tab"));
+        connect(openNoteInTabAction, &QAction::triggered, this,
+                &MainWindow::openCurrentNoteInTab);
+
         openInExternalEditorAction =
             noteMenu.addAction(tr("Open note in external editor"));
         openNoteWindowAction =
@@ -10217,7 +10350,9 @@ bool MainWindow::createNewNoteSubFolder(QString folderName) {
                                            QLineEdit::Normal, QString(), &ok);
     }
 
-    if (!ok || folderName.isEmpty()) {
+    if (!ok || folderName.isEmpty() ||
+        NoteSubFolder::willFolderBeIgnored(folderName, true)) {
+
         return false;
     }
 
@@ -11457,7 +11592,12 @@ void MainWindow::on_noteTreeWidget_itemDoubleClicked(QTreeWidgetItem *item,
     Q_UNUSED(column)
 
     // call a script hook that a new note was double clicked
-    ScriptingService::instance()->callHandleNoteDoubleClickedHook(&_currentNote);
+    const bool hookFound = ScriptingService::instance()->
+                      callHandleNoteDoubleClickedHook(&currentNote);
+
+    if (!hookFound) {
+        openCurrentNoteInTab();
+    }
 }
 
 /**
@@ -11850,4 +11990,68 @@ void MainWindow::on_actionShow_Hide_application_triggered() {
     } else {
         showWindow();
     }
+}
+
+void MainWindow::on_noteEditTabWidget_currentChanged(int index) {
+    QWidget *widget = ui->noteEditTabWidget->currentWidget();
+    const int noteId = widget->property("note-id").toInt();
+
+    // close the tab if note doesn't exist any more
+    if (!Note::noteIdExists(noteId)) {
+        removeNoteTab(index);
+        return;
+    }
+
+    setCurrentNoteFromNoteId(noteId);
+    widget->setLayout(ui->noteEditTabWidgetLayout);
+
+    closeOrphanedTabs();
+}
+
+void MainWindow::on_noteEditTabWidget_tabCloseRequested(int index) {
+    removeNoteTab(index);
+}
+
+void MainWindow::on_actionPrevious_note_tab_triggered() {
+    int index = ui->noteEditTabWidget->currentIndex() - 1;
+
+    if (index < 0) {
+        index = ui->noteEditTabWidget->count() - 1;
+    }
+
+    ui->noteEditTabWidget->setCurrentIndex(index);
+}
+
+void MainWindow::on_actionNext_note_tab_triggered() {
+    int index = ui->noteEditTabWidget->currentIndex() + 1;
+
+    if (index >= ui->noteEditTabWidget->count()) {
+        index = 0;
+    }
+
+    ui->noteEditTabWidget->setCurrentIndex(index);
+}
+
+void MainWindow::on_actionClose_current_note_tab_triggered() {
+    removeNoteTab(ui->noteEditTabWidget->currentIndex());
+}
+
+void MainWindow::on_actionNew_note_in_new_tab_triggered() {
+    on_action_New_note_triggered();
+    openCurrentNoteInTab();
+}
+
+void MainWindow::removeNoteTab(int index) const {
+    if (ui->noteEditTabWidget->count() > 1) {
+        ui->noteEditTabWidget->removeTab(index);
+    }
+}
+
+void MainWindow::on_noteEditTabWidget_tabBarDoubleClicked(int index) {
+    Utils::Gui::setTabWidgetTabSticky(ui->noteEditTabWidget, index,
+          !Utils::Gui::isTabWidgetTabSticky(ui->noteEditTabWidget, index));
+}
+
+void MainWindow::on_actionToggle_note_stickiness_of_current_tab_triggered() {
+    on_noteEditTabWidget_tabBarDoubleClicked(ui->noteEditTabWidget->currentIndex());
 }

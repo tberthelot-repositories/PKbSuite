@@ -427,8 +427,10 @@ Note Note::fetchByShareId(int shareId) {
 }
 
 Note Note::fetchByName(const QString &name,
-                       const QString &noteSubFolderPathData) {
-    auto noteSubFolder = NoteSubFolder::fetchByPathData(noteSubFolderPathData);
+                       const QString &noteSubFolderPathData,
+                       const QString& pathDataSeparator) {
+    auto noteSubFolder = NoteSubFolder::fetchByPathData(noteSubFolderPathData,
+                                                        pathDataSeparator);
 
     return fetchByName(name, noteSubFolder.getId());
 }
@@ -1759,7 +1761,9 @@ bool Note::fileWriteable() const {
 //
 // checks if the current note still exists in the database
 //
-bool Note::exists() const { return Note::fetch(this->id).id > 0; }
+bool Note::exists() const { return noteIdExists(this->id); }
+
+bool Note::noteIdExists(int id) { return fetch(id).id > 0; }
 
 //
 // reloads the current Note (by fileName)
@@ -1791,7 +1795,10 @@ QString Note::fileBaseName(bool withFullName) {
 }
 
 /**
- * Renames a note
+ * Renames a note file
+ *
+ * @param newName new file name (without file-extension)
+ * @return
  */
 bool Note::renameNoteFile(QString newName) {
     // cleanup not allowed characters characters
@@ -2950,6 +2957,22 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNe
         }
 
         const QFileInfo fileInfo(file->fileName());
+
+        QString suffix = fileInfo.suffix();
+        QMimeDatabase db;
+        const QMimeType type = db.mimeTypeForFile(file->fileName());
+
+        // try to detect the mime type of the file and use a proper file suffix
+        if (type.isValid()) {
+            const QStringList suffixes = type.suffixes();
+            if (suffixes.count() > 0) {
+                suffix = suffixes.at(0);
+            }
+        }
+
+        // find a random name for the new file
+        const QString newFileName = Utils::Misc::makeFileNameRandom(
+            file->fileName(), suffix);
 
         const QString newFilePath =
             dir.path() + QDir::separator() + fileInfo.fileName().replace(" ", "_");

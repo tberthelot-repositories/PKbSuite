@@ -570,6 +570,24 @@ class MainWindow : public QMainWindow {
 
     void on_actionShow_Hide_application_triggered();
 
+    void on_noteEditTabWidget_currentChanged(int index);
+
+    void on_noteEditTabWidget_tabCloseRequested(int index);
+
+    void openCurrentNoteInTab();
+
+    void on_actionPrevious_note_tab_triggered();
+
+    void on_actionNext_note_tab_triggered();
+
+    void on_actionClose_current_note_tab_triggered();
+
+    void on_actionNew_note_in_new_tab_triggered();
+
+    void on_noteEditTabWidget_tabBarDoubleClicked(int index);
+
+    void on_actionToggle_note_stickiness_of_current_tab_triggered();
+
 private:
     Ui::MainWindow *ui;
     QString notesPath;
@@ -663,6 +681,7 @@ private:
         QStringLiteral("text-x-generic"),
         QIcon(":icons/breeze-pkbsuite/16x16/text-x-generic.svg"));
     QList<QHotkey *> _globalShortcuts;
+    int _lastNoteId = 0;
 
     void createSystemTrayIcon();
 
@@ -1001,4 +1020,10 @@ private:
     void removeNoteFromNoteTreeWidget(Note &note) const;
     void initGlobalKeyboardShortcuts();
     void clearNoteDirectoryWatcher();
+    void resizeTagTreeWidgetColumnToContents() const;
+    void resizeNoteSubFolderTreeWidgetColumnToContents() const;
+    void updateCurrentTabData(const Note &note) const;
+    bool jumpToTab(const Note &note) const;
+    void closeOrphanedTabs() const;
+    void removeNoteTab(int index) const;
 };

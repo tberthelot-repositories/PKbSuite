@@ -623,7 +623,8 @@ QList<Tag> Tag::fetchAllWithLinkToNoteNames(const QStringList &noteNameList) {
 /**
  * Fetches all linked note ids
  */
-QVector<int> Tag::fetchAllLinkedNoteIds(const bool fromAllSubfolders) const {
+QVector<int> Tag::fetchAllLinkedNoteIds(const bool fromAllSubfolders,
+                                        const bool recursive) const {
     QSqlDatabase db = DatabaseService::getNoteFolderDatabase();
     QSqlQuery query(db);
     QVector<int> noteIdList;
@@ -633,7 +634,7 @@ QVector<int> Tag::fetchAllLinkedNoteIds(const bool fromAllSubfolders) const {
         query.prepare(QStringLiteral(
             "SELECT note_file_name, note_sub_folder_path "
             "FROM noteTagLink WHERE tag_id = :id"));
-    } else {
+    } else if (recursive) {
         query.prepare(QStringLiteral(
             "SELECT note_file_name, note_sub_folder_path "
             "FROM noteTagLink WHERE tag_id = :id "
@@ -641,6 +642,14 @@ QVector<int> Tag::fetchAllLinkedNoteIds(const bool fromAllSubfolders) const {
         query.bindValue(
             QStringLiteral(":noteSubFolderPath"),
             NoteSubFolder::activeNoteSubFolder().relativePath() + "%");
+    } else {
+        query.prepare(QStringLiteral(
+            "SELECT note_file_name, note_sub_folder_path "
+            "FROM noteTagLink WHERE tag_id = :id "
+            "AND note_sub_folder_path = :noteSubFolderPath"));
+        query.bindValue(
+            QStringLiteral(":noteSubFolderPath"),
+            NoteSubFolder::activeNoteSubFolder().relativePath());
     }
 
     query.bindValue(QStringLiteral(":id"), this->id);
@@ -655,7 +664,8 @@ QVector<int> Tag::fetchAllLinkedNoteIds(const bool fromAllSubfolders) const {
                 QStringLiteral("note_file_name")).toString();
             const QString &noteSubFolderPathData = query.value(
                 QStringLiteral("note_sub_folder_path")).toString();
-            const Note &note = Note::fetchByName(name, noteSubFolderPathData);
+            const Note &note = Note::fetchByName(name, noteSubFolderPathData,
+                                                 QStringLiteral("/"));
 
             noteIdList.append(note.getId());
         }
@@ -670,7 +680,8 @@ QVector<int> Tag::fetchAllLinkedNoteIds(const bool fromAllSubfolders) const {
  * Fetches all linked note ids for a given subfolder
  */
 QVector<int> Tag::fetchAllLinkedNoteIdsForFolder(
-    const NoteSubFolder &noteSubFolder, bool fromAllSubfolders) const {
+    const NoteSubFolder &noteSubFolder, bool fromAllSubfolders,
+    const bool recursive) const {
     QSqlDatabase db = DatabaseService::getNoteFolderDatabase();
     QSqlQuery query(db);
     QVector<int> noteIdList;
@@ -680,13 +691,20 @@ QVector<int> Tag::fetchAllLinkedNoteIdsForFolder(
         query.prepare(QStringLiteral(
             "SELECT note_file_name, note_sub_folder_path "
             "FROM noteTagLink WHERE tag_id = :id"));
-    } else {
+    } else if (recursive) {
         query.prepare(QStringLiteral(
             "SELECT note_file_name, note_sub_folder_path "
             "FROM noteTagLink WHERE tag_id = :id "
             "AND note_sub_folder_path LIKE :noteSubFolderPath"));
         query.bindValue(QStringLiteral(":noteSubFolderPath"),
                         noteSubFolder.relativePath() + "%");
+    } else {
+        query.prepare(QStringLiteral(
+            "SELECT note_file_name, note_sub_folder_path "
+            "FROM noteTagLink WHERE tag_id = :id "
+            "AND note_sub_folder_path = :noteSubFolderPath"));
+        query.bindValue(QStringLiteral(":noteSubFolderPath"),
+                        noteSubFolder.relativePath());
     }
 
     query.bindValue(QStringLiteral(":id"), this->id);
@@ -701,7 +719,8 @@ QVector<int> Tag::fetchAllLinkedNoteIdsForFolder(
                 QStringLiteral("note_file_name")).toString();
             const QString &noteSubFolderPathData = query.value(
                 QStringLiteral("note_sub_folder_path")).toString();
-            const Note &note = Note::fetchByName(name, noteSubFolderPathData);
+            const Note &note = Note::fetchByName(name, noteSubFolderPathData,
+                                                 QStringLiteral("/"));
 
             noteIdList.append(note.getId());
         }
@@ -791,9 +810,9 @@ QStringList Tag::fetchAllNames() {
 }
 
 /**
- * Count the linked note file names for a note folder
+ * Count the linked note file names for a note sub folder
  */
-int Tag::countLinkedNoteFileNamesForNoteFolder(
+int Tag::countLinkedNoteFileNamesForNoteSubFolder(
     const NoteSubFolder &noteSubFolder, const bool recursive) const {
     QSqlDatabase db = DatabaseService::getNoteFolderDatabase();
     QSqlQuery query(db);
