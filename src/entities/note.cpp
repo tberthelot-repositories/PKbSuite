@@ -290,39 +290,37 @@ bool Note::copyToPath(const QString &destinationPath, QString noteFolderPath) {
                                   currentDateTime.toString(Qt::ISODate)
                                       .replace(QChar(':'), QChar('_')) +
                                   QChar('.') + defaultNoteFileExtension();
-
-            qDebug() << "New file name:" << destinationFileName;
         }
 
         // copy the note file to the destination
         const bool isFileCopied = file.copy(destinationFileName);
 
         if (isFileCopied) {
-            const QStringList mediaFileList = getMediaFileList();
+            const QStringList embedmentFileList = getEmbedmentFileList();
 
-            if (mediaFileList.count() > 0) {
+            if (embedmentFileList.count() > 0) {
                 if (noteFolderPath.isEmpty()) {
                     noteFolderPath = destinationPath;
                 }
 
                 if (NoteFolder::isPathNoteFolder(noteFolderPath)) {
-                    const QDir mediaDir(noteFolderPath + QDir::separator() +
-                                        QStringLiteral("media"));
+                    const QDir noteEmbedmentDir(noteFolderPath + QDir::separator() +
+                                        getName());
 
-                    // created the media folder if it doesn't exist
-                    if (!mediaDir.exists()) {
-                        mediaDir.mkpath(mediaDir.path());
+                    // created the note embedment folder if it doesn't exist
+                    if (!noteEmbedmentDir.exists()) {
+                        noteEmbedmentDir.mkpath(noteEmbedmentDir.path());
                     }
 
-                    if (mediaDir.exists()) {
-                        // copy all images to the media folder inside
+                    if (noteEmbedmentDir.exists()) {
+                        // copy all images to the note embedment folder inside
                         // destinationPath
-                        for (const QString &fileName : mediaFileList) {
-                            QFile mediaFile(NoteFolder::currentMediaPath() +
+                        for (const QString &fileName : embedmentFileList) {
+                            QFile embeddedFile(this->fullNoteFilePath() + "/" + getName() +
                                             QDir::separator() + fileName);
 
-                            if (mediaFile.exists()) {
-                                mediaFile.copy(mediaDir.path() +
+                            if (embeddedFile.exists()) {
+                                embeddedFile.copy(noteEmbedmentDir.path() +
                                                QDir::separator() + fileName);
                             }
                         }
@@ -355,57 +353,28 @@ bool Note::moveToPath(const QString &destinationPath,
 }
 
 /**
- * Returns a list of all linked image files of the media folder of the current
+ * Returns a list of all linked image files of the note folder of the current
  * note
  * @return
  */
-QStringList Note::getMediaFileList() {
+QStringList Note::getEmbedmentFileList() {
     QStringList fileList;
 
-    // match image links like ![media-qV920](file://media/608766373.gif)
-    // or  ![media-qV920](media/608766373.gif)
-    QRegularExpression re(QStringLiteral(R"(!\[.*?\]\(.*media/(.+?)\))"));
+    // match image links in note's embedment folders
+	QString noteName = getName().replace(" ", "_");
+
+    QRegularExpression re(QStringLiteral(R"(!\[.*?\]\(.*)") + noteName + QStringLiteral(R"(/(.+?)\))"));
     QRegularExpressionMatchIterator i = re.globalMatch(noteText);
 
     // remove all found images from the orphaned files list
+	const QString noteEmbedmentDir = getNoteSubFolder().fullPath() + QDir::separator() + getName().replace(" ", "_") + QDir::separator();
     while (i.hasNext()) {
         QRegularExpressionMatch match = i.next();
         const QString fileName = match.captured(1);
-        fileList << fileName;
+        fileList << noteEmbedmentDir + fileName;
     }
 
     return fileList;
-}
-
-bool Note::updateRelativeMediaFileLinks() {
-    QRegularExpression re(QStringLiteral(R"((!\[.*?\])\((.*media/(.+?))\))"));
-    QRegularExpressionMatchIterator i = re.globalMatch(noteText);
-    bool textWasUpdated = false;
-    QString newText = getNoteText();
-
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        QString filePath = match.captured(2);
-
-        if (filePath.startsWith(QLatin1String("file://"))) {
-            continue;
-        }
-
-        const QString wholeLinkText = match.captured(0);
-        const QString titlePart = match.captured(1);
-        const QString fileName = match.captured(3);
-
-        filePath = mediaUrlStringForFileName(fileName);
-        newText.replace(wholeLinkText,
-                        titlePart + QChar('(') + filePath + QChar(')'));
-        textWasUpdated = true;
-    }
-
-    if (textWasUpdated) {
-        storeNewText(std::move(newText));
-    }
-
-    return textWasUpdated;
 }
 
 /**
@@ -430,38 +399,6 @@ QStringList Note::getAttachmentsFileList() const {
     }
 
     return fileList;
-}
-
-bool Note::updateRelativeAttachmentFileLinks() {
-    const QRegularExpression re(
-        QStringLiteral(R"((\[.*?\])\((.*attachments/(.+?))\))"));
-    QRegularExpressionMatchIterator i = re.globalMatch(noteText);
-    bool textWasUpdated = false;
-    QString newText = getNoteText();
-
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        QString filePath = match.captured(2);
-
-        if (filePath.startsWith(QLatin1String("file://"))) {
-            continue;
-        }
-
-        const QString wholeLinkText = match.captured(0);
-        const QString titlePart = match.captured(1);
-        const QString fileName = match.captured(3);
-
-        filePath = attachmentUrlStringForFileName(fileName);
-        newText.replace(wholeLinkText,
-                        titlePart + QChar('(') + filePath + QChar(')'));
-        textWasUpdated = true;
-    }
-
-    if (textWasUpdated) {
-        storeNewText(std::move(newText));
-    }
-
-    return textWasUpdated;
 }
 
 /**
@@ -2991,158 +2928,87 @@ QString Note::createNoteHeader(const QString &name) {
 }
 
 /**
- * Returns the markdown of the inserted media file into a note
+ * Return the path of note's embedded item folder
  */
-QString Note::getInsertMediaMarkdown(QFile *file, bool addNewLine,
-                                     bool returnUrlOnly, QString title) {
-    // file->exists() is false on Arch Linux for QTemporaryFile!
-    if (file->size() > 0) {
-        QDir mediaDir(NoteFolder::currentMediaPath());
-
-        // created the media folder if it doesn't exist
-        if (!mediaDir.exists()) {
-            mediaDir.mkpath(mediaDir.path());
-        }
-
-        const QFileInfo fileInfo(file->fileName());
-        QString suffix = fileInfo.suffix();
-        QMimeDatabase db;
-        const QMimeType type = db.mimeTypeForFile(file->fileName());
-
-        // try to detect the mime type of the file and use a proper file suffix
-        if (type.isValid()) {
-            const QStringList suffixes = type.suffixes();
-            if (suffixes.count() > 0) {
-                suffix = suffixes.at(0);
-            }
-        }
-
-        // find a random name for the new file
-        const QString newFileName =
-            QString::number(qrand()) + QChar('.') + suffix;
-
-        const QString newFilePath =
-            mediaDir.path() + QDir::separator() + newFileName;
-
-        // copy the file to the media folder
-        file->copy(newFilePath);
-
-        QFile newFile(newFilePath);
-        scaleDownImageFileIfNeeded(newFile);
-
-        const QString mediaUrlString = mediaUrlStringForFileName(newFileName);
-
-        // check if we only want to return the media url string
-        if (returnUrlOnly) {
-            return mediaUrlString;
-        }
-
-        if (title.isEmpty()) {
-            title = fileInfo.baseName();
-        }
-
-        // return the image link
-        // we add a "\n" in the end so that hoedown recognizes multiple images
-        return QStringLiteral("![") + title + QStringLiteral("](") +
-               mediaUrlString + QStringLiteral(")") +
-               (addNewLine ? QStringLiteral("\n") : QLatin1String(""));
-    }
-
-    return QLatin1String("");
-}
-
-QString Note::mediaUrlStringForFileName(const QString &fileName) const {
-    QString urlString = QLatin1String("");
-    const QSettings settings;
-
-    if (settings.value(QStringLiteral("legacyLinking")).toBool()) {
-        urlString = QStringLiteral("file://media/") + fileName;
-    } else {
-        const int depth = getNoteSubFolder().depth();
-
-        for (int i = 0; i < depth; ++i) {
-            urlString += QStringLiteral("../");
-        }
-
-        urlString += QStringLiteral("media/") + fileName;
-    }
-
-    return urlString;
-}
-
-QString Note::attachmentUrlStringForFileName(const QString &fileName) const {
-    QString urlString = QLatin1String("");
-    const QSettings settings;
-
-    if (settings.value(QStringLiteral("legacyLinking")).toBool()) {
-        urlString = QStringLiteral("file://attachments/") + fileName;
-    } else {
-        const int depth = getNoteSubFolder().depth();
-
-        for (int i = 0; i < depth; ++i) {
-            urlString += QStringLiteral("../");
-        }
-
-        urlString += QStringLiteral("attachments/") + fileName;
-    }
-
-    return urlString;
+QString Note::currentEmbedmentFolder() {
+	return fullNoteFileDirPath() + "/" + getName().replace(" ", "_");
 }
 
 /**
- * Returns the markdown of the inserted attachment file into a note
+ * Returns the markdown of the inserted object/file into a note
  */
-QString Note::getInsertAttachmentMarkdown(QFile *file, QString fileName,
-                                          bool returnUrlOnly) {
-    if (file->exists() && (file->size() > 0)) {
-        const QDir dir(NoteFolder::currentAttachmentsPath());
+QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNewLine,
+                                     bool returnUrlOnly, QString title) {
+    // file->exists() is false on Arch Linux for QTemporaryFile!
+    if (file->size() > 0) {
+        // Test if note's embedment folder exists
+        const QDir dir(currentEmbedmentFolder());
 
-        // created the attachments folder if it doesn't exist
+        // created the embedment folder if it doesn't exist
         if (!dir.exists()) {
             dir.mkpath(dir.path());
         }
 
         const QFileInfo fileInfo(file->fileName());
 
-        // find a random name for the new file
-        const QString newFileName =
-            QString::number(qrand()) + QChar('.') + fileInfo.suffix();
-
         const QString newFilePath =
-            dir.path() + QDir::separator() + newFileName;
+            dir.path() + QDir::separator() + fileInfo.fileName().replace(" ", "_");
 
-        // copy the file to the attachments folder
+        // copy the file to the embedment folder
         file->copy(newFilePath);
 
-        const QString attachmentUrlString =
-            attachmentUrlStringForFileName(newFileName);
+        QString embedmentUrlString = embedmentUrlStringForFileName(fileInfo.fileName());
 
-        // check if we only want to return the attachment url string
+        // check if we only want to return the embedment url string
         if (returnUrlOnly) {
-            return attachmentUrlString;
+            return embedmentUrlString;
         }
 
-        if (fileName.isEmpty()) {
-            fileName = fileInfo.fileName();
+        if (title.isEmpty()) {
+            title = fileInfo.baseName();
         }
 
-        // return the attachment link
-        return QStringLiteral("[") + fileName + QStringLiteral("](") +
-               attachmentUrlString + QStringLiteral(")");
+        QString strEmbedmentCode = QLatin1String("");
+        switch (type) {
+			case mediaType::image: {
+				QFile newFile(newFilePath);
+				scaleDownImageFileIfNeeded(newFile);
+				
+				// return the image link
+				// we add a "\n" in the end so that hoedown recognizes multiple images
+				strEmbedmentCode =  QStringLiteral("![") + title + QStringLiteral("](") + embedmentUrlString + QStringLiteral(")") + (addNewLine ? QStringLiteral("\n") : QLatin1String(""));
+			}
+			break;
+			case mediaType::attachment: {
+				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](") + embedmentUrlString + QStringLiteral(")");
+			}
+			break;
+			case mediaType::pdf: {
+				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](file://") + dir.path() + QDir::separator() + embedmentUrlString + QStringLiteral(")") + (addNewLine ? "\n" : "");
+			}
+		}
+		
+		return strEmbedmentCode;
     }
 
     return QLatin1String("");
 }
 
+QString Note::embedmentUrlStringForFileName(const QString &fileName) const {
+	QString tmpUrlString = getName() + QDir::separator() + fileName;
+	
+    return tmpUrlString.replace(" ", "_");
+}
+
 /**
- * Downloads an url to the media folder and returns the markdown code or the
+ * Downloads an url to the note's embedment folder and returns the markdown code or the
  * url for it relative to the note
  *
  * @param url
  * @param returnUrlOnly
  * @return
  */
-QString Note::downloadUrlToMedia(const QUrl &url, bool returnUrlOnly) {
+QString Note::downloadUrlToEmbedment(const QUrl &url, bool returnUrlOnly) {
     // try to get the suffix from the url
     QString suffix = url.toString()
                          .split(QStringLiteral("."), QString::SkipEmptyParts)
@@ -3164,9 +3030,9 @@ QString Note::downloadUrlToMedia(const QUrl &url, bool returnUrlOnly) {
     if (tempFile->open()) {
         // download the image to the temporary file
         if (Utils::Misc::downloadUrlToFile(url, tempFile)) {
-            // copy image to media folder and generate markdown code for
+            // copy image to embedment folder and generate markdown code for
             // the image
-            text = getInsertMediaMarkdown(tempFile, true, returnUrlOnly);
+            text = getInsertEmbedmentMarkdown(tempFile, mediaType::image, true, returnUrlOnly);
         }
     }
 
@@ -3201,36 +3067,13 @@ QString Note::importMediaFromBase64(QString &data, const QString &imageSuffix) {
     // write image to the temporary file
     tempFile->write(QByteArray::fromBase64(data.toLatin1()));
 
-    // store the temporary image in the media folder and return the markdown
+    // store the temporary image in the embedment folder and return the markdown
     // code
-    const QString markdownCode = getInsertMediaMarkdown(tempFile);
+    const QString markdownCode = getInsertEmbedmentMarkdown(tempFile, mediaType::image);
 
     delete tempFile;
 
     return markdownCode;
-}
-
-QString Note::getInsertPDFMarkdown(QFile *file, bool addNewLine) {
-    if (file->exists() && (file->size() > 0)) {
-        QDir PDFDir(NoteFolder::currentPDFPath());
-
-        // create the PDF folder if it doesn't exist
-        if (!PDFDir.exists()) {
-            PDFDir.mkpath(PDFDir.path());
-        }
-        
-        QFileInfo fileInfo(file->fileName());
-
-        // copy the file the the PDF folder
-        QString processedFilename = fileInfo.fileName().simplified().replace(" ", "_");
-        file->copy(PDFDir.path() + QDir::separator() + processedFilename);
-
-        // return the PDF link
-        // we add a "\n" in the end so that hoedown recognizes multiple PDF files
-        return "[" + fileInfo.baseName() + "](" + NoteFolder::currentPDFPath() + "/" + processedFilename + ")" + (addNewLine ? "\n" : "");
-    }
-
-    return "";
 }
 
 /**

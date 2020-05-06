@@ -1,6 +1,7 @@
 #pragma once
 
 #include "masterdialog.h"
+#include <QDir>
 
 class QTreeWidgetItem;
 
@@ -30,4 +31,5 @@ class OrphanedImagesDialog : public MasterDialog {
     Ui::OrphanedImagesDialog *ui;
 
     QString getFilePath(QTreeWidgetItem *item);
+	QStringList listEmbeddedFiles(QDir folder);
 };

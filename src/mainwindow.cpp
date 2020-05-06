@@ -2881,8 +2881,13 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
             notesDir.entryList(QStringList{"*"}, QDir::Dirs, QDir::Time);
 
         // ignore some folders
-        const QStringList ignoreFolderList{".", "..", "media", "attachments",
-                                           "trash"};
+        const QStringList ignoreFolderList{".", "..", "trash"};
+		
+		// ignore note's embedment folders
+		const QStringList noteFolders =
+			notesDir.entryList(QStringList{"*.md"}, QDir::Files, QDir::Time);
+		noteFolders.replaceInStrings(" ", "_");
+		noteFolders.replaceInStrings(".md", "");
 
         QSettings settings;
         // ignore folders by regular expression
@@ -2897,7 +2902,11 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
             if (ignoreFolderList.contains(folder)) {
                 continue;
             }
-
+            
+            if (noteFolders.contains(folder)) {
+				continue;
+			}
+			
             // ignore folders by regular expression
             if (Utils::Misc::regExpInListMatches(folder,
                                                  ignoredFolderRegExpList)) {
@@ -6278,7 +6287,7 @@ void MainWindow::on_actionInsert_image_triggered() {
             QFile *file = dialog->getImageFile();
 
             if (file->size() > 0) {
-                insertMedia(file, title);
+                insertImage(file, title);
             }
         }
     }
@@ -6287,11 +6296,11 @@ void MainWindow::on_actionInsert_image_triggered() {
 }
 
 /**
- * Inserts a media file into the current note
+ * Inserts an image file into the current note
  */
-bool MainWindow::insertMedia(QFile *file, QString title) {
+bool MainWindow::insertImage(QFile *file, QString title) {
     QString text =
-        _currentNote.getInsertMediaMarkdown(file, true, false, std::move(title));
+        _currentNote.getInsertEmbedmentMarkdown(file, mediaType::image, true, false, std::move(title));
 
     if (!text.isEmpty()) {
         ScriptingService *scriptingService = ScriptingService::instance();
@@ -6322,15 +6331,15 @@ bool MainWindow::insertPDF(QFile *file) {
         int iResult = dialog->exec();
         if (iResult == DropPDFDialog::idLink) {
             // If the annotations have not been processed, we just add a link to the PDF file
-            QString text = Note::getInsertPDFMarkdown(file);
+            QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::pdf);
             if (!text.isEmpty()) {
                 ScriptingService* scriptingService = ScriptingService::instance();
                 // attempts to ask a script for an other markdown text
                 text = scriptingService->callInsertPDFHook(file, text);
                 qDebug() << __func__ << " - 'text': " << text;
 
-        PKbSuiteMarkdownTextEdit* textEdit = activeNoteTextEdit();
-        QTextCursor c = textEdit->textCursor();
+                PKbSuiteMarkdownTextEdit* textEdit = activeNoteTextEdit();
+                QTextCursor c = textEdit->textCursor();
 
                 // if we try to insert PDF in the first line of the note (aka.
                 // note name) move the cursor to the last line
@@ -6343,30 +6352,21 @@ bool MainWindow::insertPDF(QFile *file) {
                 c.insertText(text);
             }
         } else if (iResult == DropPDFDialog::idCreateNote) {
-            QDir LectureNoteDir(NoteFolder::currentLectureNotePath());
-            
-            // create the PDF folder if it doesn't exist
-            if (!LectureNoteDir.exists()) {
-                LectureNoteDir.mkpath(LectureNoteDir.path());
-                
-                // rebuild the index of the note subfolders
-                buildNotesIndex();
-
-                // reload note subfolders
-                setupNoteSubFolders();
-            }
-            
             QFileInfo pdfFileInfo(file->fileName());
-
-            QFileInfo noteFileInfo(LectureNoteDir.path() + "/" + pdfFileInfo.baseName() + ".md");
+			NoteSubFolder noteSubFolder = NoteFolder::currentNoteFolder().getActiveNoteSubFolder();
+			
+            QFileInfo noteFileInfo(noteSubFolder.fullPath() + "/" + pdfFileInfo.baseName() + ".md");
             if (noteFileInfo.exists()) {
                 ;// TODO Gérer le cas où la note existe
             }
             else {
                 
                 // La note n'existe pas, on la crée
-                QFile noteFile(LectureNoteDir.path() + pdfFileInfo.baseName() + ".md");
-                
+                Note note = Note();
+                note.setName(pdfFileInfo.baseName());
+				QString noteSubFolderPath = noteSubFolder.fullPath();
+                note.setNoteSubFolderId(noteSubFolder.getId());
+
                 QString noteText = ScriptingService::instance()->callHandleNewNoteHeadlineHook(pdfFileInfo.baseName() + " - Notes");
 
                 // check if a hook changed the text
@@ -6383,7 +6383,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("```\n\n");
 
                 noteText.append("## ===== Document source =====  \n");
-                noteText.append("Fichier : " + Note::getInsertPDFMarkdown(file) + "  \n");
+                noteText.append("Fichier : " + note.getInsertEmbedmentMarkdown(file, mediaType::pdf) + "  \n");
                 noteText.append("Titre : " + pdfFile.title() + "  \n");
                 noteText.append("Auteur : " + pdfFile.author() + "  \n");
                 noteText.append("Sujet : " + pdfFile.subject() + "  \n");
@@ -6391,17 +6391,14 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("@TODO\n\n");
                 noteText.append("--- \n\n\n");
                 
+				pdfFile.setDocumentFolder(noteSubFolderPath);
+				
                 noteText.append(pdfFile.markdownSummary());
                 noteText.append(pdfFile.markdownCitations());
                 noteText.append(pdfFile.markdownComments());
-
-                NoteSubFolder noteSubFolder = NoteSubFolder::fetchByPathData(NoteFolder::currentLectureNotePath().right(NoteFolder::currentLectureNotePath().size() - NoteFolder::currentLectureNotePath().lastIndexOf("/") - 1), "/");
-                QString noteSubFolderPath = noteSubFolder.fullPath();
-                
-                Note note = Note();
-                note.setName(pdfFileInfo.baseName());
+				
                 note.setNoteText(noteText);
-                note.setNoteSubFolderId(noteSubFolder.getId());
+
                 note.store();
 
                 // workaround when signal block doesn't work correctly
@@ -6457,7 +6454,7 @@ bool MainWindow::insertPDF(QFile *file) {
             return false;
     } else {
         // If the annotations have not been processed, we just add a link to the PDF file
-        QString text = Note::getInsertPDFMarkdown(file);
+        QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::pdf);
         if (!text.isEmpty()) {
             ScriptingService* scriptingService = ScriptingService::instance();
             // attempts to ask a script for an other markdown text
@@ -6486,7 +6483,7 @@ void MainWindow::insertNoteText(const QString &text) {
     PKbSuiteMarkdownTextEdit *textEdit = activeNoteTextEdit();
     QTextCursor c = textEdit->textCursor();
 
-    // if we try to insert media in the first line of the note (aka.
+    // if we try to insert text in the first line of the note (aka.
     // note name) move the cursor to the last line
     if (currentNoteLineNumber() == 1) {
         c.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
@@ -6501,7 +6498,7 @@ void MainWindow::insertNoteText(const QString &text) {
  * Inserts a file attachment into the current note
  */
 bool MainWindow::insertAttachment(QFile *file, const QString &title) {
-    QString text = _currentNote.getInsertAttachmentMarkdown(file, title);
+    QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::attachment, false, false, title);
 
     if (!text.isEmpty()) {
         qDebug() << __func__ << " - 'text': " << text;
@@ -7015,11 +7012,11 @@ void MainWindow::handleInsertingFromMimeData(const QMimeData *mimeData) {
                         failureCount++;
                     }
                     // only allow image files to be inserted as image
-                } else if (isValidMediaFile(file)) {
+                } else if (isValidImageFile(file)) {
                     showStatusBarMessage(tr("Inserting image"));
 
                     // insert the image
-                    insertMedia(file);
+                    insertImage(file);
 
                         showStatusBarMessage(tr("Done inserting image"), 3000);
                     } else if (isValidPDFFile(file)) {
@@ -7095,7 +7092,7 @@ void MainWindow::handleInsertingFromMimeData(const QMimeData *mimeData) {
                 auto *file = new QFile(tempFile.fileName());
 
                 showStatusBarMessage(tr("Inserting image"));
-                insertMedia(file);
+                insertImage(file);
                 delete file;
 
                 showStatusBarMessage(tr("Done inserting image"), 3000);
@@ -7146,7 +7143,7 @@ void MainWindow::insertHtml(QString html) {
             showStatusBarMessage(tr("Downloading %1").arg(imageUrl.toString()));
 
             // download the image and get the media markdown code for it
-            markdownCode = _currentNote.downloadUrlToMedia(imageUrl);
+            markdownCode = _currentNote.downloadUrlToEmbedment(imageUrl);
         }
 
         if (!markdownCode.isEmpty()) {
@@ -7174,41 +7171,41 @@ void MainWindow::resetBrokenTagNotesLinkFlag() {
 }
 
 /**
- * Evaluates if file is a media file
+ * Evaluates if file is an image file
  */
-bool MainWindow::isValidMediaFile(QFile *file) {
-    QStringList mediaExtensions = QStringList() << "jpg" << "png" << "gif";
+bool MainWindow::isValidImageFile(QFile *file) {
+    QStringList imageExtensions = QStringList() << "jpg" << "png" << "gif";
     QFileInfo fileInfo(file->fileName());
     QString extension = fileInfo.suffix();
-    return mediaExtensions.contains(extension, Qt::CaseInsensitive);
+    return imageExtensions.contains(extension, Qt::CaseInsensitive);
 }
 
 /**
  * Evaluates if file is a PDF file
  */
 bool MainWindow::isValidPDFFile(QFile *file) {
-    QStringList mediaExtensions = QStringList() << "pdf";
+    QStringList pdfExtension = QStringList() << "pdf";
 
     // append the custom extensions
-    mediaExtensions.append(Note::customNoteFileExtensionList());
+    pdfExtension.append(Note::customNoteFileExtensionList());
 
     QFileInfo fileInfo(file->fileName());
     QString extension = fileInfo.suffix();
-    return mediaExtensions.contains(extension, Qt::CaseInsensitive);
+    return pdfExtension.contains(extension, Qt::CaseInsensitive);
 }
 
 /**
  * Evaluates if file is a note file
  */
 bool MainWindow::isValidNoteFile(QFile *file) {
-    QStringList mediaExtensions = QStringList({"txt", "md"});
+    QStringList noteExtensions = QStringList({"txt", "md"});
 
     // append the custom extensions
-    mediaExtensions.append(Note::customNoteFileExtensionList());
+    noteExtensions.append(Note::customNoteFileExtensionList());
 
     const QFileInfo fileInfo(file->fileName());
     const QString extension = fileInfo.suffix();
-    return mediaExtensions.contains(extension, Qt::CaseInsensitive);
+    return noteExtensions.contains(extension, Qt::CaseInsensitive);
 }
 
 void MainWindow::on_actionPaste_image_triggered() { pasteMediaIntoNote(); }
@@ -9118,18 +9115,6 @@ void MainWindow::moveSelectedNotesToNoteSubFolder(
                 // handle the replacing of all note links from other notes
                 // because the note was moved
                 note.handleNoteMoving(oldNote);
-
-                // re-link images
-                const bool mediaFileLinksUpdated =
-                    note.updateRelativeMediaFileLinks();
-
-                // re-link attachments
-                const bool attachmentFileLinksUpdated =
-                    note.updateRelativeAttachmentFileLinks();
-
-                if (mediaFileLinksUpdated || attachmentFileLinksUpdated) {
-                    note.storeNoteTextFileToDisk();
-                }
             } else {
                 qWarning() << "Could not move note:" << note.getName();
             }
@@ -9208,18 +9193,6 @@ void MainWindow::copySelectedNotesToNoteSubFolder(
                 // tag the note again
                 for (const Tag &tag : tags) {
                     tag.linkToNote(note);
-                }
-
-                // re-link images
-                const bool mediaFileLinksUpdated =
-                    note.updateRelativeMediaFileLinks();
-
-                // re-link attachments
-                const bool attachmentFileLinksUpdated =
-                    note.updateRelativeAttachmentFileLinks();
-
-                if (mediaFileLinksUpdated || attachmentFileLinksUpdated) {
-                    note.storeNoteTextFileToDisk();
                 }
             } else {
                 qWarning() << "Could not copy note:" << note.getName();

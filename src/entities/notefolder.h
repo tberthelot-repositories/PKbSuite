@@ -45,14 +45,10 @@ class NoteFolder {
     static int currentNoteFolderId();
     static NoteFolder currentNoteFolder();
     static QString currentLocalPath();
-	static QString currentLectureNotePath();
-    static QString currentPDFPath();
     static QString currentRootFolderName(bool fullPath = false);
     static bool isCurrentHasSubfolders();
     static bool isCurrentShowSubfolders();
     static QString currentTrashPath();
-    static QString currentMediaPath();
-    static QString currentAttachmentsPath();
     static QString noteFoldersWebServiceJsonText();
     static bool isPathNoteFolder(const QString &path);
     static bool isCurrentNoteTreeEnabled();

@@ -1401,7 +1401,7 @@
     </message>
     <message>
       <location filename="../dialogs/imagedialog.ui" line="33"/>
-      <source>Don't copy image to media folder</source>
+      <source>Don't copy image to attachment folder</source>
       <translation>Ne copiez pas l'image dans le dossier multimédia</translation>
     </message>
     <message>
@@ -2165,8 +2165,8 @@
     </message>
     <message>
       <location filename="../mainwindow.ui" line="1588"/>
-      <source>Insert image (the image will be copied to the `media` folder in the current notes folder)</source>
-      <translation>Insérer une image (l'image sera alors copiée dans le dossier "media" qui se trouve dans le répertoire des notes)</translation>
+      <source>Insert image (the image will be copied to the `attachment` folder in the current notes folder)</source>
+      <translation>Insérer une image (l'image sera alors copiée dans le dossier de la note qui se trouve dans le répertoire des notes)</translation>
     </message>
     <message>
       <location filename="../mainwindow.ui" line="1600"/>

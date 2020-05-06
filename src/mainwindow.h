@@ -751,13 +751,13 @@ private:
 
     void changeDistractionFreeMode(const bool enabled);
 
-    bool insertMedia(QFile *file, QString title = QString());
+    bool insertImage(QFile *file, QString title = QString());
 
     bool insertPDF(QFile *file);
     
     int currentNoteLineNumber();
 
-    static bool isValidMediaFile(QFile *file);
+    static bool isValidImageFile(QFile *file);
 
     static bool isValidNoteFile(QFile *file);
 	

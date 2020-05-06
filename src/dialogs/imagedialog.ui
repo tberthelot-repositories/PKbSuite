@@ -30,7 +30,7 @@
       <string>The path or url will be inserted directly, paths to files will be made relative to the current note</string>
      </property>
      <property name="text">
-      <string>Don't copy image to media folder</string>
+      <string>Don't copy image to note embedment folder</string>
      </property>
     </widget>
    </item>

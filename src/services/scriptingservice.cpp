@@ -1176,7 +1176,7 @@ QString ScriptingService::downloadUrlToString(const QUrl &url) {
  */
 QString ScriptingService::downloadUrlToMedia(const QUrl &url,
                                              bool returnUrlOnly) {
-    return _currentNote->downloadUrlToMedia(url, returnUrlOnly);
+    return _currentNote->downloadUrlToEmbedment(url, returnUrlOnly);
 }
 
 /**
@@ -1197,7 +1197,7 @@ QString ScriptingService::insertMediaFile(const QString &mediaFilePath,
         return QString();
     }
 
-    return _currentNote->getInsertMediaMarkdown(mediaFile, true, returnUrlOnly);
+    return _currentNote->getInsertEmbedmentMarkdown(mediaFile, mediaType::image, true, returnUrlOnly);
 }
 
 /**

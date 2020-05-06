@@ -16,6 +16,12 @@ class NoteSubFolder;
 #define NOTE_TEXT_ENCRYPTION_POST_STRING "-- END ENCRYPTED TEXT -->"
 #define BOTAN_SALT "Gj3%36/SmPoe12$snNAs-A-_.),?faQ1@!f32"
 
+typedef enum mediaType {
+	image,
+	attachment,
+	pdf
+};
+	
 class Note {
    public:
     explicit Note();
@@ -242,21 +248,16 @@ class Note {
     void handleNoteMoving(const Note &oldNote) const;
 
     static QString createNoteHeader(const QString &name);
+	
+	QString currentEmbedmentFolder();
 
-    QString getInsertMediaMarkdown(QFile *file, bool addNewLine = true,
+    QString getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNewLine = true,
                                    bool returnUrlOnly = false,
                                    QString title = QString());
-
-    QString getInsertAttachmentMarkdown(QFile *file,
-                                        QString fileName = QString(),
-                                        bool returnUrlOnly = false);
-	
-	static QString getInsertPDFMarkdown(QFile *file,
-								 bool addNewLine = true);
 	
     static bool scaleDownImageFileIfNeeded(QFile &file);
 
-    QString downloadUrlToMedia(const QUrl &url, bool returnUrlOnly = false);
+    QString downloadUrlToEmbedment(const QUrl &url, bool returnUrlOnly = false);
 
     QString importMediaFromBase64(
         QString &data, const QString &imageSuffix = QStringLiteral("dat"));
@@ -271,7 +272,7 @@ class Note {
                                int maxImageWidth = 980, bool forExport = false,
                                bool base64Images = false);
 
-    QStringList getMediaFileList();
+    QStringList getEmbedmentFileList();
 
     static Note fetchByUrlString(const QString &urlString);
 
@@ -313,15 +314,9 @@ class Note {
     QString getNoteUrlForLinkingTo(const Note &note,
                                    bool forceLegacy = false) const;
 
-    QString mediaUrlStringForFileName(const QString &fileName) const;
-
-    QString attachmentUrlStringForFileName(const QString &fileName) const;
+    QString embedmentUrlStringForFileName(const QString &fileName) const;
 
     Note fetchByRelativeFileName(const QString &fileName) const;
-
-    bool updateRelativeMediaFileLinks();
-
-    bool updateRelativeAttachmentFileLinks();
 
     static Utils::Misc::ExternalImageHash *externalImageHash();
 
