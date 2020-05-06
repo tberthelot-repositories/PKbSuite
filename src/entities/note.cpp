@@ -362,13 +362,13 @@ QStringList Note::getEmbedmentFileList() {
 
     // match image links like ![media-qV920](file://notename/608766373.gif)
     // or  ![media-qV920](notename/608766373.gif)
-	QString noteName = getName();
+	QString noteName = getName().replace(" ", "_");
 
     QRegularExpression re(QStringLiteral(R"(!\[.*?\]\(.*)") + noteName + QStringLiteral(R"(/(.+?)\))"));
     QRegularExpressionMatchIterator i = re.globalMatch(noteText);
 
     // remove all found images from the orphaned files list
-	const QString noteEmbedmentDir = getNoteSubFolder().fullPath() + QDir::separator() + getName() + QDir::separator();
+	const QString noteEmbedmentDir = getNoteSubFolder().fullPath() + QDir::separator() + getName().replace(" ", "_") + QDir::separator();
     while (i.hasNext()) {
         QRegularExpressionMatch match = i.next();
         const QString fileName = match.captured(1);
@@ -2932,9 +2932,7 @@ QString Note::createNoteHeader(const QString &name) {
  * Return the path of note's embedded item folder
  */
 QString Note::currentEmbedmentFolder() {
-	QString strEmbedmentPath = fullNoteFileDirPath() + "/" + getName();
-	
-	return strEmbedmentPath.replace(" ", "_");
+	return fullNoteFileDirPath() + "/" + getName().replace(" ", "_");
 }
 
 /**
