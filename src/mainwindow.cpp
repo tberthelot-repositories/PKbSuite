@@ -2667,7 +2667,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
                 updateWindowTitle();
 
                 // update current tab name
-                updateCurrentTabData(currentNote);
+                updateCurrentTabData(_currentNote);
             }
         }
 	
@@ -2936,11 +2936,14 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
             // ignore folders by regular expression
             if (Utils::Misc::regExpInListMatches(folder,
                                                  ignoredFolderRegExpList)) {
-
-        for (const QString &folder : folders) {
-            if (NoteSubFolder::willFolderBeIgnored(folder)) {
                 continue;
             }
+            
+			for (const QString &folder : folders) {
+				if (NoteSubFolder::willFolderBeIgnored(folder)) {
+					continue;
+				}
+			}
 
             // fetch or create the parent note sub folder
             NoteSubFolder parentNoteSubFolder =
@@ -3365,6 +3368,7 @@ void MainWindow::setCurrentNote(Note note, bool updateNoteText,
     enableShowTrashButton();
 
     // update cursor position of previous note
+    const int noteId = note.getId();
     if (_currentNote.exists() && (_currentNote.getId() != note.getId())) {
         this->noteHistory.updateCursorPositionOfNote(this->_currentNote,
                                                      ui->noteTextEdit);
@@ -9839,8 +9843,8 @@ void MainWindow::openCurrentNoteInTab() {
         }
     }
 
-    const QString &noteName = currentNote.getName();
-    const int noteId = currentNote.getId();
+    const QString &noteName = _currentNote.getName();
+    const int noteId = _currentNote.getId();
     int tabIndex = Utils::Gui::getTabWidgetIndexByProperty(
         ui->noteEditTabWidget, QStringLiteral("note-id"), noteId);
 
@@ -11593,7 +11597,7 @@ void MainWindow::on_noteTreeWidget_itemDoubleClicked(QTreeWidgetItem *item,
 
     // call a script hook that a new note was double clicked
     const bool hookFound = ScriptingService::instance()->
-                      callHandleNoteDoubleClickedHook(&currentNote);
+                      callHandleNoteDoubleClickedHook(&_currentNote);
 
     if (!hookFound) {
         openCurrentNoteInTab();

@@ -590,23 +590,20 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QOwnNotesMarkdownTextEdit" name="noteTextEdit">
+              <widget class="PKbSuiteMarkdownTextEdit" name="noteTextEdit" native="true">
                <property name="enabled">
                 <bool>true</bool>
                </property>
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="cursorWidth">
+               <property name="cursorWidth" stdset="0">
                 <number>1</number>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QOwnNotesMarkdownTextEdit" name="encryptedNoteTextEdit">
+              <widget class="PKbSuiteMarkdownTextEdit" name="encryptedNoteTextEdit" native="true">
                <property name="enabled">
                 <bool>true</bool>
                </property>
@@ -618,9 +615,6 @@
 	border: 3px dashed #aa0000;
 }
 </string>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
                </property>
               </widget>
              </item>
@@ -658,8 +652,8 @@
                 <string notr="true">2</string>
                </property>
                <property name="icon">
-                <iconset theme="text-x-generic" resource="breeze-qownnotes.qrc">
-                 <normaloff>:/icons/breeze-qownnotes/16x16/text-x-generic.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-x-generic.svg</iconset>
+                <iconset theme="text-x-generic" resource="breeze-pkbsuite.qrc">
+                 <normaloff>:/icons/breeze-pkbsuite/16x16/text-x-generic.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-x-generic.svg</iconset>
                </property>
                <property name="toolButtonStyle">
                 <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -699,8 +693,8 @@
                 <string>Add tag</string>
                </property>
                <property name="icon">
-                <iconset theme="tag" resource="breeze-qownnotes.qrc">
-                 <normaloff>:/icons/breeze-qownnotes/16x16/tag.svg</normaloff>:/icons/breeze-qownnotes/16x16/tag.svg</iconset>
+                <iconset theme="tag" resource="breeze-pkbsuite.qrc">
+                 <normaloff>:/icons/breeze-pkbsuite/16x16/tag.svg</normaloff>:/icons/breeze-pkbsuite/16x16/tag.svg</iconset>
                </property>
               </widget>
              </item>
@@ -2519,8 +2513,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionPrevious_note_tab">
    <property name="icon">
-    <iconset theme="go-previous" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/go-previous.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-previous.svg</iconset>
+    <iconset theme="go-previous" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/go-previous.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-previous.svg</iconset>
    </property>
    <property name="text">
     <string>Previous note tab</string>
@@ -2531,8 +2525,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionNext_note_tab">
    <property name="icon">
-    <iconset theme="go-next" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/go-next.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-next.svg</iconset>
+    <iconset theme="go-next" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/go-next.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-next.svg</iconset>
    </property>
    <property name="text">
     <string>Next note tab</string>
@@ -2543,8 +2537,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionClose_current_note_tab">
    <property name="icon">
-    <iconset theme="window-close" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/window-close.svg</normaloff>:/icons/breeze-qownnotes/16x16/window-close.svg</iconset>
+    <iconset theme="window-close" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/window-close.svg</normaloff>:/icons/breeze-pkbsuite/16x16/window-close.svg</iconset>
    </property>
    <property name="text">
     <string>Close current note tab</string>
@@ -2555,8 +2549,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionNew_note_in_new_tab">
    <property name="icon">
-    <iconset theme="document-new" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-new.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-new.svg</iconset>
+    <iconset theme="document-new" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/document-new.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-new.svg</iconset>
    </property>
    <property name="text">
     <string>New note in new tab</string>
@@ -2573,11 +2567,6 @@ p, li { white-space: pre-wrap; }
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>PKbSuiteMarkdownTextEdit</class>
-   <extends>QPlainTextEdit</extends>
-   <header location="global">widgets/pkbsuitemarkdowntextedit.h</header>
-  </customwidget>
   <customwidget>
    <class>NavigationWidget</class>
    <extends>QTreeWidget</extends>
@@ -2597,6 +2586,11 @@ p, li { white-space: pre-wrap; }
    <class>LineEdit</class>
    <extends>QLineEdit</extends>
    <header location="global">widgets/lineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PKbSuiteMarkdownTextEdit</class>
+   <extends>QWidget</extends>
+   <header>widgets/pkbsuitemarkdowntextedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -2622,8 +2616,8 @@ p, li { white-space: pre-wrap; }
   <include location="breeze-pkbsuite.qrc"/>
   <include location="breeze-dark-pkbsuite.qrc"/>
   <include location="images.qrc"/>
-  <include location="breeze-qownnotes.qrc"/>
-  <include location="breeze-dark-qownnotes.qrc"/>
+  <include location="breeze-pkbsuite.qrc"/>
+  <include location="breeze-dark-pkbsuite.qrc"/>
  </resources>
  <connections/>
 </ui>

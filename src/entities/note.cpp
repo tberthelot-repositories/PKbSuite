@@ -2960,11 +2960,11 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNe
 
         QString suffix = fileInfo.suffix();
         QMimeDatabase db;
-        const QMimeType type = db.mimeTypeForFile(file->fileName());
+        const QMimeType mimetype = db.mimeTypeForFile(file->fileName());
 
         // try to detect the mime type of the file and use a proper file suffix
-        if (type.isValid()) {
-            const QStringList suffixes = type.suffixes();
+        if (mimetype.isValid()) {
+            const QStringList suffixes = mimetype.suffixes();
             if (suffixes.count() > 0) {
                 suffix = suffixes.at(0);
             }
