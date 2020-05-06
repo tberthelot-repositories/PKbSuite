@@ -6287,7 +6287,7 @@ void MainWindow::on_actionInsert_image_triggered() {
             QFile *file = dialog->getImageFile();
 
             if (file->size() > 0) {
-                insertMedia(file, title);
+                insertImage(file, title);
             }
         }
     }
@@ -6296,9 +6296,9 @@ void MainWindow::on_actionInsert_image_triggered() {
 }
 
 /**
- * Inserts a media file into the current note
+ * Inserts an image file into the current note
  */
-bool MainWindow::insertMedia(QFile *file, QString title) {
+bool MainWindow::insertImage(QFile *file, QString title) {
     QString text =
         _currentNote.getInsertEmbedmentMarkdown(file, mediaType::image, true, false, std::move(title));
 
@@ -6483,7 +6483,7 @@ void MainWindow::insertNoteText(const QString &text) {
     PKbSuiteMarkdownTextEdit *textEdit = activeNoteTextEdit();
     QTextCursor c = textEdit->textCursor();
 
-    // if we try to insert media in the first line of the note (aka.
+    // if we try to insert text in the first line of the note (aka.
     // note name) move the cursor to the last line
     if (currentNoteLineNumber() == 1) {
         c.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
@@ -7012,11 +7012,11 @@ void MainWindow::handleInsertingFromMimeData(const QMimeData *mimeData) {
                         failureCount++;
                     }
                     // only allow image files to be inserted as image
-                } else if (isValidMediaFile(file)) {
+                } else if (isValidImageFile(file)) {
                     showStatusBarMessage(tr("Inserting image"));
 
                     // insert the image
-                    insertMedia(file);
+                    insertImage(file);
 
                         showStatusBarMessage(tr("Done inserting image"), 3000);
                     } else if (isValidPDFFile(file)) {
@@ -7092,7 +7092,7 @@ void MainWindow::handleInsertingFromMimeData(const QMimeData *mimeData) {
                 auto *file = new QFile(tempFile.fileName());
 
                 showStatusBarMessage(tr("Inserting image"));
-                insertMedia(file);
+                insertImage(file);
                 delete file;
 
                 showStatusBarMessage(tr("Done inserting image"), 3000);
@@ -7171,41 +7171,41 @@ void MainWindow::resetBrokenTagNotesLinkFlag() {
 }
 
 /**
- * Evaluates if file is a media file
+ * Evaluates if file is an image file
  */
-bool MainWindow::isValidMediaFile(QFile *file) {
-    QStringList mediaExtensions = QStringList() << "jpg" << "png" << "gif";
+bool MainWindow::isValidImageFile(QFile *file) {
+    QStringList imageExtensions = QStringList() << "jpg" << "png" << "gif";
     QFileInfo fileInfo(file->fileName());
     QString extension = fileInfo.suffix();
-    return mediaExtensions.contains(extension, Qt::CaseInsensitive);
+    return imageExtensions.contains(extension, Qt::CaseInsensitive);
 }
 
 /**
  * Evaluates if file is a PDF file
  */
 bool MainWindow::isValidPDFFile(QFile *file) {
-    QStringList mediaExtensions = QStringList() << "pdf";
+    QStringList pdfExtension = QStringList() << "pdf";
 
     // append the custom extensions
-    mediaExtensions.append(Note::customNoteFileExtensionList());
+    pdfExtension.append(Note::customNoteFileExtensionList());
 
     QFileInfo fileInfo(file->fileName());
     QString extension = fileInfo.suffix();
-    return mediaExtensions.contains(extension, Qt::CaseInsensitive);
+    return pdfExtension.contains(extension, Qt::CaseInsensitive);
 }
 
 /**
  * Evaluates if file is a note file
  */
 bool MainWindow::isValidNoteFile(QFile *file) {
-    QStringList mediaExtensions = QStringList({"txt", "md"});
+    QStringList noteExtensions = QStringList({"txt", "md"});
 
     // append the custom extensions
-    mediaExtensions.append(Note::customNoteFileExtensionList());
+    noteExtensions.append(Note::customNoteFileExtensionList());
 
     const QFileInfo fileInfo(file->fileName());
     const QString extension = fileInfo.suffix();
-    return mediaExtensions.contains(extension, Qt::CaseInsensitive);
+    return noteExtensions.contains(extension, Qt::CaseInsensitive);
 }
 
 void MainWindow::on_actionPaste_image_triggered() { pasteMediaIntoNote(); }

@@ -360,8 +360,7 @@ bool Note::moveToPath(const QString &destinationPath,
 QStringList Note::getEmbedmentFileList() {
     QStringList fileList;
 
-    // match image links like ![media-qV920](file://notename/608766373.gif)
-    // or  ![media-qV920](notename/608766373.gif)
+    // match image links in note's embedment folders
 	QString noteName = getName().replace(" ", "_");
 
     QRegularExpression re(QStringLiteral(R"(!\[.*?\]\(.*)") + noteName + QStringLiteral(R"(/(.+?)\))"));
@@ -3002,7 +3001,7 @@ QString Note::embedmentUrlStringForFileName(const QString &fileName) const {
 }
 
 /**
- * Downloads an url to the media folder and returns the markdown code or the
+ * Downloads an url to the note's embedment folder and returns the markdown code or the
  * url for it relative to the note
  *
  * @param url
@@ -3068,7 +3067,7 @@ QString Note::importMediaFromBase64(QString &data, const QString &imageSuffix) {
     // write image to the temporary file
     tempFile->write(QByteArray::fromBase64(data.toLatin1()));
 
-    // store the temporary image in the media folder and return the markdown
+    // store the temporary image in the embedment folder and return the markdown
     // code
     const QString markdownCode = getInsertEmbedmentMarkdown(tempFile, mediaType::image);
 
