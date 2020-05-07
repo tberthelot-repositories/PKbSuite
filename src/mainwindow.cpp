@@ -1224,24 +1224,6 @@ void MainWindow::initStyling() {
         ui->noteTextEdit->setPaperMargins(0);
     }
 
-#ifdef Q_OS_MAC
-    // no stylesheets needed for OS X, the margins doesn't work the same there
-    ui->tagFrame->setStyleSheet(QString());
-    ui->notesListFrame->setStyleSheet(QString());
-    ui->noteListSubFrame->setStyleSheet(QString());
-    ui->navigationFrame->setStyleSheet(QString());
-    ui->noteEditTabWidget->setStyleSheet(QString());
-    ui->noteViewFrame->setStyleSheet(QString());
-
-    // add some margins in OS X to match the styling of the note list
-    ui->navigationFrame->setContentsMargins(3, 0, 3, 0);
-
-    // add a padding for the note tag frame so the `add tag` button doesn't
-    // stick to the right corner
-    ui->noteTagFrame->setStyleSheet(
-        "QFrame {border: none; padding-right: 5px;}");
-#endif
-
     // move the note view scrollbar when the note edit scrollbar was moved
     connect(ui->noteTextEdit->verticalScrollBar(), SIGNAL(valueChanged(int)),
             this, SLOT(noteTextSliderValueChanged(int)));
@@ -7670,14 +7652,8 @@ void MainWindow::setupTags() {
     ui->newNoteTagLineEdit->setVisible(false);
     ui->newNoteTagButton->setVisible(true);
 
-#ifdef Q_OS_MAC
-    // try to compensate for the different button top margins in OS X
-    ui->noteTagFrame->layout()->setContentsMargins(0, 0, 0, 0);
-    ui->noteTagButtonFrame->layout()->setContentsMargins(0, 8, 0, 0);
-#else
     // we want the tag frame as small as possible
     ui->noteTagFrame->layout()->setContentsMargins(8, 0, 8, 0);
-#endif
 
     reloadTagTree();
     reloadCurrentNoteTags();
@@ -8086,6 +8062,7 @@ void MainWindow::reloadCurrentNoteTags() {
     for (const Tag &tag : Utils::asConst(tagList)) {
         QPushButton *button = new QPushButton(
             Utils::Misc::shorten(tag.getName(), 25), ui->noteTagButtonFrame);
+		button->setFlat(true);
         button->setIcon(QIcon::fromTheme(
             QStringLiteral("tag-delete"),
             QIcon(QStringLiteral(
