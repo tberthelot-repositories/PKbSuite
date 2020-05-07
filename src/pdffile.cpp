@@ -43,7 +43,7 @@ PDFFile::~PDFFile() {
         delete _document;
 }
 
-bool PDFFile::hasAnnotations() const
+bool PDFFile::hasAnnotations()
 {
     bool foundAnnotations = false;
     QSet<Poppler::Annotation::SubType> subtypes;  // Look for annotations

@@ -12,8 +12,6 @@
 class Bookmark;
 class NoteSubFolder;
 
-#define BOTAN_SALT "Gj3%36/SmPoe12$snNAs-A-_.),?faQ1@!f32"
-
 typedef enum mediaType {
 	image,
 	attachment,

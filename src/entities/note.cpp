@@ -24,8 +24,6 @@
 #include "api/noteapi.h"
 #include "entities/bookmark.h"
 #include "helpers/codetohtmlconverter.h"
-#include "libraries/botan/botan.h"
-#include "libraries/botan/botanwrapper.h"
 #include "libraries/md4c/md2html/render_html.h"
 #include "libraries/md4c/md4c/md4c.h"
 #include "notefolder.h"

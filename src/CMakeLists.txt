@@ -7,8 +7,6 @@ set(CMAKE_AUTOUIC ON)
 #set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# include some Botan settings
-include(libraries/botan/CMakeLists.txt)
 #include sonnet core directory, required for building plugins
 include_directories(libraries/sonnet/src/core)
 #some hunspell settings for windows
@@ -90,21 +88,9 @@ set(SOURCE_FILES
     dialogs/tododialog.cpp
     dialogs/tododialog.h
     dialogs/tododialog.ui
-    dialogs/trashdialog.cpp
-    dialogs/trashdialog.h
-    dialogs/trashdialog.ui
     dialogs/localtrashdialog.cpp
     dialogs/localtrashdialog.h
     dialogs/localtrashdialog.ui
-    dialogs/updatedialog.cpp
-    dialogs/updatedialog.h
-    dialogs/updatedialog.ui
-    dialogs/versiondialog.cpp
-    dialogs/versiondialog.h
-    dialogs/versiondialog.ui
-    dialogs/passworddialog.cpp
-    dialogs/passworddialog.h
-    dialogs/passworddialog.ui
     dialogs/masterdialog.cpp
     dialogs/masterdialog.h
     dialogs/tagadddialog.cpp
@@ -122,9 +108,6 @@ set(SOURCE_FILES
     dialogs/dictionarymanagerdialog.cpp
     dialogs/dictionarymanagerdialog.h
     dialogs/dictionarymanagerdialog.ui
-    dialogs/actiondialog.cpp
-    dialogs/actiondialog.h
-    dialogs/actiondialog.ui
     dialogs/tabledialog.cpp
     dialogs/tabledialog.h
     dialogs/tabledialog.ui
@@ -142,8 +125,6 @@ set(SOURCE_FILES
     dialogs/attachmentdialog.ui
     dialogs/filedialog.cpp
     dialogs/filedialog.h
-    entities/calendaritem.cpp
-    entities/calendaritem.h
     entities/note.cpp
     entities/note.h
     entities/trashitem.cpp
@@ -210,13 +191,6 @@ set(SOURCE_FILES
     services/databaseservice.h
     services/scriptingservice.cpp
     services/scriptingservice.h
-    libraries/piwiktracker/piwiktracker.h
-    libraries/piwiktracker/piwiktracker.cpp
-    libraries/botan/botan.h
-    libraries/botan/botan_internal.h    
-    libraries/botan/botan.cpp
-    libraries/botan/botanwrapper.h
-    libraries/botan/botanwrapper.cpp
     libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget_p.h
     libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget.h
     libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget.cpp

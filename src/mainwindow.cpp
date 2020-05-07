@@ -2855,8 +2855,9 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
         const QStringList ignoreFolderList{".", "..", "trash"};
 		
 		// ignore note's embedment folders
-		const QStringList noteFolders =
+		QStringList noteFolders =
 			notesDir.entryList(QStringList{"*.md"}, QDir::Files, QDir::Time);
+
 		noteFolders.replaceInStrings(" ", "_");
 		noteFolders.replaceInStrings(".md", "");
 

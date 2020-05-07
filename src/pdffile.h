@@ -48,7 +48,7 @@ public:
     PDFFile(QString fileToProcess);
     ~PDFFile();
 
-    bool hasAnnotations() const;
+    bool hasAnnotations();
 	
 	void setDocumentFolder(const QString strFolder) {_sDocumentFolder = strFolder;}
     

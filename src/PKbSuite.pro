@@ -33,7 +33,6 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     libraries/diff_match_patch/diff_match_patch.cpp \
     libraries/versionnumber/versionnumber.cpp \
-    libraries/botan/botanwrapper.cpp \
     libraries/md4c/md4c/md4c.c \
     libraries/md4c/md2html/render_html.c \
     libraries/md4c/md2html/entity.c \
@@ -102,7 +101,6 @@ HEADERS  += mainwindow.h \
     version.h \
     libraries/diff_match_patch/diff_match_patch.h \
     libraries/versionnumber/versionnumber.h \
-    libraries/botan/botanwrapper.h \
     libraries/md4c/md4c/md4c.h \
     libraries/md4c/md2html/render_html.h \
     libraries/md4c/md2html/entity.h \
@@ -202,7 +200,6 @@ RESOURCES += \
     configurations.qrc
 
 include(libraries/qmarkdowntextedit/qmarkdowntextedit.pri)
-include(libraries/botan/botan.pri)
 include(libraries/qkeysequencewidget/qkeysequencewidget/qkeysequencewidget.pri)
 include(libraries/qttoolbareditor/toolbar_editor.pri)
 include(libraries/singleapplication/singleapplication.pri)
