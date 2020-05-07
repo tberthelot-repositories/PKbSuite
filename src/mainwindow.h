@@ -587,9 +587,7 @@ private:
     bool notifyAllExternalModifications;
     int noteSaveIntervalTime;
     QTimer *noteSaveTimer;
-    QTimer *todoReminderTimer;
     QTimer *_noteViewUpdateTimer;
-    QTimer *_todoListTimer;
     bool _noteViewNeedsUpdate;
     NoteHistory noteHistory;
     QHash<int, NoteHistoryItem> noteBookmarks;

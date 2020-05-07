@@ -2027,11 +2027,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1093"/>
-        <source>Encryption</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="1105"/>
         <source>Languages</source>
         <translation type="unfinished"></translation>
@@ -3746,11 +3741,6 @@ If the trash is enabled on your ownCloud server you should be able to restore th
     <message>
         <location filename="../mainwindow.cpp" line="1107"/>
         <source>inserting toolbar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1114"/>
-        <source>encryption toolbar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

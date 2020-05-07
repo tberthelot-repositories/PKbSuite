@@ -2033,11 +2033,6 @@
         <translation>Gestion des versions</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1093"/>
-        <source>Encryption</source>
-        <translation>Chiffrement</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="1105"/>
         <source>Languages</source>
         <translation>Langues</translation>
@@ -3754,11 +3749,6 @@ Si la corbeille est activée sur votre serveur ownCloud, vous devriez pouvoir re
         <location filename="../mainwindow.cpp" line="1107"/>
         <source>inserting toolbar</source>
         <translation>barre d&apos;outils d&apos;insertion</translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1114"/>
-        <source>encryption toolbar</source>
-        <translation>barre d&apos;outils de chiffrement</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1121"/>

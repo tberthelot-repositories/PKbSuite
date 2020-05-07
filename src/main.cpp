@@ -408,8 +408,8 @@ int main(int argc, char *argv[]) {
     QCoreApplication::addLibraryPath(QStringLiteral("./"));
 #endif
 
-    QCoreApplication::setOrganizationDomain(QStringLiteral("PBE"));
-    QCoreApplication::setOrganizationName(QStringLiteral("PBE"));
+    QCoreApplication::setOrganizationDomain(QStringLiteral("TBE"));
+    QCoreApplication::setOrganizationName(QStringLiteral("TBE"));
     QCoreApplication::setApplicationName(QStringLiteral("PKbSuite") +
                                          appNameAdd);
 
