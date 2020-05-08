@@ -2031,7 +2031,6 @@ void MainWindow::readSettings() {
     readSettingsFromSettingsDialog(true);
 
     // get the notes path
-    // prepend the portable data path if we are in portable mode
     this->notesPath = 
         settings.value(QStringLiteral("notesPath")).toString();
 
@@ -4380,6 +4379,11 @@ void MainWindow::tagSelectedNotes(const Tag &tag) {
 
             // tag note
             const bool result = tag.linkToNote(note);
+			QTextCursor tc = ui->noteTextEdit->textCursor();
+			if (ui->noteTextEdit->find("=====")) {		// TODO Change behavior by identifying existing "tag line" iif any, and then add the new tag at the end
+				tc.movePosition(QTextCursor::Down);
+			}
+			tc.insertText("@" + tag.getName());
 
             if (result) {
                 tagCount++;
@@ -8764,6 +8768,8 @@ void MainWindow::buildBulkNoteFolderSubFolderMenuTree(
     QStringList directoryNames =
         dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
 
+	qDebug() << "Here we are !";
+	
     if (isRoot) {
         const auto names = QStringList({"media", "trash", "attachments"});
         for (const QString &name : names) {
