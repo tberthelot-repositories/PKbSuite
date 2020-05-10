@@ -4362,7 +4362,7 @@ void MainWindow::tagSelectedNotes(const Tag &tag) {
             }
 
             const int noteId = item->data(0, Qt::UserRole).toInt();
-            const Note note = Note::fetch(noteId);
+            Note note = Note::fetch(noteId);
 
             if (!note.isFetched()) {
                 continue;
@@ -4379,11 +4379,14 @@ void MainWindow::tagSelectedNotes(const Tag &tag) {
 
             // tag note
             const bool result = tag.linkToNote(note);
-			QTextCursor tc = ui->noteTextEdit->textCursor();
-			if (ui->noteTextEdit->find("=====")) {		// TODO Change behavior by identifying existing "tag line" iif any, and then add the new tag at the end
-				tc.movePosition(QTextCursor::Down);
+			QString strNote = note.getNoteText();
+			QRegularExpressionMatch reMatch;
+			if (strNote.contains(QRegularExpression(R"(===\n(@[a-zA-Z]*,?\s?)*)"), &reMatch)) {
+				QString strUpdatedTag = reMatch.captured(0);
+				strUpdatedTag.chop(1);
+				note.setNoteText(strNote.replace(QRegularExpression(R"(===\n(@[a-zA-Z]*,?\s?)*)"), strUpdatedTag + ", @" + tag.getName() + "\n"));
+				note.storeNoteTextFileToDisk();
 			}
-			tc.insertText("@" + tag.getName());
 
             if (result) {
                 tagCount++;
@@ -4405,7 +4408,8 @@ void MainWindow::tagSelectedNotes(const Tag &tag) {
 
         reloadCurrentNoteTags();
         reloadTagTree();
-
+		updateNoteTextFromDisk(_currentNote);
+		
         showStatusBarMessage(
             tr("%n note(s) were tagged with \"%2\"", "", tagCount)
                 .arg(tag.getName()),
