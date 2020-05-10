@@ -4145,7 +4145,7 @@ void MainWindow::removeSelectedTags() {
                 Note note = Note::fetch(idNote);
                 QString noteText = note.getNoteText();
                    
-                QRegularExpression re = QRegularExpression("@" + tag.getName());
+                QRegularExpression re = QRegularExpression(R"((, )?@)" + tag.getName());
                 QRegularExpressionMatchIterator reIterator = re.globalMatch(noteText);
 
                 while (reIterator.hasNext()) {
@@ -8157,7 +8157,7 @@ void MainWindow::removeNoteTagClicked() {
         const int selectedNotesCount = getSelectedNotesCount();
 
         if (selectedNotesCount <= 1) {
-			QRegularExpression re = QRegularExpression("@" + tag.getName());
+			QRegularExpression re = QRegularExpression(R"((, )?@)" + tag.getName());
 			QRegularExpressionMatchIterator reIterator = re.globalMatch(ui->noteTextEdit->toPlainText());
 			
 			int lTag = 0;
@@ -8166,7 +8166,7 @@ void MainWindow::removeNoteTagClicked() {
 			while (reIterator.hasNext()) {
 				QRegularExpressionMatch reMatch = reIterator.next();
 				
-				tc.setPosition(reMatch.capturedStart() - lTag - 1);
+				tc.setPosition(reMatch.capturedStart() - lTag);
 				tc.setPosition(reMatch.capturedEnd() - lTag, QTextCursor::KeepAnchor);
 				QString sTag = tc.selectedText();
 				
