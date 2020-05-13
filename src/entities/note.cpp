@@ -1344,7 +1344,6 @@ bool Note::updateNoteTextFromDisk() {
 QString Note::getFullFilePathForFile(const QString &fileName) {
     const QSettings settings;
 
-    // prepend the portable data path if we are in portable mode
     const QString notesPath =
         settings.value(QStringLiteral("notesPath")).toString();
 
@@ -2647,7 +2646,7 @@ QString Note::createNoteHeader(const QString &name) {
  * Return the path of note's embedded item folder
  */
 QString Note::currentEmbedmentFolder() {
-	return fullNoteFileDirPath() + "/" + getName().replace(" ", "_");
+	return fullNoteFilePath() + "/" + getName().replace(" ", "_");
 }
 
 /**
@@ -2678,10 +2677,6 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNe
                 suffix = suffixes.at(0);
             }
         }
-
-        // find a random name for the new file
-        const QString newFileName = Utils::Misc::makeFileNameRandom(
-            file->fileName(), suffix);
 
         const QString newFilePath =
             dir.path() + QDir::separator() + fileInfo.fileName().replace(" ", "_");
@@ -2716,7 +2711,7 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNe
 			}
 			break;
 			case mediaType::pdf: {
-				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](file://") + dir.path() + QDir::separator() + embedmentUrlString + QStringLiteral(")") + (addNewLine ? "\n" : "");
+				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](") + embedmentUrlString + QStringLiteral(")") + (addNewLine ? "\n" : "");
 			}
 		}
 		

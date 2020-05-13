@@ -35,22 +35,22 @@ void loadTranslations(T &app, QTranslator *translator,
     QString appPath = QCoreApplication::applicationDirPath();
     translator[2].load("qt_" + locale, appPath + "/translations");
     app.installTranslator(&translator[2]);
-    translator[3].load(appPath + "/../src/languages/QOwnNotes_" + locale);
+    translator[3].load(appPath + "/../src/languages/PKbSuite_" + locale);
     app.installTranslator(&translator[3]);
-    translator[4].load(appPath + "/../languages/QOwnNotes_" + locale);
+    translator[4].load(appPath + "/../languages/PKbSuite_" + locale);
     app.installTranslator(&translator[4]);
-    translator[5].load(appPath + "/languages/QOwnNotes_" + locale);
+    translator[5].load(appPath + "/languages/PKbSuite_" + locale);
     app.installTranslator(&translator[5]);
-    translator[6].load(appPath + "/QOwnNotes_" + locale);
+    translator[6].load(appPath + "/PKbSuite_" + locale);
     app.installTranslator(&translator[6]);
-    translator[7].load("../src/languages/QOwnNotes_" + locale);
+    translator[7].load("../src/languages/PKbSuite_" + locale);
     app.installTranslator(&translator[7]);
-    translator[8].load("../share/qt5/translations/QOwnNotes_" + locale);
+    translator[8].load("../share/qt5/translations/PKbSuite_" + locale);
     app.installTranslator(&translator[8]);
-    translator[9].load(appPath + "/../share/qt5/translations/QOwnNotes_" +
+    translator[9].load(appPath + "/../share/qt5/translations/PKbSuite_" +
                        locale);
     app.installTranslator(&translator[9]);
-    translator[10].load("QOwnNotes_" + locale);
+    translator[10].load("PKbSuite_" + locale);
     app.installTranslator(&translator[10]);
 }
 
@@ -63,7 +63,7 @@ inline void loadReleaseTranslations(T &app, QTranslator &translatorRelease,
                                     const QString &locale) noexcept {
     translatorRelease.load(
         "/usr/share/qt5/translations/"
-        "QOwnNotes_" +
+        "PKbSuite_" +
         locale);
     app.installTranslator(&translatorRelease);
 }
@@ -76,9 +76,9 @@ inline void loadMacTranslations(T &app, QTranslator &translatorOSX,
                                 QTranslator &translatorOSX2,
                                 const QString &appPath,
                                 const QString &locale) noexcept {
-    translatorOSX.load(appPath + "/../Resources/QOwnNotes_" + locale);
+    translatorOSX.load(appPath + "/../Resources/PKbSuite_" + locale);
     app.installTranslator(&translatorOSX);
-    translatorOSX2.load("../Resources/QOwnNotes_" + locale);
+    translatorOSX2.load("../Resources/PKbSuite_" + locale);
     app.installTranslator(&translatorOSX2);
 }
 
