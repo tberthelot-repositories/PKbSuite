@@ -211,7 +211,7 @@ MainWindow::MainWindow(QWidget *parent)
     initShowHidden();
 
     createSystemTrayIcon();
-    buildNotesIndexAndLoadNoteDirectoryList();
+    buildNotesIndexAndLoadNoteDirectoryList(false, false, false);
 
     // setup the update available button
     setupStatusBarWidgets();
@@ -752,13 +752,20 @@ QAction *MainWindow::findAction(const QString &objectName) {
  *
  * @param forceBuild
  * @param forceLoad
+ * @param reloadTabs
  */
 void MainWindow::buildNotesIndexAndLoadNoteDirectoryList(bool forceBuild,
-                                                         bool forceLoad) {
+                                                         bool forceLoad,
+                                                         bool reloadTabs) {
     const bool wasBuilt = buildNotesIndex(0, forceBuild);
 
     if (wasBuilt || forceLoad) {
         loadNoteDirectoryList();
+    }
+
+    if (wasBuilt && reloadTabs) {
+        // restore the note tabs
+        Utils::Gui::reloadNoteTabs(ui->noteEditTabWidget);
     }
 }
 
@@ -1389,6 +1396,7 @@ void MainWindow::setDistractionFreeMode(const bool enabled) {
     }
 
     ui->noteTextEdit->setPaperMargins();
+    activeNoteTextEdit()->setFocus();
 }
 
 /**
@@ -1603,7 +1611,7 @@ void MainWindow::changeNoteFolder(const int noteFolderId,
         // switching to another note folder
         unsetCurrentNote();
 
-        buildNotesIndexAndLoadNoteDirectoryList();
+        buildNotesIndexAndLoadNoteDirectoryList(false, false, false);
 
         // update the current folder tooltip
         updateCurrentFolderTooltip();
@@ -3731,7 +3739,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
                 isInDistractionFreeMode() &&
                 !activeNoteTextEdit()->searchWidget()->isVisible()) {
                 toggleDistractionFreeMode();
-                return false;
+                return true;
             }
             return false;
         } else if (obj == ui->noteTreeWidget) {
@@ -6005,11 +6013,17 @@ void MainWindow::noteTextEditCustomContextMenuRequested(
 
     // add the custom actions to the context menu
     if (!_noteTextEditContextMenuActions.isEmpty()) {
+        // add the scripts menu
+        QIcon scriptIcon = QIcon::fromTheme(
+            QStringLiteral("story-editor"),
+            QIcon(QStringLiteral(
+                ":icons/breeze-qownnotes/16x16/story-editor.svg")));
         menu->addSeparator();
-
+        QMenu *scriptMenu = menu->addMenu(tr("Custom actions"));
+        scriptMenu->setIcon(scriptIcon);
         for (QAction *action :
              Utils::asConst(_noteTextEditContextMenuActions)) {
-            menu->addAction(action);
+            scriptMenu->addAction(action);
         }
     }
 
@@ -6767,7 +6781,7 @@ void MainWindow::handleInsertingFromMimeData(const QMimeData *mimeData) {
     }
 
     if (mimeData->hasHtml()) {
-        insertHtml(mimeData->html());
+        insertHtmlAsMarkdownIntoCurrentNote(mimeData->html());
     } else if (mimeData->hasUrls()) {
         int successCount = 0;
         int failureCount = 0;
@@ -6895,7 +6909,7 @@ void MainWindow::handleInsertingFromMimeData(const QMimeData *mimeData) {
  * Inserts html as markdown in the current note
  * Images are also downloaded
  */
-void MainWindow::insertHtml(QString html) {
+void MainWindow::insertHtmlAsMarkdownIntoCurrentNote(QString html) {
     // convert html tags to markdown
     html = Utils::Misc::htmlToMarkdown(std::move(html));
 
@@ -9546,11 +9560,11 @@ void MainWindow::openCurrentNoteInTab() {
     if (tabIndex == -1) {
         auto *widgetPage = new QWidget();
         widgetPage->setLayout(ui->noteEditTabWidgetLayout);
-        widgetPage->setProperty("note-id", noteId);
         tabIndex = ui->noteEditTabWidget->addTab(widgetPage, noteName);
-    } else {
-        ui->noteEditTabWidget->setTabText(tabIndex, noteName);
     }
+
+    Utils::Gui::updateTabWidgetTabData(ui->noteEditTabWidget,
+                                       tabIndex, currentNote);
 
     ui->noteEditTabWidget->setCurrentIndex(tabIndex);
 

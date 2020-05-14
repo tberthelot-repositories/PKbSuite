@@ -156,7 +156,7 @@ class MainWindow : public QMainWindow {
     Q_INVOKABLE void reloadNoteSubFolderTree();
 
     Q_INVOKABLE void buildNotesIndexAndLoadNoteDirectoryList(
-        bool forceBuild = false, bool forceLoad = false);
+        bool forceBuild = false, bool forceLoad = false, bool reloadTabs = true);
 
     QVector<Note> selectedNotes();
 
@@ -168,7 +168,7 @@ class MainWindow : public QMainWindow {
 
     Note currentNote() const;
 
-    void insertHtml(QString html);
+    Q_INVOKABLE void insertHtmlAsMarkdownIntoCurrentNote(QString html);
 
     void resetBrokenTagNotesLinkFlag();
 

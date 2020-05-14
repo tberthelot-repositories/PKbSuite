@@ -127,6 +127,11 @@ class ScriptingService : public QObject {
     void callHandleNoteOpenedHook(Note *note);
     QString callHandleNoteNameHook(Note *note);
     bool callHandleNoteDoubleClickedHook(Note *note);
+    bool callHandleWebsocketRawDataHook(const QString &requestType,
+                                        const QString &pageUrl,
+                                        const QString &pageTitle,
+                                        const QString &rawData,
+                                        const QString &screenshotDataUrl);
     QList<QVariant> getSettingsVariables(int scriptId);
     Q_INVOKABLE QString toNativeDirSeparators(const QString &path);
     Q_INVOKABLE QString fromNativeDirSeparators(const QString &path);
@@ -167,7 +172,10 @@ class ScriptingService : public QObject {
     Q_INVOKABLE QList<int> selectedNotesIds() const;
 
     Q_INVOKABLE bool writeToFile(const QString &filePath,
-                                 const QString &data) const;
+                                 const QString &data,
+                                 const bool createParentDirs = false) const;
+    Q_INVOKABLE QString readFromFile(const QString &filePath) const;
+    Q_INVOKABLE bool fileExists(QString &filePath) const;
 
     Q_INVOKABLE QVector<int> fetchNoteIdsByNoteTextPart(
         const QString &text) const;
