@@ -1389,6 +1389,7 @@ void MainWindow::setDistractionFreeMode(const bool enabled) {
     }
 
     ui->noteTextEdit->setPaperMargins();
+    activeNoteTextEdit()->setFocus();
 }
 
 /**
@@ -9551,6 +9552,9 @@ void MainWindow::openCurrentNoteInTab() {
     } else {
         ui->noteEditTabWidget->setTabText(tabIndex, noteName);
     }
+
+    Utils::Gui::updateTabWidgetTabData(ui->noteEditTabWidget,
+                                       tabIndex, _currentNote);
 
     ui->noteEditTabWidget->setCurrentIndex(tabIndex);
 
