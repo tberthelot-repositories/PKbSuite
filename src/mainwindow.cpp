@@ -9564,7 +9564,7 @@ void MainWindow::openCurrentNoteInTab() {
     }
 
     Utils::Gui::updateTabWidgetTabData(ui->noteEditTabWidget,
-                                       tabIndex, currentNote);
+                                       tabIndex, _currentNote);
 
     ui->noteEditTabWidget->setCurrentIndex(tabIndex);
 
