@@ -2477,7 +2477,7 @@ QString Note::getFileURLFromFileName(QString fileName,
     if (urlDecodeFileName) {
         fileName = urlDecodeNoteUrl(fileName);
     }
-
+    
     if (noteSubFolderId > 0) {
         const NoteSubFolder noteSubFolder = getNoteSubFolder();
         if (noteSubFolder.isFetched()) {
@@ -2485,10 +2485,17 @@ QString Note::getFileURLFromFileName(QString fileName,
                              QStringLiteral("/"));
         }
     }
-
-    const QString path = this->getFullFilePathForFile(fileName);
-
-    return QString(QUrl::fromLocalFile(path).toEncoded());
+    
+    // Check if the link has a page number included and process it accordingly to cope with issues with url encoding of the '#'
+    int iHashtag = fileName.indexOf(R"(#)");
+    if (iHashtag != -1) {
+		const QString path = this->getFullFilePathForFile(fileName.left(iHashtag));
+		return QString(QUrl::fromLocalFile(path).toEncoded() + fileName.remove(0, iHashtag));
+	}
+	else {
+		const QString path = this->getFullFilePathForFile(fileName);
+		return QString(QUrl::fromLocalFile(path).toEncoded());
+	}
 }
 
 /**

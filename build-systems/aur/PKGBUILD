@@ -14,18 +14,18 @@ source=("${pkgname}-${pkgver}.tar.xz")
 sha256sums=('3a35f2ba4a4c95c4906b79dbe9ae4355c2926a08326ae0d07d06b8371a668254')
 
 prepare() {
-    cd "src"
+    cd "pkbsuite-0.1.0"
     echo "#define RELEASE \"AUR\"" > release.h
 }
 
 build() {
-    cd "src"
+    cd "pkbsuite-0.1.0"
     qmake QMAKE_CFLAGS_RELEASE="${CFLAGS}" QMAKE_CXXFLAGS_RELEASE="${CXXFLAGS}" QMAKE_LFLAGS_RELEASE="${LDFLAGS}"
     make
 }
 
 package() {
-    cd "src"
+    cd "pkbsuite-0.1.0"
 
     # install application
     install -D -m755 PKbSuite "${pkgdir}/usr/bin/PKbSuite"
@@ -42,4 +42,3 @@ package() {
     install -d "${pkgdir}/usr/share/qt5/translations/"
     install -D -m644 languages/*.qm "${pkgdir}/usr/share/qt5/translations/"
 }
-md5sums=('40ecfc8e02d29cced4405d56794dea45')
