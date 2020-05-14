@@ -6278,7 +6278,7 @@ bool MainWindow::insertPDF(QFile *file) {
             QFileInfo pdfFileInfo(file->fileName());
 			NoteSubFolder noteSubFolder = NoteFolder::currentNoteFolder().getActiveNoteSubFolder();
 			
-            QFileInfo noteFileInfo(noteSubFolder.fullPath() + QDir::separator() + pdfFileInfo.baseName() + ".md");
+            QFileInfo noteFileInfo(noteSubFolder.fullPath() + "/" + pdfFileInfo.baseName() + ".md");
             if (noteFileInfo.exists()) {
                 ;// TODO Gérer le cas où la note existe
             }
@@ -6317,8 +6317,8 @@ bool MainWindow::insertPDF(QFile *file) {
 				pdfFile.setDocumentFolder(noteSubFolderPath);
 				
                 noteText.append(pdfFile.markdownSummary());
-                noteText.append(pdfFile.markdownCitations(note.getName().replace(" ", "_")));
-                noteText.append(pdfFile.markdownComments(note.getName().replace(" ", "_")));
+                noteText.append(pdfFile.markdownCitations());
+                noteText.append(pdfFile.markdownComments());
 				
                 note.setNoteText(noteText);
 
