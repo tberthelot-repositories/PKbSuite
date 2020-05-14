@@ -6278,7 +6278,7 @@ bool MainWindow::insertPDF(QFile *file) {
             QFileInfo pdfFileInfo(file->fileName());
 			NoteSubFolder noteSubFolder = NoteFolder::currentNoteFolder().getActiveNoteSubFolder();
 			
-            QFileInfo noteFileInfo(noteSubFolder.fullPath() + "/" + pdfFileInfo.baseName() + ".md");
+            QFileInfo noteFileInfo(noteSubFolder.fullPath() + QDir::separator() + pdfFileInfo.baseName() + ".md");
             if (noteFileInfo.exists()) {
                 ;// TODO Gérer le cas où la note existe
             }
