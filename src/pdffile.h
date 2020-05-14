@@ -53,8 +53,8 @@ public:
 	void setDocumentFolder(const QString strFolder) {_sDocumentFolder = strFolder;}
     
     QString markdownSummary();
-    QString markdownCitations();
-    QString markdownComments();
+    QString markdownCitations(QString strEmbedmentFolder);
+    QString markdownComments(QString strEmbedmentFolder);
 
     QString title();
     QString author();

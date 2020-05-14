@@ -6317,8 +6317,8 @@ bool MainWindow::insertPDF(QFile *file) {
 				pdfFile.setDocumentFolder(noteSubFolderPath);
 				
                 noteText.append(pdfFile.markdownSummary());
-                noteText.append(pdfFile.markdownCitations());
-                noteText.append(pdfFile.markdownComments());
+                noteText.append(pdfFile.markdownCitations(note.getName().replace(" ", "_")));
+                noteText.append(pdfFile.markdownComments(note.getName().replace(" ", "_")));
 				
                 note.setNoteText(noteText);
 
