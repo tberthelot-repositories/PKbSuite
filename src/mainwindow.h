@@ -172,6 +172,9 @@ class MainWindow : public QMainWindow {
 
     void resetBrokenTagNotesLinkFlag();
 
+    void setCurrentNote(Note note, bool updateNoteText = true,
+                        bool updateSelectedNote = true,
+                        bool addPreviousNoteToHistory = true);
    protected:
     void closeEvent(QCloseEvent *event);
 
@@ -677,10 +680,6 @@ private:
     bool buildNotesIndex(int noteSubFolderId = 0, bool forceRebuild = false);
 
     QString selectOwnCloudNotesFolder();
-
-    void setCurrentNote(Note note, bool updateNoteText = true,
-                        bool updateSelectedNote = true,
-                        bool addPreviousNoteToHistory = true);
 
     void removeCurrentNote();
 
