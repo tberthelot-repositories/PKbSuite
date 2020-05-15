@@ -368,7 +368,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->actionUse_softwrap_in_note_editor->setChecked(
         settings.value(QStringLiteral("useSoftWrapInNoteEditor"), true)
             .toBool());
-
+	
     // initialize the editor soft wrapping
     initEditorSoftWrap();
 
@@ -385,6 +385,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     // restore the note history of the current note folder
     noteHistory.restoreForCurrentNoteFolder();
+	
+	// initialize the note preview button. State is updated afterwards.
+	ui->actionShow_Preview_Panel->setChecked(!_notePreviewDockWidget->isVisible());
 
     if (settings.value(QStringLiteral("restoreLastNoteAtStartup"), true)
             .toBool()) {
@@ -1044,6 +1047,7 @@ void MainWindow::updatePanelMenu() {
     // update the preview in case it was disable previously
     if (_notePreviewDockWidget->isVisible()) {
         setNoteTextFromNote(&_currentNote, true);
+		ui->actionShow_Preview_Panel->setChecked(true);
     }
 }
 
@@ -11748,4 +11752,13 @@ void MainWindow::on_noteEditTabWidget_tabBarDoubleClicked(int index) {
 
 void MainWindow::on_actionToggle_note_stickiness_of_current_tab_triggered() {
     on_noteEditTabWidget_tabBarDoubleClicked(ui->noteEditTabWidget->currentIndex());
+}
+
+void MainWindow::on_actionShow_Preview_Panel_triggered(bool checked) {
+    // update the preview in case it was disable previously
+	
+	if (checked)
+		_notePreviewDockWidget->show();
+	else
+		_notePreviewDockWidget->hide();
 }

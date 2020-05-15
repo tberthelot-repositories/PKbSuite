@@ -194,7 +194,11 @@ class MainWindow : public QMainWindow {
     void disallowNoteEditing();
 
    private slots:
+	   
+	void on_actionShow_Preview_Panel_triggered(bool checked);
 
+	void on_actionNew_note_in_new_tab_triggered();
+	
     void on_noteTextEdit_textChanged();
 
     void on_action_Quit_triggered();
@@ -567,8 +571,6 @@ class MainWindow : public QMainWindow {
     void on_actionNext_note_tab_triggered();
 
     void on_actionClose_current_note_tab_triggered();
-
-    void on_actionNew_note_in_new_tab_triggered();
 
     void on_noteEditTabWidget_tabBarDoubleClicked(int index);
 
