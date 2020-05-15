@@ -13,6 +13,7 @@ makedepends=('qt5-tools')
 source=("${pkgname}-${pkgver}.tar.xz")
 sha256sums=('3a35f2ba4a4c95c4906b79dbe9ae4355c2926a08326ae0d07d06b8371a668254')
 
+
 prepare() {
     cd "pkbsuite-0.1.0"
     echo "#define RELEASE \"AUR\"" > release.h

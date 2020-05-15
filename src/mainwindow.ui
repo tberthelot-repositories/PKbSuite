@@ -1189,6 +1189,18 @@ p, li { white-space: pre-wrap; }
    <addaction name="actionReplace_in_current_note"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="viewToolbar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionShow_Preview_Panel"/>
+  </widget>
   <action name="action_Quit">
    <property name="icon">
     <iconset theme="application-exit" resource="breeze-pkbsuite.qrc">
@@ -2457,6 +2469,21 @@ p, li { white-space: pre-wrap; }
     <string>Toggle note stickiness of current tab</string>
    </property>
   </action>
+  <action name="actionShow_Preview_Panel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/show-preview.svg</normaloff>:/icons/breeze-pkbsuite/16x16/show-preview.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Afficher la prévisualisation</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Prévisualiser la note&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -2504,9 +2531,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>noteTextView</tabstop>
  </tabstops>
  <resources>
-  <include location="images.qrc"/>
-  <include location="breeze-pkbsuite.qrc"/>
-  <include location="breeze-dark-pkbsuite.qrc"/>
   <include location="images.qrc"/>
   <include location="breeze-pkbsuite.qrc"/>
   <include location="breeze-dark-pkbsuite.qrc"/>
