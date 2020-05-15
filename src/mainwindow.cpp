@@ -9097,12 +9097,6 @@ void MainWindow::onNoteTextViewResize(QSize size, QSize oldSize) {
         _noteViewIsRegenerated = true;
         QTimer::singleShot(1000, this, SLOT(regenerateNotePreview()));
     }
-    
-    // Set the navigation pane inside the editing area.
-    ui->navigationFrame->move(ui->noteTextEdit->width() - ui->navigationFrame->width() - 15, 10);
-    Qt::WindowFlags flags = ui->navigationFrame->windowFlags();
-    ui->navigationFrame->setWindowFlags(flags |= Qt::WindowStaysOnTopHint);
-    ui->navigationFrame->adjustSize();
 }
 
 /**
@@ -11235,6 +11229,12 @@ void MainWindow::on_actionCheck_for_script_updates_triggered() {
 void MainWindow::noteTextEditResize(QResizeEvent *event) {
     Q_UNUSED(event)
     ui->noteTextEdit->setPaperMargins();
+
+    // Set the navigation pane inside the editing area.
+    ui->navigationFrame->move(ui->noteTextEdit->width() - ui->navigationFrame->width() - 25, 10);
+    Qt::WindowFlags flags = ui->navigationFrame->windowFlags();
+    ui->navigationFrame->setWindowFlags(flags |= Qt::WindowStaysOnTopHint);
+    ui->navigationFrame->adjustSize();	
 }
 
 void MainWindow::on_actionShow_local_trash_triggered() {
