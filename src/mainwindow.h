@@ -505,7 +505,7 @@ class MainWindow : public QMainWindow {
 
     void noteTextEditResize(QResizeEvent *event);
 
-    void on_actionShow_local_trash_triggered();
+	void on_actionShow_local_trash_triggered();
 
     void on_actionJump_to_note_text_edit_triggered();
 
