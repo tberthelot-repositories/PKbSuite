@@ -172,6 +172,9 @@ class MainWindow : public QMainWindow {
 
     void resetBrokenTagNotesLinkFlag();
 
+    void setCurrentNote(Note note, bool updateNoteText = true,
+                        bool updateSelectedNote = true,
+                        bool addPreviousNoteToHistory = true);
    protected:
     void closeEvent(QCloseEvent *event);
 
@@ -194,7 +197,11 @@ class MainWindow : public QMainWindow {
     void disallowNoteEditing();
 
    private slots:
+	   
+	void on_actionShow_Preview_Panel_triggered(bool checked);
 
+	void on_actionNew_note_in_new_tab_triggered();
+	
     void on_noteTextEdit_textChanged();
 
     void on_action_Quit_triggered();
@@ -498,7 +505,7 @@ class MainWindow : public QMainWindow {
 
     void noteTextEditResize(QResizeEvent *event);
 
-    void on_actionShow_local_trash_triggered();
+	void on_actionShow_local_trash_triggered();
 
     void on_actionJump_to_note_text_edit_triggered();
 
@@ -567,8 +574,6 @@ class MainWindow : public QMainWindow {
     void on_actionNext_note_tab_triggered();
 
     void on_actionClose_current_note_tab_triggered();
-
-    void on_actionNew_note_in_new_tab_triggered();
 
     void on_noteEditTabWidget_tabBarDoubleClicked(int index);
 
@@ -675,10 +680,6 @@ private:
     bool buildNotesIndex(int noteSubFolderId = 0, bool forceRebuild = false);
 
     QString selectOwnCloudNotesFolder();
-
-    void setCurrentNote(Note note, bool updateNoteText = true,
-                        bool updateSelectedNote = true,
-                        bool addPreviousNoteToHistory = true);
 
     void removeCurrentNote();
 

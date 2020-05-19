@@ -79,7 +79,7 @@ bool PDFFile::hasAnnotations()
                     else if ((annotColor.red() == 255) & (annotColor.green() == 0) & (annotColor.blue() == 0)) {        // Rouge : citation
                         Citation* citation = new Citation();
                         citation->page = iPage + 1;
-                        citation->link = fileInfo.baseName() + "/" + fileInfo.fileName() + "#" + QString::number(iPage + 1);
+                        citation->link = fileInfo.fileName() + "#" + QString::number(iPage + 1);
                         
                         Poppler::HighlightAnnotation* highlightAnnotation = (Poppler::HighlightAnnotation*) listPageAnnotations.at(i);
                         for (int j = 0; j < highlightAnnotation->highlightQuads().size(); j++) {
@@ -97,7 +97,7 @@ bool PDFFile::hasAnnotations()
                 else {
                     Comment* comment = new Comment();
                     comment->page = iPage + 1;
-                    comment->link = fileInfo.baseName() + "/" + fileInfo.fileName() + "#" + QString::number(iPage + 1);
+                    comment->link = fileInfo.fileName() + "#" + QString::number(iPage + 1);
                     comment->text = listPageAnnotations.at(i)->contents() + "\n\n";
                     
                     _listComments.append(comment);

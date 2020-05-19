@@ -368,7 +368,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->actionUse_softwrap_in_note_editor->setChecked(
         settings.value(QStringLiteral("useSoftWrapInNoteEditor"), true)
             .toBool());
-
+	
     // initialize the editor soft wrapping
     initEditorSoftWrap();
 
@@ -385,6 +385,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     // restore the note history of the current note folder
     noteHistory.restoreForCurrentNoteFolder();
+	
+	// initialize the note preview button. State is updated afterwards.
+	ui->actionShow_Preview_Panel->setChecked(!_notePreviewDockWidget->isVisible());
 
     if (settings.value(QStringLiteral("restoreLastNoteAtStartup"), true)
             .toBool()) {
@@ -1037,6 +1040,7 @@ void MainWindow::updatePanelMenu() {
     // update the preview in case it was disable previously
     if (_notePreviewDockWidget->isVisible()) {
         setNoteTextFromNote(&_currentNote, true);
+		ui->actionShow_Preview_Panel->setChecked(true);
     }
 }
 
@@ -1389,6 +1393,7 @@ void MainWindow::setDistractionFreeMode(const bool enabled) {
     }
 
     ui->noteTextEdit->setPaperMargins();
+    activeNoteTextEdit()->setFocus();
 }
 
 /**
@@ -9092,12 +9097,6 @@ void MainWindow::onNoteTextViewResize(QSize size, QSize oldSize) {
         _noteViewIsRegenerated = true;
         QTimer::singleShot(1000, this, SLOT(regenerateNotePreview()));
     }
-    
-    // Set the navigation pane inside the editing area.
-    ui->navigationFrame->move(ui->noteTextEdit->width() - ui->navigationFrame->width() - 15, 10);
-    Qt::WindowFlags flags = ui->navigationFrame->windowFlags();
-    ui->navigationFrame->setWindowFlags(flags |= Qt::WindowStaysOnTopHint);
-    ui->navigationFrame->adjustSize();
 }
 
 /**
@@ -9551,6 +9550,9 @@ void MainWindow::openCurrentNoteInTab() {
     } else {
         ui->noteEditTabWidget->setTabText(tabIndex, noteName);
     }
+
+    Utils::Gui::updateTabWidgetTabData(ui->noteEditTabWidget,
+                                       tabIndex, _currentNote);
 
     ui->noteEditTabWidget->setCurrentIndex(tabIndex);
 
@@ -11227,6 +11229,12 @@ void MainWindow::on_actionCheck_for_script_updates_triggered() {
 void MainWindow::noteTextEditResize(QResizeEvent *event) {
     Q_UNUSED(event)
     ui->noteTextEdit->setPaperMargins();
+
+    // Set the navigation pane inside the editing area.
+    ui->navigationFrame->move(ui->noteTextEdit->width() - ui->navigationFrame->width() - 25, 10);
+    Qt::WindowFlags flags = ui->navigationFrame->windowFlags();
+    ui->navigationFrame->setWindowFlags(flags |= Qt::WindowStaysOnTopHint);
+    ui->navigationFrame->adjustSize();	
 }
 
 void MainWindow::on_actionShow_local_trash_triggered() {
@@ -11734,4 +11742,13 @@ void MainWindow::on_noteEditTabWidget_tabBarDoubleClicked(int index) {
 
 void MainWindow::on_actionToggle_note_stickiness_of_current_tab_triggered() {
     on_noteEditTabWidget_tabBarDoubleClicked(ui->noteEditTabWidget->currentIndex());
+}
+
+void MainWindow::on_actionShow_Preview_Panel_triggered(bool checked) {
+    // update the preview in case it was disable previously
+	
+	if (checked)
+		_notePreviewDockWidget->show();
+	else
+		_notePreviewDockWidget->hide();
 }

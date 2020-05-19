@@ -6535,11 +6535,6 @@ Vous pouvez tester vous-même. Si vous avez des conflits de synchronisation, vou
         <translation>Url de base du calendrier&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../dialogs/settingsdialog.ui" line="1877"/>
-        <source>Please enter the CalDAV base url to your calendar.</source>
-        <translation>Merci d&apos;entrer l’url CalDAV de base de votre calendrier.</translation>
-    </message>
-    <message>
         <location filename="../dialogs/settingsdialog.ui" line="2248"/>
         <source>Czech</source>
         <translation>Tchèque</translation>

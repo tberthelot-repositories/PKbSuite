@@ -14,5 +14,14 @@ parts
 prime
 *.snap
 snap/.snapcraft/state
+<<<<<<< HEAD
 .github
 .kdev4
+=======
+<<<<<<< HEAD
+.github
+.kdev4
+=======
+src/languages/*.qm
+>>>>>>> 9f6f07bb80a3109c7c017cb871f6f6efb8484459
+>>>>>>> develop

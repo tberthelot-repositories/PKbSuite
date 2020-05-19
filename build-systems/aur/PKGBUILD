@@ -1,29 +1,34 @@
 # Maintainer: Thomas Berthelot <thomas dot berthelot at gmail dot com>
 
-pkgname=PKbSuite
+pkgname=pkbsuite
+pkgver=0.1.0
+tag="COMMIT-HASH"
 pkgrel=1
-pkgver=1.0
-pkgdesc="Personal Knowledge Management (PKM) tool forked from the excellent QOwnNotes. It is focused on my needs and to be used with LInux/KDE"
+pkgdesc="PKbSuite is a Personal Knowledge Management (PKM) tool forked from the excellent QOwnNotes. It is focused on my needs and to be used with LInux/KDE."
 arch=('i686' 'x86_64' 'armv7h' 'aarch64')
 license=('GPL2')
 groups=('pkbsuite')
 depends=('qt5-base' 'qt5-svg' 'qt5-declarative' 'openssl' 'qt5-xmlpatterns' 'qt5-websockets' 'qt5-x11extras' 'aspell')
 makedepends=('qt5-tools')
-source=("/home/thomas/1. Projects/PKbSuite/build-systems/aur/pkbsuite-install.tar.xz")
+source=("${pkgname}-${pkgver}.tar.xz")
+sha256sums=('3a35f2ba4a4c95c4906b79dbe9ae4355c2926a08326ae0d07d06b8371a668254')
+
 
 prepare() {
-    cd "pkbsuite-install"
+    cd "pkbsuite-0.1.0"
     echo "#define RELEASE \"AUR\"" > release.h
 }
 
 build() {
-    cd "pkbsuite-install"
+    cd "pkbsuite-0.1.0"
     qmake QMAKE_CFLAGS_RELEASE="${CFLAGS}" QMAKE_CXXFLAGS_RELEASE="${CXXFLAGS}" QMAKE_LFLAGS_RELEASE="${LDFLAGS}"
     make
 }
 
 package() {
-    cd "pkbsuite-install"
+
+    cd "pkbsuite-0.1.0"
+
 
     # install application
     install -D -m755 PKbSuite "${pkgdir}/usr/bin/PKbSuite"
@@ -40,4 +45,4 @@ package() {
     install -d "${pkgdir}/usr/share/qt5/translations/"
     install -D -m644 languages/*.qm "${pkgdir}/usr/share/qt5/translations/"
 }
-md5sums=('cfceb432402c08db9a51b018664a8281')
+

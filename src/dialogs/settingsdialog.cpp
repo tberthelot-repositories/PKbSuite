@@ -1717,7 +1717,7 @@ void SettingsDialog::setupScriptingPage() {
     QString issueUrl =
         QStringLiteral("https://github.com/pbek/PKbSuite/issues");
     QString documentationUrl = QStringLiteral(
-        "https://docs.pkbsuite.org/en/develop/scripting/README.html");
+        "https://docs.pkbsuite.org/en/develop/scripting/");
     ui->scriptInfoLabel->setText(
         tr("Take a look at the <a href=\"%1\">Scripting documentation</a> "
            "to get started fast.")
