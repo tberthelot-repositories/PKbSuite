@@ -2622,7 +2622,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
         }
 	
         // Check if the note has @Tags not yet linked
-        QRegularExpression re = QRegularExpression("@[a-zA-Z0-9]*");
+        QRegularExpression re = QRegularExpression("@[A-Za-zÀ-ÖØ-öø-ÿ0-9]*");       // Take care of accented characters
         QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
         while (reIterator.hasNext()) {
             QRegularExpressionMatch reMatch = reIterator.next();
@@ -4145,16 +4145,16 @@ void MainWindow::removeSelectedTags() {
         // workaround when signal blocking doesn't work correctly
         directoryWatcherWorkaround(true, true);
 
-		const auto selItems = ui->tagTreeWidget->selectedItems();
+        const auto selItems = ui->tagTreeWidget->selectedItems();
         for (QTreeWidgetItem *item : selItems) {
-            int tagId = item->data(0, Qt::UserRole).toInt();
-            Tag tag = Tag::fetch(tagId);
+            const int tagId = item->data(0, Qt::UserRole).toInt();
+            const Tag tag = Tag::fetch(tagId);
 
-			QVector<int> idsTaggedNotes = tag.fetchAllLinkedNoteIds(true);
+            QVector<int> idsTaggedNotes = tag.fetchAllLinkedNoteIds(true);
             
             int idNote = 0;
             while (idNote < idsTaggedNotes.size()) {
-                Note note = Note::fetch(idNote);
+                Note note = Note::fetch(idsTaggedNotes.at(idNote));
                 QString noteText = note.getNoteText();
                    
                 QRegularExpression re = QRegularExpression(R"((, )?@)" + tag.getName());
@@ -4164,7 +4164,7 @@ void MainWindow::removeSelectedTags() {
                     QRegularExpressionMatch reMatch = reIterator.next();
                     int lTag = reMatch.capturedLength() + 1;
                     
-                    noteText.replace(reMatch.capturedStart(), lTag, "");
+                    noteText.replace(reMatch.capturedStart(), lTag, "\n");
                 }
                                 
                 const QSignalBlocker blocker(this->noteDirectoryWatcher);
