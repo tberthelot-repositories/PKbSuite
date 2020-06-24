@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets sql svg network xml xmlpatterns printsupport qml websockets concurrent
+QT       += core gui widgets sql svg network xml xmlpatterns printsupport qml websockets concurrent quickcontrols2
 
 # quick is enabled for more scripting options
 # Windows and macOS seem to ignore that

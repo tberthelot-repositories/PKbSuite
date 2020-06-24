@@ -9,6 +9,7 @@
 #include <QStyleFactory>
 #include <QTranslator>
 #include <QtGui>
+#include <QtQuickControls2/QQuickStyle>
 
 #include "dialogs/welcomedialog.h"
 #include "entities/notefolder.h"
@@ -335,6 +336,8 @@ int main(int argc, char *argv[]) {
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+	QQuickStyle::setStyle("Material");
 
     QString release = RELEASE;
     bool portable = false;
