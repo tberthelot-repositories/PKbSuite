@@ -26,7 +26,9 @@ build() {
 }
 
 package() {
+
     cd "pkbsuite-0.1.0"
+
 
     # install application
     install -D -m755 PKbSuite "${pkgdir}/usr/bin/PKbSuite"
@@ -43,3 +45,4 @@ package() {
     install -d "${pkgdir}/usr/share/qt5/translations/"
     install -D -m644 languages/*.qm "${pkgdir}/usr/share/qt5/translations/"
 }
+
