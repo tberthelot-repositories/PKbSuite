@@ -22,9 +22,13 @@ TRANSLATIONS = $$PWD/languages/PKbSuite_en.ts \
 CODECFORTR = UTF-8
 CONFIG += c++11 with_aspell debug
 
+<<<<<<< HEAD:src/PKbSuite.pro
 INCLUDEPATH += $$PWD/libraries /usr/include/poppler
 
 LIBS += -lpoppler-qt5 -lpoppler
+=======
+INCLUDEPATH += $$PWD/libraries $$PWD/libraries/diff_match_patch
+>>>>>>> 1e11024055dbecf23f9872407a46d34e228417bb:src/QOwnNotes.pro
 
 SOURCES += main.cpp\
     dialogs/attachmentdialog.cpp \
@@ -54,6 +58,7 @@ SOURCES += main.cpp\
     helpers/pkbsuitemarkdownhighlighter.cpp \
     helpers/flowlayout.cpp \
     services/databaseservice.cpp \
+    threads/scriptthread.cpp \
     widgets/graphicsview.cpp \
     widgets/pkbsuitemarkdowntextedit.cpp \
     services/scriptingservice.cpp \
@@ -98,6 +103,7 @@ HEADERS  += mainwindow.h \
     helpers/LanguageCache.h \
     helpers/codetohtmlconverter.h \
     helpers/qownspellchecker.h \
+    threads/scriptthread.h \
     version.h \
     libraries/diff_match_patch/diff_match_patch.h \
     libraries/versionnumber/versionnumber.h \

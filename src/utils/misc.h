@@ -19,7 +19,9 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
+#include "threads/scriptthread.h"
 
+struct TerminalCmd;
 class QFile;
 
 /*  Miscellaneous functions that can be useful */
@@ -85,6 +87,7 @@ QString parseTaskList(const QString &html, bool clickable);
 QByteArray startSynchronousProcess(const QString &executablePath,
                                    const QStringList &parameters,
                                    const QByteArray &data = QByteArray());
+bool startSynchronousResultProcess(TerminalCmd &cmd);
 QList<QObject *> getParents(QObject *object);
 QString appDataPath();
 QString logFilePath();
@@ -134,6 +137,11 @@ bool isSameFile(const QString &path1, const QString &path2);
 QString generateRandomString(int length = 8);
 QString makeFileNameRandom(const QString &fileName,
                            const QString &overrideSuffix = "");
+QString rstrip(const QString &str);
+bool isPreviewUseEditorStyles();
+QString previewFontString();
+QString previewCodeFontString();
+bool fileExists(const QString &path);
 }    // namespace Misc
 }    // namespace Utils
 

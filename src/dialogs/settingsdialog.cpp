@@ -261,6 +261,12 @@ SettingsDialog::SettingsDialog(int page, QWidget *parent)
 #endif
 }
 
+void SettingsDialog::resetOKLabelData() {
+    for (int i = 0; i <= 8; i++) {
+        setOKLabelData(i, QStringLiteral("unknown"), Unknown);
+    }
+}
+
 /**
  * Check the _noteNotificationNoneCheckBox when the checkboxes should all be
  * unchecked
@@ -377,6 +383,8 @@ void SettingsDialog::storeSettings() {
                       ui->autoBracketClosingCheckBox->isChecked());
     settings.setValue(QStringLiteral("Editor/autoBracketRemoval"),
                       ui->autoBracketRemovalCheckBox->isChecked());
+    settings.setValue(QStringLiteral("Editor/removeTrainingSpaces"),
+                      ui->removeTrainingSpacesCheckBox->isChecked());
     settings.setValue(QStringLiteral("Editor/highlightCurrentLine"),
                       ui->highlightCurrentLineCheckBox->isChecked());
     settings.setValue(QStringLiteral("Editor/editorWidthInDFMOnly"),
@@ -586,7 +594,7 @@ void SettingsDialog::readSettings() {
 
     ui->externalEditorPathLineEdit->setText(QStringLiteral("externalEditorPath"));
 
-    ui->notifyAllExternalModificationsCheckBox->setChecked(
+	ui->notifyAllExternalModificationsCheckBox->setChecked(
         settings.value(QStringLiteral("notifyAllExternalModifications"))
             .toBool());
     ui->ignoreAllExternalModificationsCheckBox->setChecked(
@@ -643,10 +651,7 @@ void SettingsDialog::readSettings() {
             .value(QStringLiteral("MainWindow/noteTextView.underline"), true)
             .toBool());
     ui->noteTextViewUseEditorStylesCheckBox->setChecked(
-        settings
-            .value(QStringLiteral("MainWindow/noteTextView.useEditorStyles"),
-                   true)
-            .toBool());
+        Utils::Misc::isPreviewUseEditorStyles());
     ui->useInternalExportStylingCheckBox->setChecked(
         Utils::Misc::useInternalExportStylingForPreview());
     ui->autoBracketClosingCheckBox->setChecked(
@@ -655,6 +660,8 @@ void SettingsDialog::readSettings() {
     ui->autoBracketRemovalCheckBox->setChecked(
         settings.value(QStringLiteral("Editor/autoBracketRemoval"), true)
             .toBool());
+    ui->removeTrainingSpacesCheckBox->setChecked(
+        settings.value(QStringLiteral("Editor/removeTrainingSpaces")).toBool());
     ui->highlightCurrentLineCheckBox->setChecked(
         settings.value(QStringLiteral("Editor/highlightCurrentLine"), true)
             .toBool());
@@ -1068,7 +1075,16 @@ void SettingsDialog::loadShortcutSettings() {
             keyWidget->setToolTip(tr("Assign a new key"),
                                   tr("Reset to default key"));
             keyWidget->setDefaultKeySequence(action->data().toString());
-            keyWidget->setKeySequence(action->shortcut());
+
+            const QString &shortcutSettingKey =
+                QStringLiteral("Shortcuts/MainWindow-") + action->objectName();
+            const bool settingFound = settings.contains(shortcutSettingKey);
+
+            // try to load the key sequence from the settings, because
+            // action->shortcut() is empty if menubar was disabled!
+            keyWidget->setKeySequence(settingFound ?
+                              settings.value(shortcutSettingKey).toString() :
+                              action->data().toString());
 
             connect(
                 keyWidget, &QKeySequenceWidget::keySequenceAccepted, this,
@@ -2776,4 +2792,8 @@ void SettingsDialog::on_webSocketTokenButton_clicked() {
 
 void SettingsDialog::on_languageSearchLineEdit_textChanged(const QString &arg1) {
     Utils::Gui::searchForTextInListWidget(ui->languageListWidget, arg1, true);
+}
+
+void SettingsDialog::on_noteTextViewUseEditorStylesCheckBox_toggled(bool checked) {
+    ui->previewFontsGroupBox->setDisabled(checked);
 }

@@ -693,9 +693,23 @@ int Utils::Gui::getTabWidgetNoteId(QTabWidget *tabWidget, int index) {
     return tabWidget->widget(index)->property("note-id").toInt();
 }
 
-Note Utils::Gui::getTabWidgetNote(QTabWidget *tabWidget, int index) {
-    const int noteId = getTabWidgetNoteId(tabWidget, index);
-    return Note::fetch(noteId);
+Note Utils::Gui::getTabWidgetNote(QTabWidget *tabWidget, int index,
+                                  bool fetchByName) {
+    if (fetchByName) {
+        QWidget *widget = tabWidget->widget(index);
+
+        if (widget == nullptr) {
+            return Note();
+        }
+
+        const QString &noteName = widget->property("note-name").toString();
+        const QString &noteSubFolderPathData = widget->property(
+                             "note-subfolder-path-data").toString();
+        return Note::fetchByName(noteName, noteSubFolderPathData);
+    } else {
+        const int noteId = getTabWidgetNoteId(tabWidget, index);
+        return Note::fetch(noteId);
+    }
 }
 
 void Utils::Gui::storeNoteTabs(QTabWidget *tabWidget) {
@@ -793,7 +807,17 @@ void Utils::Gui::restoreNoteTabs(QTabWidget *tabWidget, QVBoxLayout *layout) {
 
 void Utils::Gui::updateTabWidgetTabData(QTabWidget *tabWidget, int index,
                                        const Note &note) {
-    tabWidget->widget(index)->setProperty("note-id", note.getId());
+    QWidget *widget = tabWidget->widget(index);
+
+    if (widget == nullptr) {
+        return;
+    }
+
+    widget->setProperty("note-id", note.getId());
+    widget->setProperty("note-name", note.getName());
+    widget->setProperty("note-subfolder-path-data",
+                        note.getNoteSubFolder().pathData());
+
     QString text = note.getName();
 
     if (isTabWidgetTabSticky(tabWidget, index)) {

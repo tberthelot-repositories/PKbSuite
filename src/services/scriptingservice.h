@@ -8,7 +8,9 @@
 #include <QMessageBox>
 #include <QObject>
 #include <QVariant>
+#include <threads/scriptthread.h>
 
+class ScriptThread;
 class QQmlComponent;
 class QQmlEngine;
 class NoteApi;
@@ -49,7 +51,10 @@ class ScriptingService : public QObject {
     bool methodExists(const QString &methodName) const;
     static bool validateScript(const Script &script, QString &errorMessage);
     Q_INVOKABLE bool startDetachedProcess(const QString &executablePath,
-                                          const QStringList &parameters);
+                                          const QStringList &parameters,
+                                          const QString &callbackIdentifier = QString(),
+                                          const QVariant &callbackParameter = 0,
+                                          const QByteArray &processData = QByteArray());
     Q_INVOKABLE QByteArray startSynchronousProcess(
         const QString &executablePath, QStringList parameters,
         QByteArray data = QByteArray()) const;
@@ -118,8 +123,8 @@ class ScriptingService : public QObject {
     QString callHandleNoteTextFileNameHookForObject(QObject *object,
                                                     Note *note);
     QString callHandleNoteTextFileNameHook(Note *note);
-    QString callNoteToMarkdownHtmlHook(Note *note, const QString &html);
-    QString callPreNoteToMarkdownHtmlHook(Note *note, const QString &markdown);
+    QString callNoteToMarkdownHtmlHook(Note *note, const QString &html, const bool forExport);
+    QString callPreNoteToMarkdownHtmlHook(Note *note, const QString &markdown, const bool forExport);
 
     QString callHandleNewNoteHeadlineHookForObject(QObject *object,
                                                    const QString &headline);
@@ -167,7 +172,10 @@ class ScriptingService : public QObject {
     Q_INVOKABLE QList<int> selectedNotesIds() const;
 
     Q_INVOKABLE bool writeToFile(const QString &filePath,
-                                 const QString &data) const;
+                                 const QString &data,
+                                 const bool createParentDirs = false) const;
+    Q_INVOKABLE QString readFromFile(const QString &filePath) const;
+    Q_INVOKABLE bool fileExists(const QString &filePath) const;
 
     Q_INVOKABLE QVector<int> fetchNoteIdsByNoteTextPart(
         const QString &text) const;
@@ -186,8 +194,8 @@ class ScriptingService : public QObject {
                                          const QString &markdownText);
     QString callInsertPDFHookForObject(QObject *object, QFile *file,
                                          const QString &markdownText);
-    QString callNoteToMarkdownHtmlHookForObject(QObject *object, Note *note,
-                                                const QString &html);
+    QString callNoteToMarkdownHtmlHookForObject(ScriptComponent *scriptComponent, Note *note,
+                                                const QString &html, const bool forExport);
     void initComponent(const Script &script);
     void outputMethodsOfObject(QObject *object);
     void reloadScriptComponents();
@@ -204,4 +212,5 @@ class ScriptingService : public QObject {
     void onCustomActionInvoked(const QString &identifier);
     void callCustomActionInvokedForObject(QObject *object,
                                           const QString &identifier);
+    void onScriptThreadDone(ScriptThread *thread);
 };

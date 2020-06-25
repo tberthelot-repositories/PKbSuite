@@ -22,7 +22,7 @@ PKbSuiteMarkdownTextEdit::PKbSuiteMarkdownTextEdit(QWidget *parent)
 
     _highlighter = new PKbSuiteMarkdownHighlighter(document());
 
-    setStyles();
+	setStyles();
     updateSettings();
 
     connect(this, &PKbSuiteMarkdownTextEdit::cursorPositionChanged, this,
@@ -43,11 +43,13 @@ PKbSuiteMarkdownTextEdit::PKbSuiteMarkdownTextEdit(QWidget *parent)
     }
 
     // set the highlighting options
-    _highlighter->setHighlightingOptions(options);
+    if (_highlighter) {
+        _highlighter->setHighlightingOptions(options);
 
-    // re-initialize the highlighting rules if we are using some options
-    if (options != MarkdownHighlighter::HighlightingOption::None) {
-        _highlighter->initHighlightingRules();
+         // re-initialize the highlighting rules if we are using some options
+        if (options != MarkdownHighlighter::HighlightingOption::None) {
+         _highlighter->initHighlightingRules();
+        }
     }
 }
 

@@ -433,6 +433,41 @@ QByteArray Utils::Misc::startSynchronousProcess(const QString &executablePath,
 }
 
 /**
+ * Starts a synchronous process and waits for its result
+ *
+ * @param cmd the terminal command containing all input and output information
+ * @return true on success, false otherwise
+ */
+bool Utils::Misc::startSynchronousResultProcess(TerminalCmd &cmd) {
+    QProcess process;
+
+    // start executablePath synchronous with parameters
+#ifdef Q_OS_MAC
+    process.start("open", QStringList()
+                              << cmd.executablePath << "--args" << cmd.parameters);
+#else
+    process.start(cmd.executablePath, cmd.parameters);
+#endif
+
+    if (!process.waitForStarted()) {
+        qWarning() << __func__ << " - 'process.waitForStarted' returned false";
+        return false;
+    }
+
+    process.write(cmd.data);
+    process.closeWriteChannel();
+
+    if (!process.waitForFinished()) {
+        qWarning() << __func__ << " - 'process.waitForFinished' returned false";
+        return false;
+    }
+
+    cmd.resultSet = process.readAll();
+    cmd.exitCode = process.exitCode();
+    return process.exitStatus() == QProcess::NormalExit;
+}
+
+/**
  * Returns the default notes path we are suggesting
  *
  * @return
@@ -595,15 +630,19 @@ QString Utils::Misc::htmlToMarkdown(QString text) {
 QString Utils::Misc::parseTaskList(const QString &html, bool clickable) {
     auto text = html;
 
+    // set a list item style for todo items
+    // using a css class didn't work because the styling seems to affects the sub-items too
+    const auto listTag = QStringLiteral("<li style=\"list-style-type:square\">");
+
     if (!clickable) {
         text.replace(
-            QRegularExpression(QStringLiteral(R"((<li>\s*(<p>)*\s*)\[ ?\])"),
+            QRegularExpression(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[ ?\])"),
                                QRegularExpression::CaseInsensitiveOption),
-            QStringLiteral("\\1&#9744;"));
+            listTag % QStringLiteral("\\1&#9744;"));
         text.replace(
-            QRegularExpression(QStringLiteral(R"((<li>\s*(<p>)*\s*)\[[xX]\])"),
+            QRegularExpression(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[[xX]\])"),
                                QRegularExpression::CaseInsensitiveOption),
-            QStringLiteral("\\1&#9745;"));
+            listTag % QStringLiteral("\\1&#9745;"));
         return text;
     }
 
@@ -615,14 +654,14 @@ QString Utils::Misc::parseTaskList(const QString &html, bool clickable) {
     const QString checkboxStart = QStringLiteral(
         R"(<a class="task-list-item-checkbox" href="checkbox://_)");
     text.replace(
-        QRegularExpression(QStringLiteral(R"((<li>\s*(<p>)*\s*)\[ ?\])"),
+        QRegularExpression(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[ ?\])"),
                            QRegularExpression::CaseInsensitiveOption),
-        QStringLiteral("\\1") % checkboxStart %
+        listTag % QStringLiteral("\\1") % checkboxStart %
             QStringLiteral("\">&#9744;</a>"));
     text.replace(
-        QRegularExpression(QStringLiteral(R"((<li>\s*(<p>)*\s*)\[[xX]\])"),
+        QRegularExpression(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[[xX]\])"),
                            QRegularExpression::CaseInsensitiveOption),
-        QStringLiteral("\\1") % checkboxStart %
+        listTag % QStringLiteral("\\1") % checkboxStart %
             QStringLiteral("\">&#9745;</a>"));
 
     int count = 0;
@@ -1102,6 +1141,42 @@ bool Utils::Misc::useInternalExportStylingForPreview() {
 }
 
 /**
+ * Returns the preview font string
+ *
+ * @return
+ */
+QString Utils::Misc::previewFontString() {
+    QSettings settings;
+    return settings.value(isPreviewUseEditorStyles() ?
+        QStringLiteral("MainWindow/noteTextEdit.font") :
+        QStringLiteral("MainWindow/noteTextView.font")).toString();
+}
+
+/**
+ * Returns the preview code font string
+ *
+ * @return
+ */
+QString Utils::Misc::previewCodeFontString() {
+    QSettings settings;
+    return settings.value(isPreviewUseEditorStyles() ?
+        QStringLiteral("MainWindow/noteTextEdit.code.font") :
+        QStringLiteral("MainWindow/noteTextView.code.font")).toString();
+}
+
+/**
+ * Returns if "MainWindow/noteTextView.useEditorStyles" is turned on
+ *
+ * @return
+ */
+bool Utils::Misc::isPreviewUseEditorStyles() {
+    const QSettings settings;
+    return settings.value(
+        QStringLiteral("MainWindow/noteTextView.useEditorStyles"),
+                       true).toBool();
+}
+
+/**
  * Returns if "allowNoteEditing" is turned on
  *
  * @return
@@ -1461,4 +1536,33 @@ QString Utils::Misc::makeFileNameRandom(const QString &fileName,
     // find a more random name for the file
     return baseName + QChar('-') + QString::number(qrand()) + QChar('.') +
            (overrideSuffix.isEmpty() ? fileInfo.suffix() : overrideSuffix);
+}
+
+/**
+ * Strips all trailing spaces from str and returns the stripped text
+ *
+ * @param str
+ * @return
+ */
+QString Utils::Misc::rstrip(const QString& str) {
+    int n = str.size() - 1;
+
+    for (; n >= 0; --n) {
+        if (!str.at(n).isSpace()) {
+            return str.left(n + 1);
+        }
+    }
+
+    return "";
+}
+
+/**
+ * Checks if file exists in the filesystem and is readable
+ *
+ * @return bool
+ */
+bool Utils::Misc::fileExists(const QString& path) {
+    const QFile file(path);
+    const QFileInfo fileInfo(file);
+    return file.exists() && fileInfo.isFile() && fileInfo.isReadable();
 }

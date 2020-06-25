@@ -43,7 +43,7 @@ NoteApi* NoteApi::fromNote(const Note& note) {
 QQmlListProperty<TagApi> NoteApi::tags() {
     _tags.clear();
 
-    Note note = Note::fetch(id);
+    Note note = Note::fetch(_id);
     QList<Tag> tags = Tag::fetchAllOfNote(note);
     QListIterator<Tag> itr(tags);
     while (itr.hasNext()) {
@@ -62,7 +62,7 @@ QQmlListProperty<TagApi> NoteApi::tags() {
  */
 QStringList NoteApi::tagNames() const {
     QStringList tagNameList;
-    Note note = Note::fetch(id);
+    Note note = Note::fetch(_id);
     QList<Tag> tags = Tag::fetchAllOfNote(note);
     QListIterator<Tag> itr(tags);
     while (itr.hasNext()) {
@@ -84,7 +84,7 @@ bool NoteApi::addTag(const QString& tagName) {
         return false;
     }
 
-    Note note = Note::fetch(id);
+    Note note = Note::fetch(_id);
     if (!note.exists()) {
         return false;
     }
@@ -111,7 +111,7 @@ bool NoteApi::removeTag(QString tagName) {
         return false;
     }
 
-    Note note = Note::fetch(id);
+    Note note = Note::fetch(_id);
     if (!note.exists()) {
         return false;
     }
@@ -126,7 +126,7 @@ bool NoteApi::removeTag(QString tagName) {
  * @return true if the note was renamed
  */
 bool NoteApi::renameNoteFile(const QString &newName) {
-    Note note = Note::fetch(id);
+    Note note = Note::fetch(_id);
 
     if (note.exists()) {
         return note.renameNoteFile(newName);

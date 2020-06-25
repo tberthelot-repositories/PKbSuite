@@ -971,7 +971,7 @@ void MainWindow::initPanelMenu() {
                          SLOT(updatePanelMenu()));
 
         // we are disabling the dock widget context menu to prevent enabling
-        // of the note sub-folder toolbar if sub-folders are disabled
+        // of the note subfolder toolbar if subfolders are disabled
         dockWidget->setContextMenuPolicy(Qt::PreventContextMenu);
     }
 }
@@ -990,7 +990,7 @@ void MainWindow::initToolbarMenu() {
                          &MainWindow::updateToolbarMenu);
 
         // we are disabling the toolbar context menu to prevent enabling of the
-        // note sub-folder toolbar if sub-folders are disabled
+        // note subfolder toolbar if subfolders are disabled
         toolbar->setContextMenuPolicy(Qt::PreventContextMenu);
     }
 }
@@ -1015,7 +1015,7 @@ void MainWindow::updatePanelMenu() {
         action->setCheckable(true);
         action->setChecked(!dockWidget->isHidden());
 
-        // disable the noteSubFolderDockWidget menu entry if sub-folders are
+        // disable the noteSubFolderDockWidget menu entry if subfolders are
         // not enabled
         if (dockWidget->objectName() ==
                 QStringLiteral("noteSubFolderDockWidget") &&
@@ -2212,9 +2212,7 @@ void MainWindow::readSettingsFromSettingsDialog(const bool isAppLaunch) {
     }
 
     // load note text view font
-    QString fontString =
-        settings.value(QStringLiteral("MainWindow/noteTextView.font"))
-            .toString();
+    QString fontString = Utils::Misc::previewFontString();
 
     // store the current font if there isn't any set yet
     if (fontString.isEmpty()) {
@@ -2308,6 +2306,14 @@ void MainWindow::readSettingsFromSettingsDialog(const bool isAppLaunch) {
             .toBool()) {
         qApp->setCursorFlashTime(0);
     }
+
+    // the notes need to be reloaded and subfolder panel needs to be populated
+    // if subfolders were activated for a note folder in the settings
+    if (!isAppLaunch && NoteFolder::isCurrentShowSubfolders()) {
+        buildNotesIndexAndLoadNoteDirectoryList();
+    }
+
+    initGlobalKeyboardShortcuts();
 }
 
 /**
@@ -2407,8 +2413,6 @@ void MainWindow::notesWereModified(const QString &str) {
             if (noteTextEditText == noteTextOnDisk) {
                 return;
             }
-
-            qDebug() << "Current note was modified externally!";
 
             showStatusBarMessage(tr("Current note was modified externally"),
                                  5000);
@@ -2598,6 +2602,23 @@ void MainWindow::storeUpdatedNotesToDisk() {
         Utils::Misc::waitMsecs(100);
 
         if (currentNoteChanged) {
+            // strip trailing spaces of the current note (if enabled)
+            if (QSettings().value(QStringLiteral("Editor/removeTrainingSpaces"))
+                    .toBool()) {
+                const bool wasStripped = currentNote.stripTrailingSpaces(
+                    activeNoteTextEdit()->textCursor().position());
+
+                if (wasStripped) {
+                    qDebug() << __func__ << " - 'wasStripped'";
+
+                    // updating the current note text is disabled because it
+                    // moves the cursor to the top
+//                    const QSignalBlocker blocker2(activeNoteTextEdit());
+//                    Q_UNUSED(blocker2)
+//                    setNoteTextFromNote(&currentNote);
+                }
+            }
+
             // just to make sure everything is up-to-date
             _currentNote.refetch();
 
@@ -6204,6 +6225,13 @@ void MainWindow::on_actionInsert_image_triggered() {
                 pathOrUrl = _currentNote.relativeFilePath(pathOrUrl);
             }
 
+#ifdef Q_OS_WIN32
+            // make sure a local path on a different drive really works
+            if (Utils::Misc::fileExists(pathOrUrl)) {
+                pathOrUrl = QUrl::toPercentEncoding(pathOrUrl).prepend("file:///");
+            }
+#endif
+
             // title must not be empty
             if (title.isEmpty()) {
                 title = QStringLiteral("img");
@@ -7149,7 +7177,7 @@ void MainWindow::on_noteFolderComboBox_currentIndexChanged(int index) {
         resetBrokenTagNotesLinkFlag();
     }
 
-    // hide the noteSubFolderDockWidget menu entry if sub-folders are
+    // hide the noteSubFolderDockWidget menu entry if subfolders are
     // not enabled
     QAction *action =
         findAction(QStringLiteral("togglePanel-noteSubFolderDockWidget"));
@@ -8761,7 +8789,7 @@ void MainWindow::buildBulkNoteSubFolderMenuTree(QMenu *parentMenu, bool doCopy,
 
 /**
  * Populates a subfolder menu tree for bulk note moving or copying to
- * sub-folders of other note folders
+ * subfolders of other note folders
  */
 void MainWindow::buildBulkNoteFolderSubFolderMenuTree(
     QMenu *parentMenu, bool doCopy, const QString &parentNoteSubFolderPath,
@@ -8908,7 +8936,7 @@ void MainWindow::moveSelectedNotesToNoteSubFolder(
                 noteSubFolderCount++;
                 qDebug() << "Note was moved:" << note.getName();
 
-                // set the new sub-folder so the tags are stored correctly
+                // set the new subfolder so the tags are stored correctly
                 note.setNoteSubFolder(noteSubFolder);
 
                 // tag the note again
@@ -8991,7 +9019,7 @@ void MainWindow::copySelectedNotesToNoteSubFolder(
                 noteSubFolderCount++;
                 qDebug() << "Note was copied:" << note.getName();
 
-                // set the new sub-folder so the tags are stored correctly
+                // set the new subfolder so the tags are stored correctly
                 note.setNoteSubFolder(noteSubFolder);
 
                 // tag the note again
@@ -9510,7 +9538,7 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
         return;
     }
 
-    // handle changing of the current item for sub-folders
+    // handle changing of the current item for subfolders
     if (current->data(0, Qt::UserRole + 1).toInt() == FolderType) {
         on_noteSubFolderTreeWidget_currentItemChanged(current, previous);
 
@@ -9642,7 +9670,7 @@ void MainWindow::openNotesContextMenu(const QPoint globalPos,
     if (showSubFolders) {
         if (ui->noteTreeWidget->selectedItems().count() == 1) {
             moveToThisSubFolderAction =
-                noteMenu.addAction(tr("Jump to the note's sub-folder"));
+                noteMenu.addAction(tr("Jump to the note's subfolder"));
         }
 
         auto *subFolderMoveMenu =
@@ -10214,11 +10242,8 @@ void MainWindow::initShortcuts() {
 #endif
 
             // try to load a key sequence from the settings
-            QKeySequence shortcut = QKeySequence(
-                settings
-                    .value(QStringLiteral("Shortcuts/MainWindow-") +
-                           action->objectName())
-                    .toString());
+            auto shortcut = QKeySequence(settingFound ?
+                settings.value(key).toString() : "");
 
             // do we can this method the first time?
             if (!_isDefaultShortcutInitialized) {
@@ -11751,4 +11776,19 @@ void MainWindow::on_actionShow_Preview_Panel_triggered(bool checked) {
 		_notePreviewDockWidget->show();
 	else
 		_notePreviewDockWidget->hide();
+}
+
+/**
+ * If the tab of current note was clicked now the subfolder of the note is
+ * activated if that is needed to show the note in the note list
+ */
+void MainWindow::on_noteEditTabWidget_tabBarClicked(int index) {
+    if (ui->noteEditTabWidget->currentIndex() != index) {
+        return;
+    }
+
+    if (!_showNotesFromAllNoteSubFolders &&
+        !currentNote.isInCurrentNoteSubFolder()) {
+        jumpToNoteSubFolder(currentNote.getNoteSubFolderId());
+    }
 }

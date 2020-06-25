@@ -4,13 +4,13 @@
 #include <utils/misc.h>
 
 #include <QDateTime>
-#include <QFile>
-#include <QRegularExpression>
-#include <QSqlQuery>
-#include <QUrl>
 
 class Bookmark;
 class NoteSubFolder;
+class QRegularExpression;
+class QFile;
+class QUrl;
+class QSqlQuery;
 
 typedef enum mediaType {
 	image,
@@ -120,7 +120,7 @@ class Note {
 
     bool refetch();
 
-    void fillFromQuery(const QSqlQuery &query);
+    Note fillFromQuery(const QSqlQuery &query);
 
     bool fillByFileName(const QString &fileName, int noteSubFolderId = -1);
 
@@ -293,25 +293,33 @@ class Note {
     static QString urlEncodeNoteUrl(const QString &url);
 
     static QString urlDecodeNoteUrl(QString url);
-	
+
+    QStringList getNoteTextLines() const;
+
+    bool stripTrailingSpaces(int skipLine = -1);
+
+    QString detectNewlineCharacters();
+
    protected:
-    QString name;
-    QString fileName;
+    QString _name;
+    QString _fileName;
     QString _noteTextHtml;
     QString _noteTextHtmlConversionHash;
-    QString noteText;
-    bool hasDirtyData;
-    QDateTime fileCreated;
-    QDateTime fileLastModified;
-    QDateTime created;
-    QDateTime modified;
-    qint64 fileSize;
-    int id;
-    int noteSubFolderId;
+    QString _noteText;
+    bool _hasDirtyData;
+    QDateTime _fileCreated;
+    QDateTime _fileLastModified;
+    QDateTime _created;
+    QDateTime _modified;
+    qint64 _fileSize;
+    int _id;
+    int _noteSubFolderId;
 
     static const QString getNoteURL(const QString &baseName);
 
     static const QString getNoteURLFromFileName(const QString &fileName);
+
+    void restoreCreatedDate();
 };
 
 Q_DECLARE_TYPEINFO(Note, Q_MOVABLE_TYPE);
