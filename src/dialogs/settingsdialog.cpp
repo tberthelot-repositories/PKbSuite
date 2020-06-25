@@ -261,12 +261,6 @@ SettingsDialog::SettingsDialog(int page, QWidget *parent)
 #endif
 }
 
-void SettingsDialog::resetOKLabelData() {
-    for (int i = 0; i <= 8; i++) {
-        setOKLabelData(i, QStringLiteral("unknown"), Unknown);
-    }
-}
-
 /**
  * Check the _noteNotificationNoneCheckBox when the checkboxes should all be
  * unchecked
@@ -2362,20 +2356,6 @@ void SettingsDialog::closeEvent(QCloseEvent *event) {
 
     // store the splitter settings
     storeSplitterSettings();
-}
-
-/**
- * Stores some data for Utils::Misc::generateDebugInformation
- */
-void SettingsDialog::storeOwncloudDebugData() const {
-    QSettings settings;
-    settings.setValue(QStringLiteral("ownCloudInfo/appIsValid"), appIsValid);
-    settings.setValue(QStringLiteral("ownCloudInfo/notesPathExistsText"),
-                      notesPathExistsText);
-    settings.setValue(QStringLiteral("ownCloudInfo/serverVersion"),
-                      serverVersion);
-    settings.setValue(QStringLiteral("ownCloudInfo/connectionErrorMessage"),
-                      connectionErrorMessage);
 }
 
 /**

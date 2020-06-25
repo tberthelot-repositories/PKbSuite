@@ -746,24 +746,6 @@ QString Utils::Misc::transformLineFeeds(QString text) {
 }
 
 /**
- * Replaces the text "ownCloud" by "ownCloud / Nextcloud"
- *
- * @param text
- * @param useShortText
- * @return
- */
-QString Utils::Misc::replaceOwnCloudText(QString text, bool useShortText) {
-    if (text.contains(QStringLiteral("Nextcloud"))) {
-        return text;
-    }
-
-    QString replaceText = useShortText ? QStringLiteral("NC / oC")
-                                       : QStringLiteral("Nextcloud / ownCloud");
-    return text.replace(QStringLiteral("ownCloud"), replaceText,
-                        Qt::CaseInsensitive);
-}
-
-/**
  * Declares that we need a restart
  */
 void Utils::Misc::needRestart() { qApp->setProperty("needsRestart", true); }

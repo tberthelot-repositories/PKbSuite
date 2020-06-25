@@ -1996,8 +1996,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>545</width>
-                           <height>1033</height>
+                           <width>323</width>
+                           <height>432</height>
                           </rect>
                          </property>
                          <layout class="QGridLayout" name="gridLayout_55">
@@ -3087,7 +3087,7 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                   <property name="text">
                    <string>Code font:</string>
                   </property>
-                  <property name="icon">
+                  <property name="icon" stdset="0">
                    <iconset theme="gtk-select-font" resource="../breeze-pkbsuite.qrc">
                     <normaloff>:/icons/breeze-pkbsuite/16x16/gtk-select-font.svg</normaloff>:/icons/breeze-pkbsuite/16x16/gtk-select-font.svg</iconset>
                   </property>
@@ -3171,7 +3171,7 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                    <string notr="true">…</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
+                   <iconset theme="edit-clear">
                     <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
                   </property>
                  </widget>

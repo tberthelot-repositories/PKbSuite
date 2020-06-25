@@ -54,11 +54,6 @@ void WelcomeDialog::on_nextButton_clicked() {
         ui->stackedWidget->setCurrentIndex(index);
     }
 
-    if (index == WelcomePages::MetricsPage) {
-        QSettings settings;
-        settings.setValue(QStringLiteral("appMetrics/notificationShown"), true);
-    }
-
     if (index == WelcomePages::LayoutPage) {
         ui->layoutWidget->resizeLayoutImage();
     }
@@ -193,11 +188,6 @@ void WelcomeDialog::on_noteFolderButton_clicked() {
         _notesPath = dir;
         ui->noteFolderLineEdit->setText(dir);
     }
-}
-
-void WelcomeDialog::on_ownCloudSettingsButton_clicked() {
-    auto *dialog = new SettingsDialog(SettingsDialog::OwnCloudPage, this);
-    dialog->exec();
 }
 
 void WelcomeDialog::on_networkSettingsButton_clicked() {

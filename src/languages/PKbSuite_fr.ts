@@ -4372,11 +4372,6 @@ Si la corbeille est activée sur votre serveur ownCloud, vous devriez pouvoir re
         <translation>Nouvelle connection</translation>
     </message>
     <message>
-        <location filename="../entities/cloudconnection.cpp" line="284"/>
-        <source>Default</source>
-        <translation>Par défaut</translation>
-    </message>
-    <message>
         <location filename="../main.cpp" line="256"/>
         <source>Note folder not found!</source>
         <translation>Dossier de note non trouvé!</translation>

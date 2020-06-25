@@ -12,14 +12,14 @@ NoteApi* NoteApi::fetch(int _id) {
     _note = Note::fetch(_id);
 
     if (_note.isFetched()) {
-        this->id = _note.getId();
-        name = _note.getName();
-        fileName = _note.getFileName();
-        noteText = _note.getNoteText();
-        hasDirtyData = _note.getHasDirtyData();
-        noteSubFolderId = _note.getNoteSubFolderId();
-        fileCreated = _note.getFileCreated();
-        fileLastModified = _note.getFileLastModified();
+        this->_id = _note.getId();
+        _name = _note.getName();
+        _fileName = _note.getFileName();
+        _noteText = _note.getNoteText();
+        _hasDirtyData = _note.getHasDirtyData();
+        _noteSubFolderId = _note.getNoteSubFolderId();
+        _fileCreated = _note.getFileCreated();
+        _fileLastModified = _note.getFileLastModified();
     }
 
     return this;

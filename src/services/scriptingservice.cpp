@@ -1817,10 +1817,18 @@ TagApi *ScriptingService::getTagByNameBreadcrumbList(
  * @return
  */
 bool ScriptingService::writeToFile(const QString &filePath,
-                                   const QString &data) const {
+                                   const QString &data,
+                                   const bool createParentDirs) const {
     if (filePath.isEmpty()) return false;
 
     QFile file(filePath);
+
+    if(createParentDirs) {
+        QFileInfo fileInfo(file);
+        QDir dir = fileInfo.dir();
+        if(!dir.mkpath(dir.path())) return false;
+    }
+
     if (!file.open(QFile::WriteOnly | QFile::Truncate)) return false;
 
     QTextStream out(&file);

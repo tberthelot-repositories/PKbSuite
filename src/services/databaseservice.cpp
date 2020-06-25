@@ -419,36 +419,6 @@ bool DatabaseService::setupTables() {
                        "created DATETIME default current_timestamp,"
                        "modified DATETIME default current_timestamp)"));
 
-    if (version < 1) {
-        queryDisk.exec(
-            QStringLiteral("CREATE TABLE IF NOT EXISTS calendarItem ("
-                           "id INTEGER PRIMARY KEY,"
-                           "summary VARCHAR(255),"
-                           "url VARCHAR(255),"
-                           "description TEXT,"
-                           "has_dirty_data INTEGER DEFAULT 0,"
-                           "completed INTEGER DEFAULT 0,"
-                           "priority INTEGER,"
-                           "calendar VARCHAR(255),"
-                           "uid VARCHAR(255),"
-                           "ics_data TEXT,"
-                           "alarm_date DATETIME,"
-                           "etag VARCHAR(255),"
-                           "last_modified_string VARCHAR(255),"
-                           "created DATETIME DEFAULT current_timestamp,"
-                           "modified DATETIME DEFAULT current_timestamp)"));
-
-        queryDisk.exec(
-            QStringLiteral("CREATE UNIQUE INDEX IF NOT EXISTS idxUrl "
-                           "ON calendarItem( url )"));
-        queryDisk.exec(QStringLiteral(
-            "ALTER TABLE calendarItem ADD completed_date DATETIME"));
-        queryDisk.exec(
-            QStringLiteral("ALTER TABLE calendarItem "
-                           "ADD sort_priority INTEGER DEFAULT 0"));
-        version = 1;
-    }
-
     if (version < 3) {
         queryDisk.exec(
             QStringLiteral("CREATE TABLE IF NOT EXISTS noteFolder ("
@@ -624,12 +594,6 @@ bool DatabaseService::setupTables() {
         version = 21;
     }
 
-    if (version < 22) {
-        queryDisk.exec(QStringLiteral(
-            "ALTER TABLE noteFolder ADD use_git BOOLEAN DEFAULT 0"));
-        version = 22;
-    }
-
     if (version < 23) {
         queryDisk.exec(
             QStringLiteral("ALTER TABLE script ADD identifier VARCHAR(255)"));
@@ -716,28 +680,6 @@ bool DatabaseService::setupTables() {
         version = 28;
     }
 
-    if (version < 29) {
-        queryDisk.exec(
-            QStringLiteral("CREATE TABLE IF NOT EXISTS cloudConnection ("
-                           "id INTEGER PRIMARY KEY,"
-                           "name VARCHAR(255),"
-                           "server_url VARCHAR(255),"
-                           "username VARCHAR(255),"
-                           "password VARCHAR(255),"
-                           "priority INTEGER DEFAULT 0 )"));
-        queryDisk.exec(
-            QStringLiteral("ALTER TABLE noteFolder ADD cloud_connection_id "
-                           "INTEGER DEFAULT 1"));
-
-        version = 29;
-    }
-
-    if (version < 32) {
-        queryDisk.exec(QStringLiteral(
-            "ALTER TABLE calendarItem ADD related_uid VARCHAR(255)"));
-        version = 32;
-    }
-
     if (version < 33) {
         foreach(NoteFolder noteFolder, NoteFolder::fetchAll()) {
             noteFolder.setSettingsValue(QStringLiteral("allowDifferentNoteFileName"),
@@ -747,12 +689,6 @@ bool DatabaseService::setupTables() {
         settings.remove(QStringLiteral("allowDifferentNoteFileName"));
 
         version = 33;
-    }
-
-    if (version < 34) {
-        queryDisk.exec(QStringLiteral(
-                           "ALTER TABLE cloudConnection ADD qownnotesapi_enabled BOOLEAN DEFAULT 1"));
-        version = 34;
     }
 
     if (version != oldVersion) {

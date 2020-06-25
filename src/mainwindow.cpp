@@ -1551,10 +1551,10 @@ void MainWindow::loadNoteFolderListMenu() {
  */
 void MainWindow::changeNoteFolder(const int noteFolderId,
                                   const bool forceChange) {
-    const int currentNoteFolderId = NoteFolder::currentNoteFolderId();
+    const int _currentNoteFolderId = NoteFolder::currentNoteFolderId();
 
     // store the current position in the note of the current note folder
-    _activeNoteFolderNotePositions[currentNoteFolderId] =
+    _activeNoteFolderNotePositions[_currentNoteFolderId] =
         NoteHistoryItem(&_currentNote, ui->noteTextEdit);
 
     // store the note history of the old note folder
@@ -2048,7 +2048,7 @@ void MainWindow::readSettings() {
 
     // let us select a folder if we haven't find one in the settings
     if (this->notesPath.isEmpty()) {
-        selectOwnCloudNotesFolder();
+        selectPKbSuiteNotesFolder();
     }
 
     // migration: remove notes path from recent note folders
@@ -2421,7 +2421,7 @@ void MainWindow::notesWereModified(const QString &str) {
             // external modifications check if we really need one
             if (!this->notifyAllExternalModifications) {
                 bool isCurrentNoteNotEditedForAWhile =
-                    this->currentNoteLastEdited.addSecs(60) <
+                    this->_currentNoteLastEdited.addSecs(60) <
                     QDateTime::currentDateTime();
 
                 // reloading the current note text straight away
@@ -2583,12 +2583,12 @@ void MainWindow::storeUpdatedNotesToDisk() {
     // For some reason this->noteDirectoryWatcher gets an event from this.
     // I didn't find another solution than to wait yet.
     // All flushing and syncing didn't help.
-    bool currentNoteChanged = false;
+    bool _currentNoteChanged = false;
     bool noteWasRenamed = false;
 
-    // currentNote will be set by this method if the filename has changed
+    // _currentNote will be set by this method if the filename has changed
     const int count = Note::storeDirtyNotesToDisk(
-        _currentNote, &currentNoteChanged, &noteWasRenamed);
+        _currentNote, &_currentNoteChanged, &noteWasRenamed);
 
     if (count > 0) {
         _noteViewNeedsUpdate = true;
@@ -2601,11 +2601,11 @@ void MainWindow::storeUpdatedNotesToDisk() {
         // is opened, otherwise we get the event
         Utils::Misc::waitMsecs(100);
 
-        if (currentNoteChanged) {
+        if (_currentNoteChanged) {
             // strip trailing spaces of the current note (if enabled)
             if (QSettings().value(QStringLiteral("Editor/removeTrainingSpaces"))
                     .toBool()) {
-                const bool wasStripped = currentNote.stripTrailingSpaces(
+                const bool wasStripped = _currentNote.stripTrailingSpaces(
                     activeNoteTextEdit()->textCursor().position());
 
                 if (wasStripped) {
@@ -2615,7 +2615,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
                     // moves the cursor to the top
 //                    const QSignalBlocker blocker2(activeNoteTextEdit());
 //                    Q_UNUSED(blocker2)
-//                    setNoteTextFromNote(&currentNote);
+//                    setNoteTextFromNote(&_currentNote);
                 }
             }
 
@@ -3055,11 +3055,10 @@ void MainWindow::removeConflictedNotesDatabaseCopies() {
 
     if (Utils::Gui::question(
             this, tr("Delete conflicted database copies"),
-            Utils::Misc::replaceOwnCloudText(
                 tr("Proceed with automatic deletion of <strong>%n</strong>"
                    " conflicted database copies that may block your ownCloud"
                    " sync process?",
-                   "", count)) +
+                   "", count) +
                 QStringLiteral("<br /><br />") +
                 files.join(QStringLiteral("<br />")),
             QStringLiteral("delete-conflicted-database-files")) !=
@@ -3231,7 +3230,7 @@ bool MainWindow::jumpToNoteSubFolder(int noteSubFolderId) {
     return false;
 }
 
-QString MainWindow::selectOwnCloudNotesFolder() {
+QString MainWindow::selectPKbSuiteNotesFolder() {
     QString path = this->notesPath;
 
     if (path.isEmpty()) {
@@ -3267,12 +3266,11 @@ QString MainWindow::selectOwnCloudNotesFolder() {
         if (this->notesPath.isEmpty()) {
             switch (QMessageBox::information(
                 this, tr("No folder was selected"),
-                Utils::Misc::replaceOwnCloudText(
                     tr("You have to select your ownCloud notes "
-                       "folder to make this software work!")),
+                       "folder to make this software work!"),
                 tr("&Retry"), tr("&Exit"), QString(), 0, 1)) {
                 case 0:
-                    selectOwnCloudNotesFolder();
+                    selectPKbSuiteNotesFolder();
                     break;
                 case 1:
                 default:
@@ -3330,7 +3328,7 @@ void MainWindow::setCurrentNote(Note note, bool updateNoteText,
 
     // for places we can't get the current note id, like the markdown
     // highlighter
-    qApp->setProperty("currentNoteId", noteId);
+    qApp->setProperty("_currentNoteId", noteId);
 
     const QString name = note.getName();
     updateWindowTitle();
@@ -4027,12 +4025,11 @@ void MainWindow::removeSelectedNotes() {
 
     if (Utils::Gui::question(
             this, tr("Remove selected notes"),
-            Utils::Misc::replaceOwnCloudText(
                 tr("Remove <strong>%n</strong> selected note(s)?\n\n"
                    "If the trash is enabled on your "
                    "ownCloud server you should be able to restore "
                    "them from there.",
-                   "", selectedItemsCount)),
+                   "", selectedItemsCount),
             QStringLiteral("remove-notes")) == QMessageBox::Yes) {
         const QSignalBlocker blocker(this->noteDirectoryWatcher);
         Q_UNUSED(blocker)
@@ -5003,7 +5000,7 @@ void MainWindow::noteTextEditTextWasUpdated() {
     if (text != noteTextFromDisk || _currentNote.getHasDirtyData()) {
         this->_currentNote.storeNewText(std::move(text));
         this->_currentNote.refetch();
-        this->currentNoteLastEdited = QDateTime::currentDateTime();
+        this->_currentNoteLastEdited = QDateTime::currentDateTime();
         _noteViewNeedsUpdate = true;
 
         ScriptingService::instance()->onCurrentNoteChanged(&_currentNote);
@@ -5026,7 +5023,7 @@ void MainWindow::handleNoteTextChanged() {
 
     // update the note list tooltip of the note
     setTreeWidgetItemToolTipForNote(ui->noteTreeWidget->currentItem(),
-                                    _currentNote, &currentNoteLastEdited);
+                                    _currentNote, &_currentNoteLastEdited);
 }
 
 void MainWindow::on_action_Quit_triggered() {
@@ -8060,17 +8057,17 @@ void MainWindow::reloadCurrentNoteTags() {
     }
 
     int selectedNotesCount = getSelectedNotesCount();
-    bool currentNoteOnly = selectedNotesCount <= 1;
-    ui->selectedTagsToolButton->setVisible(!currentNoteOnly);
+    bool _currentNoteOnly = selectedNotesCount <= 1;
+    ui->selectedTagsToolButton->setVisible(!_currentNoteOnly);
     ui->newNoteTagButton->setToolTip(
-        currentNoteOnly ? tr("Add a tag to the current note")
+        _currentNoteOnly ? tr("Add a tag to the current note")
                         : tr("Add a tag to the selected notes"));
     QList<Tag> tagList;
 
-    ui->multiSelectActionFrame->setVisible(!currentNoteOnly);
-    ui->noteEditorFrame->setVisible(currentNoteOnly);
+    ui->multiSelectActionFrame->setVisible(!_currentNoteOnly);
+    ui->noteEditorFrame->setVisible(_currentNoteOnly);
 
-    if (currentNoteOnly) {
+    if (_currentNoteOnly) {
         tagList = Tag::fetchAllOfNote(_currentNote);
 
         // only refresh the preview if we previously selected multiple notes
@@ -8097,7 +8094,7 @@ void MainWindow::reloadCurrentNoteTags() {
         ui->noteTextView->setText(previewHtml);
     }
 
-    _lastNoteSelectionWasMultiple = !currentNoteOnly;
+    _lastNoteSelectionWasMultiple = !_currentNoteOnly;
 
     // add all new remove-tag buttons
     for (const Tag &tag : Utils::asConst(tagList)) {
@@ -8109,7 +8106,7 @@ void MainWindow::reloadCurrentNoteTags() {
             QIcon(QStringLiteral(
                 ":icons/breeze-pkbsuite/16x16/xml-attribute-delete.svg"))));
         button->setToolTip(
-            currentNoteOnly
+            _currentNoteOnly
                 ? tr("Remove tag '%1' from the current note").arg(tag.getName())
                 : tr("Remove tag '%1' from the selected notes")
                       .arg(tag.getName()));
@@ -8141,10 +8138,10 @@ void MainWindow::reloadCurrentNoteTags() {
  */
 void MainWindow::highlightCurrentNoteTagsInTagTree() {
     const int selectedNotesCount = getSelectedNotesCount();
-    const bool currentNoteOnly = selectedNotesCount <= 1;
+    const bool _currentNoteOnly = selectedNotesCount <= 1;
     QList<Tag> tagList;
 
-    if (currentNoteOnly) {
+    if (_currentNoteOnly) {
         tagList = Tag::fetchAllOfNote(_currentNote);
     } else {
         const QVector<Note> &notes = selectedNotes();
@@ -9550,6 +9547,19 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
     qDebug() << __func__;
 
     setCurrentNote(std::move(note), true, false);
+	
+        // Check if the note has @Tags not yet linked
+        QRegularExpression re = QRegularExpression("@[A-Za-zÀ-ÖØ-öø-ÿ0-9]*");       // Take care of accented characters
+        QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
+        while (reIterator.hasNext()) {
+            QRegularExpressionMatch reMatch = reIterator.next();
+            QString tag = reMatch.captured().right(reMatch.capturedLength() - 1);
+            
+            const QSignalBlocker blocker(noteDirectoryWatcher);
+            Q_UNUSED(blocker);
+
+            linkTagNameToCurrentNote(tag);
+        }
 
     // let's highlight the text from the search line edit and do a "in note
     // search"
@@ -10241,6 +10251,10 @@ void MainWindow::initShortcuts() {
                                 QStringLiteral("Meta+"));
 #endif
 
+            const QString &key =
+                QStringLiteral("Shortcuts/MainWindow-") + action->objectName();
+            const bool settingFound = settings.contains(key);
+			
             // try to load a key sequence from the settings
             auto shortcut = QKeySequence(settingFound ?
                 settings.value(key).toString() : "");
@@ -11788,7 +11802,7 @@ void MainWindow::on_noteEditTabWidget_tabBarClicked(int index) {
     }
 
     if (!_showNotesFromAllNoteSubFolders &&
-        !currentNote.isInCurrentNoteSubFolder()) {
-        jumpToNoteSubFolder(currentNote.getNoteSubFolderId());
+        !_currentNote.isInCurrentNoteSubFolder()) {
+        jumpToNoteSubFolder(_currentNote.getNoteSubFolderId());
     }
 }

@@ -22,13 +22,9 @@ TRANSLATIONS = $$PWD/languages/PKbSuite_en.ts \
 CODECFORTR = UTF-8
 CONFIG += c++11 with_aspell debug
 
-<<<<<<< HEAD:src/PKbSuite.pro
-INCLUDEPATH += $$PWD/libraries /usr/include/poppler
+INCLUDEPATH += $$PWD/libraries $$PWD/libraries/diff_match_patch /usr/include/poppler
 
 LIBS += -lpoppler-qt5 -lpoppler
-=======
-INCLUDEPATH += $$PWD/libraries $$PWD/libraries/diff_match_patch
->>>>>>> 1e11024055dbecf23f9872407a46d34e228417bb:src/QOwnNotes.pro
 
 SOURCES += main.cpp\
     dialogs/attachmentdialog.cpp \

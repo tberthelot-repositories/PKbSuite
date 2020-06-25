@@ -576,8 +576,6 @@ set(SOURCE_FILES
     dialogs/attachmentdialog.ui
     dialogs/filedialog.cpp
     dialogs/filedialog.h
-    entities/calendaritem.cpp
-    entities/calendaritem.h
     entities/note.cpp
     entities/note.h
     entities/trashitem.cpp
@@ -588,8 +586,6 @@ set(SOURCE_FILES
     entities/notehistory.h
     entities/notefolder.cpp
     entities/notefolder.h
-    entities/cloudconnection.cpp
-    entities/cloudconnection.h
     entities/tag.cpp
     entities/tag.h
     entities/script.cpp

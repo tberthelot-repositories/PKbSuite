@@ -590,7 +590,7 @@ private:
     NoteDiffDialog *noteDiffDialog;
     bool showSystemTray;
     QSystemTrayIcon *trayIcon;
-    QDateTime currentNoteLastEdited;
+    QDateTime _currentNoteLastEdited;
     bool notifyAllExternalModifications;
     int noteSaveIntervalTime;
     QTimer *noteSaveTimer;
@@ -681,7 +681,7 @@ private:
 
     bool buildNotesIndex(int noteSubFolderId = 0, bool forceRebuild = false);
 
-    QString selectOwnCloudNotesFolder();
+    QString selectPKbSuiteNotesFolder();
 
     void removeCurrentNote();
 

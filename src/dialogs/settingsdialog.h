@@ -22,9 +22,6 @@ class Script;
 class QCheckBox;
 class NoteFolder;
 class QSplitter;
-class CloudConnection;
-
-struct CalDAVCalendarData;
 
 class SettingsDialog : public MasterDialog {
     Q_OBJECT
@@ -291,10 +288,6 @@ private:
     void initSearchEngineComboBox() const;
 
     QKeySequenceWidget *findKeySequenceWidget(const QString &objectName);
-
-    void storeOwncloudDebugData() const;
-
-    void initCloudConnectionComboBox(int selectedId = -1);
 
     void handleDarkModeCheckBoxToggled(bool updateCheckBoxes = false,
                                        bool updateSchema = false);
