@@ -387,7 +387,7 @@ MainWindow::MainWindow(QWidget *parent)
     noteHistory.restoreForCurrentNoteFolder();
 	
 	// initialize the note preview button. State is updated afterwards.
-	ui->actionShow_Preview_Panel->setChecked(!_notePreviewDockWidget->isVisible());
+	ui->actionShow_Preview_Panel->setChecked(_notePreviewDockWidget->isVisible());
 
     if (settings.value(QStringLiteral("restoreLastNoteAtStartup"), true)
             .toBool()) {
@@ -9547,19 +9547,19 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
     qDebug() << __func__;
 
     setCurrentNote(std::move(note), true, false);
-	
-        // Check if the note has @Tags not yet linked
-        QRegularExpression re = QRegularExpression("@[A-Za-zÀ-ÖØ-öø-ÿ0-9]*");       // Take care of accented characters
-        QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
-        while (reIterator.hasNext()) {
-            QRegularExpressionMatch reMatch = reIterator.next();
-            QString tag = reMatch.captured().right(reMatch.capturedLength() - 1);
-            
-            const QSignalBlocker blocker(noteDirectoryWatcher);
-            Q_UNUSED(blocker);
 
-            linkTagNameToCurrentNote(tag);
-        }
+	// Check if the note has @Tags not yet linked
+	QRegularExpression re = QRegularExpression("@[A-Za-zÀ-ÖØ-öø-ÿ0-9]*");       // Take care of accented characters
+	QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
+	while (reIterator.hasNext()) {
+		QRegularExpressionMatch reMatch = reIterator.next();
+		QString tag = reMatch.captured().right(reMatch.capturedLength() - 1);
+		
+		const QSignalBlocker blocker(noteDirectoryWatcher);
+		Q_UNUSED(blocker);
+
+		linkTagNameToCurrentNote(tag);
+	}
 
     // let's highlight the text from the search line edit and do a "in note
     // search"
