@@ -733,8 +733,6 @@ private:
 
     void printTextDocument(QTextDocument *textDocument);
 
-    void showAppMetricsNotificationIfNeeded();
-
     void resetCurrentNote(bool goToTop = true);
 
     void setupNoteBookmarkShortcuts();

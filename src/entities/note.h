@@ -221,7 +221,7 @@ class Note {
 	
 	QString currentEmbedmentFolder();
 
-    QString getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNewLine = true,
+    QString getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool copyFile, bool addNewLine = true,
                                    bool returnUrlOnly = false,
                                    QString title = QString());
 	

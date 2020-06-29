@@ -18,9 +18,12 @@ public:
     
     explicit DropPDFDialog(QWidget *parent = 0);
     ~DropPDFDialog();
+	
+	bool copyFileToKb();
 
 private:
     Ui::DropPDFDialog *ui;
+	bool copyFile = true;
 
 private slots:
     void on_linkButton_clicked();

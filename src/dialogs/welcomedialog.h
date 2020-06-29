@@ -27,8 +27,6 @@ class WelcomeDialog : public MasterDialog {
 
     void on_noteFolderButton_clicked();
 
-    void on_networkSettingsButton_clicked();
-
    private:
     Ui::WelcomeDialog *ui;
     bool _allowFinishButton;

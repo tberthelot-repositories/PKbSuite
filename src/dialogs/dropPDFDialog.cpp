@@ -23,5 +23,10 @@ void DropPDFDialog::on_linkButton_clicked() {
 }
 
 void DropPDFDialog::on_createNoteButton_clicked() {
+	copyFile = ui->checkBoxCopy->isChecked();
     done(idCreateNote);
+}
+
+bool DropPDFDialog::copyFileToKb() {
+	return copyFile;
 }

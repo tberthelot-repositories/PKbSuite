@@ -4943,30 +4943,6 @@ void MainWindow::exportNoteAsPDF(QTextDocument *doc) {
     delete printer;
 }
 
-/**
- * Shows the app metrics notification if not already shown
- */
-void MainWindow::showAppMetricsNotificationIfNeeded() {
-    QSettings settings;
-    bool showDialog =
-        !settings.value(QStringLiteral("appMetrics/notificationShown"))
-             .toBool();
-
-    if (showDialog) {
-        settings.setValue(QStringLiteral("appMetrics/notificationShown"), true);
-
-        if (QMessageBox::information(
-                this, QStringLiteral("PKbSuite"),
-                tr("PKbSuite will track anonymous usage data, that helps to "
-                   "decide what parts of PKbSuite to improve next "
-                   "and to find and fix bugs. You can disable that "
-                   "behaviour in the settings."),
-                tr("&Ok"), tr("Open &settings"), QString(), 0, 1) == 1) {
-            openSettingsDialog(SettingsDialog::NetworkPage);
-        }
-    }
-}
-
 // *****************************************************************************
 // *
 // *
@@ -6253,7 +6229,7 @@ void MainWindow::on_actionInsert_image_triggered() {
  */
 bool MainWindow::insertImage(QFile *file, QString title) {
     QString text =
-        _currentNote.getInsertEmbedmentMarkdown(file, mediaType::image, true, false, std::move(title));
+        _currentNote.getInsertEmbedmentMarkdown(file, mediaType::image, true, true, false, std::move(title));
 
     if (!text.isEmpty()) {
         ScriptingService *scriptingService = ScriptingService::instance();
@@ -6284,7 +6260,7 @@ bool MainWindow::insertPDF(QFile *file) {
         int iResult = dialog->exec();
         if (iResult == DropPDFDialog::idLink) {
             // If the annotations have not been processed, we just add a link to the PDF file
-            QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::pdf);
+            QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::pdf, false);
             if (!text.isEmpty()) {
                 ScriptingService* scriptingService = ScriptingService::instance();
                 // attempts to ask a script for an other markdown text
@@ -6325,7 +6301,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 // check if a hook changed the text
                 if (noteText.isEmpty()) {
                     // fallback to the old text if no hook changed the text
-                    noteText = Note::createNoteHeader(pdfFileInfo.baseName() + " - Notes");
+                    noteText = Note::createNoteHeader(pdfFileInfo.baseName());
                 } else {
                     noteText.append("\n\n");
                 }
@@ -6336,7 +6312,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("```\n\n");
 
                 noteText.append("## ===== Document source =====  \n");
-                noteText.append("Fichier : " + note.getInsertEmbedmentMarkdown(file, mediaType::pdf) + "  \n");
+                noteText.append("Fichier : " + note.getInsertEmbedmentMarkdown(file, mediaType::pdf, dialog->copyFileToKb()) + "  \n");
                 noteText.append("Titre : " + pdfFile.title() + "  \n");
                 noteText.append("Auteur : " + pdfFile.author() + "  \n");
                 noteText.append("Sujet : " + pdfFile.subject() + "  \n");
@@ -6407,7 +6383,7 @@ bool MainWindow::insertPDF(QFile *file) {
             return false;
     } else {
         // If the annotations have not been processed, we just add a link to the PDF file
-        QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::pdf);
+        QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::pdf, false);
         if (!text.isEmpty()) {
             ScriptingService* scriptingService = ScriptingService::instance();
             // attempts to ask a script for an other markdown text
@@ -6451,7 +6427,7 @@ void MainWindow::insertNoteText(const QString &text) {
  * Inserts a file attachment into the current note
  */
 bool MainWindow::insertAttachment(QFile *file, const QString &title) {
-    QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::attachment, false, false, title);
+    QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::attachment, true, false, false, title);
 
     if (!text.isEmpty()) {
         qDebug() << __func__ << " - 'text': " << text;

@@ -2787,48 +2787,36 @@ QString Note::currentEmbedmentFolder() {
 /**
  * Returns the markdown of the inserted object/file into a note
  */
-QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNewLine,
+QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool copyFile, bool addNewLine,
                                      bool returnUrlOnly, QString title) {
     // file->exists() is false on Arch Linux for QTemporaryFile!
     if (file->size() > 0) {
-        // Test if note's embedment folder exists
-        const QDir dir(currentEmbedmentFolder());
-
-        // created the embedment folder if it doesn't exist
-        if (!dir.exists()) {
-            dir.mkpath(dir.path());
-        }
-
         const QFileInfo fileInfo(file->fileName());
+		
+		QString embedmentUrlString = "";
+		QString newFilePath = "";
+		if (copyFile) {
+			// Test if note's embedment folder exists
+			const QDir dir(currentEmbedmentFolder());
+			// created the embedment folder if it doesn't exist
+			if (!dir.exists()) {
+				dir.mkpath(dir.path());
+			}
 
-        QString suffix = fileInfo.suffix();
-        QMimeDatabase db;
-        const QMimeType mimetype = db.mimeTypeForFile(file->fileName());
+			newFilePath = dir.path() + QDir::separator() + fileInfo.fileName().replace(" ", "_");
 
-        // try to detect the mime type of the file and use a proper file suffix
-        if (mimetype.isValid()) {
-            const QStringList suffixes = mimetype.suffixes();
-            if (suffixes.count() > 0) {
-                suffix = suffixes.at(0);
-            }
-        }
+			// copy the file to the embedment folder
+			file->copy(newFilePath);
 
-        // find a random name for the new file
-        const QString newFileName =
-            Utils::Misc::makeFileNameRandom(file->fileName(), suffix);
+			embedmentUrlString = embedmentUrlStringForFileName(fileInfo.fileName());
 
-        const QString newFilePath =
-            dir.path() + QDir::separator() + fileInfo.fileName().replace(" ", "_");
-
-        // copy the file to the embedment folder
-        file->copy(newFilePath);
-
-        QString embedmentUrlString = embedmentUrlStringForFileName(fileInfo.fileName());
-
-        // check if we only want to return the embedment url string
-        if (returnUrlOnly) {
-            return embedmentUrlString;
-        }
+			// check if we only want to return the embedment url string
+			if (returnUrlOnly) {
+				return embedmentUrlString;
+			}
+		}
+		else
+			embedmentUrlString = fileInfo.absoluteFilePath();
 
         if (title.isEmpty()) {
             title = fileInfo.baseName();
@@ -2850,7 +2838,7 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool addNe
 			}
 			break;
 			case mediaType::pdf: {
-				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](file://") + dir.path() + QDir::separator() + embedmentUrlString + QStringLiteral(")") + (addNewLine ? "\n" : "");
+				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](") + embedmentUrlString + QStringLiteral(")") + (addNewLine ? "\n" : "");
 			}
 		}
 		
@@ -2935,7 +2923,7 @@ QString Note::importMediaFromBase64(QString &data, const QString &imageSuffix) {
 
     // store the temporary image in the embedment folder and return the markdown
     // code
-    const QString markdownCode = getInsertEmbedmentMarkdown(tempFile, mediaType::image);
+    const QString markdownCode = getInsertEmbedmentMarkdown(tempFile, mediaType::image, true);
 
     delete tempFile;
 

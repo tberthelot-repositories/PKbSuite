@@ -190,11 +190,6 @@ void WelcomeDialog::on_noteFolderButton_clicked() {
     }
 }
 
-void WelcomeDialog::on_networkSettingsButton_clicked() {
-    auto *dialog = new SettingsDialog(SettingsDialog::NetworkPage, this);
-    dialog->exec();
-}
-
 void WelcomeDialog::closeEvent(QCloseEvent *event) {
     MasterDialog::closeEvent(event);
 }

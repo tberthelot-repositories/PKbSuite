@@ -71,7 +71,7 @@ bool PDFFile::hasAnnotations()
                             Poppler::HighlightAnnotation::Quad quad = highlightAnnotation->highlightQuads().at(j);
                             
                             QRectF rectHighlight = QRectF(quad.points[0].x() * sizePage.width(), quad.points[0].y() * sizePage.height(), (quad.points[2].x() - quad.points[0].x())* sizePage.width(), (quad.points[2].y() - quad.points[0].y()) * sizePage.height());
-                           _summary.text += pageProcessed->text(rectHighlight) + " ";
+                           _summary.text += "* " + pageProcessed->text(rectHighlight) + "\n";
                         }
                         while (_summary.text[_summary.text.size() -1] == ' ')
                             _summary.text.remove(_summary.text.size() - 1, 1);
