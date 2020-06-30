@@ -2,7 +2,6 @@
 #define SETTINGSDIALOG_H
 
 #include <entities/notefolder.h>
-#include <entities/script.h>
 
 #include "masterdialog.h"
 
@@ -18,7 +17,6 @@ class QTreeWidgetItem;
 class QLineEdit;
 class QStatusBar;
 class QButtonGroup;
-class Script;
 class QCheckBox;
 class NoteFolder;
 class QSplitter;
@@ -100,21 +98,6 @@ class SettingsDialog : public MasterDialog {
 
     void on_noteFolderActiveCheckBox_stateChanged(int arg1);
 
-    void addLocalScript();
-
-    void on_scriptRemoveButton_clicked();
-
-    void on_scriptPathButton_clicked();
-
-    void on_scriptListWidget_currentItemChanged(QListWidgetItem *current,
-                                                QListWidgetItem *previous);
-
-    void on_scriptNameLineEdit_editingFinished();
-
-    void on_scriptValidationButton_clicked();
-
-    void on_scriptReloadEngineButton_clicked();
-
     void on_addCustomNoteFileExtensionButton_clicked();
 
     void on_removeCustomNoteFileExtensionButton_clicked();
@@ -157,12 +140,6 @@ class SettingsDialog : public MasterDialog {
     void noteNotificationNoneCheckBoxCheck();
 
     void needRestart();
-
-    void searchScriptInRepository(bool checkForUpdates = false);
-
-    void checkForScriptUpdates();
-
-    void on_scriptListWidget_itemChanged(QListWidgetItem *item);
 
     void on_interfaceStyleComboBox_currentTextChanged(const QString &arg1);
 
@@ -215,7 +192,6 @@ private:
     QString notesPathExistsText;
     QString connectionErrorMessage;
     NoteFolder _selectedNoteFolder;
-    Script _selectedScript;
     static const int _defaultMarkdownHighlightingInterval = 200;
     QSplitter *_mainSplitter;
     QButtonGroup *_noteNotificationButtonGroup;
@@ -241,12 +217,6 @@ private:
 
     QString generatePathFromCurrentNoteFolderRemotePathItem(
         QTreeWidgetItem *item);
-
-    void setupScriptingPage();
-
-    void storeScriptListEnabledState();
-
-    void validateCurrentScript();
 
     QListWidgetItem *addCustomNoteFileExtension(const QString &fileExtension);
 

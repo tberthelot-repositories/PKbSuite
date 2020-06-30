@@ -105,8 +105,7 @@ class Note {
 
     friend QDebug operator<<(QDebug dbg, const Note &note);
 
-    void createFromFile(QFile &file, int noteSubFolderId = 0,
-                        bool withNoteNameHook = false);
+    void createFromFile(QFile &file, int noteSubFolderId = 0);
 
     static bool deleteAll();
 
@@ -165,8 +164,6 @@ class Note {
 
     QString fileNameSuffix() const;
 
-    bool modifyNoteTextFileNameFromQMLHook();
-
     static QVector<int> searchInNotes(QString query,
                                       bool ignoreNoteSubFolder = false,
                                       int noteSubFolderId = -1);
@@ -208,8 +205,7 @@ class Note {
     qint64 getFileSize() const;
 
     static Note updateOrCreateFromFile(QFile &file,
-                                       const NoteSubFolder &noteSubFolder,
-                                       bool withNoteNameHook = false);
+                                       const NoteSubFolder &noteSubFolder);
 
     static QVector<int> fetchAllIds(int limit = -1, int offset = -1);
 

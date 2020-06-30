@@ -234,9 +234,6 @@ bool mainStartupMisc(const QStringList &arguments) {
         }
 
         settings.setValue(QStringLiteral("notesPath"), notesPath);
-
-        // prepend the portable data path if we are in portable mode
-        notesPath = notesPath;
         dir = QDir(notesPath);
     }
 

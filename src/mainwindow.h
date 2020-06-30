@@ -21,6 +21,7 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 #include <QFrame>
+#include <QScrollArea>
 
 #include "entities/notehistory.h"
 
@@ -130,19 +131,6 @@ class MainWindow : public QMainWindow {
     QList<QMenu *> menuList();
 
     QAction *findAction(const QString &objectName);
-
-    void addCustomAction(const QString &identifier, const QString &menuText,
-                         const QString &buttonText, const QString &icon,
-                         bool useInNoteEditContextMenu = false,
-                         bool hideButtonInToolbar = false,
-                         bool useInNoteListContextMenu = false);
-
-    void addScriptingLabel(const QString &identifier,
-                           const QString &text = QString());
-
-    void setScriptingLabelText(const QString &identifier, const QString &text);
-
-    void preReloadScriptingEngine();
 
     void writeToNoteTextEdit(const QString &text);
 
@@ -369,8 +357,6 @@ class MainWindow : public QMainWindow {
 
     void on_actionSelect_note_folder_triggered();
 
-    void on_actionReload_scripting_engine_triggered();
-
     void on_actionExport_preview_HTML_triggered();
 
     void hideNoteFolderComboBoxIfNeeded();
@@ -428,8 +414,6 @@ class MainWindow : public QMainWindow {
     void copySelectedNotesToNoteSubFolderId(int noteSubFolderId);
 
     void on_actionSplit_note_at_cursor_position_triggered();
-
-    void onCustomActionInvoked(const QString &identifier);
 
 	void on_actionFind_notes_in_all_subfolders_triggered();
 
@@ -500,8 +484,6 @@ class MainWindow : public QMainWindow {
     void on_actionInsert_attachment_triggered();
 
     void on_actionAllow_note_editing_triggered(bool checked);
-
-    void on_actionCheck_for_script_updates_triggered();
 
     void noteTextEditResize(QResizeEvent *event);
 
@@ -629,7 +611,6 @@ private:
     QDockWidget *_noteEditDockWidget;
     QDockWidget *_noteTagDockWidget;
     QDockWidget *_notePreviewDockWidget;
-    QDockWidget *_scriptingDockWidget;
     QWidget *_taggingDockTitleBarWidget;
     QWidget *_noteSubFolderDockTitleBarWidget;
     QWidget *_noteSearchDockTitleBarWidget;
@@ -803,8 +784,6 @@ private:
 
     bool jumpToNoteHistoryItem(const NoteHistoryItem &historyItem);
 
-    void initScriptingEngine();
-
     int getMaxImageWidth();
 
     void updateWindowTitle();
@@ -933,18 +912,6 @@ private:
     void updateNotesPanelSortOrder();
 
     void selectAllNotesInTagTreeWidget() const;
-
-    void handleScriptingNoteTagging(Note note, const Tag &tag,
-                                    bool doRemove = false,
-                                    bool triggerPostMethods = true);
-
-    void handleScriptingNotesTagUpdating();
-
-    void handleScriptingNotesTagRenaming(const Tag &tag,
-                                         const QString &newTagName);
-
-    void handleScriptingNotesTagRemoving(const Tag &tag,
-                                         bool forBulkOperation = false);
 
     void directoryWatcherWorkaround(bool isNotesDirectoryWasModifiedDisabled,
                                     bool alsoHandleNotesWereModified = false);

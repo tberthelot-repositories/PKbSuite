@@ -22,8 +22,8 @@ NoteDiffDialog::NoteDiffDialog(QWidget *parent, const QString &html)
     _notificationNoneCheckBox = new QCheckBox(this);
     _notificationNoneCheckBox->setHidden(true);
     _notificationButtonGroup->addButton(_notificationNoneCheckBox);
-    connect(_notificationButtonGroup, SIGNAL(buttonPressed(QAbstractButton *)),
-            this, SLOT(notificationButtonGroupPressed(QAbstractButton *)));
+    connect(_notificationButtonGroup, SIGNAL(buttonPressed(QAbstractButton*)),
+            this, SLOT(notificationButtonGroupPressed(QAbstractButton*)));
 
     this->ui->textEdit->setHtml(html);
 
@@ -50,8 +50,8 @@ NoteDiffDialog::NoteDiffDialog(QWidget *parent, const QString &html)
     //    button->setDefault(false);
     //    ui->buttonBox->addButton(button, QDialogButtonBox::ActionRole);
 
-    connect(this->ui->buttonBox, SIGNAL(clicked(QAbstractButton *)),
-            SLOT(dialogButtonClicked(QAbstractButton *)));
+    connect(this->ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
+            SLOT(dialogButtonClicked(QAbstractButton*)));
 }
 
 NoteDiffDialog::~NoteDiffDialog() { delete ui; }

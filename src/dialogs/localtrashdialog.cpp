@@ -69,8 +69,8 @@ LocalTrashDialog::LocalTrashDialog(MainWindow *mainWindow, QWidget *parent)
     //    button->setDefault(true);
     //    ui->buttonBox->addButton(button, QDialogButtonBox::ActionRole);
 
-    connect(this->ui->buttonBox, SIGNAL(clicked(QAbstractButton *)),
-            SLOT(dialogButtonClicked(QAbstractButton *)));
+    connect(this->ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
+            SLOT(dialogButtonClicked(QAbstractButton*)));
     connect(this, SIGNAL(finished(int)), this, SLOT(storeSettings()));
 
     loadTrashedNotes();
