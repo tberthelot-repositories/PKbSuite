@@ -2714,6 +2714,15 @@ QString Note::createNoteHeader(const QString &name) {
 }
 
 /**
+ * Creates a note footer with the "Referenced by" section
+ * 
+**/
+QString Note::createNoteFooter() {
+	QString footer = QStringLiteral("\n\n=====\n# *Referenced by:*\n\n");
+	return footer;
+}
+
+/**
  * Return the path of note's embedded item folder
  */
 QString Note::currentEmbedmentFolder() {
@@ -3159,4 +3168,46 @@ QDebug operator<<(QDebug dbg, const Note &note) {
                   << noteSubFolder.relativePath() << " <_hasDirtyData>"
                   << note._hasDirtyData;
     return dbg.space();
+}
+
+void Note::updateReferenceBySectionInLinkedNotes() {
+//	QRegularExpression re = QRegularExpression("\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\s]*\]\(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%]*.md)\)");
+	QRegularExpression re = QRegularExpression("\(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md)\)");
+	QRegularExpressionMatchIterator reIterator = re.globalMatch(_noteText);
+	while (reIterator.hasNext()) {
+		QRegularExpressionMatch reMatch = reIterator.next();
+		QString linkedNote = reMatch.captured();
+
+		updateReferencedNote(linkedNote.replace("%20", " "), _fileName);
+	}	
+}
+
+void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath) {
+	Note linkedNote = Note::fetchByFileName(linkedNotePath);
+	QString text = linkedNote.getNoteText();
+
+	if (text.length() != 0) {
+		// First, look for the "Referenced by" section
+		QRegularExpressionMatch match = QRegularExpression(R"(\n\n=====\n# \*Referenced by:\*\n\n)").match(text);
+		
+		// No "Referenced by" section yet. Let's create it
+		if (!match.hasMatch()) {
+			text.append(QStringLiteral("\n\n=====\n# \*Referenced by:\*\n\n"));
+		}
+		
+		// Next, check if links are available and create/update them
+		QString path = relativeFilePath(currentNotePath);
+		match = QRegularExpression(R"(\*\s\[[A-Za-z0-9\s]*\]\(()" + path.replace(" ", "%20") + R"()\))").match(text);
+		
+		// Note link to current note in "Referenced by" section yet, add it
+		if (!match.hasMatch()) {
+			text.append("* [" + _name + "](" + path.replace(" ", "%20") +")\n");
+		}
+		else { 	// Link is present, update it with current note path
+			text.replace(QRegularExpression(R"(\*\s\[\([)" + _name + R"(\)\]\([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md))"), "* [\\1](" + path.replace(" ", "%20") + ")");
+		}
+		
+		linkedNote.setNoteText(text);
+		linkedNote.storeNoteTextFileToDisk();
+	}
 }

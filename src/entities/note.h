@@ -214,6 +214,8 @@ class Note {
     void handleNoteMoving(const Note &oldNote) const;
 
     static QString createNoteHeader(const QString &name);
+
+	static QString createNoteFooter();
 	
 	QString currentEmbedmentFolder();
 
@@ -295,6 +297,8 @@ class Note {
     bool stripTrailingSpaces(int skipLine = -1);
 
     QString detectNewlineCharacters();
+	
+	void updateReferenceBySectionInLinkedNotes();
 
    protected:
     QString _name;
@@ -316,6 +320,8 @@ class Note {
     static const QString getNoteURLFromFileName(const QString &fileName);
 
     void restoreCreatedDate();
+	
+	void updateReferencedNote(QString linkedNotePath, QString currentNotePath);
 };
 
 Q_DECLARE_TYPEINFO(Note, Q_MOVABLE_TYPE);

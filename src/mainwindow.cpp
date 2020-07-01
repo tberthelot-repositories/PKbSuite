@@ -2537,8 +2537,12 @@ void MainWindow::storeUpdatedNotesToDisk() {
     // All flushing and syncing didn't help.
     bool _currentNoteChanged = false;
     bool noteWasRenamed = false;
+	
+	
+	// Check and update "Referenced by" section if needed
+	_currentNote.updateReferenceBySectionInLinkedNotes();
 
-    // _currentNote will be set by this method if the filename has changed
+	// _currentNote will be set by this method if the filename has changed
     const int count = Note::storeDirtyNotesToDisk(
         _currentNote, &_currentNoteChanged, &noteWasRenamed);
 
@@ -5287,6 +5291,7 @@ void MainWindow::jumpToNoteOrCreateNew(bool disableLoadNoteDirectoryList) {
     if (note.getId() == 0) {
         // check if a hook wants to set the text
         QString noteText = Note::createNoteHeader(text);
+		noteText.append(Note::createNoteFooter());
 
         const NoteSubFolder noteSubFolder =
             NoteSubFolder::activeNoteSubFolder();
