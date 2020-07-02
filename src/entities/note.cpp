@@ -3171,8 +3171,7 @@ QDebug operator<<(QDebug dbg, const Note &note) {
 }
 
 void Note::updateReferenceBySectionInLinkedNotes() {
-//	QRegularExpression re = QRegularExpression("\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\s]*\]\(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%]*.md)\)");
-	QRegularExpression re = QRegularExpression("\(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md)\)");
+	QRegularExpression re = QRegularExpression(R"(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md))");
 	QRegularExpressionMatchIterator reIterator = re.globalMatch(_noteText);
 	while (reIterator.hasNext()) {
 		QRegularExpressionMatch reMatch = reIterator.next();
@@ -3202,12 +3201,15 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 		// Note link to current note in "Referenced by" section yet, add it
 		if (!match.hasMatch()) {
 			text.append("* [" + _name + "](" + path.replace(" ", "%20") +")\n");
-		}
-		else { 	// Link is present, update it with current note path
+		} 
+		// TODO temporarily disable link update because it should be managed by the note move function or equivalent
+/*		else { 	// Link is present, update it with current note path
 			text.replace(QRegularExpression(R"(\*\s\[\([)" + _name + R"(\)\]\([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md))"), "* [\\1](" + path.replace(" ", "%20") + ")");
 		}
-		
+*/
+
 		linkedNote.setNoteText(text);
-		linkedNote.storeNoteTextFileToDisk();
+		linkedNote.setHasDirtyData(true);
+		linkedNote.store();
 	}
 }

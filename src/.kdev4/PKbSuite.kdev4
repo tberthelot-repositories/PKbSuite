@@ -29,8 +29,8 @@ CMAKE_EXPORT_COMPILE_COMMANDS=ON
 Launch Configurations=Launch Configuration 0
 
 [Launch][Launch Configuration 0]
-Configured Launch Modes=execute
-Configured Launchers=nativeAppLauncher
+Configured Launch Modes=execute,Valgrind
+Configured Launchers=nativeAppLauncher,Memcheck
 Name=Nouveau lanceur Binaire compilé
 Type=Native Application
 
