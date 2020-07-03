@@ -1,2 +1,1 @@
-// #define VERSION "20.6.9 24/06/20"
-#define VERSION "
+#define VERSION "0.2.2a"
