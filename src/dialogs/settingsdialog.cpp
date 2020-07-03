@@ -3,14 +3,11 @@
 #include <QtNetwork/qnetworkproxy.h>
 #include <entities/notefolder.h>
 #include <entities/notesubfolder.h>
-#include <entities/script.h>
 #include <helpers/toolbarcontainer.h>
 #include <libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget.h>
-#include <services/scriptingservice.h>
 #include <services/websocketserverservice.h>
 #include <utils/gui.h>
 #include <utils/misc.h>
-#include <widgets/scriptsettingwidget.h>
 
 #include <QAction>
 #include <QButtonGroup>
@@ -41,7 +38,6 @@
 #include "filedialog.h"
 #include "mainwindow.h"
 #include "release.h"
-#include "scriptrepositorydialog.h"
 #include "services/databaseservice.h"
 #include "ui_settingsdialog.h"
 #include "version.h"
@@ -106,15 +102,12 @@ SettingsDialog::SettingsDialog(int page, QWidget *parent)
     _noteNotificationNoneCheckBox->setHidden(true);
     _noteNotificationButtonGroup->addButton(_noteNotificationNoneCheckBox);
     connect(_noteNotificationButtonGroup,
-            SIGNAL(buttonPressed(QAbstractButton *)), this,
-            SLOT(noteNotificationButtonGroupPressed(QAbstractButton *)));
+            SIGNAL(buttonPressed(QAbstractButton*)), this,
+            SLOT(noteNotificationButtonGroupPressed(QAbstractButton*)));
 
     if (!fromWelcomeDialog) {
         // setup the note folder tab
         setupNoteFolderPage();
-
-        // setup the scripting tab
-        setupScriptingPage();
     }
 
     readSettings();
@@ -432,9 +425,6 @@ void SettingsDialog::storeSettings() {
 
     // apply and store the toolbar configuration
     on_applyToolbarButton_clicked();
-
-    // store the enabled state of the scripts
-    storeScriptListEnabledState();
 
     // store image scaling settings
     settings.setValue(QStringLiteral("imageScaleDown"),
@@ -1087,6 +1077,8 @@ void SettingsDialog::loadShortcutSettings() {
             ui->shortcutTreeWidget->setItemWidget(actionItem, 1, keyWidget);
 
             actionCount++;
+			
+			delete menuItem;
         }
 
         if (actionCount > 0) {
@@ -1718,387 +1710,6 @@ QString SettingsDialog::generatePathFromCurrentNoteFolderRemotePathItem(
 }
 
 /**
- * Does the scripting page setup
- */
-void SettingsDialog::setupScriptingPage() {
-    // reload the script list
-    reloadScriptList();
-
-    QString issueUrl =
-        QStringLiteral("https://github.com/pbek/PKbSuite/issues");
-    QString documentationUrl = QStringLiteral(
-        "https://docs.pkbsuite.org/en/develop/scripting/");
-    ui->scriptInfoLabel->setText(
-        tr("Take a look at the <a href=\"%1\">Scripting documentation</a> "
-           "to get started fast.")
-            .arg(documentationUrl) +
-        "<br>" +
-        tr("If you need access to a certain functionality in "
-           "PKbSuite please open an issue on the "
-           "<a href=\"%1\"> PKbSuite issue page</a>.")
-            .arg(issueUrl));
-
-    /*
-     * Setup the "add script" button menu
-     */
-    auto *addScriptMenu = new QMenu(this);
-
-    QAction *searchScriptAction =
-        addScriptMenu->addAction(tr("Search script repository"));
-    searchScriptAction->setIcon(
-        QIcon::fromTheme(QStringLiteral("edit-find"),
-                         QIcon(":icons/breeze-pkbsuite/16x16/edit-find.svg")));
-    searchScriptAction->setToolTip(
-        tr("Find a script in the script "
-           "repository"));
-    connect(searchScriptAction, SIGNAL(triggered()), this,
-            SLOT(searchScriptInRepository()));
-
-    QAction *updateScriptAction =
-        addScriptMenu->addAction(tr("Check for script updates"));
-    updateScriptAction->setIcon(QIcon::fromTheme(
-        QStringLiteral("svn-update"),
-        QIcon(":icons/breeze-pkbsuite/16x16/svn-update.svg")));
-    connect(updateScriptAction, SIGNAL(triggered()), this,
-            SLOT(checkForScriptUpdates()));
-
-    QAction *addAction = addScriptMenu->addAction(tr("Add local script"));
-    addAction->setIcon(QIcon::fromTheme(
-        QStringLiteral("document-new"),
-        QIcon(":icons/breeze-pkbsuite/16x16/document-new.svg")));
-    addAction->setToolTip(tr("Add an existing, local script"));
-    connect(addAction, SIGNAL(triggered()), this, SLOT(addLocalScript()));
-
-    ui->scriptAddButton->setMenu(addScriptMenu);
-}
-
-/**
- * Reloads the script list
- */
-void SettingsDialog::reloadScriptList() const {
-    QList<Script> scripts = Script::fetchAll();
-    int scriptsCount = scripts.count();
-    ui->scriptListWidget->clear();
-
-    // populate the script list
-    if (scriptsCount > 0) {
-        Q_FOREACH (Script script, scripts) {
-            auto *item = new QListWidgetItem(script.getName());
-            item->setData(Qt::UserRole, script.getId());
-            item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-            item->setCheckState(script.getEnabled() ? Qt::Checked
-                                                    : Qt::Unchecked);
-            ui->scriptListWidget->addItem(item);
-        }
-
-        // set the current row
-        ui->scriptListWidget->setCurrentRow(0);
-    }
-
-    // disable the edit frame if there is no item
-    ui->scriptEditFrame->setEnabled(scriptsCount > 0);
-
-    // disable the remove button if there is no item
-    ui->scriptRemoveButton->setEnabled(scriptsCount > 0);
-}
-
-/**
- * Adds a new script
- */
-void SettingsDialog::addLocalScript() {
-    _selectedScript = Script();
-    _selectedScript.setName(_newScriptName);
-    _selectedScript.setPriority(ui->scriptListWidget->count());
-    _selectedScript.store();
-
-    if (_selectedScript.isFetched()) {
-        auto *item = new QListWidgetItem(_selectedScript.getName());
-        item->setData(Qt::UserRole, _selectedScript.getId());
-        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-        item->setCheckState(Qt::Checked);
-        ui->scriptListWidget->addItem(item);
-
-        // set the current row
-        ui->scriptListWidget->setCurrentRow(ui->scriptListWidget->count() - 1);
-
-        // enable the remove button
-        ui->scriptRemoveButton->setEnabled(true);
-
-        // focus the script name edit and select the text
-        ui->scriptNameLineEdit->setFocus();
-        ui->scriptNameLineEdit->selectAll();
-
-        // open the dialog to select the script
-        on_scriptPathButton_clicked();
-    }
-}
-
-/**
- * Removes the current script
- */
-void SettingsDialog::on_scriptRemoveButton_clicked() {
-    if (ui->scriptListWidget->count() < 1) {
-        return;
-    }
-
-    if (Utils::Gui::question(
-            this, tr("Remove script"),
-            tr("Remove the current script <strong>%1</strong>?")
-                .arg(_selectedScript.getName()),
-            QStringLiteral("remove-script")) == QMessageBox::Yes) {
-        // remove the script from the database
-        _selectedScript.remove();
-
-        // remove the list item
-        ui->scriptListWidget->takeItem(ui->scriptListWidget->currentRow());
-
-        bool scriptsAvailable = ui->scriptListWidget->count() > 0;
-        // disable the remove button if there is only no item left
-        ui->scriptRemoveButton->setEnabled(scriptsAvailable);
-
-        // disable the edit frame if there is no item
-        ui->scriptEditFrame->setEnabled(scriptsAvailable);
-
-        // reload the scripting engine
-        ScriptingService::instance()->reloadEngine();
-    }
-}
-
-/**
- * Allows to choose the script path
- */
-void SettingsDialog::on_scriptPathButton_clicked() {
-    QString path = ui->scriptPathLineEdit->text();
-    QString dirPath = path;
-
-    // get the path of the script if a script was set
-    if (!path.isEmpty()) {
-        dirPath = QFileInfo(path).dir().path();
-    }
-
-    FileDialog dialog(QStringLiteral("ScriptPath"));
-
-    if (!dirPath.isEmpty()) {
-        dialog.setDirectory(dirPath);
-    }
-
-    if (!path.isEmpty()) {
-        dialog.selectFile(path);
-    }
-
-    dialog.setFileMode(QFileDialog::ExistingFile);
-    dialog.setAcceptMode(QFileDialog::AcceptOpen);
-    dialog.setNameFilter(tr("QML files") + " (*.qml)");
-    dialog.setWindowTitle(tr("Please select your QML file"));
-    int ret = dialog.exec();
-
-    if (ret == QDialog::Accepted) {
-        path = dialog.selectedFile();
-
-        QFile file(path);
-
-        if (file.exists() && (!path.isEmpty())) {
-            QString scriptName = _selectedScript.getName();
-
-            // set the script name from the file name if none was set yet
-            if (scriptName.isEmpty() || (scriptName == _newScriptName)) {
-                scriptName = QFileInfo(file).baseName();
-                ui->scriptNameLineEdit->setText(scriptName);
-                ui->scriptNameLabel->setText(scriptName);
-                _selectedScript.setName(scriptName);
-
-                const QSignalBlocker blocker(ui->scriptListWidget);
-                Q_UNUSED(blocker)
-                ui->scriptListWidget->currentItem()->setText(scriptName);
-            }
-
-            ui->scriptPathLineEdit->setText(path);
-            _selectedScript.setScriptPath(path);
-            _selectedScript.store();
-
-            // validate the script
-            validateCurrentScript();
-
-            // reload the scripting engine
-            ScriptingService::instance()->reloadEngine();
-
-            // trigger the item change so that the page is reloaded for
-            // script variables
-            reloadCurrentScriptPage();
-        }
-    }
-}
-
-/**
- * Loads the current script in the UI when the current item changed
- */
-void SettingsDialog::on_scriptListWidget_currentItemChanged(
-    QListWidgetItem *current, QListWidgetItem *previous) {
-    Q_UNUSED(current)
-    Q_UNUSED(previous)
-
-    reloadCurrentScriptPage();
-}
-
-/**
- * Loads the current script in the UI
- */
-void SettingsDialog::reloadCurrentScriptPage() {
-    QListWidgetItem *item = ui->scriptListWidget->currentItem();
-
-    if (item == Q_NULLPTR) {
-        return;
-    }
-
-    ui->scriptValidationLabel->clear();
-
-    int scriptId = item->data(Qt::UserRole).toInt();
-    _selectedScript = Script::fetch(scriptId);
-    if (_selectedScript.isFetched()) {
-        ui->scriptNameLabel->setText("<b>" + _selectedScript.getName() +
-                                     "</b>");
-        ui->scriptPathLineEdit->setText(_selectedScript.getScriptPath());
-        ui->scriptEditFrame->setEnabled(true);
-
-        bool isScriptFromRepository = _selectedScript.isScriptFromRepository();
-        ui->scriptNameLineEdit->setReadOnly(isScriptFromRepository);
-        ui->scriptPathButton->setDisabled(isScriptFromRepository);
-        ui->scriptRepositoryItemFrame->setVisible(isScriptFromRepository);
-        ui->localScriptItemFrame->setHidden(isScriptFromRepository);
-        ui->scriptNameLineEdit->setHidden(isScriptFromRepository);
-        ui->scriptNameLineEditLabel->setHidden(isScriptFromRepository);
-
-        // add additional information if script was from the script repository
-        if (isScriptFromRepository) {
-            ScriptInfoJson infoJson = _selectedScript.getScriptInfoJson();
-
-            ui->scriptVersionLabel->setText(infoJson.version);
-            ui->scriptDescriptionLabel->setText(infoJson.description);
-            ui->scriptAuthorsLabel->setText(infoJson.richAuthorText);
-            ui->scriptRepositoryLinkLabel->setText(
-                "<a href=\"https://github.com/pkbsuite/scripts/tree/"
-                "master/" +
-                infoJson.identifier + "\">" + tr("Open repository") + "</a>");
-        } else {
-            ui->scriptNameLineEdit->setText(_selectedScript.getName());
-        }
-
-        // get the registered script settings variables
-        QList<QVariant> variables =
-            ScriptingService::instance()->getSettingsVariables(
-                _selectedScript.getId());
-
-        bool hasScriptSettings = variables.count() > 0;
-        ui->scriptSettingsFrame->setVisible(hasScriptSettings);
-
-        if (hasScriptSettings) {
-            // remove the current ScriptSettingWidget widgets in the
-            // scriptSettingsFrame
-            QList<ScriptSettingWidget *> widgets =
-                ui->scriptSettingsFrame->findChildren<ScriptSettingWidget *>();
-            Q_FOREACH (ScriptSettingWidget *widget, widgets) { delete widget; }
-
-            foreach (QVariant variable, variables) {
-                QMap<QString, QVariant> varMap = variable.toMap();
-
-                // populate the variable UI
-                ScriptSettingWidget *scriptSettingWidget =
-                    new ScriptSettingWidget(this, _selectedScript, varMap);
-
-                //                    QString name = varMap["name"].toString();
-
-                ui->scriptSettingsFrame->layout()->addWidget(
-                    scriptSettingWidget);
-            }
-        }
-
-        // validate the script
-        validateCurrentScript();
-    } else {
-        ui->scriptEditFrame->setEnabled(false);
-        ui->scriptNameLineEdit->clear();
-        ui->scriptPathLineEdit->clear();
-    }
-}
-
-/**
- * Validates the current script
- */
-void SettingsDialog::validateCurrentScript() {
-    ui->scriptValidationLabel->clear();
-
-    if (_selectedScript.isFetched()) {
-        QString path = _selectedScript.getScriptPath();
-
-        // check the script validity if the path is not empty
-        if (!path.isEmpty()) {
-            QString errorMessage;
-            bool result =
-                ScriptingService::validateScript(_selectedScript, errorMessage);
-            QString validationText =
-                result ? tr("Your script seems to be valid")
-                       : tr("There were script errors:\n%1").arg(errorMessage);
-            ui->scriptValidationLabel->setText(validationText);
-            ui->scriptValidationLabel->setStyleSheet(
-                QStringLiteral("color: %1;").arg(result ? "green" : "red"));
-        }
-    }
-}
-
-/**
- * Stores a script name after it was edited
- */
-void SettingsDialog::on_scriptNameLineEdit_editingFinished() {
-    QString text = ui->scriptNameLineEdit->text();
-    _selectedScript.setName(text);
-    _selectedScript.store();
-
-    ui->scriptListWidget->currentItem()->setText(text);
-}
-
-/**
- * Stores the enabled states of the scripts
- */
-void SettingsDialog::storeScriptListEnabledState() {
-    for (int i = 0; i < ui->scriptListWidget->count(); i++) {
-        QListWidgetItem *item = ui->scriptListWidget->item(i);
-        bool enabled = item->checkState() == Qt::Checked;
-        int scriptId = item->data(Qt::UserRole).toInt();
-
-        Script script = Script::fetch(scriptId);
-        if (script.isFetched()) {
-            if (script.getEnabled() != enabled) {
-                script.setEnabled(enabled);
-                script.store();
-            }
-        }
-    }
-
-    // reload the scripting engine
-    ScriptingService::instance()->reloadEngine();
-}
-
-/**
- * Validates the current script
- */
-void SettingsDialog::on_scriptValidationButton_clicked() {
-    // validate the script
-    validateCurrentScript();
-}
-
-/**
- * Reloads the scripting engine
- */
-void SettingsDialog::on_scriptReloadEngineButton_clicked() {
-    // store the enabled states and reload the scripting engine
-    storeScriptListEnabledState();
-
-    // trigger the item change so that the page is reloaded for
-    // script variables
-    reloadCurrentScriptPage();
-}
-
-/**
  * Adds a custom file extension
  */
 void SettingsDialog::on_addCustomNoteFileExtensionButton_clicked() {
@@ -2609,50 +2220,6 @@ void SettingsDialog::on_clearLogFileButton_clicked() {
  * Declares that we need a restart
  */
 void SettingsDialog::needRestart() { Utils::Misc::needRestart(); }
-
-/**
- * Opens a dialog to search for scripts in the script repository
- */
-void SettingsDialog::searchScriptInRepository(bool checkForUpdates) {
-    auto *dialog = new ScriptRepositoryDialog(this, checkForUpdates);
-    dialog->exec();
-    Script lastInstalledScript = dialog->getLastInstalledScript();
-    delete (dialog);
-
-    // reload the script list
-    reloadScriptList();
-
-    // select the last installed script
-    if (lastInstalledScript.isFetched()) {
-        auto item = Utils::Gui::getListWidgetItemWithUserData(
-            ui->scriptListWidget, lastInstalledScript.getId());
-        ui->scriptListWidget->setCurrentItem(item);
-    }
-
-    // reload the scripting engine
-    ScriptingService::instance()->reloadEngine();
-
-    // reload page so the script settings will be viewed
-    reloadCurrentScriptPage();
-}
-
-/**
- * Opens a dialog to check for script updates
- */
-void SettingsDialog::checkForScriptUpdates() { searchScriptInRepository(true); }
-
-/**
- * Saves the enabled state of all items and reload the current script page to
- * make the script settings available when a script was enabled or disabled
- *
- * @param item
- */
-void SettingsDialog::on_scriptListWidget_itemChanged(QListWidgetItem *item) {
-    Q_UNUSED(item)
-
-    storeScriptListEnabledState();
-    reloadCurrentScriptPage();
-}
 
 void SettingsDialog::on_interfaceStyleComboBox_currentTextChanged(
     const QString &arg1) {

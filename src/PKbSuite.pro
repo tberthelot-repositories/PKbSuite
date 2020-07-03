@@ -6,10 +6,6 @@
 
 QT       += core gui widgets sql svg network xml xmlpatterns printsupport qml websockets concurrent quickcontrols2
 
-# quick is enabled for more scripting options
-# Windows and macOS seem to ignore that
-#QT       += quick
-
 CONFIG += with_aspell
 
 TARGET = PKbSuite
@@ -30,7 +26,7 @@ SOURCES += main.cpp\
     dialogs/attachmentdialog.cpp \
     helpers/codetohtmlconverter.cpp \
     helpers/qownspellchecker.cpp \
-        mainwindow.cpp \
+	mainwindow.cpp \
     libraries/diff_match_patch/diff_match_patch.cpp \
     libraries/versionnumber/versionnumber.cpp \
     libraries/md4c/md4c/md4c.c \
@@ -47,17 +43,14 @@ SOURCES += main.cpp\
     entities/notehistory.cpp \
     entities/notefolder.cpp \
     entities/tag.cpp \
-    entities/script.cpp \
     entities/bookmark.cpp \
     helpers/htmlentities.cpp \
     helpers/toolbarcontainer.cpp \
     helpers/pkbsuitemarkdownhighlighter.cpp \
     helpers/flowlayout.cpp \
     services/databaseservice.cpp \
-    threads/scriptthread.cpp \
     widgets/graphicsview.cpp \
     widgets/pkbsuitemarkdowntextedit.cpp \
-    services/scriptingservice.cpp \
     services/websocketserverservice.cpp \
     dialogs/masterdialog.cpp \
     utils/misc.cpp \
@@ -78,14 +71,10 @@ SOURCES += main.cpp\
     dialogs/dropPDFDialog.cpp \
     dialogs/notedialog.cpp \
     dialogs/filedialog.cpp \
-    dialogs/scriptrepositorydialog.cpp \
     dialogs/dictionarymanagerdialog.cpp \
-    widgets/scriptsettingwidget.cpp \
-    api/scriptapi.cpp \
     widgets/label.cpp \
     widgets/lineedit.cpp \
     widgets/qtexteditsearchwidget.cpp \
-    widgets/scriptlistwidget.cpp \
     widgets/notefolderlistwidget.cpp \
     widgets/notetreewidgetitem.cpp \
     pdffile.cpp \
@@ -99,7 +88,6 @@ HEADERS  += mainwindow.h \
     helpers/LanguageCache.h \
     helpers/codetohtmlconverter.h \
     helpers/qownspellchecker.h \
-    threads/scriptthread.h \
     version.h \
     libraries/diff_match_patch/diff_match_patch.h \
     libraries/versionnumber/versionnumber.h \
@@ -112,14 +100,12 @@ HEADERS  += mainwindow.h \
     entities/notesubfolder.h \
     entities/notefolder.h \
     entities/tag.h \
-    entities/script.h \
     entities/bookmark.h \
     dialogs/aboutdialog.h \
     dialogs/linkdialog.h \
     dialogs/notediffdialog.h \
     dialogs/settingsdialog.h \
     dialogs/localtrashdialog.h \
-    services/scriptingservice.h \
     services/websocketserverservice.h \
     helpers/htmlentities.h \
     helpers/toolbarcontainer.h \
@@ -152,14 +138,10 @@ HEADERS  += mainwindow.h \
     dialogs/dropPDFDialog.h \
     dialogs/notedialog.h \
     dialogs/filedialog.h \
-    dialogs/scriptrepositorydialog.h \
     dialogs/dictionarymanagerdialog.h \
-    widgets/scriptsettingwidget.h \
-    api/scriptapi.h \
     widgets/label.h \
     widgets/lineedit.h \
     widgets/qtexteditsearchwidget.h \
-    widgets/scriptlistwidget.h \
     widgets/notefolderlistwidget.h \
     widgets/notetreewidgetitem.h \
     pdffile.h \
@@ -182,10 +164,8 @@ FORMS    += mainwindow.ui \
     dialogs/orphanedattachmentsdialog.ui \
     dialogs/tabledialog.ui \
     dialogs/notedialog.ui \
-    dialogs/scriptrepositorydialog.ui \
     dialogs/dictionarymanagerdialog.ui \
     widgets/qtexteditsearchwidget.ui \
-    widgets/scriptsettingwidget.ui \
     widgets/notetreewidgetitem.ui \
     dialogs/dropPDFDialog.ui \
     widgets/layoutwidget.ui \

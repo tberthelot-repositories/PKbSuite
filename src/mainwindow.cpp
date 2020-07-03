@@ -20,7 +20,6 @@
 #include <dialogs/imagedialog.h>
 #include <dialogs/localtrashdialog.h>
 #include <dialogs/notedialog.h>
-#include <dialogs/scriptrepositorydialog.h>
 #include <dialogs/tabledialog.h>
 #include <dialogs/tagadddialog.h>
 #include <dialogs/dropPDFDialog.h>
@@ -30,7 +29,6 @@
 #include <entities/trashitem.h>
 #include <helpers/toolbarcontainer.h>
 #include <helpers/flowlayout.h>
-#include <services/scriptingservice.h>
 #include <utils/gui.h>
 #include <utils/misc.h>
 #include <utils/schema.h>
@@ -192,11 +190,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // initialize the dock widgets
     initDockWidgets();
-
-    // initialize the scripting engine
-    // initDockWidgets() has to be called before that so the scripting dock
-    // widget is already in place
-    initScriptingEngine();
 
     // restore toolbars
     // initDockWidgets() has to be called first so panel checkboxes can be
@@ -610,15 +603,6 @@ void MainWindow::initDockWidgets() {
     addDockWidget(Qt::RightDockWidgetArea, _notePreviewDockWidget,
                   Qt::Horizontal);
 
-    _scriptingDockWidget = new QDockWidget(tr("Scripting"), this);
-    _scriptingDockWidget->setObjectName(QStringLiteral("scriptingDockWidget"));
-    _scriptingDockWidget->setWidget(ui->scriptingScrollArea);
-    _scriptingDockTitleBarWidget = _scriptingDockWidget->titleBarWidget();
-    addDockWidget(Qt::RightDockWidgetArea, _scriptingDockWidget, Qt::Vertical);
-    _scriptingDockWidget->hide();
-    // we only needed that label to set a layout in QtCreator
-    delete ui->scriptingDemoLabel;
-
     QSettings settings;
 
     // forcing some dock widget sizes on the first application start
@@ -789,34 +773,6 @@ void MainWindow::initEditorSoftWrap() {
 
     ui->noteTextEdit->setLineWrapMode(pMode);
     ui->noteTextView->setLineWrapMode(mode);
-}
-
-/**
- * Initializes the scripting engine
- */
-void MainWindow::initScriptingEngine() {
-    ui->menuCustom_actions->hide();
-    //    _customActionToolbar->hide();
-
-    ScriptingService *scriptingService = ScriptingService::createInstance(this);
-    QQmlEngine *engine = scriptingService->engine();
-    //    engine->setObjectOwnership(ui->noteTextEdit,
-    //    QQmlEngine::CppOwnership);
-    engine->rootContext()->setContextProperty(QStringLiteral("noteTextEdit"),
-                                              ui->noteTextEdit);
-    scriptingService->initComponents();
-}
-
-/**
- * Invokes the custom action in the scripting service
- *
- * @param identifier
- */
-void MainWindow::onCustomActionInvoked(const QString &identifier) {
-    ScriptingService *scriptingService = ScriptingService::instance();
-    if (scriptingService != Q_NULLPTR) {
-        scriptingService->onCustomActionInvoked(identifier);
-    }
 }
 
 /**
@@ -2365,13 +2321,9 @@ void MainWindow::updateNoteTextFromDisk(Note note) {
     note.store();
     this->_currentNote = note;
 
-    {
-        const QSignalBlocker blocker(this->ui->noteTextEdit);
-        Q_UNUSED(blocker)
-        this->setNoteTextFromNote(&note);
-    }
-
-    ScriptingService::instance()->onCurrentNoteChanged(&_currentNote);
+	const QSignalBlocker blocker(this->ui->noteTextEdit);
+	Q_UNUSED(blocker)
+	this->setNoteTextFromNote(&note);
 }
 
 void MainWindow::notesWereModified(const QString &str) {
@@ -2585,8 +2537,12 @@ void MainWindow::storeUpdatedNotesToDisk() {
     // All flushing and syncing didn't help.
     bool _currentNoteChanged = false;
     bool noteWasRenamed = false;
+	
+	
+	// Check and update "Referenced by" section if needed
+	_currentNote.updateReferenceBySectionInLinkedNotes();
 
-    // _currentNote will be set by this method if the filename has changed
+	// _currentNote will be set by this method if the filename has changed
     const int count = Note::storeDirtyNotesToDisk(
         _currentNote, &_currentNoteChanged, &noteWasRenamed);
 
@@ -2790,8 +2746,6 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
         NoteSubFolder::deleteAll();
     }
 
-    const bool withNoteNameHook =
-        ScriptingService::instance()->handleNoteNameHookExists();
     const int numFiles = files.count();
     QProgressDialog progress(tr("Loading notes…"), tr("Abort"), 0, numFiles,
                              this);
@@ -2814,7 +2768,7 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
 
         // update or create a note from the file
         const Note note =
-            Note::updateOrCreateFromFile(file, noteSubFolder, withNoteNameHook);
+            Note::updateOrCreateFromFile(file, noteSubFolder);
 
         // add the note id to in the end check if notes need to be removed
         _buildNotesIndexAfterNoteIdList << note.getId();
@@ -3371,24 +3325,8 @@ void MainWindow::setCurrentNote(Note note, bool updateNoteText,
     reloadCurrentNoteTags();
     updateNoteTextEditReadOnly();
 
-    ScriptingService::instance()->onCurrentNoteChanged(&_currentNote);
-
-    // call a script hook that a new note was opened
-    ScriptingService::instance()->callHandleNoteOpenedHook(&_currentNote);
-
-    //    putenv(QString("QOWNNOTES_CURRENT_NOTE_PATH=" + _currentNote
-    //            .fullNoteFilePath()).toLatin1().data());
-    //    setenv("QOWNNOTES_CURRENT_NOTE_PATH",
-    //           _currentNote.fullNoteFilePath().toLatin1().data(),
-    //           1);
-
     QSettings settings;
-
-#ifdef Q_OS_MAC
-    const bool restoreCursorPositionDefault = false;
-#else
     const bool restoreCursorPositionDefault = true;
-#endif
 
     const bool restoreCursorPosition =
         settings
@@ -3821,7 +3759,6 @@ QTreeWidgetItem *MainWindow::firstVisibleNoteTreeWidgetItem() {
 void MainWindow::searchInNoteTextEdit(QString str) {
     QList<QTextEdit::ExtraSelection> extraSelections;
     QList<QTextEdit::ExtraSelection> extraSelections2;
-    QList<QTextEdit::ExtraSelection> extraSelections3;
 
     if (str.count() >= 2) {
         // do a in-note search
@@ -4187,17 +4124,12 @@ void MainWindow::removeSelectedTags() {
                     ui->noteTextEdit->setPlainText(noteText);
                 idNote++;
 			}
-
-			// take care that the tag is removed from all notes
-			handleScriptingNotesTagRemoving(tag, true);
 			
 			tag.remove();
 			qDebug() << "Removed tag " << tag.getName();
 		}
 
-        if (ScriptingService::instance()->noteTaggingHookExists()) {
-            storeUpdatedNotesToDisk();
-        }
+        storeUpdatedNotesToDisk();
 
         // disable workaround
         directoryWatcherWorkaround(false, true);
@@ -4372,8 +4304,6 @@ void MainWindow::tagSelectedNotes(const Tag &tag) {
                 .arg(tag.getName()),
             QStringLiteral("tag-notes")) == QMessageBox::Yes) {
         int tagCount = 0;
-        const bool useScriptingEngine =
-            ScriptingService::instance()->noteTaggingHookExists();
 
         // workaround when signal block doesn't work correctly
         directoryWatcherWorkaround(true, true);
@@ -4393,12 +4323,6 @@ void MainWindow::tagSelectedNotes(const Tag &tag) {
 
             const QSignalBlocker blocker(noteDirectoryWatcher);
             Q_UNUSED(blocker)
-
-            if (useScriptingEngine) {
-                // add the tag to the note text if defined via
-                // scripting engine
-                handleScriptingNoteTagging(note, tag, false, false);
-            }
 
             // tag note
             const bool result = tag.linkToNote(note);
@@ -4420,13 +4344,6 @@ void MainWindow::tagSelectedNotes(const Tag &tag) {
             } else {
                 qWarning() << "Could not tag note:" << note.getName();
             }
-        }
-
-        if (useScriptingEngine) {
-            const QSignalBlocker blocker(this->noteDirectoryWatcher);
-            Q_UNUSED(blocker)
-
-            storeUpdatedNotesToDisk();
         }
 
         reloadCurrentNoteTags();
@@ -4456,8 +4373,6 @@ void MainWindow::removeTagFromSelectedNotes(const Tag &tag) {
                 .arg(tag.getName()),
             QStringLiteral("remove-tag-from-notes")) == QMessageBox::Yes) {
         int tagCount = 0;
-        const bool useScriptingEngine =
-            ScriptingService::instance()->noteTaggingHookExists();
 
         // workaround when signal blocking doesn't work correctly
         directoryWatcherWorkaround(true, true);
@@ -4478,11 +4393,6 @@ void MainWindow::removeTagFromSelectedNotes(const Tag &tag) {
             const QSignalBlocker blocker(noteDirectoryWatcher);
             Q_UNUSED(blocker)
 
-            if (useScriptingEngine) {
-                // take care that the tag is removed from the note
-                handleScriptingNoteTagging(note, tag, true, false);
-            }
-
             // tag note
             const bool result = tag.removeLinkToNote(note);
 
@@ -4496,13 +4406,6 @@ void MainWindow::removeTagFromSelectedNotes(const Tag &tag) {
                 qWarning() << "Could not remove tag from note:"
                            << note.getName();
             }
-        }
-
-        if (useScriptingEngine) {
-            const QSignalBlocker blocker(noteDirectoryWatcher);
-            Q_UNUSED(blocker)
-
-            storeUpdatedNotesToDisk();
         }
 
         reloadCurrentNoteTags();
@@ -4979,8 +4882,6 @@ void MainWindow::noteTextEditTextWasUpdated() {
         this->_currentNoteLastEdited = QDateTime::currentDateTime();
         _noteViewNeedsUpdate = true;
 
-        ScriptingService::instance()->onCurrentNoteChanged(&_currentNote);
-
         handleNoteTextChanged();
     }
 }
@@ -5389,16 +5290,8 @@ void MainWindow::jumpToNoteOrCreateNew(bool disableLoadNoteDirectoryList) {
     // if we can't find a note we create a new one
     if (note.getId() == 0) {
         // check if a hook wants to set the text
-        QString noteText =
-            ScriptingService::instance()->callHandleNewNoteHeadlineHook(text);
-
-        // check if a hook changed the text
-        if (noteText.isEmpty()) {
-            // fallback to the old text if no hook changed the text
-            noteText = Note::createNoteHeader(text);
-        } else {
-            noteText.append(QLatin1String("\n\n"));
-        }
+        QString noteText = Note::createNoteHeader(text);
+		noteText.append(Note::createNoteFooter());
 
         const NoteSubFolder noteSubFolder =
             NoteSubFolder::activeNoteSubFolder();
@@ -6232,9 +6125,6 @@ bool MainWindow::insertImage(QFile *file, QString title) {
         _currentNote.getInsertEmbedmentMarkdown(file, mediaType::image, true, true, false, std::move(title));
 
     if (!text.isEmpty()) {
-        ScriptingService *scriptingService = ScriptingService::instance();
-        // attempts to ask a script for another markdown text
-        text = scriptingService->callInsertMediaHook(file, text);
         qDebug() << __func__ << " - 'text': " << text;
 
         insertNoteText(text);
@@ -6262,9 +6152,6 @@ bool MainWindow::insertPDF(QFile *file) {
             // If the annotations have not been processed, we just add a link to the PDF file
             QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::pdf, false);
             if (!text.isEmpty()) {
-                ScriptingService* scriptingService = ScriptingService::instance();
-                // attempts to ask a script for an other markdown text
-                text = scriptingService->callInsertPDFHook(file, text);
                 qDebug() << __func__ << " - 'text': " << text;
 
                 PKbSuiteMarkdownTextEdit* textEdit = activeNoteTextEdit();
@@ -6296,7 +6183,7 @@ bool MainWindow::insertPDF(QFile *file) {
 				QString noteSubFolderPath = noteSubFolder.fullPath();
                 note.setNoteSubFolderId(noteSubFolder.getId());
 
-                QString noteText = ScriptingService::instance()->callHandleNewNoteHeadlineHook(pdfFileInfo.baseName() + " - Notes");
+                QString noteText = pdfFileInfo.baseName() + " - Notes";
 
                 // check if a hook changed the text
                 if (noteText.isEmpty()) {
@@ -6385,9 +6272,6 @@ bool MainWindow::insertPDF(QFile *file) {
         // If the annotations have not been processed, we just add a link to the PDF file
         QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::pdf, false);
         if (!text.isEmpty()) {
-            ScriptingService* scriptingService = ScriptingService::instance();
-            // attempts to ask a script for an other markdown text
-            text = scriptingService->callInsertPDFHook(file, text);
             qDebug() << __func__ << " - 'text': " << text;
 
             QMarkdownTextEdit* textEdit = activeNoteTextEdit();
@@ -6755,23 +6639,6 @@ void MainWindow::dropEvent(QDropEvent *e) {
  * produced by a drop event or a paste action
  */
 void MainWindow::handleInsertingFromMimeData(const QMimeData *mimeData) {
-    // check if a QML wants to set the inserted text
-    if (mimeData->hasText() || mimeData->hasHtml()) {
-        ScriptingService *scriptingService = ScriptingService::instance();
-        QString text =
-            scriptingService->callInsertingFromMimeDataHook(mimeData);
-
-        if (!text.isEmpty()) {
-            PKbSuiteMarkdownTextEdit *textEdit = activeNoteTextEdit();
-            QTextCursor c = textEdit->textCursor();
-
-            // insert text from QML
-            c.insertText(text);
-
-            return;
-        }
-    }
-
     if (mimeData->hasHtml()) {
         insertHtml(mimeData->html());
     } else if (mimeData->hasUrls()) {
@@ -7178,8 +7045,6 @@ void MainWindow::hideNoteFolderComboBoxIfNeeded() {
  */
 void MainWindow::reloadTagTree() {
     qDebug() << __func__;
-    // take care that the tags are synced from the notes to the internal db
-    handleScriptingNotesTagUpdating();
 
     QSettings settings;
 
@@ -7406,6 +7271,8 @@ void MainWindow::reloadNoteSubFolderTree() {
     if ((activeNoteSubFolderId == 0) && _showNotesFromAllNoteSubFolders) {
         selectAllNotesInNoteSubFolderTreeWidget();
     }
+    
+    delete allItem;
 }
 
 /**
@@ -7768,17 +7635,9 @@ void MainWindow::linkTagNameToCurrentNote(const QString &tagName,
                 }
 
                 tag.linkToNote(note);
-
-                // add the tag to the note text if defined via scripting
-                // engine
-                handleScriptingNoteTagging(note, tag, false, false);
             }
         } else {
             tag.linkToNote(_currentNote);
-
-            // add the tag to the note text if defined via scripting engine
-
-			handleScriptingNoteTagging(_currentNote, tag, false, false);
         }
 
         reloadCurrentNoteTags();
@@ -7791,226 +7650,6 @@ void MainWindow::linkTagNameToCurrentNote(const QString &tagName,
 
     // turn off the workaround again
     directoryWatcherWorkaround(false, true);
-}
-
-/**
- * Adds or removes a tag from the note text if defined via scripting engine
- *
- * @param note
- * @param tagName
- * @param doRemove
- * @param triggerPostMethods
- */
-void MainWindow::handleScriptingNoteTagging(Note note, const Tag &tag,
-                                            bool doRemove,
-                                            bool triggerPostMethods) {
-    const QString oldNoteText = note.getNoteText();
-    const QString &action =
-        doRemove ? QStringLiteral("remove") : QStringLiteral("add");
-    QString noteText =
-        ScriptingService::instance()
-            ->callNoteTaggingHook(
-                note, action,
-                tag.getName())
-            .toString();
-
-    // try noteTaggingByObjectHook if noteTaggingHook didn't do anything
-    if (noteText.isEmpty()) {
-        noteText =
-            ScriptingService::instance()
-                ->callNoteTaggingByObjectHook(note, action, tag).toString();
-
-        if (noteText.isEmpty() || (oldNoteText == noteText)) {
-            return;
-        }
-    }
-
-    // return if note could not be stored
-    if (!note.storeNewText(std::move(noteText))) {
-        return;
-    }
-
-    // do some stuff to get the UI updated
-    if (triggerPostMethods) {
-        const QSignalBlocker blocker(this->noteDirectoryWatcher);
-        Q_UNUSED(blocker)
-
-        storeUpdatedNotesToDisk();
-        reloadTagTree();
-        //        reloadCurrentNoteTags();
-    }
-
-    if (note.isSameFile(_currentNote)) {
-        //            updateNoteTextFromDisk(note);
-
-        _currentNote.refetch();
-        setNoteTextFromNote(&_currentNote);
-    }
-}
-
-/**
- * Takes care that the tags are synced from the notes to the internal db
- */
-void MainWindow::handleScriptingNotesTagUpdating() {
-    if (!ScriptingService::instance()->noteTaggingHookExists()) {
-        return;
-    }
-
-    qDebug() << __func__;
-
-    // workaround when signal blocking doesn't work correctly
-    directoryWatcherWorkaround(true, true);
-
-    const QVector<Note> &notes = Note::fetchAll();
-    for (const Note &note : notes) {
-        QSet<int> tagIdList;
-        const QStringList tagNameList =
-            ScriptingService::instance()
-                ->callNoteTaggingHook(note, QStringLiteral("list"))
-                .toStringList();
-
-        if (tagNameList.count() == 0) {
-            // if callNoteTaggingHook didn't return anything lets try
-            // callNoteTaggingByObjectHook
-            const auto variantTagIdList = ScriptingService::instance()
-                ->callNoteTaggingByObjectHook(note, QStringLiteral("list"))
-                .toList();
-
-            // get a tagId list from the variant list
-            for (const QVariant &tagId : variantTagIdList) {
-                tagIdList << tagId.toInt();
-            }
-        } else {
-            // get a tagId list from the tag name list
-            for (const QString &tagName : tagNameList) {
-                Tag tag = Tag::fetchByName(tagName);
-
-                // add missing tags to the tag database
-                if (!tag.isFetched()) {
-                    tag.setName(tagName);
-                    tag.store();
-                }
-
-                tagIdList << tag.getId();
-            }
-        }
-
-        QSet<int> tagIdList2 = Tag::fetchAllIdsByNote(note);
-
-        // we need to create a copy of tagIdList, because subtract would modify tagIdList
-        QSet<int> subtraction = tagIdList;
-        subtraction.subtract(tagIdList2);
-
-        // add missing tag links to the note
-        for (const int tagId : subtraction) {
-            Tag tag = Tag::fetch(tagId);
-            tag.linkToNote(note);
-            qDebug() << " difference1: " << tag;
-        }
-
-        const QSet<int> subtraction1 = tagIdList2.subtract(tagIdList);
-
-        // remove tags from the note that are not in the note text
-        for (const int tagId : subtraction1) {
-            Tag tag = Tag::fetch(tagId);
-            tag.removeLinkToNote(note);
-            qDebug() << " difference2: " << tag;
-        }
-    }
-
-    // disable workaround
-    directoryWatcherWorkaround(false, true);
-}
-
-/**
- * Takes care that a tag is renamed in all notes
- *
- * @param oldTagName
- * @param newTagName
- */
-void MainWindow::handleScriptingNotesTagRenaming(const Tag &tag,
-                                                 const QString &newTagName) {
-    if (!ScriptingService::instance()->noteTaggingHookExists()) {
-        return;
-    }
-
-    qDebug() << __func__;
-
-    // workaround when signal blocking doesn't work correctly
-    directoryWatcherWorkaround(true, true);
-
-    const QSignalBlocker blocker(this->noteDirectoryWatcher);
-    Q_UNUSED(blocker)
-
-    const auto notes = Note::fetchAll();
-    for (Note note : notes) {
-        const QString oldNoteText = note.getNoteText();
-        QString noteText =
-            ScriptingService::instance()
-                ->callNoteTaggingHook(note, QStringLiteral("rename"),
-                                      tag.getName(), newTagName)
-                .toString();
-
-        // if nothing came back from callNoteTaggingHook let's try
-        // callNoteTaggingByObjectHook
-        if (noteText.isEmpty()) {
-            noteText =
-                ScriptingService::instance()
-                    ->callNoteTaggingByObjectHook(
-                        note, QStringLiteral("rename"), tag, newTagName)
-                    .toString();
-
-            if (noteText.isEmpty() || (oldNoteText == noteText)) {
-                continue;
-            }
-        }
-
-        note.storeNewText(std::move(noteText));
-    }
-
-    storeUpdatedNotesToDisk();
-
-    // disable workaround
-    directoryWatcherWorkaround(false, true);
-
-    reloadTagTree();
-
-    // refetch current note to make sure the note text with the tag was updated
-    _currentNote.refetch();
-    setNoteTextFromNote(&_currentNote);
-}
-
-/**
- * Takes care that a tag is removed from all notes
- *
- * @param tagName
- */
-void MainWindow::handleScriptingNotesTagRemoving(const Tag &tag,
-                                                 bool forBulkOperation) {
-    if (!ScriptingService::instance()->noteTaggingHookExists()) {
-        return;
-    }
-
-    qDebug() << __func__;
-
-    if (!forBulkOperation) {
-        // workaround when signal blocking doesn't work correctly
-        directoryWatcherWorkaround(true, true);
-    }
-
-    const QVector<Note> &notes = Note::fetchAll();
-    for (const Note &note : notes) {
-        handleScriptingNoteTagging(note, tag, true, false);
-    }
-
-    if (!forBulkOperation) {
-        storeUpdatedNotesToDisk();
-
-        // disable workaround
-        directoryWatcherWorkaround(false, true);
-
-        reloadTagTree();
-    }
 }
 
 /**
@@ -8174,7 +7813,6 @@ void MainWindow::removeNoteTagClicked() {
 				
 				tc.setPosition(reMatch.capturedStart() - lTag);
 				tc.setPosition(reMatch.capturedEnd() - lTag, QTextCursor::KeepAnchor);
-				QString sTag = tc.selectedText();
 				
 				lTag = reMatch.capturedLength() + 1;
 				
@@ -8182,9 +7820,6 @@ void MainWindow::removeNoteTagClicked() {
 			}
 			
             tag.removeLinkToNote(_currentNote);
-
-            // remove the tag from the note text if defined via scripting engine
-            handleScriptingNoteTagging(_currentNote, tag, true);
         } else {
             const auto selectedNotesList = selectedNotes();
             for (const Note &note : selectedNotesList) {
@@ -8193,10 +7828,6 @@ void MainWindow::removeNoteTagClicked() {
                 }
 
                 tag.removeLinkToNote(note);
-
-                // remove the tag from the note text if defined via
-                // scripting engine
-                handleScriptingNoteTagging(note, tag, true);
             }
         }
 
@@ -8242,7 +7873,6 @@ void MainWindow::on_tagTreeWidget_itemChanged(QTreeWidgetItem *item,
 
     Tag tag = Tag::fetch(item->data(0, Qt::UserRole).toInt());
     if (tag.isFetched()) {
-        const QString oldName = tag.getName();
         const QString name = item->text(0);
 
         // workaround when signal block doesn't work correctly
@@ -8276,8 +7906,6 @@ void MainWindow::on_tagTreeWidget_itemChanged(QTreeWidgetItem *item,
                 note.store();
                 idNote++;
             }
-            // take care that a tag is renamed in all notes
-            handleScriptingNotesTagRenaming(tag, name);
 
             tag.setName(name);
             tag.store();
@@ -8645,44 +8273,13 @@ void MainWindow::moveSelectedTagsToTagId(int tagId) {
     }
 
     if (tagList.count() > 0) {
-        const bool useScriptingEngine =
-            ScriptingService::instance()->noteTaggingHookExists();
-
         // workaround when signal block doesn't work correctly
         directoryWatcherWorkaround(true, true);
 
         // move tags
         for (Tag tag : Utils::asConst(tagList)) {
-            if (useScriptingEngine) {
-                const QList<Tag> tagsToHandle =
-                    Tag::fetchRecursivelyByParentId(tag.getId());
-
-                // check all tags we need to handle
-                for (const Tag &tagToHandle : tagsToHandle) {
-                    // remove tag from all notes
-                    for (const Note &note : tagToHandle.fetchAllLinkedNotes()) {
-                        handleScriptingNoteTagging(
-                            note, tagToHandle, true, false);
-                    }
-                }
-            }
-
             tag.setParentId(tagId);
             tag.store();
-
-            if (useScriptingEngine) {
-                const QList<Tag> tagsToHandle =
-                    Tag::fetchRecursivelyByParentId(tag.getId());
-
-                // check all tags we need to handle
-                for (const Tag &tagToHandle : tagsToHandle) {
-                    // add tag to all notes
-                    for (const Note &note : tagToHandle.fetchAllLinkedNotes()) {
-                        handleScriptingNoteTagging(
-                            note, tagToHandle, false, false);
-                    }
-                }
-            }
 
             showStatusBarMessage(
                 tr("Moved tag '%1' to new tag").arg(tag.getName()), 3000);
@@ -9145,20 +8742,6 @@ void MainWindow::on_actionAutocomplete_triggered() {
         }
     }
 
-    // load texts from scripts to show in the autocompletion list
-    const QStringList autocompletionList =
-        ScriptingService::instance()->callAutocompletionHook();
-    if (!autocompletionList.isEmpty()) {
-        auto *action = menu.addAction(QString());
-        action->setSeparator(true);
-
-        for (const QString &text : autocompletionList) {
-            auto *newAction = menu.addAction(text);
-            newAction->setData(text);
-            newAction->setWhatsThis(QStringLiteral("autocomplete"));
-        }
-    }
-
     QPoint globalPos =
         textEdit->mapToGlobal(textEdit->cursorRect().bottomRight());
 
@@ -9332,36 +8915,6 @@ void MainWindow::on_actionSelect_note_folder_triggered() {
     _noteFolderDockWidgetWasVisible = _noteFolderDockWidget->isVisible();
     _noteFolderDockWidget->show();
     ui->noteFolderComboBox->showPopup();
-}
-
-/**
- * Reloads the scripting engine
- */
-void MainWindow::on_actionReload_scripting_engine_triggered() {
-    ScriptingService::instance()->reloadEngine();
-    showStatusBarMessage(tr("The scripting engine was reloaded"), 3000);
-    forceRegenerateNotePreview();
-}
-
-/**
- * Things to do before the scripting engine will be reloaded
- * Will be invoked by the ScriptingService
- */
-void MainWindow::preReloadScriptingEngine() {
-    // clear and hide the custom actions
-    ui->menuCustom_actions->clear();
-    ui->menuCustom_actions->hide();
-    _customActionToolbar->clear();
-    //    _customActionToolbar->hide();
-    _noteTextEditContextMenuActions.clear();
-    _noteListContextMenuActions.clear();
-
-    // hide the scripting dock widget and remove all registered labels
-    _scriptingDockWidget->hide();
-    const auto labels = ui->scriptingScrollArea->findChildren<QLabel *>();
-    for (QLabel *label : labels) {
-        delete label;
-    }
 }
 
 /**
@@ -10347,91 +9900,6 @@ void MainWindow::on_actionSplit_note_at_cursor_position_triggered() {
 }
 
 /**
- * Adds a custom action as menu item and button
- */
-void MainWindow::addCustomAction(const QString &identifier,
-                                 const QString &menuText,
-                                 const QString &buttonText, const QString &icon,
-                                 bool useInNoteEditContextMenu,
-                                 bool hideButtonInToolbar,
-                                 bool useInNoteListContextMenu) {
-    //    ui->menuCustom_actions->show();
-    QAction *action = ui->menuCustom_actions->addAction(menuText);
-    action->setObjectName(QStringLiteral("customAction_") + identifier);
-    action->setData(identifier);
-
-    // restore the shortcut of the custom action
-    QSettings settings;
-    QKeySequence shortcut = QKeySequence(
-        settings
-            .value(QStringLiteral("Shortcuts/MainWindow-customAction_") +
-                   identifier)
-            .toString());
-    if (!shortcut.isEmpty()) {
-        action->setShortcut(shortcut);
-    }
-
-    // try to add an icon
-    if (!icon.isEmpty()) {
-        QFile file(icon);
-        // if no icon file was found set it as freedesktop theme icon
-        QIcon i = file.exists() ? QIcon(icon) : QIcon::fromTheme(icon);
-        action->setIcon(i);
-    }
-
-    // set a button text if not empty
-    if (!buttonText.isEmpty()) {
-        action->setIconText(buttonText);
-    }
-
-    // add a button to the custom action toolbar
-    if (!hideButtonInToolbar && (!buttonText.isEmpty() || !icon.isEmpty())) {
-        //        _customActionToolbar->show();
-        _customActionToolbar->addAction(action);
-    }
-
-    connect(action, &QAction::triggered, this,
-            [this, identifier]() { onCustomActionInvoked(identifier); });
-
-    // add the custom action to the note text edit context menu later
-    if (useInNoteEditContextMenu) {
-        _noteTextEditContextMenuActions.append(action);
-    }
-
-    // add the custom action to the note list context menu later
-    if (useInNoteListContextMenu) {
-        _noteListContextMenuActions.append(action);
-    }
-}
-
-/**
- * Adds a label to the scripting dock widget
- */
-void MainWindow::addScriptingLabel(const QString &identifier,
-                                   const QString &text) {
-    _scriptingDockWidget->show();
-    QLabel *label = new QLabel(text, _scriptingDockWidget);
-    label->setOpenExternalLinks(true);
-    label->setTextInteractionFlags(Qt::TextSelectableByMouse |
-                                   Qt::LinksAccessibleByMouse);
-    label->setWordWrap(true);
-    label->setObjectName(QStringLiteral("scriptingLabel-") + identifier);
-    ui->scriptingScrollAreaLayout->addWidget(label);
-}
-
-/**
- * Sets the text of a label in the scripting dock widget
- */
-void MainWindow::setScriptingLabelText(const QString &identifier,
-                                       const QString &text) {
-    auto *label = ui->scriptingScrollArea->findChild<QLabel *>(
-        QStringLiteral("scriptingLabel-") + identifier);
-    if (label != Q_NULLPTR) {
-        label->setText(text);
-    }
-}
-
-/**
  * Jumps to "All notes" in the note subfolder and tag tree widget and triggers
  * a "Find note"
  */
@@ -10546,7 +10014,6 @@ void MainWindow::on_actionUnlock_panels_toggled(bool arg1) {
         _noteTagDockWidget->setTitleBarWidget(_noteTagDockTitleBarWidget);
         _notePreviewDockWidget->setTitleBarWidget(
             _notePreviewDockTitleBarWidget);
-        _scriptingDockWidget->setTitleBarWidget(_scriptingDockTitleBarWidget);
 
         for (QDockWidget *dockWidget : dockWidgets) {
             // reset the top margin of the enclosed widget
@@ -10987,7 +10454,9 @@ void MainWindow::on_actionDelete_line_triggered() {
         } else {
             QApplication::postEvent(QApplication::focusWidget(), event);
         }
-
+	
+		delete event;
+		
         return;
     }
 
@@ -11029,6 +10498,8 @@ void MainWindow::on_actionDelete_word_triggered() {
             QApplication::postEvent(QApplication::focusWidget(), event);
         }
 
+		delete event;
+			
         return;
     }
 
@@ -11232,15 +10703,6 @@ void MainWindow::setMenuEnabled(QMenu *menu, bool enabled) {
     }
 }
 
-void MainWindow::on_actionCheck_for_script_updates_triggered() {
-    auto *dialog = new ScriptRepositoryDialog(this, true);
-    dialog->exec();
-    delete (dialog);
-
-    // reload the scripting engine
-    ScriptingService::instance()->reloadEngine();
-}
-
 void MainWindow::noteTextEditResize(QResizeEvent *event) {
     Q_UNUSED(event)
     ui->noteTextEdit->setPaperMargins();
@@ -11282,10 +10744,8 @@ void MainWindow::on_tagTreeWidget_itemDoubleClicked(QTreeWidgetItem *item,
 
         if (tag.isLinkedToNote(_currentNote)) {
             tag.removeLinkToNote(_currentNote);
-            handleScriptingNoteTagging(_currentNote, tag, true, false);
         } else {
             tag.linkToNote(_currentNote);
-            handleScriptingNoteTagging(_currentNote, tag, false, false);
         }
 
         if (!NoteFolder::isCurrentNoteTreeEnabled()) {
@@ -11308,13 +10768,7 @@ void MainWindow::on_noteTreeWidget_itemDoubleClicked(QTreeWidgetItem *item,
     Q_UNUSED(item)
     Q_UNUSED(column)
 
-    // call a script hook that a new note was double clicked
-    const bool hookFound = ScriptingService::instance()->
-                      callHandleNoteDoubleClickedHook(&_currentNote);
-
-    if (!hookFound) {
-        openCurrentNoteInTab();
-    }
+    openCurrentNoteInTab();
 }
 
 /**

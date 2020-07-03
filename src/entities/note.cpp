@@ -1,6 +1,5 @@
 #include "entities/note.h"
 
-#include <services/scriptingservice.h>
 #include <utils/gui.h>
 #include <utils/misc.h>
 #include <utils/schema.h>
@@ -1024,14 +1023,7 @@ bool Note::storeNoteTextFileToDisk() {
     const QString oldNoteFilePath = fullNoteFilePath();
     TrashItem trashItem = TrashItem::prepare(this);
 
-    if (allowDifferentFileName()) {
-        // check if a QML function wants to set another note file name and
-        // modify it accordingly
-        modifyNoteTextFileNameFromQMLHook();
-    } else {
-        // checks if filename has to be changed (and change it if needed)
-        handleNoteTextFileName();
-    }
+    handleNoteTextFileName();
 
     const QString newName = _name;
     bool noteFileWasRenamed = false;
@@ -1211,28 +1203,6 @@ QString Note::extendedCleanupFileName(QString name) {
                  QStringLiteral(" "));
 
     return name;
-}
-
-/**
- * Checks if a QML function wants to set another note file name and
- * modifies it accordingly
- */
-bool Note::modifyNoteTextFileNameFromQMLHook() {
-    // check if a QML function wants to set another note name
-    const QString newName =
-        ScriptingService::instance()->callHandleNoteTextFileNameHook(this);
-
-    // set the file name from the QML hook
-    if (!newName.isEmpty() && (newName != _name)) {
-        qDebug() << __func__ << " - 'newName': " << newName;
-
-        // store new name and filename
-        _name = newName;
-        _fileName = newName + QStringLiteral(".") + fileNameSuffix();
-        return store();
-    }
-
-    return false;
 }
 
 /**
@@ -1584,7 +1554,6 @@ int Note::storeDirtyNotesToDisk(Note &currentNote, bool *currentNoteChanged,
                                 bool *noteWasRenamed) {
     const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
     QSqlQuery query(db);
-    ScriptingService *scriptingService = ScriptingService::instance();
     //    qDebug() << "storeDirtyNotesToDisk";
 
     query.prepare(
@@ -1623,10 +1592,6 @@ int Note::storeDirtyNotesToDisk(Note &currentNote, bool *currentNoteChanged,
             // times this way
             //                Note::handleNoteRenaming(oldName, newName);
         }
-
-        // emit the signal for the QML that the note was stored
-        emit scriptingService->noteStored(QVariant::fromValue(
-            static_cast<QObject *>(NoteApi::fromNote(note))));
 
         // reassign currentNote if filename of currentNote has changed
         if (note.isSameFile(currentNote)) {
@@ -1684,8 +1649,7 @@ QString Note::detectNewlineCharacters() {
     return QStringLiteral("\n");
 }
 
-void Note::createFromFile(QFile &file, int noteSubFolderId,
-                          bool withNoteNameHook) {
+void Note::createFromFile(QFile &file, int noteSubFolderId) {
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream in(&file);
         in.setCodec("UTF-8");
@@ -1716,17 +1680,6 @@ void Note::createFromFile(QFile &file, int noteSubFolderId,
 
         this->_fileLastModified = fileInfo.lastModified();
         this->store();
-
-        if (withNoteNameHook) {
-            // check if a name was set in a script
-            const QString hookName =
-                ScriptingService::instance()->callHandleNoteNameHook(this);
-
-            if (!hookName.isEmpty()) {
-                this->_name = std::move(hookName);
-                this->store();
-            }
-        }
     }
 }
 
@@ -1738,8 +1691,7 @@ void Note::createFromFile(QFile &file, int noteSubFolderId,
  * @return
  */
 Note Note::updateOrCreateFromFile(QFile &file,
-                                  const NoteSubFolder &noteSubFolder,
-                                  bool withNoteNameHook) {
+                                  const NoteSubFolder &noteSubFolder) {
     const QFileInfo fileInfo(file);
     Note note = fetchByFileName(fileInfo.fileName(), noteSubFolder.getId());
 
@@ -1749,7 +1701,7 @@ Note Note::updateOrCreateFromFile(QFile &file,
     if ((fileInfo.size() != note.getFileSize()) ||
         (fileInfo.lastModified() > note.getModified())) {
         // load file data and store note
-        note.createFromFile(file, noteSubFolder.getId(), withNoteNameHook);
+        note.createFromFile(file, noteSubFolder.getId());
 
         //        qDebug() << __func__ << " - 'file modified': " <<
         //        file.fileName();
@@ -2120,14 +2072,6 @@ QString Note::textToMarkdownHtml(QString str, const QString &notesPath,
                                            QStringLiteral(")"));
     }
 
-    // check if there is a script that wants to modify the markdown
-    const QString preScriptResult =
-        ScriptingService::instance()->callPreNoteToMarkdownHtmlHook(this, str, forExport);
-
-    if (!preScriptResult.isEmpty()) {
-        str = std::move(preScriptResult);
-    }
-
     const auto data = str.toUtf8();
     if (data.size() == 0) {
         return QLatin1String("");
@@ -2335,14 +2279,6 @@ QString Note::textToMarkdownHtml(QString str, const QString &notesPath,
                 QStringLiteral(R"(<img\1src="data:%1;base64,%2")")
                     .arg(type.name(), QString(ba.toBase64())));
         }
-    }
-
-    // check if there is a script that wants to modify the content
-    const QString scriptResult =
-        ScriptingService::instance()->callNoteToMarkdownHtmlHook(this, result, forExport);
-
-    if (!scriptResult.isEmpty()) {
-        result = scriptResult;
     }
 
     //    qDebug() << __func__ << " - 'result': " << result;
@@ -2775,6 +2711,15 @@ QString Note::createNoteHeader(const QString &name) {
     header.append(QString(QChar('=')).repeated(len));
     header.append(QStringLiteral("\n\n"));
     return header;
+}
+
+/**
+ * Creates a note footer with the "Referenced by" section
+ * 
+**/
+QString Note::createNoteFooter() {
+	QString footer = QStringLiteral("\n\n=====\n# *Referenced by:*\n\n");
+	return footer;
 }
 
 /**
@@ -3223,4 +3168,48 @@ QDebug operator<<(QDebug dbg, const Note &note) {
                   << noteSubFolder.relativePath() << " <_hasDirtyData>"
                   << note._hasDirtyData;
     return dbg.space();
+}
+
+void Note::updateReferenceBySectionInLinkedNotes() {
+	QRegularExpression re = QRegularExpression(R"(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md))");
+	QRegularExpressionMatchIterator reIterator = re.globalMatch(_noteText);
+	while (reIterator.hasNext()) {
+		QRegularExpressionMatch reMatch = reIterator.next();
+		QString linkedNote = reMatch.captured();
+
+		updateReferencedNote(linkedNote.replace("%20", " "), _fileName);
+	}	
+}
+
+void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath) {
+	Note linkedNote = Note::fetchByFileName(linkedNotePath);
+	QString text = linkedNote.getNoteText();
+
+	if (text.length() != 0) {
+		// First, look for the "Referenced by" section
+		QRegularExpressionMatch match = QRegularExpression(R"(\n\n=====\n# \*Referenced by:\*\n\n)").match(text);
+		
+		// No "Referenced by" section yet. Let's create it
+		if (!match.hasMatch()) {
+			text.append(QStringLiteral("\n\n=====\n# \*Referenced by:\*\n\n"));
+		}
+		
+		// Next, check if links are available and create/update them
+		QString path = relativeFilePath(currentNotePath);
+		match = QRegularExpression(R"(\*\s\[[A-Za-z0-9\s]*\]\(()" + path.replace(" ", "%20") + R"()\))").match(text);
+		
+		// Note link to current note in "Referenced by" section yet, add it
+		if (!match.hasMatch()) {
+			text.append("* [" + _name + "](" + path.replace(" ", "%20") +")\n");
+		} 
+		// TODO temporarily disable link update because it should be managed by the note move function or equivalent
+/*		else { 	// Link is present, update it with current note path
+			text.replace(QRegularExpression(R"(\*\s\[\([)" + _name + R"(\)\]\([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md))"), "* [\\1](" + path.replace(" ", "%20") + ")");
+		}
+*/
+
+		linkedNote.setNoteText(text);
+		linkedNote.setHasDirtyData(true);
+		linkedNote.store();
+	}
 }

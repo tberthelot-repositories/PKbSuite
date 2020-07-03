@@ -268,6 +268,9 @@ void NotePreviewWidget::contextMenuEvent(QContextMenuEvent *event) {
             exportAsHTMLFile();
         }
     }
+    
+    delete copyLinkLocationAction;
+	delete copyImageAction;
 }
 
 void NotePreviewWidget::exportAsHTMLFile() {

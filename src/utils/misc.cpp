@@ -17,7 +17,6 @@
 #include <entities/note.h>
 #include <entities/notefolder.h>
 #include <entities/notesubfolder.h>
-#include <entities/script.h>
 #include <services/databaseservice.h>
 
 #include <QApplication>
@@ -131,7 +130,7 @@ void Utils::Misc::openFolderSelect(const QString &absolutePath) {
         openPath(path.left(path.lastIndexOf("/")));
     }
 #elif defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-    if (QFileInfo(path).exists()) {
+    if (QFileInfo().exists(path)) {
         QProcess proc;
         QString output;
         proc.start(QStringLiteral("xdg-mime"),
@@ -309,7 +308,7 @@ QString Utils::Misc::toSentenceCase(const QString &text) {
 
     for (QString &sentence : sentences) {
         if (sentence.length() > 0) {
-            sentence = sentence.left(1).toUpper() +
+            sentence = sentence.at(0).toUpper() +
                        sentence.right(sentence.length() - 1);
         }
     }
@@ -442,12 +441,7 @@ bool Utils::Misc::startSynchronousResultProcess(TerminalCmd &cmd) {
     QProcess process;
 
     // start executablePath synchronous with parameters
-#ifdef Q_OS_MAC
-    process.start("open", QStringList()
-                              << cmd.executablePath << "--args" << cmd.parameters);
-#else
     process.start(cmd.executablePath, cmd.parameters);
-#endif
 
     if (!process.waitForStarted()) {
         qWarning() << __func__ << " - 'process.waitForStarted' returned false";
@@ -778,7 +772,7 @@ QByteArray Utils::Misc::downloadUrl(const QUrl &url) {
     timer.setSingleShot(true);
 
     QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-    QObject::connect(manager, SIGNAL(finished(QNetworkReply *)), &loop,
+    QObject::connect(manager, SIGNAL(finished(QNetworkReply*)), &loop,
                      SLOT(quit()));
 
     // 10 sec timeout for the request
@@ -1323,46 +1317,6 @@ bool Utils::Misc::regExpInListMatches(const QString &text,
     }
 
     return false;
-}
-
-/**
- * Transforms Nextcloud preview image tags
- *
- * @param html
- */
-void Utils::Misc::transformNextcloudPreviewImages(
-    QString &html, int maxImageWidth, ExternalImageHash *externalImageHash) {
-
-    QRegularExpression re(
-        QStringLiteral(
-            R"(<img src=\"(\/core\/preview\?fileId=.+#mimetype=[\w\d%]+&.+)\" alt=\".+\"\/?>)"),
-        QRegularExpression::CaseInsensitiveOption |
-            QRegularExpression::MultilineOption);
-    QRegularExpressionMatchIterator i = re.globalMatch(html);
-
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        const QString imageTag = match.captured(0);
-        QString inlineImageTag;
-        int imageWidth;
-        ExternalImageHashItem hashItem;
-
-        if (externalImageHash->contains(imageTag)) {
-            hashItem = externalImageHash->value(imageTag);
-            inlineImageTag = hashItem.imageTag;
-            imageWidth = hashItem.imageWidth;
-        } else {
-            hashItem.imageTag = inlineImageTag;
-            hashItem.imageWidth = imageWidth;
-            externalImageHash->insert(imageTag, hashItem);
-        }
-
-        imageWidth = std::min(maxImageWidth, imageWidth);
-        inlineImageTag.replace(
-            "/>", QString("width=\"%1\"/>").arg(QString::number(imageWidth)));
-
-        html.replace(imageTag, inlineImageTag);
-    }
 }
 
 /**

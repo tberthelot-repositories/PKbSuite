@@ -15,10 +15,10 @@ class PKbSuiteMarkdownTextEdit : public QMarkdownTextEdit {
 
    public:
     enum EditorWidthMode { Narrow = 1, Medium, Wide, Full, Custom };
-    Q_ENUMS(EditorWidthMode)
+    Q_ENUM(EditorWidthMode)
 
     enum FontModificationMode { Increase = 1, Decrease, Reset };
-    Q_ENUMS(FontModificationMode)
+    Q_ENUM(FontModificationMode)
 
     explicit PKbSuiteMarkdownTextEdit(QWidget *parent = nullptr);
 

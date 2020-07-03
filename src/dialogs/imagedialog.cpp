@@ -45,10 +45,10 @@ ImageDialog::ImageDialog(QWidget *parent)
         }
     }
 
-    connect(ui->graphicsView, SIGNAL(scrolledContentsBy(int, int)), this,
-            SLOT(scrolledGraphicsViewContentsBy(int, int)));
-    connect(ui->graphicsView, SIGNAL(resizedBy(int, int)), this,
-            SLOT(resizedGraphicsViewBy(int, int)));
+    connect(ui->graphicsView, SIGNAL(scrolledContentsBy(int,int)), this,
+            SLOT(scrolledGraphicsViewContentsBy(int,int)));
+    connect(ui->graphicsView, SIGNAL(resizedBy(int,int)), this,
+            SLOT(resizedGraphicsViewBy(int,int)));
 }
 
 ImageDialog::~ImageDialog() {

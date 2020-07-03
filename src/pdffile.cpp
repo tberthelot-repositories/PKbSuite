@@ -56,7 +56,6 @@ bool PDFFile::hasAnnotations()
         if (pageProcessed) {
             QList<Poppler::Annotation*> listPageAnnotations = pageProcessed->annotations(subtypes);
 			QFileInfo fileInfo(_sFile);
-			QString strBaseName = fileInfo.baseName();
 
             // TODO A finaliser
             for (int i = 0; i < listPageAnnotations.size(); i++) {
