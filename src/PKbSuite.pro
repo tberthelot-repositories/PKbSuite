@@ -26,7 +26,7 @@ SOURCES += main.cpp\
     dialogs/attachmentdialog.cpp \
     helpers/codetohtmlconverter.cpp \
     helpers/qownspellchecker.cpp \
-        mainwindow.cpp \
+	mainwindow.cpp \
     libraries/diff_match_patch/diff_match_patch.cpp \
     libraries/versionnumber/versionnumber.cpp \
     libraries/md4c/md4c/md4c.c \
