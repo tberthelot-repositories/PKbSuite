@@ -1,7 +1,7 @@
 # Maintainer: Thomas Berthelot <thomas dot berthelot at gmail dot com>
 
 pkgname=pkbsuite
-pkgver=0.1.0
+pkgver=VERSION-STRING
 tag="COMMIT-HASH"
 pkgrel=1
 pkgdesc="PKbSuite is a Personal Knowledge Management (PKM) tool forked from the excellent QOwnNotes. It is focused on my needs and to be used with LInux/KDE."
@@ -15,19 +15,19 @@ sha256sums=('c903f6b66112d3f2de3dc92c9f045ddc42eddf6834550d65e3143f1951d0351b')
 
 
 prepare() {
-    cd "pkbsuite-0.1.0"
+    cd "pkbsuite-VERSION-STRING"
     echo "#define RELEASE \"AUR\"" > release.h
 }
 
 build() {
-    cd "pkbsuite-0.1.0"
+    cd "pkbsuite-VERSION-STRING"
     qmake QMAKE_CFLAGS_RELEASE="${CFLAGS}" QMAKE_CXXFLAGS_RELEASE="${CXXFLAGS}" QMAKE_LFLAGS_RELEASE="${LDFLAGS}"
     make
 }
 
 package() {
 
-    cd "pkbsuite-0.1.0"
+    cd "pkbsuite-VERSION-STRING"
 
 
     # install application
