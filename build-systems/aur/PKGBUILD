@@ -11,7 +11,7 @@ groups=('pkbsuite')
 depends=('qt5-base' 'qt5-svg' 'qt5-declarative' 'openssl' 'qt5-xmlpatterns' 'qt5-websockets' 'qt5-x11extras' 'aspell')
 makedepends=('qt5-tools')
 source=("${pkgname}-${pkgver}.tar.xz")
-sha256sums=('7fddf7d9798e8ab45def18666b238d66d9263281d4ae82c16e9c5ba195e16bc2')
+sha256sums=('c903f6b66112d3f2de3dc92c9f045ddc42eddf6834550d65e3143f1951d0351b')
 
 
 prepare() {
