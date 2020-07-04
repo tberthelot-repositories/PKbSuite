@@ -12,7 +12,8 @@
 BRANCH=master
 
 PROJECT_PATH="/tmp/PKbSuite-aur-$$"
-SRC_PATH="/mnt/Documents/_Thomas/1. Projects/_Repository/PKbSuite"
+# SRC_PATH="/mnt/Documents/_Thomas/1. Projects/_Repository/PKbSuite"
+SRC_PATH="/home/thomas/1. Projects/PKbSuite"
 CUR_DIR=$(pwd)
 
 echo "Started the AUR packaging process"
