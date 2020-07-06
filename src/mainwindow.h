@@ -184,6 +184,9 @@ class MainWindow : public QMainWindow {
 
     void disallowNoteEditing();
 
+    void createNewNote(QString noteName = QString(),
+                       bool withNameAppend = true);
+
    private slots:
 	   
 	void on_actionShow_Preview_Panel_triggered(bool checked);
@@ -834,9 +837,6 @@ private:
     void moveSelectedNotesToNoteSubFolder(const NoteSubFolder &noteSubFolder);
 
     void copySelectedNotesToNoteSubFolder(const NoteSubFolder &noteSubFolder);
-
-    void createNewNote(QString noteName = QString(),
-                       bool withNameAppend = true);
 
     bool selectedNotesHaveTags();
 

@@ -3912,7 +3912,7 @@ void MainWindow::createNewNote(QString name, QString text,
     if (f->exists()) {
         QDateTime currentDate = QDateTime::currentDateTime();
         name.append(QStringLiteral(" ") +
-                    currentDate.toString(Qt::ISODate)
+                    currentDate.toString("yyyyMMddhhmmss")
                         .replace(QStringLiteral(":"), QStringLiteral(".")));
 
         if (!useNameAsHeadline) {
@@ -5422,7 +5422,7 @@ void MainWindow::createNewNote(QString noteName, bool withNameAppend) {
 
         // replacing ":" with "_" for Windows systems
         noteName = noteName + QStringLiteral(" ") +
-                   currentDate.toString(Qt::ISODate)
+                   currentDate.toString("yyyyMMddhhmmss")
                        .replace(QStringLiteral(":"), QStringLiteral("."));
     }
 
