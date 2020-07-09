@@ -240,13 +240,11 @@ class Note {
                                int maxImageWidth = 980, bool forExport = false,
                                bool base64Images = false);
 
-    QStringList getEmbedmentFileList();
+    QStringList getEmbedmentFileList() const;
 
     static Note fetchByUrlString(const QString &urlString);
 
     static QVector<int> fetchAllIdsByNoteTextPart(const QString &textPart);
-
-    QStringList getAttachmentsFileList() const;
 
     QString getNotePreviewText(bool asHtml = false, int lines = 3) const;
 

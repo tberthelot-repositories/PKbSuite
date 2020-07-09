@@ -56,7 +56,8 @@ bool PDFFile::hasAnnotations()
         if (pageProcessed) {
             QList<Poppler::Annotation*> listPageAnnotations = pageProcessed->annotations(subtypes);
 			QFileInfo fileInfo(_sFile);
-
+			QString pageSummary = "";
+			
             // TODO A finaliser
             for (int i = 0; i < listPageAnnotations.size(); i++) {
                 if (listPageAnnotations.at(i)->subType() == Poppler::Annotation::AHighlight) { //  listPageAnnotations.at(i)->AHighlight) {
@@ -70,17 +71,17 @@ bool PDFFile::hasAnnotations()
                             Poppler::HighlightAnnotation::Quad quad = highlightAnnotation->highlightQuads().at(j);
                             
                             QRectF rectHighlight = QRectF(quad.points[0].x() * sizePage.width(), quad.points[0].y() * sizePage.height(), (quad.points[2].x() - quad.points[0].x())* sizePage.width(), (quad.points[2].y() - quad.points[0].y()) * sizePage.height());
-                           _summary.text += "* " + pageProcessed->text(rectHighlight) + "\n";
+							pageSummary += pageProcessed->text(rectHighlight) + " ";
                         }
-                        while (_summary.text[_summary.text.size() -1] == ' ')
-                            _summary.text.remove(_summary.text.size() - 1, 1);
+                        while (pageSummary[pageSummary.size() -1] == ' ')
+                            pageSummary.remove(pageSummary.size() - 1, 1);
                     }
                     else if ((annotColor.red() == 255) & (annotColor.green() == 0) & (annotColor.blue() == 0)) {        // Rouge : citation
                         Citation* citation = new Citation();
                         citation->page = iPage + 1;
-                        citation->link = fileInfo.fileName() + "#" + QString::number(iPage + 1);
-                        
-                        Poppler::HighlightAnnotation* highlightAnnotation = (Poppler::HighlightAnnotation*) listPageAnnotations.at(i);
+                        citation->link = "#" + QString::number(iPage + 1);
+
+						Poppler::HighlightAnnotation* highlightAnnotation = (Poppler::HighlightAnnotation*) listPageAnnotations.at(i);
                         for (int j = 0; j < highlightAnnotation->highlightQuads().size(); j++) {
                             Poppler::HighlightAnnotation::Quad quad = highlightAnnotation->highlightQuads().at(j);
                             
@@ -96,7 +97,7 @@ bool PDFFile::hasAnnotations()
                 else {
                     Comment* comment = new Comment();
                     comment->page = iPage + 1;
-                    comment->link = fileInfo.fileName() + "#" + QString::number(iPage + 1);
+                    comment->link = "#" + QString::number(iPage + 1);
                     comment->text = listPageAnnotations.at(i)->contents() + "\n\n";
                     
                     _listComments.append(comment);
@@ -105,9 +106,11 @@ bool PDFFile::hasAnnotations()
                 foundAnnotations = true;
             }
             
+            if (pageSummary.length() > 0)
+				_summary.text += "* " + pageSummary + "\n";
             delete pageProcessed;
         }
-    }
+	}
     
     return foundAnnotations;
 }
@@ -123,15 +126,16 @@ QString PDFFile::markdownSummary()
     return sTmp;
 }
 
-QString PDFFile::markdownCitations()
+QString PDFFile::markdownCitations(QString embedmentLink)
 {
     QString sTmp = "";
     
+	embedmentLink.replace(")", "");
     for (int iCitation = 0; iCitation < _listCitations.size(); iCitation++) {
         sTmp.append("## Citation " + QString::number(iCitation + 1) + " \n");
         sTmp.append("Page : " + QString::number(_listCitations.at(iCitation)->page) + "   \n");
-        sTmp.append("[Lien](file://" + _sDocumentFolder + QDir::separator() + _listCitations.at(iCitation)->link + ")\n\n");
-        sTmp.append("Extrait :\n\n");
+        sTmp.append(embedmentLink + _listCitations.at(iCitation)->link + ")\n\n");
+        sTmp.append("Extrait : ");
         sTmp.append("*" + _listCitations.at(iCitation)->extract + "*\n\n");
         sTmp.append("*--- Fin ---*\n\n");
     }
@@ -139,14 +143,14 @@ QString PDFFile::markdownCitations()
     return sTmp;
 }
 
-QString PDFFile::markdownComments()
+QString PDFFile::markdownComments(QString embedmentLink)
 {
     QString sTmp = "";
     
     for (int iComment = 0; iComment < _listComments.size(); iComment++) {
         sTmp.append("## Commentaire " + QString::number(iComment + 1) + "   \n");
         sTmp.append("Page : " + QString::number(_listComments.at(iComment)->page) + "\n\n");
-        sTmp.append("[Lien](file://" + _sDocumentFolder + QDir::separator() + _listComments.at(iComment)->link + ")\n\n");
+        sTmp.append(embedmentLink + _listComments.at(iComment)->link + ")\n\n");
         sTmp.append("Commentaire :\n\n");
         sTmp.append(_listComments.at(iComment)->text + "\n\n");
         sTmp.append("*--- Fin ---*\n\n");
