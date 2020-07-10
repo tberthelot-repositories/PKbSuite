@@ -6191,22 +6191,25 @@ bool MainWindow::insertPDF(QFile *file) {
                 } else {
                     noteText.append("\n=====\n");
                 }
-                
+
+/*
                 noteText.append("```\n");
                 noteText.append("Creation date : " + QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:sst") + "  \n");
                 noteText.append("Notes de lecture : " + pdfFileInfo.fileName() +"\n");
                 noteText.append("```\n\n");
-
+*/
 				const QString embedmentLink = note.getInsertEmbedmentMarkdown(file, mediaType::pdf, dialog->copyFileToKb(), false);
-                noteText.append("## ===== Document source =====  \n");
-                noteText.append("Fichier : " + embedmentLink + "  \n");
-                noteText.append("Titre : " + pdfFile.title() + "  \n");
-                noteText.append("Auteur : " + pdfFile.author() + "  \n");
-                noteText.append("Sujet : " + pdfFile.subject() + "  \n");
-                noteText.append("Mots-clés : " + pdfFile.keywords() + "  \n");
-                noteText.append("@Lecture_Note, @TODO\n\n");
-                noteText.append("--- \n\n\n");
-                
+
+				noteText.append("\n-----\n");
+                noteText.append("**Titre :** " + pdfFile.title() + "  \n");
+                noteText.append("**Creation date :** " + QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:sst") + "  \n");
+                noteText.append("**Fichier :** " + embedmentLink + "  \n");
+                noteText.append("**Sujet :** " + pdfFile.subject() + "  \n");
+                noteText.append("**Mots-clés :** " + pdfFile.keywords() + "  \n");
+                noteText.append("@Lecture_Note, @TODO \n");
+                noteText.append("**Auteur :** " + pdfFile.author() + "  \n");
+				noteText.append("\n-----\n");
+
 				pdfFile.setDocumentFolder(noteSubFolderPath);
 				
                 noteText.append(pdfFile.markdownSummary());
