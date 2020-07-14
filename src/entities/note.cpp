@@ -2712,7 +2712,7 @@ QString Note::createNoteHeader(const QString &name) {
  * 
 **/
 QString Note::createNoteFooter() {
-	QString footer = QStringLiteral("\n\n# *Related notes:\n\n") + QStringLiteral("\n\n=====\n# *Referenced by:*\n\n");
+	QString footer = QStringLiteral("\n\n*Link to Litterature Note*\n") + QStringLiteral("** BibTex reference:** *bibref*\n") + QStringLiteral("\n\n## **Tags:**\n\n") + QStringLiteral("\n\n## **Citation:**\n\n") + QStringLiteral("---\n\n*Body of the Zettel*\n\n---\n") + QStringLiteral("\n\n## **Analysis and explanations:**\n\n") + QStringLiteral("\n\n## **Related notes:**\n\n") + QStringLiteral("\n\n---\n## *Referenced by:*\n\n");
 	return footer;
 }
 
@@ -3181,11 +3181,11 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 
 	if (text.length() != 0) {
 		// First, look for the "Referenced by" section
-		QRegularExpressionMatch match = QRegularExpression(R"(\n\n=====\n# \*Referenced by:\*\n\n)").match(text);
+		QRegularExpressionMatch match = QRegularExpression(R"(\n\n---\n## \*Referenced by:\*\n\n)").match(text);
 		
 		// No "Referenced by" section yet. Let's create it
 		if (!match.hasMatch()) {
-			text.append(QStringLiteral("\n\n=====\n# \*Referenced by:\*\n\n"));
+			text.append(QStringLiteral("\n\n---\n## \*Referenced by:\*\n\n"));
 		}
 		
 		// Next, check if links are available and create/update them

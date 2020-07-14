@@ -128,11 +128,11 @@ QString PDFFile::markdownSummary()
 
 QString PDFFile::markdownCitations(QString embedmentLink)
 {
-    QString sTmp = "";
+    QString sTmp = "## Citations :\n";
     
 	embedmentLink.replace(")", "");
     for (int iCitation = 0; iCitation < _listCitations.size(); iCitation++) {
-        sTmp.append("## Citation " + QString::number(iCitation + 1) + " \n");
+        sTmp.append("### Citation " + QString::number(iCitation + 1) + " \n");
         sTmp.append("Page : " + QString::number(_listCitations.at(iCitation)->page) + "   \n");
         sTmp.append(embedmentLink + _listCitations.at(iCitation)->link + ")\n\n");
         sTmp.append("Extrait : ");
@@ -145,10 +145,10 @@ QString PDFFile::markdownCitations(QString embedmentLink)
 
 QString PDFFile::markdownComments(QString embedmentLink)
 {
-    QString sTmp = "";
+    QString sTmp = "## Commentaires :\n";
     
     for (int iComment = 0; iComment < _listComments.size(); iComment++) {
-        sTmp.append("## Commentaire " + QString::number(iComment + 1) + "   \n");
+        sTmp.append("### Commentaire " + QString::number(iComment + 1) + "   \n");
         sTmp.append("Page : " + QString::number(_listComments.at(iComment)->page) + "\n\n");
         sTmp.append(embedmentLink + _listComments.at(iComment)->link + ")\n\n");
         sTmp.append("Commentaire :\n\n");

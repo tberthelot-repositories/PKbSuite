@@ -6206,13 +6206,15 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("**Fichier :** " + embedmentLink + "  \n");
                 noteText.append("**Sujet :** " + pdfFile.subject() + "  \n");
                 noteText.append("**Mots-clés :** " + pdfFile.keywords() + "  \n");
-                noteText.append("@Lecture_Note, @TODO \n");
+                noteText.append("**Tags :** @Lecture_Note, @TODO\n");
                 noteText.append("**Auteur :** " + pdfFile.author() + "  \n");
 				noteText.append("\n-----\n");
 
 				pdfFile.setDocumentFolder(noteSubFolderPath);
 				
                 noteText.append(pdfFile.markdownSummary());
+				noteText.append("## Analyse/Observations :\n");
+				noteText.append("\n\n");
                 noteText.append(pdfFile.markdownCitations(embedmentLink));
                 noteText.append(pdfFile.markdownComments(embedmentLink));
 				
