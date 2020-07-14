@@ -2592,7 +2592,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
         }
 	
         // Check if the note has @Tags not yet linked
-        QRegularExpression re = QRegularExpression("@[A-Za-zÀ-ÖØ-öø-ÿ0-9]*");       // Take care of accented characters
+        QRegularExpression re = QRegularExpression(R"(@[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
         QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
         while (reIterator.hasNext()) {
             QRegularExpressionMatch reMatch = reIterator.next();
@@ -6173,45 +6173,50 @@ bool MainWindow::insertPDF(QFile *file) {
 			
             QFileInfo noteFileInfo(noteSubFolder.fullPath() + "/" + pdfFileInfo.baseName() + ".md");
             if (noteFileInfo.exists()) {
-                ;// TODO Gérer le cas où la note existe
+                QMessageBox::warning(this, QStringLiteral("Erreur"), QStringLiteral("Attention : la note existe déjà dans la KB. Supprimez la note existante ou renommez l'une des deux."));
             }
             else {
-                
-                // La note n'existe pas, on la crée
+				// La note n'existe pas, on la crée
                 Note note = Note();
                 note.setName(pdfFileInfo.baseName());
 				QString noteSubFolderPath = noteSubFolder.fullPath();
                 note.setNoteSubFolderId(noteSubFolder.getId());
 
-                QString noteText = pdfFileInfo.baseName() + " - Notes";
+                QString noteText = pdfFileInfo.baseName();
 
                 // check if a hook changed the text
                 if (noteText.isEmpty()) {
                     // fallback to the old text if no hook changed the text
                     noteText = Note::createNoteHeader(pdfFileInfo.baseName());
                 } else {
-                    noteText.append("\n\n");
+                    noteText.append("\n=====\n");
                 }
-                
+
+/*
                 noteText.append("```\n");
                 noteText.append("Creation date : " + QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:sst") + "  \n");
                 noteText.append("Notes de lecture : " + pdfFileInfo.fileName() +"\n");
                 noteText.append("```\n\n");
+*/
+				const QString embedmentLink = note.getInsertEmbedmentMarkdown(file, mediaType::pdf, dialog->copyFileToKb(), false);
 
-                noteText.append("## ===== Document source =====  \n");
-                noteText.append("Fichier : " + note.getInsertEmbedmentMarkdown(file, mediaType::pdf, dialog->copyFileToKb()) + "  \n");
-                noteText.append("Titre : " + pdfFile.title() + "  \n");
-                noteText.append("Auteur : " + pdfFile.author() + "  \n");
-                noteText.append("Sujet : " + pdfFile.subject() + "  \n");
-                noteText.append("Mots-clés : " + pdfFile.keywords() + "  \n");
-                noteText.append("@TODO\n\n");
-                noteText.append("--- \n\n\n");
-                
+				noteText.append("\n-----\n");
+                noteText.append("**Titre :** " + pdfFile.title() + "  \n");
+                noteText.append("**Creation date :** " + QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:sst") + "  \n");
+                noteText.append("**Fichier :** " + embedmentLink + "  \n");
+                noteText.append("**Sujet :** " + pdfFile.subject() + "  \n");
+                noteText.append("**Mots-clés :** " + pdfFile.keywords() + "  \n");
+                noteText.append("**Tags :** @Lecture_Note, @TODO\n");
+                noteText.append("**Auteur :** " + pdfFile.author() + "  \n");
+				noteText.append("\n-----\n");
+
 				pdfFile.setDocumentFolder(noteSubFolderPath);
 				
                 noteText.append(pdfFile.markdownSummary());
-                noteText.append(pdfFile.markdownCitations());
-                noteText.append(pdfFile.markdownComments());
+				noteText.append("## Analyse/Observations :\n");
+				noteText.append("\n\n");
+                noteText.append(pdfFile.markdownCitations(embedmentLink));
+                noteText.append(pdfFile.markdownComments(embedmentLink));
 				
                 note.setNoteText(noteText);
 
@@ -9078,7 +9083,7 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
     setCurrentNote(std::move(note), true, false);
 
 	// Check if the note has @Tags not yet linked
-	QRegularExpression re = QRegularExpression("@[A-Za-zÀ-ÖØ-öø-ÿ0-9]*");       // Take care of accented characters
+	QRegularExpression re = QRegularExpression(R"(@[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
 	QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
 	while (reIterator.hasNext()) {
 		QRegularExpressionMatch reMatch = reIterator.next();

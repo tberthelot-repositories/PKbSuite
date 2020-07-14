@@ -1077,9 +1077,7 @@ void SettingsDialog::loadShortcutSettings() {
             ui->shortcutTreeWidget->setItemWidget(actionItem, 1, keyWidget);
 
             actionCount++;
-			
-			delete menuItem;
-        }
+		}
 
         if (actionCount > 0) {
             menuItem->setText(0, menu->title().remove(QStringLiteral("&")));
@@ -1087,7 +1085,9 @@ void SettingsDialog::loadShortcutSettings() {
             ui->shortcutTreeWidget->addTopLevelItem(menuItem);
             menuItem->setExpanded(true);
         }
-    }
+		
+		delete menuItem;
+	}
 
     ui->shortcutTreeWidget->resizeColumnToContents(0);
     ui->shortcutTreeWidget->resizeColumnToContents(1);
