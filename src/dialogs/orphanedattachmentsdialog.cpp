@@ -43,7 +43,7 @@ OrphanedAttachmentsDialog::OrphanedAttachmentsDialog(QWidget *parent)
     ui->progressBar->show();
 
     Q_FOREACH (const Note &note, noteList) {
-        QStringList attachmentsFileList = note.getAttachmentsFileList();
+        QStringList attachmentsFileList = note.getEmbedmentFileList(true);
 
         // remove all found attachments from the orphaned files list
         Q_FOREACH (const QString &fileName, attachmentsFileList) {

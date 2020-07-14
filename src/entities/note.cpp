@@ -283,34 +283,39 @@ bool Note::copyToPath(const QString &destinationPath, QString noteFolderPath) {
 
         if (isFileCopied) {
             const QStringList embedmentFileList = getEmbedmentFileList();
+			
+			if (embedmentFileList.count() > 0) {
 
-            if (embedmentFileList.count() > 0) {
-                if (noteFolderPath.isEmpty()) {
-                    noteFolderPath = destinationPath;
-                }
+				if (currentEmbedmentFolder() != "") {	// The note has an embedment folder to copy
+					if (noteFolderPath.isEmpty()) {
+						noteFolderPath = destinationPath;
+					}
 
-                if (NoteFolder::isPathNoteFolder(noteFolderPath)) {
-                    const QDir noteEmbedmentDir(noteFolderPath + QDir::separator() +
-                                        getName());
+					const QDir noteEmbedmentDir(noteFolderPath + QDir::separator() + getName().replace(" ", "_"));
 
-                    // created the note embedment folder if it doesn't exist
-                    if (!noteEmbedmentDir.exists()) {
-                        noteEmbedmentDir.mkpath(noteEmbedmentDir.path());
-                    }
+					// created the note embedment folder if it doesn't exist
+					if (!noteEmbedmentDir.exists()) {
+						noteEmbedmentDir.mkpath(noteEmbedmentDir.path());
+					}
+			
+					if (noteEmbedmentDir.exists()) {
+						// copy all files to the note embedment folder inside
+						// destinationPath
+						bool successCopy = true;
+						for (const QString &fileName : embedmentFileList) {
+							QString tmp = this->fullNoteFilePath() + "/" + getName().replace(" ", "_") +
+											QDir::separator() + fileName;
+							QFile embeddedFile(fileName);
+							QFileInfo fileInfo(fileName);
 
-                    if (noteEmbedmentDir.exists()) {
-                        // copy all images to the note embedment folder ins_ide
-                        // destinationPath
-                        for (const QString &fileName : embedmentFileList) {
-                            QFile embeddedFile(this->fullNoteFilePath() + "/" + getName() +
-                                            QDir::separator() + fileName);
-
-                            if (embeddedFile.exists()) {
-                                embeddedFile.copy(noteEmbedmentDir.path() +
-                                               QDir::separator() + fileName);
-                            }
-                        }
-                    }
+							if (embeddedFile.exists()) {
+								successCopy &= embeddedFile.copy(noteEmbedmentDir.path() +
+											QDir::separator() + fileInfo.fileName());
+							}
+						}
+						
+						return successCopy;
+					}
                 }
             }
         }
@@ -340,48 +345,28 @@ bool Note::moveToPath(const QString &destinationPath,
  * note
  * @return
  */
-QStringList Note::getEmbedmentFileList() {
+QStringList Note::getEmbedmentFileList(bool onlyImages) const{
     QStringList fileList;
-
+	const QString text = getNoteText();
+	
     // match image links in note's embedment folders
 	QString noteName = getName().replace(" ", "_");
 
-    QRegularExpression re(QStringLiteral(R"(!\[.*?\]\(.*)") + noteName + QStringLiteral(R"(/(.+?)\))"));
-    QRegularExpressionMatchIterator i = re.globalMatch(_noteText);
+    QRegularExpression re((onlyImages?QStringLiteral(R"(!)"):"") + QStringLiteral(R"(\[.*?\]\(.*)") + noteName + QStringLiteral(R"(/(.+?)\))"));
+    QRegularExpressionMatchIterator i = re.globalMatch(text);
 
     // remove all found images from the orphaned files list
 	const QString noteEmbedmentDir = getNoteSubFolder().fullPath() + QDir::separator() + getName().replace(" ", "_") + QDir::separator();
     while (i.hasNext()) {
         QRegularExpressionMatch match = i.next();
-        const QString fileName = match.captured(1);
+        QString fileName = match.captured(1);
+		if (fileName.indexOf('#') != -1)
+			fileName.truncate(fileName.indexOf('#'));
         fileList << noteEmbedmentDir + fileName;
     }
 
-    return fileList;
-}
-
-/**
- * Returns a list of all linked attachments of the current note
- * @return
- */
-QStringList Note::getAttachmentsFileList() const {
-    const QString text = getNoteText();
-    QStringList fileList;
-
-    // match attachment links like [956321614](file://attachments/956321614.pdf)
-    // or [956321614](attachments/956321614.pdf)
-    const QRegularExpression re(
-        QStringLiteral(R"(\[.*?\]\(.*attachments/(.+?)\))"));
-    QRegularExpressionMatchIterator i = re.globalMatch(text);
-
-    // remove all found attachments from the orphaned files list
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        const QString fileName = match.captured(1);
-        fileList << fileName;
-    }
-
-    return fileList;
+    fileList.removeDuplicates();
+	return fileList;
 }
 
 Note Note::fetchByName(const QString &name,
@@ -1806,6 +1791,11 @@ bool Note::renameNoteFile(QString newName) {
         return false;
     }
 
+    // Rename the embedment folder if exists
+    QDir embedmendFolder(currentEmbedmentFolder());
+	if (embedmendFolder.exists())
+		embedmendFolder.rename(currentEmbedmentFolder(), fullNoteFileDirPath() + QDir::separator() + newName.replace(" ", "_"));
+	
     if (TrashItem::isLocalTrashEnabled()) {
         // add note to trash
         bool trashResult = TrashItem::add(this);
@@ -1825,12 +1815,16 @@ bool Note::renameNoteFile(QString newName) {
 }
 
 /**
- * Removes the file of the note
+ * Removes the file of the note + the embedment folder if it exists
  *
  * @return
  */
 bool Note::removeNoteFile() {
     if (this->fileExists()) {
+		QDir embedmentFolder(currentEmbedmentFolder());
+		if (embedmentFolder.exists())
+			embedmentFolder.removeRecursively();
+		
         if (TrashItem::isLocalTrashEnabled()) {
             // add note to trash
             bool trashResult = TrashItem::add(this);
@@ -2718,7 +2712,7 @@ QString Note::createNoteHeader(const QString &name) {
  * 
 **/
 QString Note::createNoteFooter() {
-	QString footer = QStringLiteral("\n\n=====\n# *Referenced by:*\n\n");
+	QString footer = QStringLiteral("\n\n*Link to Litterature Note*\n") + QStringLiteral("** BibTex reference:** *bibref*\n") + QStringLiteral("\n\n## **Tags:**\n\n") + QStringLiteral("\n\n## **Citation:**\n\n") + QStringLiteral("---\n\n*Body of the Zettel*\n\n---\n") + QStringLiteral("\n\n## **Analysis and explanations:**\n\n") + QStringLiteral("\n\n## **Related notes:**\n\n") + QStringLiteral("\n\n---\n## *Referenced by:*\n\n");
 	return footer;
 }
 
@@ -2726,7 +2720,7 @@ QString Note::createNoteFooter() {
  * Return the path of note's embedded item folder
  */
 QString Note::currentEmbedmentFolder() {
-	return fullNoteFileDirPath() + "/" + getName().replace(" ", "_");
+	return fullNoteFileDirPath() + QDir::separator() + getName().replace(" ", "_");
 }
 
 /**
@@ -2761,7 +2755,7 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool copyF
 			}
 		}
 		else
-			embedmentUrlString = fileInfo.absoluteFilePath();
+			embedmentUrlString = fileInfo.absoluteFilePath().replace(" ", "%20");
 
         if (title.isEmpty()) {
             title = fileInfo.baseName();
@@ -3187,16 +3181,16 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 
 	if (text.length() != 0) {
 		// First, look for the "Referenced by" section
-		QRegularExpressionMatch match = QRegularExpression(R"(\n\n=====\n# \*Referenced by:\*\n\n)").match(text);
+		QRegularExpressionMatch match = QRegularExpression(R"(\n\n---\n## \*Referenced by:\*\n\n)").match(text);
 		
 		// No "Referenced by" section yet. Let's create it
 		if (!match.hasMatch()) {
-			text.append(QStringLiteral("\n\n=====\n# \*Referenced by:\*\n\n"));
+			text.append(QStringLiteral("\n\n---\n## \*Referenced by:\*\n\n"));
 		}
 		
 		// Next, check if links are available and create/update them
 		QString path = relativeFilePath(currentNotePath);
-		match = QRegularExpression(R"(\*\s\[[A-Za-z0-9\s]*\]\(()" + path.replace(" ", "%20") + R"()\))").match(text);
+		match = QRegularExpression(R"(\*\s\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*\]\(()" + path.replace(" ", "%20") + R"()\))").match(text);
 		
 		// Note link to current note in "Referenced by" section yet, add it
 		if (!match.hasMatch()) {
