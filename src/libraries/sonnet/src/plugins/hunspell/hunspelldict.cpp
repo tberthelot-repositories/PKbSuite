@@ -67,12 +67,7 @@ HunspellDict::HunspellDict(const QString &lang, QString path)
         return;
     }
     QString userDic;
-    if (Utils::Misc::isInPortableMode()) {
-        userDic = Utils::Misc::portableDataPath() + QLatin1Char('/')
-                + QLatin1String(".hunspell_") % lang;
-    } else {
-        userDic = QDir::home().filePath(QLatin1String(".hunspell_") % lang);
-    }
+    userDic = QDir::home().filePath(QLatin1String(".hunspell_") % lang);
 
     QFile userDicFile(userDic);
     if (userDicFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -188,12 +183,7 @@ bool HunspellDict::addToPersonal(const QString &word)
     //QString userDic = QDir::home().filePath(QLatin1String(".hunspell_"));
     //QString userDic = QDir::home().filePath(QLatin1String(".hunspell_") % language());
     QString userDic;
-    if (Utils::Misc::isInPortableMode()) {
-        userDic = Utils::Misc::portableDataPath() + QLatin1Char('/')
-                           + QLatin1String(".hunspell_") % language();
-    } else {
-        userDic = QDir::home().filePath(QLatin1String(".hunspell_") % language());
-    }
+    userDic = QDir::home().filePath(QLatin1String(".hunspell_") % language());
     QFile userDicFile(userDic);
     if (userDicFile.open(QIODevice::Append | QIODevice::Text)) {
         QTextStream out(&userDicFile);

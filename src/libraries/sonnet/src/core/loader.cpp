@@ -99,7 +99,7 @@ Loader::~Loader()
 
 SpellerPlugin *Loader::createSpeller(const QString &language, const QString &clientName) const
 {
-/*QOwnNotes Specific
+/*PKbSuite Specific
  * Waqar144: <waqar.17a@gmail.com>
  * Disable support for multiple backends
  * Since we are only using Hunspell, we have only one client and we don't need to do all this

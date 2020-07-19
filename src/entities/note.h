@@ -12,10 +12,12 @@ class QFile;
 class QUrl;
 class QSqlQuery;
 
-#define NOTE_TEXT_ENCRYPTION_PRE_STRING "<!-- BEGIN ENCRYPTED TEXT --"
-#define NOTE_TEXT_ENCRYPTION_POST_STRING "-- END ENCRYPTED TEXT -->"
-#define BOTAN_SALT "Gj3%36/SmPoe12$snNAs-A-_.),?faQ1@!f32"
-
+typedef enum mediaType {
+	image,
+	attachment,
+	pdf
+};
+	
 class Note {
    public:
     explicit Note();
@@ -35,12 +37,6 @@ class Note {
     void setName(QString text);
 
     void setNoteText(QString text);
-
-    qint64 getCryptoKey() const;
-
-    QString getCryptoPassword() const;
-
-    void setCryptoKey(const qint64 cryptoKey);
 
     static bool addNote(const QString &name, const QString &fileName,
                         const QString &text);
@@ -109,8 +105,7 @@ class Note {
 
     friend QDebug operator<<(QDebug dbg, const Note &note);
 
-    void createFromFile(QFile &file, int noteSubFolderId = 0,
-                        bool withNoteNameHook = false);
+    void createFromFile(QFile &file, int noteSubFolderId = 0);
 
     static bool deleteAll();
 
@@ -133,8 +128,7 @@ class Note {
     bool remove(bool withFile = false);
 
     QString toMarkdownHtml(const QString &notesPath, int maxImageWidth = 980,
-                           bool forExport = false, bool decrypt = true,
-                           bool base64Images = false);
+                           bool forExport = false, bool base64Images = false);
 
     bool isFetched() const;
 
@@ -148,18 +142,6 @@ class Note {
 
     static qint64 qint64Hash(const QString &str);
 
-    QString encryptNoteText();
-
-    QString getDecryptedNoteText() const;
-
-    bool hasEncryptedNoteText() const;
-
-    void setCryptoPassword(const QString &password);
-
-    bool canDecryptNoteText() const;
-
-    static bool expireCryptoKeys();
-
     QUrl fullNoteFileUrl() const;
 
     QString fullNoteFilePath() const;
@@ -167,12 +149,6 @@ class Note {
     QString fullNoteFileDirPath() const;
 
     static QString encodeCssFont(const QFont &refFont);
-
-    void setDecryptedNoteText(QString text);
-
-    bool storeNewDecryptedText(QString text);
-
-    void setDecryptedText(QString text);
 
     QDateTime getFileLastModified() const;
 
@@ -187,8 +163,6 @@ class Note {
     bool renameNoteFile(QString newName);
 
     QString fileNameSuffix() const;
-
-    bool modifyNoteTextFileNameFromQMLHook();
 
     static QVector<int> searchInNotes(QString query,
                                       bool ignoreNoteSubFolder = false,
@@ -226,29 +200,12 @@ class Note {
 
     bool isSameFile(const Note &note) const;
 
-    QString getShareUrl() const;
-
-    void setShareUrl(QString url);
-
-    int getShareId() const;
-
-    void setShareId(int id);
-
-    unsigned int getSharePermissions() const;
-
-    bool isShareEditAllowed() const;
-
-    void setSharePermissions(unsigned int permissions);
-
-    bool isShared() const;
-
-    static Note fetchByShareId(int shareId);
+    QString relativeNoteFilePath(QString separator = "");
 
     qint64 getFileSize() const;
 
     static Note updateOrCreateFromFile(QFile &file,
-                                       const NoteSubFolder &noteSubFolder,
-                                       bool withNoteNameHook = false);
+                                       const NoteSubFolder &noteSubFolder);
 
     static QVector<int> fetchAllIds(int limit = -1, int offset = -1);
 
@@ -258,17 +215,17 @@ class Note {
 
     static QString createNoteHeader(const QString &name);
 
-    QString getInsertMediaMarkdown(QFile *file, bool addNewLine = true,
+	static QString createNoteFooter();
+	
+	QString currentEmbedmentFolder();
+
+    QString getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool copyFile, bool addNewLine = true,
                                    bool returnUrlOnly = false,
                                    QString title = QString());
-
-    QString getInsertAttachmentMarkdown(QFile *file,
-                                        QString fileName = QString(),
-                                        bool returnUrlOnly = false);
-
+	
     static bool scaleDownImageFileIfNeeded(QFile &file);
 
-    QString downloadUrlToMedia(const QUrl &url, bool returnUrlOnly = false);
+    QString downloadUrlToEmbedment(const QUrl &url, bool returnUrlOnly = false);
 
     QString importMediaFromBase64(
         QString &data, const QString &imageSuffix = QStringLiteral("dat"));
@@ -283,13 +240,11 @@ class Note {
                                int maxImageWidth = 980, bool forExport = false,
                                bool base64Images = false);
 
-    QStringList getMediaFileList();
+    QStringList getEmbedmentFileList(bool onlyImages = false) const;
 
     static Note fetchByUrlString(const QString &urlString);
 
     static QVector<int> fetchAllIdsByNoteTextPart(const QString &textPart);
-
-    QStringList getAttachmentsFileList() const;
 
     QString getNotePreviewText(bool asHtml = false, int lines = 3) const;
 
@@ -325,15 +280,9 @@ class Note {
     QString getNoteUrlForLinkingTo(const Note &note,
                                    bool forceLegacy = false) const;
 
-    QString mediaUrlStringForFileName(const QString &fileName) const;
-
-    QString attachmentUrlStringForFileName(const QString &fileName) const;
+    QString embedmentUrlStringForFileName(const QString &fileName) const;
 
     Note fetchByRelativeFileName(const QString &fileName) const;
-
-    bool updateRelativeMediaFileLinks();
-
-    bool updateRelativeAttachmentFileLinks();
 
     static Utils::Misc::ExternalImageHash *externalImageHash();
 
@@ -346,6 +295,8 @@ class Note {
     bool stripTrailingSpaces(int skipLine = -1);
 
     QString detectNewlineCharacters();
+	
+	void updateReferenceBySectionInLinkedNotes();
 
    protected:
     QString _name;
@@ -353,29 +304,22 @@ class Note {
     QString _noteTextHtml;
     QString _noteTextHtmlConversionHash;
     QString _noteText;
-    QString _decryptedNoteText;
-    QString _cryptoPassword;
-    QString _shareUrl;
+    bool _hasDirtyData;
     QDateTime _fileCreated;
     QDateTime _fileLastModified;
     QDateTime _created;
     QDateTime _modified;
     qint64 _fileSize;
-    qint64 _cryptoKey;
     int _id;
     int _noteSubFolderId;
-    int _shareId;
-    unsigned int _sharePermissions;
-    bool _hasDirtyData;
-
-    QRegularExpression getEncryptedNoteTextRegularExpression() const;
-    QString getEncryptedNoteText() const;
 
     static const QString getNoteURL(const QString &baseName);
 
     static const QString getNoteURLFromFileName(const QString &fileName);
 
     void restoreCreatedDate();
+	
+	void updateReferencedNote(QString linkedNotePath, QString currentNotePath);
 };
 
 Q_DECLARE_TYPEINFO(Note, Q_MOVABLE_TYPE);

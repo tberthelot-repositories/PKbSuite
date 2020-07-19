@@ -6,32 +6,37 @@
 #include <utils/gui.h>
 
 #include <QDebug>
-#include <QDir>
 #include <QFileInfo>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
 #include <QTreeWidgetItem>
 #include <QtWidgets/QMessageBox>
+#include <QDirIterator>
 
 #include "ui_orphanedimagesdialog.h"
-#include "widgets/qownnotesmarkdowntextedit.h"
+#include "widgets/pkbsuitemarkdowntextedit.h"
+#include <QMimeDatabase>
 
 OrphanedImagesDialog::OrphanedImagesDialog(QWidget *parent)
     : MasterDialog(parent), ui(new Ui::OrphanedImagesDialog) {
     ui->setupUi(this);
     ui->fileTreeWidget->installEventFilter(this);
 
-    QDir mediaDir(NoteFolder::currentMediaPath());
+	QStringList orphanedFiles;
 
-    if (!mediaDir.exists()) {
-        ui->progressBar->setValue(ui->progressBar->maximum());
-        return;
-    }
-
-    QStringList orphanedFiles = mediaDir.entryList(
-        QStringList(QStringLiteral("*")), QDir::Files, QDir::Time);
+	QDirIterator iterator(NoteFolder::currentLocalPath(), QDirIterator::Subdirectories);
+	while (iterator.hasNext()) {
+		iterator.next();
+		if (QFileInfo(iterator.filePath()).isFile()) {
+			QMimeDatabase db;
+			QMimeType type = db.mimeTypeForFile(iterator.filePath());
+			
+			if (type.name().contains("image"))
+				orphanedFiles << iterator.filePath();
+		}
+	}	
     orphanedFiles.removeDuplicates();
-
+	
     QVector<Note> noteList = Note::fetchAll();
     int noteListCount = noteList.count();
 
@@ -39,10 +44,10 @@ OrphanedImagesDialog::OrphanedImagesDialog(QWidget *parent)
     ui->progressBar->show();
 
     Q_FOREACH (Note note, noteList) {
-        QStringList mediaFileList = note.getMediaFileList();
+        QStringList embeddedFileList = note.getEmbedmentFileList();
 
         // remove all found images from the orphaned files list
-        Q_FOREACH (QString fileName, mediaFileList) {
+        Q_FOREACH (QString fileName, embeddedFileList) {
             orphanedFiles.removeAll(fileName);
         }
 
@@ -53,13 +58,12 @@ OrphanedImagesDialog::OrphanedImagesDialog(QWidget *parent)
 
     Q_FOREACH (QString fileName, orphanedFiles) {
         QTreeWidgetItem *item = new QTreeWidgetItem();
-        item->setText(0, fileName);
-        item->setData(0, Qt::UserRole, fileName);
 
-        QString filePath = getFilePath(item);
-        QFileInfo info(filePath);
+        QFileInfo info(fileName);
         item->setToolTip(
             0, tr("Last modified at %1").arg(info.lastModified().toString()));
+        item->setData(0, Qt::UserRole, fileName);
+        item->setText(0, fileName.remove(0, fileName.lastIndexOf("/") + 1));
 
         ui->fileTreeWidget->addTopLevelItem(item);
     }
@@ -104,10 +108,14 @@ QString OrphanedImagesDialog::getFilePath(QTreeWidgetItem *item) {
     if (item == Q_NULLPTR) {
         return QString();
     }
+/*    
+	QStringList nameFilter(item->data(0, Qt::UserRole).toString());
+	QStringList itemFile = QDir(NoteFolder::currentLocalPath()).entryList(nameFilter);
 
-    QString fileName = NoteFolder::currentMediaPath() + QDir::separator() +
-                       item->data(0, Qt::UserRole).toString();
+    QString fileName = itemFile.at(0);
     return fileName;
+*/
+	return item->data(0, Qt::UserRole).toString();
 }
 
 /**
@@ -180,18 +188,33 @@ void OrphanedImagesDialog::on_insertButton_clicked() {
         return;
     }
 
-    QOwnNotesMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
+    PKbSuiteMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
     Note note = mainWindow->getCurrentNote();
 
     // insert all selected images
     Q_FOREACH (QTreeWidgetItem *item, ui->fileTreeWidget->selectedItems()) {
         QString filePath = getFilePath(item);
         QFileInfo fileInfo(filePath);
-        QString mediaUrlString =
-            note.mediaUrlStringForFileName(fileInfo.fileName());
+        QString embedmentUrlString =
+            note.embedmentUrlStringForFileName(fileInfo.fileName());
         QString imageLink =
-            "![" + fileInfo.baseName() + "](" + mediaUrlString + ")\n";
+            "![" + fileInfo.baseName() + "](" + embedmentUrlString + ")\n";
         textEdit->insertPlainText(imageLink);
         delete item;
     }
+}
+
+QStringList listEmbeddedFiles(QDir folder) {
+	QDirIterator iterator(folder.absolutePath(), QDirIterator::Subdirectories);
+	QStringList listFiles;
+	
+	while (iterator.hasNext()) {
+		listEmbeddedFiles(QDir(iterator.next()));
+	}
+	
+	QStringList filters;
+	filters << ".jpg" << "*.Jpg" << "*.JPG" << "*.jpeg" << "*.Jpeg" << "*.JPEG";
+	listFiles += folder.entryList(filters);	
+
+	return listFiles;
 }

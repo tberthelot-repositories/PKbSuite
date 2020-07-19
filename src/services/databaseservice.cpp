@@ -1,6 +1,5 @@
 #include "services/databaseservice.h"
 
-#include <entities/cloudconnection.h>
 #include <entities/notefolder.h>
 #include <entities/tag.h>
 #include <utils/misc.h>
@@ -16,9 +15,7 @@
 #include <QSqlQuery>
 #include <QStandardPaths>
 
-#include "entities/calendaritem.h"
 #include "mainwindow.h"
-#include "owncloudservice.h"
 
 DatabaseService::DatabaseService() = default;
 
@@ -30,7 +27,7 @@ DatabaseService::DatabaseService() = default;
 QString DatabaseService::getDiskDatabasePath() {
     QString databaseFileName = Utils::Misc::appDataPath() +
                                Utils::Misc::dirSeparator() +
-                               QStringLiteral("QOwnNotes.sqlite");
+                               QStringLiteral("PKbSuite.sqlite");
     qDebug() << __func__ << " - 'databaseFileName': " << databaseFileName;
 
     return databaseFileName;
@@ -329,7 +326,7 @@ bool DatabaseService::setupNoteFolderTables() {
 
     if (version < 14) {
         // removing broken tag assignments from
-        // https://github.com/pbek/QOwnNotes/issues/1510
+        // https://github.com/pbek/PKbSuite/issues/1510
         queryDisk.exec(QStringLiteral(
             "DELETE FROM noteTagLink WHERE note_sub_folder_path IS NULL"));
 
@@ -408,15 +405,9 @@ bool DatabaseService::setupTables() {
                        "file_size INT64 DEFAULT 0,"
                        "note_sub_folder_id int,"
                        "note_text TEXT,"
-                       "decrypted_note_text TEXT,"
                        "has_dirty_data INTEGER DEFAULT 0,"
                        "file_last_modified DATETIME,"
                        "file_created DATETIME,"
-                       "crypto_key INT64 DEFAULT 0,"
-                       "crypto_password VARCHAR(255),"
-                       "share_url VARCHAR(255),"
-                       "share_id int,"
-                       "share_permissions int,"
                        "created DATETIME default current_timestamp,"
                        "modified DATETIME default current_timestamp)"));
     queryMemory.exec(
@@ -427,41 +418,6 @@ bool DatabaseService::setupTables() {
                        "file_last_modified DATETIME,"
                        "created DATETIME default current_timestamp,"
                        "modified DATETIME default current_timestamp)"));
-
-    if (version < 1) {
-        queryDisk.exec(
-            QStringLiteral("CREATE TABLE IF NOT EXISTS calendarItem ("
-                           "id INTEGER PRIMARY KEY,"
-                           "summary VARCHAR(255),"
-                           "url VARCHAR(255),"
-                           "description TEXT,"
-                           "has_dirty_data INTEGER DEFAULT 0,"
-                           "completed INTEGER DEFAULT 0,"
-                           "priority INTEGER,"
-                           "calendar VARCHAR(255),"
-                           "uid VARCHAR(255),"
-                           "ics_data TEXT,"
-                           "alarm_date DATETIME,"
-                           "etag VARCHAR(255),"
-                           "last_modified_string VARCHAR(255),"
-                           "created DATETIME DEFAULT current_timestamp,"
-                           "modified DATETIME DEFAULT current_timestamp)"));
-
-        queryDisk.exec(
-            QStringLiteral("CREATE UNIQUE INDEX IF NOT EXISTS idxUrl "
-                           "ON calendarItem( url )"));
-        queryDisk.exec(QStringLiteral(
-            "ALTER TABLE calendarItem ADD completed_date DATETIME"));
-        queryDisk.exec(
-            QStringLiteral("ALTER TABLE calendarItem "
-                           "ADD sort_priority INTEGER DEFAULT 0"));
-        version = 1;
-    }
-
-    if (version < 2) {
-        CalendarItem::updateAllSortPriorities();
-        version = 2;
-    }
 
     if (version < 3) {
         queryDisk.exec(
@@ -544,22 +500,6 @@ bool DatabaseService::setupTables() {
         version = 12;
     }
 
-    if (version < 14) {
-        // remove all calendar items so that all task items will be reloaded
-        // from the server because we are using the display name now instead
-        // of the last part of the calendar url
-        CalendarItem::removeAll();
-
-        // remove the todoCalendar list setting, so that the user has
-        // to select the items again because the items will use the display
-        // name now instead of the last part of the calendar url
-        settings.remove(QStringLiteral("ownCloud/todoCalendarEnabledList"));
-        settings.remove(QStringLiteral("ownCloud/todoCalendarEnabledUrlList"));
-        settings.remove(QStringLiteral("ownCloud/todoCalendarUrlList"));
-
-        version = 14;
-    }
-
     if (version < 15) {
         // turn off the DFM initially after the dock widget update
         settings.remove(QStringLiteral("DistractionFreeMode/isEnabled"));
@@ -632,16 +572,6 @@ bool DatabaseService::setupTables() {
         version = 18;
     }
 
-    if (version < 19) {
-        // set the ownCloud support enabled setting
-        bool ownCloudEnabled =
-            OwnCloudService::hasOwnCloudSettings(false, true);
-        settings.setValue(QStringLiteral("ownCloud/supportEnabled"),
-                          ownCloudEnabled);
-
-        version = 19;
-    }
-
     if (version < 20) {
 #ifdef Q_OS_MAC
         // disable restoreCursorPosition for macOS by default, because there
@@ -662,12 +592,6 @@ bool DatabaseService::setupTables() {
         }
 
         version = 21;
-    }
-
-    if (version < 22) {
-        queryDisk.exec(QStringLiteral(
-            "ALTER TABLE noteFolder ADD use_git BOOLEAN DEFAULT 0"));
-        version = 22;
     }
 
     if (version < 23) {
@@ -756,51 +680,6 @@ bool DatabaseService::setupTables() {
         version = 28;
     }
 
-    if (version < 29) {
-        queryDisk.exec(
-            QStringLiteral("CREATE TABLE IF NOT EXISTS cloudConnection ("
-                           "id INTEGER PRIMARY KEY,"
-                           "name VARCHAR(255),"
-                           "server_url VARCHAR(255),"
-                           "username VARCHAR(255),"
-                           "password VARCHAR(255),"
-                           "priority INTEGER DEFAULT 0 )"));
-        queryDisk.exec(
-            QStringLiteral("ALTER TABLE noteFolder ADD cloud_connection_id "
-                           "INTEGER DEFAULT 1"));
-
-        version = 29;
-    }
-
-    // let's check every time if there is at least one cloud connection
-    CloudConnection::migrateToCloudConnections();
-
-    if (version < 30) {
-        // remove obsolete server settings (we now have cloud connections)
-        settings.remove(QStringLiteral("ownCloud/serverUrl"));
-        settings.remove(QStringLiteral("ownCloud/userName"));
-        settings.remove(QStringLiteral("ownCloud/password"));
-
-        version = 30;
-    }
-
-    if (version < 31) {
-        // preset cloud connections for all note folders
-        queryDisk.prepare(
-            QStringLiteral("UPDATE noteFolder SET cloud_connection_id = :id"));
-        queryDisk.bindValue(QStringLiteral(":id"),
-                            CloudConnection::firstCloudConnection().getId());
-        queryDisk.exec();
-
-        version = 31;
-    }
-
-    if (version < 32) {
-        queryDisk.exec(QStringLiteral(
-            "ALTER TABLE calendarItem ADD related_uid VARCHAR(255)"));
-        version = 32;
-    }
-
     if (version < 33) {
         foreach(NoteFolder noteFolder, NoteFolder::fetchAll()) {
             noteFolder.setSettingsValue(QStringLiteral("allowDifferentNoteFileName"),
@@ -810,12 +689,6 @@ bool DatabaseService::setupTables() {
         settings.remove(QStringLiteral("allowDifferentNoteFileName"));
 
         version = 33;
-    }
-
-    if (version < 34) {
-        queryDisk.exec(QStringLiteral(
-                           "ALTER TABLE cloudConnection ADD qownnotesapi_enabled BOOLEAN DEFAULT 1"));
-        version = 34;
     }
 
     if (version != oldVersion) {
@@ -884,8 +757,8 @@ bool DatabaseService::mergeNoteFolderDatabase(const QString& path) {
     mergeDB.close();
 
     // We can ignore the appData table, because data there will get updated by
-    // QOwnNotes itself
-    // We can ignore the trashItem table, because QOwnNotes will manage the
+    // PKbSuite itself
+    // We can ignore the trashItem table, because PKbSuite will manage the
     // trashed notes itself
     return isTagsMerged;
 }

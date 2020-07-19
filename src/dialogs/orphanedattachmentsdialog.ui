@@ -57,8 +57,8 @@
          <string>Delete</string>
         </property>
         <property name="icon">
-         <iconset theme="list-remove" resource="../breeze-qownnotes.qrc">
-          <normaloff>:/icons/breeze-qownnotes/16x16/list-remove.svg</normaloff>:/icons/breeze-qownnotes/16x16/list-remove.svg</iconset>
+         <iconset theme="list-remove" resource="../breeze-pkbsuite.qrc">
+          <normaloff>:/icons/breeze-pkbsuite/16x16/list-remove.svg</normaloff>:/icons/breeze-pkbsuite/16x16/list-remove.svg</iconset>
         </property>
        </widget>
       </item>
@@ -89,8 +89,8 @@
          <string>Add to note</string>
         </property>
         <property name="icon">
-         <iconset theme="list-add" resource="../breeze-qownnotes.qrc">
-          <normaloff>:/icons/breeze-qownnotes/16x16/list-add.svg</normaloff>:/icons/breeze-qownnotes/16x16/list-add.svg</iconset>
+         <iconset theme="list-add" resource="../breeze-pkbsuite.qrc">
+          <normaloff>:/icons/breeze-pkbsuite/16x16/list-add.svg</normaloff>:/icons/breeze-pkbsuite/16x16/list-add.svg</iconset>
         </property>
        </widget>
       </item>
@@ -100,8 +100,8 @@
          <string>Open &amp;attachment</string>
         </property>
         <property name="icon">
-         <iconset theme="mail-attachment" resource="../breeze-qownnotes.qrc">
-          <normaloff>:/icons/breeze-qownnotes/16x16/mail-attachment.svg</normaloff>:/icons/breeze-qownnotes/16x16/mail-attachment.svg</iconset>
+         <iconset theme="mail-attachment" resource="../breeze-pkbsuite.qrc">
+          <normaloff>:/icons/breeze-pkbsuite/16x16/mail-attachment.svg</normaloff>:/icons/breeze-pkbsuite/16x16/mail-attachment.svg</iconset>
         </property>
        </widget>
       </item>
@@ -111,8 +111,8 @@
          <string>Open &amp;folder</string>
         </property>
         <property name="icon">
-         <iconset theme="folder" resource="../breeze-dark-qownnotes.qrc">
-          <normaloff>:/icons/breeze-dark-qownnotes/16x16/folder.svg</normaloff>:/icons/breeze-dark-qownnotes/16x16/folder.svg</iconset>
+         <iconset theme="folder" resource="../breeze-dark-pkbsuite.qrc">
+          <normaloff>:/icons/breeze-dark-pkbsuite/16x16/folder.svg</normaloff>:/icons/breeze-dark-pkbsuite/16x16/folder.svg</iconset>
         </property>
        </widget>
       </item>
@@ -233,8 +233,8 @@
   </layout>
  </widget>
  <resources>
-  <include location="../breeze-dark-qownnotes.qrc"/>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-dark-pkbsuite.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -48,7 +48,7 @@ LocalTrashDialog::LocalTrashDialog(MainWindow *mainWindow, QWidget *parent)
     button->setDefault(false);
     button->setIcon(QIcon::fromTheme(
         QStringLiteral("view-restore"),
-        QIcon(":/icons/breeze-qownnotes/16x16/view-restore.svg")));
+        QIcon(":/icons/breeze-pkbsuite/16x16/view-restore.svg")));
     ui->buttonBox->addButton(button, QDialogButtonBox::ActionRole);
 
     button = new QPushButton(tr("Remove"), this);
@@ -57,7 +57,7 @@ LocalTrashDialog::LocalTrashDialog(MainWindow *mainWindow, QWidget *parent)
     button->setDefault(false);
     button->setIcon(QIcon::fromTheme(
         QStringLiteral("edit-delete"),
-        QIcon(":/icons/breeze-qownnotes/16x16/edit-delete.svg")));
+        QIcon(":/icons/breeze-pkbsuite/16x16/edit-delete.svg")));
     ui->buttonBox->addButton(button, QDialogButtonBox::ActionRole);
 
     //    button = new QPushButton(tr("Cancel"));
@@ -65,12 +65,12 @@ LocalTrashDialog::LocalTrashDialog(MainWindow *mainWindow, QWidget *parent)
     //    button->setIcon(
     //            QIcon::fromTheme(
     //                    "dialog-cancel",
-    //                    QIcon(":/icons/breeze-qownnotes/16x16/dialog-cancel.svg")));
+    //                    QIcon(":/icons/breeze-pkbsuite/16x16/dialog-cancel.svg")));
     //    button->setDefault(true);
     //    ui->buttonBox->addButton(button, QDialogButtonBox::ActionRole);
 
-    connect(this->ui->buttonBox, SIGNAL(clicked(QAbstractButton *)),
-            SLOT(dialogButtonClicked(QAbstractButton *)));
+    connect(this->ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
+            SLOT(dialogButtonClicked(QAbstractButton*)));
     connect(this, SIGNAL(finished(int)), this, SLOT(storeSettings()));
 
     loadTrashedNotes();
@@ -105,7 +105,7 @@ void LocalTrashDialog::loadTrashedNotes() {
                 0,
                 QIcon::fromTheme(
                     QStringLiteral("edit-delete"),
-                    QIcon(":/icons/breeze-qownnotes/16x16/edit-delete.svg")));
+                    QIcon(":/icons/breeze-pkbsuite/16x16/edit-delete.svg")));
             toolTipText = tr("File <strong>%1</strong> isn't readable and can't"
                              " be restored!")
                               .arg(trashItem.fullFilePath());

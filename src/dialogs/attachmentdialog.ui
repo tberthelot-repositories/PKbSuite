@@ -97,8 +97,8 @@
          <string notr="true"/>
         </property>
         <property name="icon">
-         <iconset theme="dialog-cancel" resource="../breeze-qownnotes.qrc">
-          <normaloff>:/icons/breeze-qownnotes/16x16/dialog-cancel.svg</normaloff>:/icons/breeze-qownnotes/16x16/dialog-cancel.svg</iconset>
+         <iconset theme="dialog-cancel" resource="../breeze-pkbsuite.qrc">
+          <normaloff>:/icons/breeze-pkbsuite/16x16/dialog-cancel.svg</normaloff>:/icons/breeze-pkbsuite/16x16/dialog-cancel.svg</iconset>
         </property>
        </widget>
       </item>
@@ -117,8 +117,8 @@
       <string comment="The URL will be downloaded">Download URL</string>
      </property>
      <property name="icon">
-      <iconset theme="edit-download" resource="../breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/edit-download.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-download.svg</iconset>
+      <iconset theme="edit-download" resource="../breeze-pkbsuite.qrc">
+       <normaloff>:/icons/breeze-pkbsuite/16x16/edit-download.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-download.svg</iconset>
      </property>
     </widget>
    </item>
@@ -173,7 +173,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../breeze-qownnotes.qrc"/>
+  <include location="../breeze-pkbsuite.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -77,18 +77,14 @@ QMessageBox::StandardButton question(
     const QString &identifier = QStringLiteral("default"),
     QMessageBox::StandardButtons buttons =
         QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No),
-    QMessageBox::StandardButton defaultButton = QMessageBox::NoButton,
-    QMessageBox::StandardButtons skipOverrideButtons =
-        QMessageBox::StandardButtons(QMessageBox::No));
+    QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
 
 QMessageBox::StandardButton questionNoSkipOverride(
     QWidget *parent, const QString &title, const QString &text,
     const QString &identifier = QStringLiteral("default"),
     QMessageBox::StandardButtons buttons =
         QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No),
-    QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
-
-QMessageBox::StandardButton warning(
+    QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);QMessageBox::StandardButton warning(
     QWidget *parent, const QString &title, const QString &text,
     const QString &identifier = QStringLiteral("default"),
     QMessageBox::StandardButtons buttons =
@@ -127,13 +123,12 @@ int getTabWidgetIndexByProperty(QTabWidget *tabWidget,
                                 const QString &propertyName,
                                 const QVariant &propertyValue);
 int getTabWidgetNoteId(QTabWidget *tabWidget, int index);
+int getTabWidgetNoteId(QTabWidget *tabWidget, int index);
 Note getTabWidgetNote(QTabWidget *tabWidget, int index,
-                      bool fetchByName = false);
-void storeNoteTabs(QTabWidget *tabWidget);
+                      bool fetchByName = false);void storeNoteTabs(QTabWidget *tabWidget);
 void restoreNoteTabs(QTabWidget *tabWidget, QVBoxLayout *layout);
 void setTabWidgetTabSticky(QTabWidget *tabWidget, int index, bool sticky);
 bool isTabWidgetTabSticky(QTabWidget *tabWidget, int index);
 void updateTabWidgetTabData(QTabWidget *tabWidget, int index, const Note &note);
-void reloadNoteTabs(QTabWidget *tabWidget);
 }    // namespace Gui
 }    // namespace Utils

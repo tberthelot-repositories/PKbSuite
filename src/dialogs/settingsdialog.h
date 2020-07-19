@@ -1,9 +1,7 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include <entities/cloudconnection.h>
 #include <entities/notefolder.h>
-#include <entities/script.h>
 
 #include "masterdialog.h"
 
@@ -19,13 +17,9 @@ class QTreeWidgetItem;
 class QLineEdit;
 class QStatusBar;
 class QButtonGroup;
-class Script;
 class QCheckBox;
 class NoteFolder;
 class QSplitter;
-class CloudConnection;
-
-struct CalDAVCalendarData;
 
 class SettingsDialog : public MasterDialog {
     Q_OBJECT
@@ -40,21 +34,14 @@ class SettingsDialog : public MasterDialog {
 
     enum SettingsPages {
         NoteFolderPage,
-        OwnCloudPage,
-        NetworkPage,
-        TodoPage,
         InterfacePage,
         ShortcutPage,
         ScriptingPage,
         GeneralPage,
-        DebugPage,
         EditorFontColorPage,
-        PortableModePage,
         PreviewFontPage,
         ToolbarPage,
-        DebugOptionPage,
         EditorPage,
-        GitPage,
         PanelsPage,
         LocalTrashPage,
         LayoutPage,
@@ -65,17 +52,6 @@ class SettingsDialog : public MasterDialog {
 
     ~SettingsDialog();
 
-    void connectTestCallback(bool appIsValid, QString appVersion,
-                             QString serverVersion, QString notesPathExistsText,
-                             QString connectionErrorMessage);
-
-    void setOKLabelData(int number, const QString &text, OKLabelStatus status);
-
-    void refreshTodoCalendarList(const QList<CalDAVCalendarData> &items,
-                                 bool forceReadCheckedState = false);
-
-    void setNoteFolderRemotePathList(QStringList pathList);
-
     void setCurrentPage(int page);
 
     void readSettings();
@@ -85,25 +61,13 @@ class SettingsDialog : public MasterDialog {
 
    private slots:
 
-    void on_connectButton_clicked();
-
     void on_buttonBox_clicked(QAbstractButton *button);
-
-    void on_ownCloudServerAppPageButton_clicked();
 
     void on_noteTextEditButton_clicked();
 
     void on_noteTextViewButton_clicked();
 
-    void on_reloadCalendarListButton_clicked();
-
-    void on_defaultOwnCloudCalendarRadioButton_toggled(bool checked);
-
     void on_reinitializeDatabaseButton_clicked();
-
-    void on_saveDebugInfoButton_clicked();
-
-    void on_appMetricsCheckBox_toggled(bool checked);
 
     void on_clearAppDataAndExitButton_clicked();
 
@@ -121,10 +85,6 @@ class SettingsDialog : public MasterDialog {
 
     void on_setExternalEditorPathToolButton_clicked();
 
-    void storeProxySettings();
-
-    void on_ignoreSSLErrorsCheckBox_toggled(bool checked);
-
     void on_noteFolderListWidget_currentItemChanged(QListWidgetItem *current,
                                                     QListWidgetItem *previous);
 
@@ -134,33 +94,9 @@ class SettingsDialog : public MasterDialog {
 
     void on_noteFolderNameLineEdit_editingFinished();
 
-    void on_noteFolderRemotePathLineEdit_editingFinished();
-
     void on_noteFolderLocalPathButton_clicked();
 
     void on_noteFolderActiveCheckBox_stateChanged(int arg1);
-
-    void on_noteFolderRemotePathButton_clicked();
-
-    void on_noteFolderRemotePathTreeWidget_currentItemChanged(
-        QTreeWidgetItem *current, QTreeWidgetItem *previous);
-
-    void on_useOwnCloudPathButton_clicked();
-
-    void addLocalScript();
-
-    void on_scriptRemoveButton_clicked();
-
-    void on_scriptPathButton_clicked();
-
-    void on_scriptListWidget_currentItemChanged(QListWidgetItem *current,
-                                                QListWidgetItem *previous);
-
-    void on_scriptNameLineEdit_editingFinished();
-
-    void on_scriptValidationButton_clicked();
-
-    void on_scriptReloadEngineButton_clicked();
 
     void on_addCustomNoteFileExtensionButton_clicked();
 
@@ -176,20 +112,12 @@ class SettingsDialog : public MasterDialog {
 
     void on_noteFolderShowSubfoldersCheckBox_toggled(bool checked);
 
-    void on_gitHubLineBreaksCheckBox_toggled(bool checked);
-
     void on_shortcutSearchLineEdit_textChanged(const QString &arg1);
 
     void on_settingsTreeWidget_currentItemChanged(QTreeWidgetItem *current,
                                                   QTreeWidgetItem *previous);
 
     void on_settingsStackedWidget_currentChanged(int index);
-
-    void on_calDavCalendarRadioButton_toggled(bool checked);
-
-    void on_calendarPlusRadioButton_toggled(bool checked);
-
-    void on_emptyCalendarCachePushButton_clicked();
 
     void on_itemHeightResetButton_clicked();
 
@@ -205,8 +133,6 @@ class SettingsDialog : public MasterDialog {
 
     void on_searchLineEdit_textChanged(const QString &arg1);
 
-    void on_fileLoggingCheckBox_toggled(bool checked);
-
     void on_clearLogFileButton_clicked();
 
     void noteNotificationButtonGroupPressed(QAbstractButton *button);
@@ -214,20 +140,6 @@ class SettingsDialog : public MasterDialog {
     void noteNotificationNoneCheckBoxCheck();
 
     void needRestart();
-
-    void on_legacyOwnCloudCalendarRadioButton_toggled(bool checked);
-
-    void on_ownCloudSupportCheckBox_toggled();
-
-    void on_noteFolderGitCommitCheckBox_toggled(bool checked);
-
-    void on_setGitPathToolButton_clicked();
-
-    void searchScriptInRepository(bool checkForUpdates = false);
-
-    void checkForScriptUpdates();
-
-    void on_scriptListWidget_itemChanged(QListWidgetItem *item);
 
     void on_interfaceStyleComboBox_currentTextChanged(const QString &arg1);
 
@@ -245,12 +157,6 @@ class SettingsDialog : public MasterDialog {
 
     void keySequenceEvent(const QString &objectName);
 
-    void on_exportSettingsButton_clicked();
-
-    void on_importSettingsButton_clicked();
-
-    void on_issueAssistantPushButton_clicked();
-
     void on_ignoreNoteSubFoldersResetButton_clicked();
 
     void on_interfaceFontSizeSpinBox_valueChanged(int arg1);
@@ -266,24 +172,6 @@ class SettingsDialog : public MasterDialog {
     void on_systemIconThemeCheckBox_toggled(bool checked);
 
     void on_webSocketTokenButton_clicked();
-
-    void on_cloudConnectionComboBox_currentIndexChanged(int index);
-
-    void on_cloudConnectionAddButton_clicked();
-
-    void on_cloudConnectionRemoveButton_clicked();
-
-    void on_noteFolderCloudConnectionComboBox_currentIndexChanged(int index);
-
-    void on_calendarCloudConnectionComboBox_currentIndexChanged(int index);
-
-    void storeSelectedCloudConnection();
-
-    void on_todoCalendarSupportCheckBox_toggled();
-
-    void on_copyDebugInfoButton_clicked();
-
-    void on_ownCloudServerAppPasswordPageButton_clicked();
 
     void on_allowDifferentNoteFileNameCheckBox_toggled(bool checked);
 
@@ -304,21 +192,15 @@ private:
     QString notesPathExistsText;
     QString connectionErrorMessage;
     NoteFolder _selectedNoteFolder;
-    Script _selectedScript;
     static const int _defaultMarkdownHighlightingInterval = 200;
     QSplitter *_mainSplitter;
     QButtonGroup *_noteNotificationButtonGroup;
     QCheckBox *_noteNotificationNoneCheckBox;
     QString _newScriptName;
-    CloudConnection _selectedCloudConnection;
 
     void storeSettings();
 
-    void startConnectionTest();
-
     void setFontLabel(QLineEdit *label, const QFont &font);
-
-    void outputSettings();
 
     static void selectListWidgetValue(QListWidget *listWidget,
                                       const QString &value);
@@ -328,28 +210,13 @@ private:
 
     static QString getSelectedListWidgetValue(QListWidget *listWidget);
 
-    void setupProxyPage();
-
-    void loadProxySettings();
-
     void setupNoteFolderPage();
-
-    QTreeWidgetItem *findNoteFolderRemotePathTreeWidgetItem(
-        QTreeWidgetItem *parent, const QString &text);
 
     void addPathToNoteFolderRemotePathTreeWidget(QTreeWidgetItem *parent,
                                                  const QString &path);
 
     QString generatePathFromCurrentNoteFolderRemotePathItem(
         QTreeWidgetItem *item);
-
-    void setNoteFolderRemotePathTreeWidgetFrameVisibility(bool visi);
-
-    void setupScriptingPage();
-
-    void storeScriptListEnabledState();
-
-    void validateCurrentScript();
 
     QListWidgetItem *addCustomNoteFileExtension(const QString &fileExtension);
 
@@ -365,19 +232,11 @@ private:
 
     void storeFontSettings();
 
-    void reloadCalendarList();
-
-    void initPortableModePage();
-
     int findSettingsPageIndexOfWidget(QWidget *widget);
 
     void addToSearchIndexList(QWidget *widget, QList<int> &pageIndexList);
 
     void removeLogFile() const;
-
-    void replaceOwnCloudText() const;
-
-    bool connectionTestCanBeStarted() const;
 
     void reloadScriptList() const;
 
@@ -392,10 +251,6 @@ private:
     void initSearchEngineComboBox() const;
 
     QKeySequenceWidget *findKeySequenceWidget(const QString &objectName);
-
-    void storeOwncloudDebugData() const;
-
-    void initCloudConnectionComboBox(int selectedId = -1);
 
     void handleDarkModeCheckBoxToggled(bool updateCheckBoxes = false,
                                        bool updateSchema = false);

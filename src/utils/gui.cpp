@@ -244,17 +244,14 @@ QMessageBox::StandardButton Utils::Gui::information(
  * @param identifier
  * @param buttons
  * @param defaultButton
- * @param skipOverrideButtons
  * @return
  */
 QMessageBox::StandardButton Utils::Gui::question(
     QWidget *parent, const QString &title, const QString &text,
     const QString &identifier, QMessageBox::StandardButtons buttons,
-    QMessageBox::StandardButton defaultButton,
-    QMessageBox::StandardButtons skipOverrideButtons) {
+    QMessageBox::StandardButton defaultButton) {
     return showMessageBox(parent, QMessageBox::Icon::Question, title, text,
-                          identifier, buttons, defaultButton,
-                          skipOverrideButtons);
+                          identifier, buttons, defaultButton);
 }
 
 /**
@@ -397,7 +394,7 @@ QFont Utils::Gui::fontDialogGetFont(bool *ok, const QFont &initial,
                                     QFontDialog::FontDialogOptions options) {
 #ifdef Q_OS_MAC
     // there was a bug in Qt 5.11.2 with the native dialog
-    // see: https://github.com/pbek/QOwnNotes/issues/1033
+    // see: https://github.com/pbek/PKbSuite/issues/1033
     options |= QFontDialog::DontUseNativeDialog;
 #endif
 
@@ -693,13 +690,7 @@ int Utils::Gui::getTabWidgetIndexByProperty(QTabWidget *tabWidget,
 }
 
 int Utils::Gui::getTabWidgetNoteId(QTabWidget *tabWidget, int index) {
-    QWidget *widget = tabWidget->widget(index);
-
-    if (widget == nullptr) {
-        return 0;
-    }
-
-    return widget->property("note-id").toInt();
+    return tabWidget->widget(index)->property("note-id").toInt();
 }
 
 Note Utils::Gui::getTabWidgetNote(QTabWidget *tabWidget, int index,
@@ -799,7 +790,7 @@ void Utils::Gui::restoreNoteTabs(QTabWidget *tabWidget, QVBoxLayout *layout) {
                 // create a new tab if there are too few tabs
                 if ((tabWidget->count() - 1) < i) {
                     auto *widgetPage = new QWidget();
-                    tabWidget->addTab(widgetPage, QStringLiteral(""));
+                    tabWidget->addTab(widgetPage, QLatin1String(""));
                 }
 
                 // set the current tab index and the note data
@@ -812,22 +803,6 @@ void Utils::Gui::restoreNoteTabs(QTabWidget *tabWidget, QVBoxLayout *layout) {
 
     // make sure a layout is set in the end
     tabWidget->currentWidget()->setLayout(layout);
-}
-
-void Utils::Gui::reloadNoteTabs(QTabWidget *tabWidget) {
-//    const QSignalBlocker blocker(tabWidget);
-//    Q_UNUSED(blocker)
-//    return;
-
-    for (int i = 0; i < tabWidget->count(); i++) {
-        const Note note = getTabWidgetNote(tabWidget, i, true);
-
-        if (!note.isFetched()) {
-            continue;
-        }
-
-        updateTabWidgetTabData(tabWidget, i, note);
-    }
 }
 
 void Utils::Gui::updateTabWidgetTabData(QTabWidget *tabWidget, int index,
@@ -844,38 +819,22 @@ void Utils::Gui::updateTabWidgetTabData(QTabWidget *tabWidget, int index,
                         note.getNoteSubFolder().pathData());
 
     QString text = note.getName();
-    const bool isSticky = isTabWidgetTabSticky(tabWidget, index);
 
-    if (isSticky) {
+    if (isTabWidgetTabSticky(tabWidget, index)) {
         // https://unicode-table.com/en/search/?q=flag
         text.prepend(QStringLiteral("\u2690 "));
     }
 
     tabWidget->setTabText(index, text);
-    tabWidget->setTabToolTip(index, isSticky ?
-            QObject::tr("Double-click to unstick note from tab") :
-            QObject::tr("Double-click to stick note to tab"));
 }
 
 void Utils::Gui::setTabWidgetTabSticky(QTabWidget *tabWidget, int index,
                                        bool sticky) {
-    QWidget *widget = tabWidget->widget(index);
-
-    if (widget == nullptr) {
-        return;
-    }
-
-    widget->setProperty("sticky", sticky);
+    tabWidget->widget(index)->setProperty("sticky", sticky);
     Note note = getTabWidgetNote(tabWidget, index);
     updateTabWidgetTabData(tabWidget, index, note);
 }
 
 bool Utils::Gui::isTabWidgetTabSticky(QTabWidget *tabWidget, int index) {
-    QWidget *widget = tabWidget->widget(index);
-
-    if (widget == nullptr) {
-        return false;
-    }
-
-    return widget->property("sticky").toBool();
+    return tabWidget->widget(index)->property("sticky").toBool();
 }

@@ -45,10 +45,10 @@ ImageDialog::ImageDialog(QWidget *parent)
         }
     }
 
-    connect(ui->graphicsView, SIGNAL(scrolledContentsBy(int, int)), this,
-            SLOT(scrolledGraphicsViewContentsBy(int, int)));
-    connect(ui->graphicsView, SIGNAL(resizedBy(int, int)), this,
-            SLOT(resizedGraphicsViewBy(int, int)));
+    connect(ui->graphicsView, SIGNAL(scrolledContentsBy(int,int)), this,
+            SLOT(scrolledGraphicsViewContentsBy(int,int)));
+    connect(ui->graphicsView, SIGNAL(resizedBy(int,int)), this,
+            SLOT(resizedGraphicsViewBy(int,int)));
 }
 
 ImageDialog::~ImageDialog() {
@@ -133,7 +133,7 @@ void ImageDialog::on_buttonBox_accepted() {
         _imageWasDownloaded ||
         ui->widthSpinBox->value() != _basePixmap.width()) {
         _tempFile = new QTemporaryFile(QDir::tempPath() + QDir::separator() +
-                                       "qownnotes-media-XXXXXX.png");
+                                       "pkbsuite-media-XXXXXX.png");
 
         if (_tempFile->open()) {
             // save temporary png image

@@ -17,7 +17,7 @@
 #include <QtWidgets/QMessageBox>
 
 #include "ui_orphanedattachmentsdialog.h"
-#include "widgets/qownnotesmarkdowntextedit.h"
+#include "widgets/pkbsuitemarkdowntextedit.h"
 
 OrphanedAttachmentsDialog::OrphanedAttachmentsDialog(QWidget *parent)
     : MasterDialog(parent), ui(new Ui::OrphanedAttachmentsDialog) {
@@ -25,7 +25,7 @@ OrphanedAttachmentsDialog::OrphanedAttachmentsDialog(QWidget *parent)
     ui->infoFrame->setEnabled(false);
     ui->fileTreeWidget->installEventFilter(this);
 
-    QDir attachmentsDir(NoteFolder::currentAttachmentsPath());
+    QDir attachmentsDir(NoteFolder::currentLocalPath());
 
     if (!attachmentsDir.exists()) {
         ui->progressBar->setValue(ui->progressBar->maximum());
@@ -43,7 +43,7 @@ OrphanedAttachmentsDialog::OrphanedAttachmentsDialog(QWidget *parent)
     ui->progressBar->show();
 
     Q_FOREACH (const Note &note, noteList) {
-        QStringList attachmentsFileList = note.getAttachmentsFileList();
+        QStringList attachmentsFileList = note.getEmbedmentFileList(true);
 
         // remove all found attachments from the orphaned files list
         Q_FOREACH (const QString &fileName, attachmentsFileList) {
@@ -61,7 +61,9 @@ OrphanedAttachmentsDialog::OrphanedAttachmentsDialog(QWidget *parent)
         item->setData(0, Qt::UserRole, fileName);
 
         QString filePath = getFilePath(item);
-        QFileInfo info(filePath);
+        item->setData(1, Qt::UserRole, filePath);
+		
+		QFileInfo info(filePath);
         item->setToolTip(
             0, tr("Last modified at %1").arg(info.lastModified().toString()));
 
@@ -123,10 +125,7 @@ QString OrphanedAttachmentsDialog::getFilePath(QTreeWidgetItem *item) {
         return QString();
     }
 
-    QString fileName = NoteFolder::currentAttachmentsPath() +
-                       QDir::separator() +
-                       item->data(0, Qt::UserRole).toString();
-    return fileName;
+    return item->data(1, Qt::UserRole).toString();
 }
 
 /**
@@ -199,7 +198,7 @@ void OrphanedAttachmentsDialog::on_insertButton_clicked() {
         return;
     }
 
-    QOwnNotesMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
+    PKbSuiteMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
     Note note = mainWindow->getCurrentNote();
 
     // insert all selected attachments
@@ -207,7 +206,7 @@ void OrphanedAttachmentsDialog::on_insertButton_clicked() {
         QString filePath = getFilePath(item);
         QFileInfo fileInfo(filePath);
         QString attachmentsUrlString =
-            note.attachmentUrlStringForFileName(fileInfo.fileName());
+            note.embedmentUrlStringForFileName(fileInfo.fileName());
         QString attachmentLink =
             "[" + fileInfo.baseName() + "](" + attachmentsUrlString + ")\n";
         textEdit->insertPlainText(attachmentLink);

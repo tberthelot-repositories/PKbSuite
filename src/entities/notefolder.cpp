@@ -1,6 +1,5 @@
 #include "notefolder.h"
 
-#include <services/owncloudservice.h>
 #include <utils/misc.h>
 
 #include <QDebug>
@@ -16,33 +15,25 @@
 
 #include "notesubfolder.h"
 
-NoteFolder::NoteFolder()
-    : name(QLatin1String("")),
-      localPath(QLatin1String("")),
-      remotePath(QLatin1String("")) {
+NoteFolder::NoteFolder() : name(QString()),
+                           localPath(QString()) {
     id = 0;
-    cloudConnectionId = 1;
+//    name = "";
+//    localPath = "";
     priority = 0;
     activeTagId = 0;
     showSubfolders = false;
-    useGit = false;
 }
 
 int NoteFolder::getId() const { return this->id; }
 
 QString NoteFolder::getLocalPath() const { return this->localPath; }
 
-int NoteFolder::getCloudConnectionId() const { return this->cloudConnectionId; }
-
 QString NoteFolder::getName() const { return this->name; }
-
-QString NoteFolder::getRemotePath() const { return this->remotePath; }
 
 int NoteFolder::getPriority() const { return this->priority; }
 
 bool NoteFolder::isShowSubfolders() const { return showSubfolders; }
-
-bool NoteFolder::isUseGit() const { return useGit; }
 
 int NoteFolder::getActiveTagId() const { return this->activeTagId; }
 
@@ -52,17 +43,11 @@ NoteSubFolder NoteFolder::getActiveNoteSubFolder() const {
 
 void NoteFolder::setName(const QString &text) { this->name = text; }
 
-void NoteFolder::setCloudConnectionId(int id) { this->cloudConnectionId = id; }
-
 void NoteFolder::setLocalPath(const QString &text) { this->localPath = text; }
-
-void NoteFolder::setRemotePath(const QString &text) { this->remotePath = text; }
 
 void NoteFolder::setPriority(int value) { this->priority = value; }
 
 void NoteFolder::setShowSubfolders(bool value) { showSubfolders = value; }
-
-void NoteFolder::setUseGit(bool value) { useGit = value; }
 
 void NoteFolder::setActiveTagId(int value) { this->activeTagId = value; }
 
@@ -74,20 +59,14 @@ void NoteFolder::resetActiveNoteSubFolder() {
     this->activeNoteSubFolderData.clear();
 }
 
-bool NoteFolder::create(const QString &name, const QString &localPath,
-                        int cloudConnectionId, const QString &remotePath) {
-    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("disk"));
+bool NoteFolder::create(const QString& name, const QString& localPath) {
+    QSqlDatabase db = QSqlDatabase::database(QStringLiteral("disk"));
     QSqlQuery query(db);
 
-    query.prepare(
-        QStringLiteral("INSERT INTO noteFolder ( name, local_path, "
-                       "cloud_connection_id, remote_path ) "
-                       "VALUES ( :name, :localPath, :cloudConnectionId, "
-                       ":remotePath )"));
-    query.bindValue(QStringLiteral(":name"), name);
-    query.bindValue(QStringLiteral(":localPath"), localPath);
-    query.bindValue(QStringLiteral(":cloudConnectionId"), cloudConnectionId);
-    query.bindValue(QStringLiteral(":remotePath"), remotePath);
+    query.prepare("INSERT INTO noteFolder ( name, local_path) "
+                          "VALUES ( :name, :localPath )");
+    query.bindValue(":name", name);
+    query.bindValue(":localPath", localPath);
     return query.exec();
 }
 
@@ -161,20 +140,16 @@ NoteFolder NoteFolder::noteFolderFromQuery(const QSqlQuery &query) {
 bool NoteFolder::fillFromQuery(const QSqlQuery &query) {
     this->id = query.value(QStringLiteral("id")).toInt();
     this->name = query.value(QStringLiteral("name")).toString();
-    this->cloudConnectionId =
-        query.value(QStringLiteral("cloud_connection_id")).toInt();
-    this->remotePath = query.value(QStringLiteral("remote_path")).toString();
     this->priority = query.value(QStringLiteral("priority")).toInt();
     this->showSubfolders =
         query.value(QStringLiteral("show_subfolders")).toBool();
-    this->useGit = query.value(QStringLiteral("use_git")).toBool();
     this->activeTagId = query.value(QStringLiteral("active_tag_id")).toInt();
     this->activeNoteSubFolderData =
         query.value(QStringLiteral("active_note_sub_folder_data")).toString();
 
     // prepend the portable data path if we are in portable mode
-    this->localPath = Utils::Misc::prependPortableDataPathIfNeeded(
-        query.value(QStringLiteral("local_path")).toString());
+    this->localPath =
+        query.value(QStringLiteral("local_path")).toString();
 
     return true;
 }
@@ -207,40 +182,30 @@ bool NoteFolder::store() {
 
     if (this->id > 0) {
         query.prepare(QStringLiteral(
-            "UPDATE noteFolder SET name = :name, local_path = :localPath, "
-            "cloud_connection_id = :cloudConnectionId, "
-            "remote_path = :remotePath, priority = :priority, "
-            "active_tag_id = :activeTagId, show_subfolders = "
-            ":showSubfolders, active_note_sub_folder_data = "
-            ":activeNoteSubFolderData, use_git = :useGit WHERE "
-            "id = :id"));
+                "UPDATE noteFolder SET name = :name, local_path = :localPath, "
+                        "priority = :priority, "
+                        "active_tag_id = :activeTagId, show_subfolders = "
+                        ":showSubfolders, active_note_sub_folder_data = "
+                        ":activeNoteSubFolderData WHERE "
+                        "id = :id"));
         query.bindValue(QStringLiteral(":id"), this->id);
     } else {
         query.prepare(QStringLiteral(
-            "INSERT INTO noteFolder (name, local_path, cloud_connection_id, "
-            "remote_path, priority, active_tag_id, "
-            "show_subfolders, active_note_sub_folder_data, use_git)"
-            " VALUES (:name, :localPath, :cloudConnectionId, "
-            ":remotePath, :priority, :activeTagId, "
-            ":showSubfolders, :activeNoteSubFolderData, :useGit)"));
+                "INSERT INTO noteFolder (name, local_path,"
+                        "priority, active_tag_id, "
+                        "show_subfolders, active_note_sub_folder_data)"
+                        " VALUES (:name, :localPath, "
+                        ":priority, :activeTagId, "
+                        ":showSubfolders, :activeNoteSubFolderData)"));
     }
 
     query.bindValue(QStringLiteral(":name"), this->name);
-    query.bindValue(QStringLiteral(":cloudConnectionId"),
-                    this->cloudConnectionId);
-    query.bindValue(QStringLiteral(":remotePath"), this->remotePath);
     query.bindValue(QStringLiteral(":priority"), this->priority);
     query.bindValue(QStringLiteral(":activeTagId"), this->activeTagId);
     query.bindValue(QStringLiteral(":showSubfolders"), this->showSubfolders);
-    query.bindValue(QStringLiteral(":useGit"), this->useGit);
-    query.bindValue(QStringLiteral(":activeNoteSubFolderData"),
-                    this->activeNoteSubFolderData);
+    query.bindValue(QStringLiteral(":activeNoteSubFolderData"), this->activeNoteSubFolderData);
 
-    // make the path relative to the portable data path if we are in
-    // portable mode
-    query.bindValue(QStringLiteral(":localPath"),
-                    Utils::Misc::makePathRelativeToPortableDataPathIfNeeded(
-                        this->localPath));
+    query.bindValue(QStringLiteral(":localPath"), this->localPath);
 
     if (!query.exec()) {
         // on error
@@ -267,12 +232,7 @@ void NoteFolder::setAsCurrent() const {
 
     // make the path relative to the portable data path if we are in
     // portable mode
-    settings.setValue(
-        QStringLiteral("notesPath"),
-        Utils::Misc::makePathRelativeToPortableDataPathIfNeeded(localPath));
-
-    // we need to reset the instance
-    OwnCloudService::instance(true);
+    settings.setValue(QStringLiteral("notesPath"), localPath);
 }
 
 /**
@@ -293,34 +253,6 @@ int NoteFolder::currentNoteFolderId() {
  */
 NoteFolder NoteFolder::currentNoteFolder() {
     return NoteFolder::fetch(currentNoteFolderId());
-}
-
-/**
- * Fetches the current remote path for the ownCloud service
- */
-QString NoteFolder::currentRemotePath(bool addTrailingSlash) {
-    QString remotePath;
-    const NoteFolder noteFolder = currentNoteFolder();
-
-    if (noteFolder.isFetched()) {
-        remotePath = noteFolder.getRemotePath();
-    }
-
-    // add a leading "/"
-    remotePath = Utils::Misc::prependIfDoesNotStartWith(std::move(remotePath),
-                                                        QStringLiteral("/"));
-
-    if (addTrailingSlash) {
-        // add a trailing "/"
-        remotePath = Utils::Misc::appendIfDoesNotEndWith(std::move(remotePath),
-                                                         QStringLiteral("/"));
-    } else {
-        // remove a trailing "/"
-        remotePath = Utils::Misc::removeIfEndsWith(std::move(remotePath),
-                                                   QStringLiteral("/"));
-    }
-
-    return remotePath;
 }
 
 /**
@@ -347,9 +279,7 @@ QString NoteFolder::currentLocalPath() {
     if (path.isEmpty()) {
         const QSettings settings;
 
-        // prepend the portable data path if we are in portable mode
-        path = Utils::Misc::prependPortableDataPathIfNeeded(
-            settings.value(QStringLiteral("notesPath")).toString());
+        path = settings.value(QStringLiteral("notesPath")).toString();
     }
 
     path = Utils::Misc::removeIfEndsWith(std::move(path), QDir::separator());
@@ -379,22 +309,6 @@ QString NoteFolder::currentTrashPath() {
 }
 
 /**
- * Fetches the current media path
- */
-QString NoteFolder::currentMediaPath() {
-    return NoteFolder::currentLocalPath() + QDir::separator() +
-           QStringLiteral("media");
-}
-
-/**
- * Fetches the current attachments path
- */
-QString NoteFolder::currentAttachmentsPath() {
-    return NoteFolder::currentLocalPath() + QDir::separator() +
-           QStringLiteral("attachments");
-}
-
-/**
  * Checks if there are note subfolders in the current note folder
  */
 bool NoteFolder::isCurrentHasSubfolders() {
@@ -418,45 +332,14 @@ bool NoteFolder::isCurrentNoteTreeEnabled() {
 }
 
 /**
- * Suggests a remote path from an old localOwnCloudPath
- */
-QString NoteFolder::suggestRemotePath() {
-    const QSettings settings;
-    const QString localOwnCloudPath =
-        settings.value(QStringLiteral("ownCloud/localOwnCloudPath")).toString();
-
-    // get remote path from local ownCloud path
-    if (!localOwnCloudPath.isEmpty()) {
-        remotePath = localPath;
-        remotePath.remove(localOwnCloudPath);
-        fixRemotePath();
-    } else {
-        remotePath = QStringLiteral("Notes");
-    }
-
-    return remotePath;
-}
-
-/**
- * Removes a leading or trailing slash from the remote path
- */
-QString NoteFolder::fixRemotePath() {
-    remotePath = Utils::Misc::removeIfStartsWith(std::move(remotePath),
-                                                 QStringLiteral("/"));
-    remotePath = Utils::Misc::removeIfEndsWith(std::move(remotePath),
-                                               QStringLiteral("/"));
-    return remotePath;
-}
-
-/**
  * Migrate the notesPath and the recentNoteFolders to NoteFolder objects
  */
 bool NoteFolder::migrateToNoteFolders() {
     QSettings settings;
 
     // prepend the portable data path if we are in portable mode
-    const QString notesPath = Utils::Misc::prependPortableDataPathIfNeeded(
-        settings.value(QStringLiteral("notesPath")).toString());
+    const QString notesPath = 
+        settings.value(QStringLiteral("notesPath")).toString();
 
     if (countAll() > 0) {
         if (currentNoteFolder().getLocalPath() == notesPath) return false;
@@ -469,8 +352,6 @@ bool NoteFolder::migrateToNoteFolders() {
         NoteFolder noteFolder;
         noteFolder.setName(QObject::tr("default"));
         noteFolder.setLocalPath(notesPath);
-        noteFolder.setCloudConnectionId(1);
-        noteFolder.suggestRemotePath();
         noteFolder.setPriority(priority++);
         noteFolder.setShowSubfolders(
             settings.value(QStringLiteral("showNoteSubFolders")).toBool());
@@ -493,8 +374,6 @@ bool NoteFolder::migrateToNoteFolders() {
                 NoteFolder noteFolder;
                 noteFolder.setName(recentNoteFolderPath);
                 noteFolder.setLocalPath(recentNoteFolderPath);
-                noteFolder.setCloudConnectionId(1);
-                noteFolder.suggestRemotePath();
                 noteFolder.setPriority(priority++);
                 noteFolder.store();
             }
@@ -565,9 +444,8 @@ QVariant NoteFolder::settingsValue(const QString &key,
 }
 
 QDebug operator<<(QDebug dbg, const NoteFolder &noteFolder) {
-    dbg.nospace() << "NoteFolder: <id>" << noteFolder.id << " <name>"
-                  << noteFolder.name << " <localPath>" << noteFolder.localPath
-                  << " <remotePath>" << noteFolder.remotePath << " <priority>"
-                  << noteFolder.priority;
+    dbg.nospace() << "NoteFolder: <id>" << noteFolder.id << " <name>" <<
+            noteFolder.name << " <localPath>" << noteFolder.localPath <<
+            " <priority>" << noteFolder.priority;
     return dbg.space();
 }

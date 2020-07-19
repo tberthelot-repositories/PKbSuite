@@ -19,9 +19,15 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
-#include "threads/scriptthread.h"
 
-struct TerminalCmd;
+struct TerminalCmd {
+    QString executablePath;
+    QStringList parameters;
+    QByteArray data;
+    int exitCode;
+    QByteArray resultSet;
+};
+
 class QFile;
 
 /*  Miscellaneous functions that can be useful */
@@ -92,7 +98,6 @@ QList<QObject *> getParents(QObject *object);
 QString appDataPath();
 QString logFilePath();
 QString transformLineFeeds(QString text);
-QString replaceOwnCloudText(QString text, bool useShortText = false);
 void restartApplication();
 void needRestart();
 bool downloadUrlToFile(const QUrl &url, QFile *file);
@@ -124,8 +129,6 @@ QString prepareDebugInformationLine(const QString &headline, QString data,
 QString generateDebugInformation(bool withGitHubLineBreaks = true);
 bool regExpInListMatches(const QString &text, const QStringList &regExpList);
 bool isDarkModeIconTheme();
-void transformNextcloudPreviewImages(QString &html, int maxImageWidth,
-                                     ExternalImageHash *externalImageHash);
 void transformRemotePreviewImages(QString &html, int maxImageWidth,
                                   ExternalImageHash *externalImageHash);
 QString remotePreviewImageTagToInlineImageTag(QString imageTag,

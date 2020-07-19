@@ -8,7 +8,7 @@
 #include "filedialog.h"
 #include "libraries/qtcsv/src/include/reader.h"
 #include "ui_tabledialog.h"
-#include "widgets/qownnotesmarkdowntextedit.h"
+#include "widgets/pkbsuitemarkdowntextedit.h"
 
 TableDialog::TableDialog(QWidget *parent)
     : MasterDialog(parent), ui(new Ui::TableDialog) {

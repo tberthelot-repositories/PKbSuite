@@ -18,7 +18,6 @@ NoteApi* NoteApi::fetch(int _id) {
         _noteText = _note.getNoteText();
         _hasDirtyData = _note.getHasDirtyData();
         _noteSubFolderId = _note.getNoteSubFolderId();
-        _decryptedNoteText = _note.getDecryptedNoteText();
         _fileCreated = _note.getFileCreated();
         _fileLastModified = _note.getFileLastModified();
     }
@@ -173,7 +172,7 @@ QQmlListProperty<NoteApi> NoteApi::fetchAll(int limit, int offset) {
  */
 QString NoteApi::toMarkdownHtml(bool forExport) {
     return _note.toMarkdownHtml(NoteFolder::currentLocalPath(), 980, forExport,
-                                true, true);
+                                true);
 }
 
 /**

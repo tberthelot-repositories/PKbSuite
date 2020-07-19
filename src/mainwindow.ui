@@ -11,10 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">QOwnNotes</string>
+   <string notr="true">PKbSuite</string>
   </property>
   <property name="windowIcon">
-   <iconset theme="QOwnNotes" resource="images.qrc">
+   <iconset theme="PKbSuite" resource="images.qrc">
     <normaloff>:/images/icon.png</normaloff>:/images/icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -590,37 +590,15 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QOwnNotesMarkdownTextEdit" name="noteTextEdit">
+              <widget class="PKbSuiteMarkdownTextEdit" name="noteTextEdit" native="true">
                <property name="enabled">
                 <bool>true</bool>
                </property>
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="cursorWidth">
+               <property name="cursorWidth" stdset="0">
                 <number>1</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QOwnNotesMarkdownTextEdit" name="encryptedNoteTextEdit">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="contextMenuPolicy">
-                <enum>Qt::CustomContextMenu</enum>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">QPlainTextEdit {
-	border: 3px dashed #aa0000;
-}
-</string>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
                </property>
               </widget>
              </item>
@@ -658,8 +636,8 @@
                 <string notr="true">2</string>
                </property>
                <property name="icon">
-                <iconset theme="text-x-generic" resource="breeze-qownnotes.qrc">
-                 <normaloff>:/icons/breeze-qownnotes/16x16/text-x-generic.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-x-generic.svg</iconset>
+                <iconset theme="text-x-generic" resource="breeze-pkbsuite.qrc">
+                 <normaloff>:/icons/breeze-pkbsuite/16x16/text-x-generic.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-x-generic.svg</iconset>
                </property>
                <property name="toolButtonStyle">
                 <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -699,8 +677,8 @@
                 <string>Add tag</string>
                </property>
                <property name="icon">
-                <iconset theme="tag" resource="breeze-qownnotes.qrc">
-                 <normaloff>:/icons/breeze-qownnotes/16x16/tag.svg</normaloff>:/icons/breeze-qownnotes/16x16/tag.svg</iconset>
+                <iconset theme="tag" resource="breeze-pkbsuite.qrc">
+                 <normaloff>:/icons/breeze-pkbsuite/16x16/tag.svg</normaloff>:/icons/breeze-pkbsuite/16x16/tag.svg</iconset>
                </property>
               </widget>
              </item>
@@ -745,65 +723,6 @@
          <property name="bottomMargin">
           <number>0</number>
          </property>
-         <item row="0" column="1">
-          <widget class="QScrollArea" name="scriptingScrollArea">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>10</height>
-            </size>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-           <property name="widgetResizable">
-            <bool>true</bool>
-           </property>
-           <widget class="QWidget" name="scrollAreaWidgetContents">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>293</width>
-              <height>28</height>
-             </rect>
-            </property>
-            <layout class="QVBoxLayout" name="scriptingScrollAreaLayout">
-             <property name="leftMargin">
-              <number>3</number>
-             </property>
-             <property name="topMargin">
-              <number>3</number>
-             </property>
-             <property name="rightMargin">
-              <number>3</number>
-             </property>
-             <property name="bottomMargin">
-              <number>3</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="scriptingDemoLabel">
-               <property name="text">
-                <string notr="true">Scripting label</string>
-               </property>
-               <property name="wordWrap">
-                <bool>true</bool>
-               </property>
-               <property name="textInteractionFlags">
-                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </widget>
-         </item>
          <item row="1" column="1">
           <widget class="NotePreviewWidget" name="noteTextView">
            <property name="enabled">
@@ -822,7 +741,7 @@
             <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="acceptRichText">
@@ -859,10 +778,10 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1383</width>
-     <height>34</height>
+     <height>30</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuQOwnNotes">
+   <widget class="QMenu" name="menuPKbSuite">
     <property name="title">
      <string>&amp;Note</string>
     </property>
@@ -886,8 +805,8 @@ p, li { white-space: pre-wrap; }
       <string>Export</string>
      </property>
      <property name="icon">
-      <iconset theme="document-export" resource="breeze-dark-qownnotes.qrc">
-       <normaloff>:/icons/breeze-dark-qownnotes/16x16/document-export.svg</normaloff>:/icons/breeze-dark-qownnotes/16x16/document-export.svg</iconset>
+      <iconset theme="document-export" resource="breeze-dark-pkbsuite.qrc">
+       <normaloff>:/icons/breeze-dark-pkbsuite/16x16/document-export.svg</normaloff>:/icons/breeze-dark-pkbsuite/16x16/document-export.svg</iconset>
      </property>
      <addaction name="action_Export_note_as_PDF_text"/>
      <addaction name="action_Export_note_as_PDF_markdown"/>
@@ -902,7 +821,6 @@ p, li { white-space: pre-wrap; }
       <iconset theme="document-import">
        <normaloff>.</normaloff>.</iconset>
      </property>
-     <addaction name="actionImport_notes_from_Evernote"/>
      <addaction name="actionImport_notes_from_text_files"/>
      <addaction name="actionImport_bookmarks_from_server"/>
     </widget>
@@ -911,8 +829,8 @@ p, li { white-space: pre-wrap; }
       <string>Navigation</string>
      </property>
      <property name="icon">
-      <iconset theme="go-down" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/go-down.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-down.svg</iconset>
+      <iconset theme="go-down" resource="breeze-pkbsuite.qrc">
+       <normaloff>:/icons/breeze-pkbsuite/16x16/go-down.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-down.svg</iconset>
      </property>
      <addaction name="action_Back_in_note_history"/>
      <addaction name="action_Forward_in_note_history"/>
@@ -928,8 +846,8 @@ p, li { white-space: pre-wrap; }
       <string>Print</string>
      </property>
      <property name="icon">
-      <iconset theme="document-print" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/document-print.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-print.svg</iconset>
+      <iconset theme="document-print" resource="breeze-pkbsuite.qrc">
+       <normaloff>:/icons/breeze-pkbsuite/16x16/document-print.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-print.svg</iconset>
      </property>
      <addaction name="action_Print_note_text"/>
      <addaction name="action_Print_note_markdown"/>
@@ -939,30 +857,19 @@ p, li { white-space: pre-wrap; }
       <string>View note</string>
      </property>
      <property name="icon">
-      <iconset theme="window" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/window.svg</normaloff>:/icons/breeze-qownnotes/16x16/window.svg</iconset>
+      <iconset theme="window" resource="breeze-pkbsuite.qrc">
+       <normaloff>:/icons/breeze-pkbsuite/16x16/window.svg</normaloff>:/icons/breeze-pkbsuite/16x16/window.svg</iconset>
      </property>
      <addaction name="action_Open_note_in_external_editor"/>
      <addaction name="actionShow_note_in_file_manager"/>
      <addaction name="actionView_note_in_new_window"/>
-    </widget>
-    <widget class="QMenu" name="menuTrash">
-     <property name="title">
-      <string>Trash</string>
-     </property>
-     <property name="icon">
-      <iconset theme="trash-empty" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/trash-empty.svg</normaloff>:/icons/breeze-qownnotes/16x16/trash-empty.svg</iconset>
-     </property>
-     <addaction name="actionShow_local_trash"/>
-     <addaction name="actionShow_trash"/>
     </widget>
     <addaction name="action_New_note"/>
     <addaction name="actionNew_note_in_new_tab"/>
     <addaction name="action_Find_note"/>
     <addaction name="actionFind_notes_in_all_subfolders"/>
     <addaction name="menuNavigation"/>
-    <addaction name="menuTrash"/>
+    <addaction name="actionShow_local_trash"/>
     <addaction name="menuSort_by"/>
     <addaction name="actionAllow_note_editing"/>
     <addaction name="separator"/>
@@ -971,7 +878,6 @@ p, li { white-space: pre-wrap; }
     <addaction name="menuPrint"/>
     <addaction name="separator"/>
     <addaction name="menuView_note"/>
-    <addaction name="actionShare_note"/>
     <addaction name="actionSave_modified_notes"/>
     <addaction name="separator"/>
     <addaction name="action_Reload_note_folder"/>
@@ -987,32 +893,12 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>&amp;Help</string>
     </property>
-    <widget class="QMenu" name="menuOpen_chat">
-     <property name="title">
-      <string>Open chat</string>
-     </property>
-     <property name="icon">
-      <iconset theme="im-user-online" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/im-user-online.svg</normaloff>:/icons/breeze-qownnotes/16x16/im-user-online.svg</iconset>
-     </property>
-     <addaction name="actionTelegram"/>
-     <addaction name="actionRiot"/>
-     <addaction name="actionGitter"/>
-     <addaction name="actionOpen_IRC_Channel"/>
-    </widget>
     <addaction name="actionFind_action"/>
     <addaction name="separator"/>
-    <addaction name="actionCheck_for_updates"/>
-    <addaction name="actionShow_changelog"/>
     <addaction name="action_Shortcuts"/>
     <addaction name="actionMarkdown_cheatsheet"/>
-    <addaction name="action_Knowledge_base"/>
-    <addaction name="actionGet_invloved"/>
-    <addaction name="menuOpen_chat"/>
-    <addaction name="actionReport_problems_or_ideas"/>
-    <addaction name="actionDonate"/>
     <addaction name="separator"/>
-    <addaction name="actionAbout_QOwnNotes"/>
+    <addaction name="actionAbout_PKbSuite"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -1023,8 +909,8 @@ p, li { white-space: pre-wrap; }
       <string>Insert</string>
      </property>
      <property name="icon">
-      <iconset theme="mail-attachment" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/mail-attachment.svg</normaloff>:/icons/breeze-qownnotes/16x16/mail-attachment.svg</iconset>
+      <iconset theme="mail-attachment" resource="breeze-pkbsuite.qrc">
+       <normaloff>:/icons/breeze-pkbsuite/16x16/mail-attachment.svg</normaloff>:/icons/breeze-pkbsuite/16x16/mail-attachment.svg</iconset>
      </property>
      <addaction name="actionInsert_Link_to_note"/>
      <addaction name="actionInsert_image"/>
@@ -1040,8 +926,8 @@ p, li { white-space: pre-wrap; }
       <string>Format</string>
      </property>
      <property name="icon">
-      <iconset theme="format-text-bold" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/format-text-bold.svg</normaloff>:/icons/breeze-qownnotes/16x16/format-text-bold.svg</iconset>
+      <iconset theme="format-text-bold" resource="breeze-pkbsuite.qrc">
+       <normaloff>:/icons/breeze-pkbsuite/16x16/format-text-bold.svg</normaloff>:/icons/breeze-pkbsuite/16x16/format-text-bold.svg</iconset>
      </property>
      <addaction name="actionFormat_text_bold"/>
      <addaction name="actionFormat_text_italic"/>
@@ -1053,8 +939,8 @@ p, li { white-space: pre-wrap; }
       <string>Extra</string>
      </property>
      <property name="icon">
-      <iconset theme="split" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/split.svg</normaloff>:/icons/breeze-qownnotes/16x16/split.svg</iconset>
+      <iconset theme="split" resource="breeze-pkbsuite.qrc">
+       <normaloff>:/icons/breeze-pkbsuite/16x16/split.svg</normaloff>:/icons/breeze-pkbsuite/16x16/split.svg</iconset>
      </property>
      <addaction name="actionCopy_headline"/>
      <addaction name="actionSearch_text_on_the_web"/>
@@ -1069,36 +955,13 @@ p, li { white-space: pre-wrap; }
       <string>Edit</string>
      </property>
      <property name="icon">
-      <iconset theme="document-edit" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/document-edit.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-edit.svg</iconset>
+      <iconset theme="document-edit" resource="breeze-pkbsuite.qrc">
+       <normaloff>:/icons/breeze-pkbsuite/16x16/document-edit.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-edit.svg</iconset>
      </property>
      <addaction name="action_DuplicateText"/>
      <addaction name="action_FormatTable"/>
      <addaction name="actionDelete_line"/>
      <addaction name="actionDelete_word"/>
-    </widget>
-    <widget class="QMenu" name="menuVersioning">
-     <property name="title">
-      <string>Versioning</string>
-     </property>
-     <property name="icon">
-      <iconset theme="appointment-new" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/appointment-new.svg</normaloff>:/icons/breeze-qownnotes/16x16/appointment-new.svg</iconset>
-     </property>
-     <addaction name="actionShow_versions"/>
-     <addaction name="actionShow_note_git_versions"/>
-    </widget>
-    <widget class="QMenu" name="menuEncryption">
-     <property name="title">
-      <string>Encryption</string>
-     </property>
-     <property name="icon">
-      <iconset theme="document-encrypted" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/document-encrypted.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-encrypted.svg</iconset>
-     </property>
-     <addaction name="action_Encrypt_note"/>
-     <addaction name="actionEdit_encrypted_note"/>
-     <addaction name="actionDecrypt_note"/>
     </widget>
     <widget class="QMenu" name="menuLanguages">
      <property name="title">
@@ -1121,20 +984,12 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionSelect_all_notes"/>
     <addaction name="actionPaste_image"/>
     <addaction name="separator"/>
-    <addaction name="menuVersioning"/>
-    <addaction name="menuEncryption"/>
     <addaction name="menuExtra"/>
     <addaction name="separator"/>
     <addaction name="actionCheck_spelling"/>
     <addaction name="menuSpelling_backend"/>
     <addaction name="menuLanguages"/>
     <addaction name="actionManage_dictionaries"/>
-   </widget>
-   <widget class="QMenu" name="menuTodo">
-    <property name="title">
-     <string>To&amp;do</string>
-    </property>
-    <addaction name="actionOpen_List"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -1173,8 +1028,8 @@ p, li { white-space: pre-wrap; }
       <string extracomment="To show or hide stuff">Show</string>
      </property>
      <property name="icon">
-      <iconset theme="application-menu" resource="breeze-qownnotes.qrc">
-       <normaloff>:/icons/breeze-qownnotes/16x16/application-menu.svg</normaloff>:/icons/breeze-qownnotes/16x16/application-menu.svg</iconset>
+      <iconset theme="application-menu" resource="breeze-pkbsuite.qrc">
+       <normaloff>:/icons/breeze-pkbsuite/16x16/application-menu.svg</normaloff>:/icons/breeze-pkbsuite/16x16/application-menu.svg</iconset>
      </property>
      <addaction name="actionShow_menu_bar"/>
      <addaction name="actionShow_toolbar"/>
@@ -1228,27 +1083,9 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="action_new_tag"/>
    </widget>
-   <widget class="QMenu" name="menuScripting">
-    <property name="title">
-     <string>&amp;Scripting</string>
-    </property>
-    <widget class="QMenu" name="menuCustom_actions">
-     <property name="title">
-      <string>Custom actions</string>
-     </property>
-    </widget>
-    <addaction name="actionScript_repository"/>
-    <addaction name="actionScript_settings"/>
-    <addaction name="actionCheck_for_script_updates"/>
-    <addaction name="separator"/>
-    <addaction name="actionReload_scripting_engine"/>
-    <addaction name="menuCustom_actions"/>
-   </widget>
-   <addaction name="menuQOwnNotes"/>
+   <addaction name="menuPKbSuite"/>
    <addaction name="menuEdit"/>
    <addaction name="menuTag"/>
-   <addaction name="menuTodo"/>
-   <addaction name="menuScripting"/>
    <addaction name="menuWindow"/>
    <addaction name="menu_Help"/>
   </widget>
@@ -1274,18 +1111,24 @@ p, li { white-space: pre-wrap; }
    <addaction name="separator"/>
    <addaction name="action_Find_text_in_note"/>
    <addaction name="actionReplace_in_current_note"/>
-   <addaction name="separator"/>
-   <addaction name="actionShow_versions"/>
-   <addaction name="actionShow_trash"/>
-   <addaction name="actionShare_note"/>
-   <addaction name="separator"/>
-   <addaction name="actionOpen_List"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="viewToolbar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionShow_Preview_Panel"/>
+  </widget>
   <action name="action_Quit">
    <property name="icon">
-    <iconset theme="application-exit" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/application-exit.svg</normaloff>:/icons/breeze-qownnotes/16x16/application-exit.svg</iconset>
+    <iconset theme="application-exit" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/application-exit.svg</normaloff>:/icons/breeze-pkbsuite/16x16/application-exit.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Quit</string>
@@ -1299,8 +1142,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionSet_ownCloud_Folder">
    <property name="icon">
-    <iconset theme="folder-sync" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/folder-sync.svg</normaloff>:/icons/breeze-qownnotes/16x16/folder-sync.svg</iconset>
+    <iconset theme="folder-sync" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/folder-sync.svg</normaloff>:/icons/breeze-pkbsuite/16x16/folder-sync.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Setup note folders</string>
@@ -1308,8 +1151,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Find_note">
    <property name="icon">
-    <iconset theme="edit-find" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/edit-find.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-find.svg</iconset>
+    <iconset theme="edit-find" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/edit-find.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-find.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Find note</string>
@@ -1320,8 +1163,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Remove_note">
    <property name="icon">
-    <iconset theme="edit-delete" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/edit-delete.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-delete.svg</iconset>
+    <iconset theme="edit-delete" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/edit-delete.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-delete.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Remove current note</string>
@@ -1330,13 +1173,13 @@ p, li { white-space: pre-wrap; }
     <string notr="true">Alt+R</string>
    </property>
   </action>
-  <action name="actionAbout_QOwnNotes">
+  <action name="actionAbout_PKbSuite">
    <property name="icon">
-    <iconset theme="help-about" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/help-about.svg</normaloff>:/icons/breeze-qownnotes/16x16/help-about.svg</iconset>
+    <iconset theme="help-about" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/help-about.svg</normaloff>:/icons/breeze-pkbsuite/16x16/help-about.svg</iconset>
    </property>
    <property name="text">
-    <string>About &amp;QOwnNotes…</string>
+    <string>About &amp;PKbSuite…</string>
    </property>
    <property name="menuRole">
     <enum>QAction::AboutRole</enum>
@@ -1344,8 +1187,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_New_note">
    <property name="icon">
-    <iconset theme="document-new" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-new.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-new.svg</iconset>
+    <iconset theme="document-new" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/document-new.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-new.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;New note</string>
@@ -1356,8 +1199,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionCheck_for_updates">
    <property name="icon">
-    <iconset theme="svn-update" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/svn-update.svg</normaloff>:/icons/breeze-qownnotes/16x16/svn-update.svg</iconset>
+    <iconset theme="svn-update" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/svn-update.svg</normaloff>:/icons/breeze-pkbsuite/16x16/svn-update.svg</iconset>
    </property>
    <property name="text">
     <string>Check for &amp;updates</string>
@@ -1368,8 +1211,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionReport_problems_or_ideas">
    <property name="icon">
-    <iconset theme="face-smile" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/face-smile.svg</normaloff>:/icons/breeze-qownnotes/16x16/face-smile.svg</iconset>
+    <iconset theme="face-smile" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/face-smile.svg</normaloff>:/icons/breeze-pkbsuite/16x16/face-smile.svg</iconset>
    </property>
    <property name="text">
     <string>Post questions, feature requests or issues</string>
@@ -1402,8 +1245,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Settings">
    <property name="icon">
-    <iconset theme="configure" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</iconset>
+    <iconset theme="configure" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Settings</string>
@@ -1415,30 +1258,6 @@ p, li { white-space: pre-wrap; }
     <enum>QAction::PreferencesRole</enum>
    </property>
   </action>
-  <action name="actionShow_versions">
-   <property name="icon">
-    <iconset theme="appointment-new" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/appointment-new.svg</normaloff>:/icons/breeze-qownnotes/16x16/appointment-new.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show note &amp;versions</string>
-   </property>
-   <property name="toolTip">
-    <string>Show note versions on server</string>
-   </property>
-  </action>
-  <action name="actionShow_trash">
-   <property name="icon">
-    <iconset theme="trash-empty" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/trash-empty.svg</normaloff>:/icons/breeze-qownnotes/16x16/trash-empty.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show remote trash</string>
-   </property>
-   <property name="toolTip">
-    <string>Show trashed notes on server</string>
-   </property>
-  </action>
   <action name="actionSelect_all_notes">
    <property name="text">
     <string>Select &amp;all notes</string>
@@ -1446,8 +1265,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionInsert_Link_to_note">
    <property name="icon">
-    <iconset theme="text-frame-link" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/text-frame-link.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-frame-link.svg</iconset>
+    <iconset theme="text-frame-link" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/text-frame-link.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-frame-link.svg</iconset>
    </property>
    <property name="text">
     <string>Insert &amp;link</string>
@@ -1461,8 +1280,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Find_text_in_note">
    <property name="icon">
-    <iconset theme="edit-find-in-note" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/edit-find-in-note.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-find-in-note.svg</iconset>
+    <iconset theme="edit-find-in-note" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/edit-find-in-note.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-find-in-note.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Find in current note</string>
@@ -1489,8 +1308,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Back_in_note_history">
    <property name="icon">
-    <iconset theme="go-previous" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/go-previous.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-previous.svg</iconset>
+    <iconset theme="go-previous" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/go-previous.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-previous.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Back in note history</string>
@@ -1501,8 +1320,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Forward_in_note_history">
    <property name="icon">
-    <iconset theme="go-next" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/go-next.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-next.svg</iconset>
+    <iconset theme="go-next" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/go-next.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-next.svg</iconset>
    </property>
    <property name="text">
     <string>Forward in note history</string>
@@ -1513,8 +1332,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Shortcuts">
    <property name="icon">
-    <iconset theme="applications-system" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/applications-system.svg</normaloff>:/icons/breeze-qownnotes/16x16/applications-system.svg</iconset>
+    <iconset theme="applications-system" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/applications-system.svg</normaloff>:/icons/breeze-pkbsuite/16x16/applications-system.svg</iconset>
    </property>
    <property name="text">
     <string>Show shortcuts</string>
@@ -1522,8 +1341,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Knowledge_base">
    <property name="icon">
-    <iconset theme="dialog-information" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/dialog-information.svg</normaloff>:/icons/breeze-qownnotes/16x16/dialog-information.svg</iconset>
+    <iconset theme="dialog-information" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/dialog-information.svg</normaloff>:/icons/breeze-pkbsuite/16x16/dialog-information.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Knowledge base</string>
@@ -1531,8 +1350,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionInsert_current_time">
    <property name="icon">
-    <iconset theme="resource-calendar-insert" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/resource-calendar-insert.svg</normaloff>:/icons/breeze-qownnotes/16x16/resource-calendar-insert.svg</iconset>
+    <iconset theme="resource-calendar-insert" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/resource-calendar-insert.svg</normaloff>:/icons/breeze-pkbsuite/16x16/resource-calendar-insert.svg</iconset>
    </property>
    <property name="text">
     <string>Insert current &amp;time</string>
@@ -1541,22 +1360,10 @@ p, li { white-space: pre-wrap; }
     <string notr="true">Ctrl+T</string>
    </property>
   </action>
-  <action name="actionOpen_List">
-   <property name="icon">
-    <iconset theme="view-calendar-tasks" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/view-calendar-tasks.svg</normaloff>:/icons/breeze-qownnotes/16x16/view-calendar-tasks.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show &amp;Todo List</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true">Ctrl+Shift+T</string>
-   </property>
-  </action>
   <action name="action_Export_note_as_PDF_markdown">
    <property name="icon">
-    <iconset theme="application-pdf" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/application-pdf.svg</normaloff>:/icons/breeze-qownnotes/16x16/application-pdf.svg</iconset>
+    <iconset theme="application-pdf" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/application-pdf.svg</normaloff>:/icons/breeze-pkbsuite/16x16/application-pdf.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Export note as PDF (preview)</string>
@@ -1567,8 +1374,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Export_note_as_PDF_text">
    <property name="icon">
-    <iconset theme="application-pdf" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/application-pdf.svg</normaloff>:/icons/breeze-qownnotes/16x16/application-pdf.svg</iconset>
+    <iconset theme="application-pdf" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/application-pdf.svg</normaloff>:/icons/breeze-pkbsuite/16x16/application-pdf.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Export note as PDF (text)</string>
@@ -1576,8 +1383,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Print_note_text">
    <property name="icon">
-    <iconset theme="document-print" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-print.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-print.svg</iconset>
+    <iconset theme="document-print" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/document-print.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-print.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Print note (text)</string>
@@ -1588,8 +1395,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Print_note_markdown">
    <property name="icon">
-    <iconset theme="document-print" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-print.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-print.svg</iconset>
+    <iconset theme="document-print" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/document-print.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-print.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Print note (preview)</string>
@@ -1600,8 +1407,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionInsert_image">
    <property name="icon">
-    <iconset theme="insert-image" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/insert-image.svg</normaloff>:/icons/breeze-qownnotes/16x16/insert-image.svg</iconset>
+    <iconset theme="insert-image" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/insert-image.svg</normaloff>:/icons/breeze-pkbsuite/16x16/insert-image.svg</iconset>
    </property>
    <property name="text">
     <string>Insert &amp;image</string>
@@ -1615,47 +1422,17 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionShow_changelog">
    <property name="icon">
-    <iconset theme="text-x-changelog" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/text-x-changelog.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-x-changelog.svg</iconset>
+    <iconset theme="text-x-changelog" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/text-x-changelog.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-x-changelog.svg</iconset>
    </property>
    <property name="text">
     <string>Show &amp;changelog</string>
    </property>
   </action>
-  <action name="action_Encrypt_note">
-   <property name="icon">
-    <iconset theme="document-encrypted" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-encrypted.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-encrypted.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Encrypt note</string>
-   </property>
-  </action>
-  <action name="actionEdit_encrypted_note">
-   <property name="icon">
-    <iconset theme="document-edit-encrypt" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-edit-encrypt.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-edit-encrypt.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Edit encrypted note</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true">Ctrl+Shift+E</string>
-   </property>
-  </action>
-  <action name="actionDecrypt_note">
-   <property name="icon">
-    <iconset theme="document-decrypt" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-decrypt.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-decrypt.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Decrypt note</string>
-   </property>
-  </action>
   <action name="action_Open_note_in_external_editor">
    <property name="icon">
-    <iconset theme="story-editor" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/story-editor.svg</normaloff>:/icons/breeze-qownnotes/16x16/story-editor.svg</iconset>
+    <iconset theme="story-editor" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/story-editor.svg</normaloff>:/icons/breeze-pkbsuite/16x16/story-editor.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Open note in external editor</string>
@@ -1666,8 +1443,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Export_note_as_markdown">
    <property name="icon">
-    <iconset theme="text-x-markdown" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/text-x-markdown.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-x-markdown.svg</iconset>
+    <iconset theme="text-x-markdown" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/text-x-markdown.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-x-markdown.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Export note as markdown file</string>
@@ -1675,8 +1452,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionGet_invloved">
    <property name="icon">
-    <iconset theme="archive-extract" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/archive-extract.svg</normaloff>:/icons/breeze-qownnotes/16x16/archive-extract.svg</iconset>
+    <iconset theme="archive-extract" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/archive-extract.svg</normaloff>:/icons/breeze-pkbsuite/16x16/archive-extract.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Get involved</string>
@@ -1684,8 +1461,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionInsert_code_block">
    <property name="icon">
-    <iconset theme="code-context" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/code-context.svg</normaloff>:/icons/breeze-qownnotes/16x16/code-context.svg</iconset>
+    <iconset theme="code-context" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/code-context.svg</normaloff>:/icons/breeze-pkbsuite/16x16/code-context.svg</iconset>
    </property>
    <property name="text">
     <string>Insert &amp;code block</string>
@@ -1696,8 +1473,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionNext_note">
    <property name="icon">
-    <iconset theme="go-down" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/go-down.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-down.svg</iconset>
+    <iconset theme="go-down" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/go-down.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-down.svg</iconset>
    </property>
    <property name="text">
     <string>Next note</string>
@@ -1708,8 +1485,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionPrevious_Note">
    <property name="icon">
-    <iconset theme="go-up" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/go-up.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-up.svg</iconset>
+    <iconset theme="go-up" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/go-up.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-up.svg</iconset>
    </property>
    <property name="text">
     <string>Previous note</string>
@@ -1720,8 +1497,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionToggle_distraction_free_mode">
    <property name="icon">
-    <iconset theme="zoom-original" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/zoom-original.svg</normaloff>:/icons/breeze-qownnotes/16x16/zoom-original.svg</iconset>
+    <iconset theme="zoom-original" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/zoom-original.svg</normaloff>:/icons/breeze-pkbsuite/16x16/zoom-original.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Distraction free mode</string>
@@ -1787,8 +1564,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionPaste_image">
    <property name="icon">
-    <iconset theme="insert-image" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/insert-image.svg</normaloff>:/icons/breeze-qownnotes/16x16/insert-image.svg</iconset>
+    <iconset theme="insert-image" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/insert-image.svg</normaloff>:/icons/breeze-pkbsuite/16x16/insert-image.svg</iconset>
    </property>
    <property name="text">
     <string>Paste html or media</string>
@@ -1805,8 +1582,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionShow_note_in_file_manager">
    <property name="icon">
-    <iconset theme="document-open" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</iconset>
+    <iconset theme="document-open" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</iconset>
    </property>
    <property name="text">
     <string>Show note in &amp;file manager</string>
@@ -1817,8 +1594,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionFormat_text_bold">
    <property name="icon">
-    <iconset theme="format-text-bold" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/format-text-bold.svg</normaloff>:/icons/breeze-qownnotes/16x16/format-text-bold.svg</iconset>
+    <iconset theme="format-text-bold" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/format-text-bold.svg</normaloff>:/icons/breeze-pkbsuite/16x16/format-text-bold.svg</iconset>
    </property>
    <property name="text">
     <string>Format text &amp;bold</string>
@@ -1829,8 +1606,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionFormat_text_italic">
    <property name="icon">
-    <iconset theme="format-text-italic" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/format-text-italic.svg</normaloff>:/icons/breeze-qownnotes/16x16/format-text-italic.svg</iconset>
+    <iconset theme="format-text-italic" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/format-text-italic.svg</normaloff>:/icons/breeze-pkbsuite/16x16/format-text-italic.svg</iconset>
    </property>
    <property name="text">
     <string>Format text &amp;italic</string>
@@ -1841,8 +1618,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Increase_note_text_size">
    <property name="icon">
-    <iconset theme="format-font-size-more" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/format-font-size-more.svg</normaloff>:/icons/breeze-qownnotes/16x16/format-font-size-more.svg</iconset>
+    <iconset theme="format-font-size-more" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/format-font-size-more.svg</normaloff>:/icons/breeze-pkbsuite/16x16/format-font-size-more.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Increase note text size</string>
@@ -1853,8 +1630,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Decrease_note_text_size">
    <property name="icon">
-    <iconset theme="format-font-size-less" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/format-font-size-less.svg</normaloff>:/icons/breeze-qownnotes/16x16/format-font-size-less.svg</iconset>
+    <iconset theme="format-font-size-less" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/format-font-size-less.svg</normaloff>:/icons/breeze-pkbsuite/16x16/format-font-size-less.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Decrease note text size</string>
@@ -1865,8 +1642,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Reset_note_text_size">
    <property name="icon">
-    <iconset theme="zoom-fit-height" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/zoom-fit-height.svg</normaloff>:/icons/breeze-qownnotes/16x16/zoom-fit-height.svg</iconset>
+    <iconset theme="zoom-fit-height" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/zoom-fit-height.svg</normaloff>:/icons/breeze-pkbsuite/16x16/zoom-fit-height.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Reset note text size</string>
@@ -1877,8 +1654,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_new_tag">
    <property name="icon">
-    <iconset theme="tag" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/tag.svg</normaloff>:/icons/breeze-qownnotes/16x16/tag.svg</iconset>
+    <iconset theme="tag" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/tag.svg</normaloff>:/icons/breeze-pkbsuite/16x16/tag.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Add tag to note</string>
@@ -1889,8 +1666,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="action_Reload_note_folder">
    <property name="icon">
-    <iconset theme="view-refresh" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/view-refresh.svg</normaloff>:/icons/breeze-qownnotes/16x16/view-refresh.svg</iconset>
+    <iconset theme="view-refresh" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/view-refresh.svg</normaloff>:/icons/breeze-pkbsuite/16x16/view-refresh.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;Reload note folder</string>
@@ -1915,8 +1692,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionReplace_in_current_note">
    <property name="icon">
-    <iconset theme="edit-find-replace" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/edit-find-replace.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-find-replace.svg</iconset>
+    <iconset theme="edit-find-replace" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/edit-find-replace.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-find-replace.svg</iconset>
    </property>
    <property name="text">
     <string>Replace in current note</string>
@@ -1949,8 +1726,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionReload_scripting_engine">
    <property name="icon">
-    <iconset theme="step_object_LinearMotor" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/step_object_LinearMotor.svg</normaloff>:/icons/breeze-qownnotes/16x16/step_object_LinearMotor.svg</iconset>
+    <iconset theme="step_object_LinearMotor" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/step_object_LinearMotor.svg</normaloff>:/icons/breeze-pkbsuite/16x16/step_object_LinearMotor.svg</iconset>
    </property>
    <property name="text">
     <string>Reload scripting engine</string>
@@ -1961,8 +1738,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionShow_log">
    <property name="icon">
-    <iconset theme="text-x-generic" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/text-x-generic.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-x-generic.svg</iconset>
+    <iconset theme="text-x-generic" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/text-x-generic.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-x-generic.svg</iconset>
    </property>
    <property name="text">
     <string>Show log</string>
@@ -1970,8 +1747,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionExport_preview_HTML">
    <property name="icon">
-    <iconset theme="text-xml" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/text-xml.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-xml.svg</iconset>
+    <iconset theme="text-xml" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/text-xml.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-xml.svg</iconset>
    </property>
    <property name="text">
     <string>Export note as HTML</string>
@@ -1979,23 +1756,23 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionOpen_IRC_Channel">
    <property name="icon">
-    <iconset theme="im-user-online" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/im-user-online.svg</normaloff>:/icons/breeze-qownnotes/16x16/im-user-online.svg</iconset>
+    <iconset theme="im-user-online" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</iconset>
    </property>
    <property name="text">
     <string notr="true">IRC</string>
    </property>
    <property name="toolTip">
-    <string>Open the #qownnotes IRC channel, you have to stay online to get a response</string>
+    <string>Open the #pkbsuite IRC channel, you have to stay online to get a response</string>
    </property>
    <property name="statusTip">
-    <string>Open the #qownnotes IRC channel, you have to stay online to get a response</string>
+    <string>Open the #pkbsuite IRC channel, you have to stay online to get a response</string>
    </property>
   </action>
   <action name="actionInsert_headline_from_note_filename">
    <property name="icon">
-    <iconset theme="format-font-size-more" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/format-font-size-more.svg</normaloff>:/icons/breeze-qownnotes/16x16/format-font-size-more.svg</iconset>
+    <iconset theme="format-font-size-more" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/format-font-size-more.svg</normaloff>:/icons/breeze-pkbsuite/16x16/format-font-size-more.svg</iconset>
    </property>
    <property name="text">
     <string>Insert headline from note filename</string>
@@ -2023,34 +1800,10 @@ p, li { white-space: pre-wrap; }
     <string>Show status bar</string>
    </property>
   </action>
-  <action name="actionShare_note">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset theme="document-share" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-share.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-share.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Share note</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true">Ctrl+Alt+S</string>
-   </property>
-   <property name="visible">
-    <bool>true</bool>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
-   </property>
-  </action>
   <action name="actionToggle_text_case">
    <property name="icon">
-    <iconset theme="format-text-capitalize" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/format-text-capitalize.svg</normaloff>:/icons/breeze-qownnotes/16x16/format-text-capitalize.svg</iconset>
+    <iconset theme="format-text-capitalize" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/format-text-capitalize.svg</normaloff>:/icons/breeze-pkbsuite/16x16/format-text-capitalize.svg</iconset>
    </property>
    <property name="text">
     <string>Cycle text case</string>
@@ -2061,8 +1814,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionMarkdown_cheatsheet">
    <property name="icon">
-    <iconset theme="text-x-markdown" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/text-x-markdown.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-x-markdown.svg</iconset>
+    <iconset theme="text-x-markdown" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/text-x-markdown.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-x-markdown.svg</iconset>
    </property>
    <property name="text">
     <string>Markdown cheatsheet</string>
@@ -2070,8 +1823,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionStrike_out_text">
    <property name="icon">
-    <iconset theme="format-text-strikethrough" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/format-text-strikethrough.svg</normaloff>:/icons/breeze-qownnotes/16x16/format-text-strikethrough.svg</iconset>
+    <iconset theme="format-text-strikethrough" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/format-text-strikethrough.svg</normaloff>:/icons/breeze-pkbsuite/16x16/format-text-strikethrough.svg</iconset>
    </property>
    <property name="text">
     <string>Strike out text</string>
@@ -2099,8 +1852,8 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="application-menu" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/application-menu.svg</normaloff>:/icons/breeze-qownnotes/16x16/application-menu.svg</iconset>
+    <iconset theme="application-menu" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/application-menu.svg</normaloff>:/icons/breeze-pkbsuite/16x16/application-menu.svg</iconset>
    </property>
    <property name="text">
     <string>Show menu bar</string>
@@ -2111,8 +1864,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionSplit_note_at_cursor_position">
    <property name="icon">
-    <iconset theme="split" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/split.svg</normaloff>:/icons/breeze-qownnotes/16x16/split.svg</iconset>
+    <iconset theme="split" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/split.svg</normaloff>:/icons/breeze-pkbsuite/16x16/split.svg</iconset>
    </property>
    <property name="text">
     <string>Split note at cursor position</string>
@@ -2131,8 +1884,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionDonate">
    <property name="icon">
-    <iconset resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/taxes-finances.svg</normaloff>:/icons/breeze-qownnotes/16x16/taxes-finances.svg</iconset>
+    <iconset resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/taxes-finances.svg</normaloff>:/icons/breeze-pkbsuite/16x16/taxes-finances.svg</iconset>
    </property>
    <property name="text">
     <string>Donate</string>
@@ -2140,8 +1893,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionFind_notes_in_all_subfolders">
    <property name="icon">
-    <iconset theme="edit-find" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/edit-find.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-find.svg</iconset>
+    <iconset theme="edit-find" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/edit-find.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-find.svg</iconset>
    </property>
    <property name="text">
     <string>Find notes in all tags / subfolders</string>
@@ -2152,8 +1905,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionImport_notes_from_Evernote">
    <property name="icon">
-    <iconset theme="text-xml" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/text-xml.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-xml.svg</iconset>
+    <iconset theme="text-xml" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/text-xml.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-xml.svg</iconset>
    </property>
    <property name="text">
     <string>Import notes from Evernote</string>
@@ -2161,8 +1914,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionImport_notes_from_text_files">
    <property name="icon">
-    <iconset theme="text-x-generic" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/text-x-generic.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-x-generic.svg</iconset>
+    <iconset theme="text-x-generic" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/text-x-generic.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-x-generic.svg</iconset>
    </property>
    <property name="text">
     <string>Import notes from text files</string>
@@ -2170,8 +1923,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionDelete_orphaned_images">
    <property name="icon">
-    <iconset theme="archive-remove" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/archive-remove.svg</normaloff>:/icons/breeze-qownnotes/16x16/archive-remove.svg</iconset>
+    <iconset theme="archive-remove" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/archive-remove.svg</normaloff>:/icons/breeze-pkbsuite/16x16/archive-remove.svg</iconset>
    </property>
    <property name="text">
     <string>Manage orphaned image files</string>
@@ -2179,8 +1932,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionTelegram">
    <property name="icon">
-    <iconset theme="im-user-online" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/im-user-online.svg</normaloff>:/icons/breeze-qownnotes/16x16/im-user-online.svg</iconset>
+    <iconset theme="im-user-online" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</iconset>
    </property>
    <property name="text">
     <string notr="true">Telegram</string>
@@ -2194,8 +1947,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionRiot">
    <property name="icon">
-    <iconset theme="im-user-online" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/im-user-online.svg</normaloff>:/icons/breeze-qownnotes/16x16/im-user-online.svg</iconset>
+    <iconset theme="im-user-online" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</iconset>
    </property>
    <property name="text">
     <string notr="true">Riot</string>
@@ -2209,17 +1962,17 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionGitter">
    <property name="icon">
-    <iconset theme="im-user-online" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/im-user-online.svg</normaloff>:/icons/breeze-qownnotes/16x16/im-user-online.svg</iconset>
+    <iconset theme="im-user-online" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</iconset>
    </property>
    <property name="text">
     <string notr="true">Gitter</string>
    </property>
    <property name="toolTip">
-    <string>Open the qownnotes Gitter room, you need a GitHub or Twitter account to login, but you can get offline messages</string>
+    <string>Open the pkbsuite Gitter room, you need a GitHub or Twitter account to login, but you can get offline messages</string>
    </property>
    <property name="statusTip">
-    <string>Open the qownnotes Gitter room, you need a GitHub or Twitter account to login, but you can get offline messages</string>
+    <string>Open the pkbsuite Gitter room, you need a GitHub or Twitter account to login, but you can get offline messages</string>
    </property>
   </action>
   <action name="actionUnlock_panels">
@@ -2227,8 +1980,8 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="window-duplicate" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/window-duplicate.svg</normaloff>:/icons/breeze-qownnotes/16x16/window-duplicate.svg</iconset>
+    <iconset theme="window-duplicate" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/window-duplicate.svg</normaloff>:/icons/breeze-pkbsuite/16x16/window-duplicate.svg</iconset>
    </property>
    <property name="text">
     <string>Unlock panels</string>
@@ -2236,8 +1989,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionRemove_current_workspace">
    <property name="icon">
-    <iconset theme="list-remove" resource="breeze-dark-qownnotes.qrc">
-     <normaloff>:/icons/breeze-dark-qownnotes/16x16/list-remove.svg</normaloff>:/icons/breeze-dark-qownnotes/16x16/list-remove.svg</iconset>
+    <iconset theme="list-remove" resource="breeze-dark-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-dark-pkbsuite/16x16/list-remove.svg</normaloff>:/icons/breeze-dark-pkbsuite/16x16/list-remove.svg</iconset>
    </property>
    <property name="text">
     <string>Remove current workspace</string>
@@ -2245,8 +1998,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionStore_as_new_workspace">
    <property name="icon">
-    <iconset theme="list-add" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/list-add.svg</normaloff>:/icons/breeze-qownnotes/16x16/list-add.svg</iconset>
+    <iconset theme="list-add" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/list-add.svg</normaloff>:/icons/breeze-pkbsuite/16x16/list-add.svg</iconset>
    </property>
    <property name="text">
     <string>Add new workspace</string>
@@ -2254,8 +2007,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionRename_current_workspace">
    <property name="icon">
-    <iconset theme="document-edit" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-edit.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-edit.svg</iconset>
+    <iconset theme="document-edit" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/document-edit.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-edit.svg</iconset>
    </property>
    <property name="text">
     <string>Rename current workspace</string>
@@ -2263,8 +2016,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionSwitch_to_previous_workspace">
    <property name="icon">
-    <iconset theme="go-previous" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/go-previous.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-previous.svg</iconset>
+    <iconset theme="go-previous" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/go-previous.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-previous.svg</iconset>
    </property>
    <property name="text">
     <string>Switch to previous workspace</string>
@@ -2280,8 +2033,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionFind_action">
    <property name="icon">
-    <iconset theme="configure" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</iconset>
+    <iconset theme="configure" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</iconset>
    </property>
    <property name="text">
     <string>Find action</string>
@@ -2298,8 +2051,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionInsert_table">
    <property name="icon">
-    <iconset theme="insert-table" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/insert-table.svg</normaloff>:/icons/breeze-qownnotes/16x16/insert-table.svg</iconset>
+    <iconset theme="insert-table" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/insert-table.svg</normaloff>:/icons/breeze-pkbsuite/16x16/insert-table.svg</iconset>
    </property>
    <property name="text">
     <string>Insert table</string>
@@ -2310,8 +2063,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionInsert_block_quote">
    <property name="icon">
-    <iconset theme="format-text-blockquote" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/format-text-blockquote.svg</normaloff>:/icons/breeze-qownnotes/16x16/format-text-blockquote.svg</iconset>
+    <iconset theme="format-text-blockquote" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/format-text-blockquote.svg</normaloff>:/icons/breeze-pkbsuite/16x16/format-text-blockquote.svg</iconset>
    </property>
    <property name="text">
     <string>Insert block &amp;quote</string>
@@ -2357,8 +2110,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionView_note_in_new_window">
    <property name="icon">
-    <iconset theme="window" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/window.svg</normaloff>:/icons/breeze-qownnotes/16x16/window.svg</iconset>
+    <iconset theme="window" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/window.svg</normaloff>:/icons/breeze-pkbsuite/16x16/window.svg</iconset>
    </property>
    <property name="text">
     <string>Open note in different window</string>
@@ -2369,8 +2122,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionSave_modified_notes">
    <property name="icon">
-    <iconset theme="document-save" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-save.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-save.svg</iconset>
+    <iconset theme="document-save" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/document-save.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-save.svg</iconset>
    </property>
    <property name="text">
     <string>Save modified notes</string>
@@ -2397,8 +2150,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionShow_note_git_versions">
    <property name="icon">
-    <iconset theme="appointment-new" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/appointment-new.svg</normaloff>:/icons/breeze-qownnotes/16x16/appointment-new.svg</iconset>
+    <iconset theme="appointment-new" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/appointment-new.svg</normaloff>:/icons/breeze-pkbsuite/16x16/appointment-new.svg</iconset>
    </property>
    <property name="text">
     <string>Show note git versions</string>
@@ -2406,8 +2159,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionScript_repository">
    <property name="icon">
-    <iconset theme="document-open" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-open.svg</iconset>
+    <iconset theme="document-open" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</iconset>
    </property>
    <property name="text">
     <string>Find scripts in script repository</string>
@@ -2418,8 +2171,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionScript_settings">
    <property name="icon">
-    <iconset theme="configure" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</normaloff>:/icons/breeze-qownnotes/16x16/configure.svg</iconset>
+    <iconset theme="configure" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</iconset>
    </property>
    <property name="text">
     <string>Script settings</string>
@@ -2427,8 +2180,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionInsert_attachment">
    <property name="icon">
-    <iconset theme="mail-attachment" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/mail-attachment.svg</normaloff>:/icons/breeze-qownnotes/16x16/mail-attachment.svg</iconset>
+    <iconset theme="mail-attachment" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/mail-attachment.svg</normaloff>:/icons/breeze-pkbsuite/16x16/mail-attachment.svg</iconset>
    </property>
    <property name="text">
     <string>Insert attachment</string>
@@ -2442,8 +2195,8 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="document-edit" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-edit.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-edit.svg</iconset>
+    <iconset theme="document-edit" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/document-edit.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-edit.svg</iconset>
    </property>
    <property name="text">
     <string>Allow all note editing</string>
@@ -2454,8 +2207,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionCheck_for_script_updates">
    <property name="icon">
-    <iconset theme="svn-update" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/svn-update.svg</normaloff>:/icons/breeze-qownnotes/16x16/svn-update.svg</iconset>
+    <iconset theme="svn-update" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/svn-update.svg</normaloff>:/icons/breeze-pkbsuite/16x16/svn-update.svg</iconset>
    </property>
    <property name="text">
     <string>Check for script updates</string>
@@ -2463,8 +2216,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionShow_local_trash">
    <property name="icon">
-    <iconset theme="trash-empty" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/trash-empty.svg</normaloff>:/icons/breeze-qownnotes/16x16/trash-empty.svg</iconset>
+    <iconset theme="trash-empty" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/trash-empty.svg</normaloff>:/icons/breeze-pkbsuite/16x16/trash-empty.svg</iconset>
    </property>
    <property name="text">
     <string>Show local trash</string>
@@ -2483,8 +2236,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionManage_orphaned_attachments">
    <property name="icon">
-    <iconset theme="mail-attachment" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/mail-attachment.svg</normaloff>:/icons/breeze-qownnotes/16x16/mail-attachment.svg</iconset>
+    <iconset theme="mail-attachment" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/mail-attachment.svg</normaloff>:/icons/breeze-pkbsuite/16x16/mail-attachment.svg</iconset>
    </property>
    <property name="text">
     <string>Manage orphaned attachments</string>
@@ -2589,8 +2342,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionPrevious_note_tab">
    <property name="icon">
-    <iconset theme="go-previous" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/go-previous.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-previous.svg</iconset>
+    <iconset theme="go-previous" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/go-previous.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-previous.svg</iconset>
    </property>
    <property name="text">
     <string>Previous note tab</string>
@@ -2601,8 +2354,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionNext_note_tab">
    <property name="icon">
-    <iconset theme="go-next" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/go-next.svg</normaloff>:/icons/breeze-qownnotes/16x16/go-next.svg</iconset>
+    <iconset theme="go-next" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/go-next.svg</normaloff>:/icons/breeze-pkbsuite/16x16/go-next.svg</iconset>
    </property>
    <property name="text">
     <string>Next note tab</string>
@@ -2613,8 +2366,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionClose_current_note_tab">
    <property name="icon">
-    <iconset theme="window-close" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/window-close.svg</normaloff>:/icons/breeze-qownnotes/16x16/window-close.svg</iconset>
+    <iconset theme="window-close" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/window-close.svg</normaloff>:/icons/breeze-pkbsuite/16x16/window-close.svg</iconset>
    </property>
    <property name="text">
     <string>Close current note tab</string>
@@ -2625,8 +2378,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionNew_note_in_new_tab">
    <property name="icon">
-    <iconset theme="document-new" resource="breeze-qownnotes.qrc">
-     <normaloff>:/icons/breeze-qownnotes/16x16/document-new.svg</normaloff>:/icons/breeze-qownnotes/16x16/document-new.svg</iconset>
+    <iconset theme="document-new" resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/document-new.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-new.svg</iconset>
    </property>
    <property name="text">
     <string>New note in new tab</string>
@@ -2640,14 +2393,24 @@ p, li { white-space: pre-wrap; }
     <string>Toggle note stickiness of current tab</string>
    </property>
   </action>
+  <action name="actionShow_Preview_Panel">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="breeze-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/show-preview.svg</normaloff>:/icons/breeze-pkbsuite/16x16/show-preview.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Afficher la prévisualisation</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Prévisualiser la note&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>QOwnNotesMarkdownTextEdit</class>
-   <extends>QPlainTextEdit</extends>
-   <header location="global">widgets/qownnotesmarkdowntextedit.h</header>
-  </customwidget>
   <customwidget>
    <class>NavigationWidget</class>
    <extends>QTreeWidget</extends>
@@ -2668,6 +2431,11 @@ p, li { white-space: pre-wrap; }
    <extends>QLineEdit</extends>
    <header location="global">widgets/lineedit.h</header>
   </customwidget>
+  <customwidget>
+   <class>PKbSuiteMarkdownTextEdit</class>
+   <extends>QWidget</extends>
+   <header>widgets/pkbsuitemarkdowntextedit.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>noteSubFolderLineEdit</tabstop>
@@ -2681,16 +2449,14 @@ p, li { white-space: pre-wrap; }
   <tabstop>navigationWidget</tabstop>
   <tabstop>noteOperationsButton</tabstop>
   <tabstop>noteTextEdit</tabstop>
-  <tabstop>encryptedNoteTextEdit</tabstop>
   <tabstop>newNoteTagButton</tabstop>
   <tabstop>newNoteTagLineEdit</tabstop>
-  <tabstop>scriptingScrollArea</tabstop>
   <tabstop>noteTextView</tabstop>
  </tabstops>
  <resources>
   <include location="images.qrc"/>
-  <include location="breeze-qownnotes.qrc"/>
-  <include location="breeze-dark-qownnotes.qrc"/>
+  <include location="breeze-pkbsuite.qrc"/>
+  <include location="breeze-dark-pkbsuite.qrc"/>
  </resources>
  <connections/>
 </ui>

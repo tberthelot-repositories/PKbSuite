@@ -1,0 +1,39 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x10\x00P\x00K\x00b\x00S\x00u\x00i\x00t\x00e)
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=Nouveau lanceur Binaire compilé
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=
+Executable=file:///home/thomas/1. Projects/PKbSuite/src
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=PKbSuite,PKbSuite
+Use External Terminal=false
+Working Directory=
+isExecutable=false
+
+[Project]
+VersionControlSupport=kdevgit
+
+[QMake_Builder]
+Build_Folder=/home/thomas/1. Projects/PKbSuite/src/build
+Build_Type=0
+Extra_Arguments=
+Install_Prefix=
+QMake_Binary=/usr/bin/qmake-qt5
+
+[QMake_Builder][/home/thomas/1. Projects/PKbSuite/src/build]
+Build_Type=0
+Extra_Arguments=
+Install_Prefix=
+QMake_Binary=/usr/bin/qmake-qt5

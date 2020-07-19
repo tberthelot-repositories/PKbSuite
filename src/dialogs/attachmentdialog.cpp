@@ -19,8 +19,8 @@ AttachmentDialog::AttachmentDialog(QWidget *parent)
     ui->infoFrame->hide();
 
     _networkManager = new QNetworkAccessManager(this);
-    QObject::connect(_networkManager, SIGNAL(finished(QNetworkReply *)), this,
-                     SLOT(slotReplyFinished(QNetworkReply *)));
+    QObject::connect(_networkManager, SIGNAL(finished(QNetworkReply*)), this,
+                     SLOT(slotReplyFinished(QNetworkReply*)));
 
     QClipboard *clipboard = QApplication::clipboard();
     QString text = clipboard->text();
@@ -98,8 +98,8 @@ void AttachmentDialog::on_downloadButton_clicked() {
 
     QNetworkReply *reply = _networkManager->get(networkRequest);
 
-    connect(reply, SIGNAL(downloadProgress(qint64, qint64)), this,
-            SLOT(downloadProgress(qint64, qint64)));
+    connect(reply, SIGNAL(downloadProgress(qint64,qint64)), this,
+            SLOT(downloadProgress(qint64,qint64)));
     connect(ui->downloadCancelButton, SIGNAL(clicked()), reply, SLOT(abort()));
 }
 
@@ -159,7 +159,7 @@ void AttachmentDialog::slotReplyFinished(QNetworkReply *reply) {
     }
 
     auto *tempFile =
-        new QTemporaryFile(QDir::tempPath() + "/QOwnNotes-XXXXXX." + suffix);
+        new QTemporaryFile(QDir::tempPath() + "/PKbSuite-XXXXXX." + suffix);
 
     // we want to keep the file to be used in the update process
     tempFile->setAutoRemove(false);

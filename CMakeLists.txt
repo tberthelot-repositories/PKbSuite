@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2.2)
 
-project(QOwnNotes)
+project(PKbSuite)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
