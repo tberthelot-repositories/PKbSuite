@@ -36,12 +36,8 @@ class PKbSuiteMarkdownHighlighter : public MarkdownHighlighter {
     PKbSuiteMarkdownHighlighter(
         QTextDocument *parent = 0,
         HighlightingOptions highlightingOptions = HighlightingOption::None);
-    ~PKbSuiteMarkdownHighlighter() Q_DECL_OVERRIDE;
 
-    void updateCurrentNote(const Note note);
-    void setCommentHighlighting(bool);
-    void setCodeHighlighting(bool);
-    void setSpellChecker(QOwnSpellChecker *);
+    void updateCurrentNote(Note *note);
 
    protected:
     void highlightBlock(const QString &text) Q_DECL_OVERRIDE;
@@ -52,10 +48,5 @@ class PKbSuiteMarkdownHighlighter : public MarkdownHighlighter {
     void highlightSpellChecking(const QString &text);
 
    private:
-    Sonnet::WordTokenizer *wordTokenizer;
-    Sonnet::LanguageFilter *languageFilter;
-    QOwnSpellChecker *spellchecker;
-    Note _currentNote;
-    bool commentHighlightingOn;
-    bool codeHighlightingOn;
+    Note *_currentNote = nullptr;
 };

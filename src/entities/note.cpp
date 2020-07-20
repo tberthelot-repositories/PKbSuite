@@ -23,6 +23,7 @@
 #include "api/noteapi.h"
 #include "entities/bookmark.h"
 #include "helpers/codetohtmlconverter.h"
+
 #include "libraries/md4c/md2html/render_html.h"
 #include "libraries/md4c/md4c/md4c.h"
 #include "notefolder.h"
@@ -1020,7 +1021,8 @@ bool Note::storeNoteTextFileToDisk() {
         // rename the note file
         if (oldFile.exists()) {
             noteFileWasRenamed = oldFile.rename(fullNoteFilePath());
-            qDebug() << __func__ << " - 'noteFileWasRenamed': " << noteFileWasRenamed;
+            qDebug() << __func__
+                     << " - 'noteFileWasRenamed': " << noteFileWasRenamed;
 
             // Restore the created date of the current note under Windows,
             // because it gets set to the current date when note is renamed
@@ -1102,26 +1104,27 @@ bool Note::storeNoteTextFileToDisk() {
 
         // in the end we want to remove the old note file if note was stored and
         // filename has changed
-        // #1190: we also need to check if the files are the same even if the name
-        // is not the same for NTFS
+        // #1190: we also need to check if the files are the same even if the
+        // name is not the same for NTFS
         if ((fullNoteFilePath() != oldNoteFilePath) &&
             (oldFileInfo != newFileInfo)) {
             // remove the old note file
             if (oldFile.exists() && oldFileInfo.isFile() &&
                 oldFileInfo.isReadable() && oldFile.remove()) {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 0))
-            qInfo() << QObject::tr("Renamed note-file was removed: %1")
-                           .arg(oldFile.fileName());
+                qInfo() << QObject::tr("Renamed note-file was removed: %1")
+                               .arg(oldFile.fileName());
 #else
-            qDebug() << __func__ << " - 'renamed note-file was removed': "
-                     << oldFile.fileName();
+                qDebug() << __func__ << " - 'renamed note-file was removed': "
+                         << oldFile.fileName();
 #endif
 
             } else {
                 qWarning() << QObject::tr(
-                    "Could not remove renamed note-file: %1"
-                    " - Error message: %2")
-                    .arg(oldFile.fileName(), oldFile.errorString());
+                                  "Could not remove renamed note-file: %1"
+                                  " - Error message: %2")
+                                  .arg(oldFile.fileName(),
+                                       oldFile.errorString());
             }
         }
     }
@@ -1145,15 +1148,15 @@ void Note::restoreCreatedDate() {
     fileTime.dwLowDateTime = _100nanosecs;
     fileTime.dwHighDateTime = (_100nanosecs >> 32);
 
-    LPCWSTR filePath = (const wchar_t*) QDir::toNativeSeparators(
-                           fullNoteFilePath()).utf16();
-    HANDLE fileHandle = CreateFile(filePath,
-                    FILE_WRITE_ATTRIBUTES, FILE_SHARE_READ|FILE_SHARE_WRITE,
-                    nullptr, OPEN_EXISTING,
-                    FILE_ATTRIBUTE_NORMAL, nullptr);
+    LPCWSTR filePath =
+        (const wchar_t *)QDir::toNativeSeparators(fullNoteFilePath()).utf16();
+    HANDLE fileHandle = CreateFile(
+        filePath, FILE_WRITE_ATTRIBUTES, FILE_SHARE_READ | FILE_SHARE_WRITE,
+        nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
     // set the created date to the old created date before the rename
-    // see: https://stackoverflow.com/questions/10041651/changing-the-file-creation-date-in-c-using-windows-h-in-windows-7
+    // see:
+    // https://stackoverflow.com/questions/10041651/changing-the-file-creation-date-in-c-using-windows-h-in-windows-7
     SetFileTime(fileHandle, &fileTime, (LPFILETIME) nullptr,
                 (LPFILETIME) nullptr);
     CloseHandle(fileHandle);
@@ -1240,6 +1243,10 @@ bool Note::handleNoteTextFileName() {
     // cleanup additional characters
     name = cleanupFileName(name);
 
+    if (name.isEmpty()) {
+        name = QObject::tr("Note");
+    }
+
     // check if name has changed
     if (name != this->_name) {
         qDebug() << __func__ << " - 'name' was changed: " << name;
@@ -1275,8 +1282,8 @@ bool Note::handleNoteTextFileName() {
 
         // let's check if we would be able to write to the file
         if (!canWriteToNoteFile()) {
-            qDebug() << __func__ << " - cannot write to file " << this->_fileName
-                     << " - we will try another filename";
+            qDebug() << __func__ << " - cannot write to file "
+                     << this->_fileName << " - we will try another filename";
 
             // we try to replace some more characters (mostly for Windows
             // filesystems)
@@ -1742,7 +1749,9 @@ bool Note::noteIdExists(int _id) { return fetch(_id)._id > 0; }
 //
 // reloads the current Note (by fileName)
 //
-bool Note::refetch() { return this->fillByFileName(_fileName, _noteSubFolderId); }
+bool Note::refetch() {
+    return this->fillByFileName(_fileName, _noteSubFolderId);
+}
 
 /**
  * Returns the suffix of the note file name
@@ -1875,8 +1884,8 @@ QString Note::toMarkdownHtml(const QString &notesPath, int maxImageWidth,
     return _noteTextHtml;
 }
 
-void captureHtmlFragment(const MD_CHAR *data, MD_SIZE data_size,
-                         void *userData) {
+static void captureHtmlFragment(const MD_CHAR *data, MD_SIZE data_size,
+                                void *userData) {
     QByteArray *array = static_cast<QByteArray *>(userData);
 
     if (data_size > 0) {
@@ -1887,7 +1896,7 @@ void captureHtmlFragment(const MD_CHAR *data, MD_SIZE data_size,
 /**
  * @brief Converts code blocks to highlighted code
  */
-void highlightCode(QString &str, const QString &type, int cbCount) {
+static void highlightCode(QString &str, const QString &type, int cbCount) {
     if (cbCount >= 1) {
         const int firstBlock = str.indexOf(type, 0);
         int currentCbPos = firstBlock;
@@ -1914,8 +1923,8 @@ void highlightCode(QString &str, const QString &type, int cbCount) {
 
             QString highlightedCodeBlock;
             if (!(codeBlock.isEmpty() && lang.isEmpty())) {
-                const CodeToHtmlConverter c(codeBlock, lang);
-                highlightedCodeBlock = c.process();
+                const CodeToHtmlConverter c(lang);
+                highlightedCodeBlock = c.process(codeBlock);
                 // take care of the null char
                 highlightedCodeBlock.replace(QChar('\u0000'),
                                              QLatin1String(""));
@@ -1932,7 +1941,7 @@ void highlightCode(QString &str, const QString &type, int cbCount) {
     }
 }
 
-static int nonOverlapCount(const QString &str, const QChar c = '`') {
+static inline int nonOverlapCount(const QString &str, const QChar c = '`') {
     const auto len = str.length();
     int count = 0;
     for (int i = 0; i < len; ++i) {
@@ -1959,8 +1968,7 @@ QString Note::textToMarkdownHtml(QString str, const QString &notesPath,
                                  bool base64Images) {
     // MD4C flags
     unsigned flags = MD_DIALECT_GITHUB | MD_FLAG_WIKILINKS |
-                     MD_FLAG_LATEXMATHSPANS | MD_FLAG_PERMISSIVEATXHEADERS |
-                     MD_FLAG_UNDERLINE;
+                     MD_FLAG_LATEXMATHSPANS | MD_FLAG_UNDERLINE;
     // we parse the task lists ourselves
     flags &= ~MD_FLAG_TASKLISTS;
 
@@ -2101,7 +2109,7 @@ QString Note::textToMarkdownHtml(QString str, const QString &notesPath,
                 "\\1file://" + windowsSlash + notePath + "/\\2\"");
     */
 
-    const QString fontString = Utils::Misc::previewCodeFontString() ;
+    const QString fontString = Utils::Misc::previewCodeFontString();
 
     // set the stylesheet for the <code> blocks
     QString codeStyleSheet = QLatin1String("");
@@ -2196,8 +2204,9 @@ QString Note::textToMarkdownHtml(QString str, const QString &notesPath,
         // remove trailing newline in code blocks
         result.replace(QStringLiteral("\n</code>"), QStringLiteral("</code>"));
     } else {
-        const QString schemaStyles = Utils::Misc::isPreviewUseEditorStyles() ?
-            Utils::Schema::getSchemaStyles() : QLatin1String("");
+        const QString schemaStyles = Utils::Misc::isPreviewUseEditorStyles()
+                                         ? Utils::Schema::getSchemaStyles()
+                                         : QLatin1String("");
 
         // for preview
         result =
@@ -2339,14 +2348,13 @@ QString Note::generateTextForLink(QString text) {
     return text;
 }
 
-/**
+/*
  * Splits the text into a string list
  *
  * @return
  */
 QStringList Note::getNoteTextLines() const {
-    return _noteText.split(QRegExp(
-        QStringLiteral(R"((\r\n)|(\n\r)|\r|\n)")));
+    return _noteText.split(QRegExp(QStringLiteral(R"((\r\n)|(\n\r)|\r|\n)")));
 }
 
 /**

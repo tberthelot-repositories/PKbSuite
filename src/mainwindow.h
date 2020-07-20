@@ -301,6 +301,8 @@ class MainWindow : public QMainWindow {
 
     void on_actionFormat_text_bold_triggered();
 
+    void on_actionFormat_text_underline_triggered();
+
     void on_actionFormat_text_italic_triggered();
 
     void on_action_Increase_note_text_size_triggered();
@@ -566,6 +568,8 @@ class MainWindow : public QMainWindow {
 
     void on_noteEditTabWidget_tabBarClicked(int index);
 
+    void showNoteEditTabWidgetContextMenu(const QPoint &point);
+
 private:
     Ui::MainWindow *ui;
     QString notesPath;
@@ -656,6 +660,7 @@ private:
         QIcon(":icons/breeze-pkbsuite/16x16/text-x-generic.svg"));
     QList<QHotkey *> _globalShortcuts;
     int _lastNoteId = 0;
+    bool _scriptUpdateFound = false;
 
     void createSystemTrayIcon();
 
@@ -972,4 +977,5 @@ private:
     bool jumpToTab(const Note &note) const;
     void closeOrphanedTabs() const;
     void removeNoteTab(int index) const;
+    void automaticScriptUpdateCheck();
 };
