@@ -2062,11 +2062,6 @@ QString Note::textToMarkdownHtml(QString str, const QString &notesPath,
         const QString fileText = match.captured(1);
         const QString fileLink = match.captured(2);
 
-        // ignore links to remote Nextcloud images
-        if (fileLink.startsWith(QLatin1String("/core/preview"))) {
-            continue;
-        }
-
         const QString url = Note::getFileURLFromFileName(fileLink, true);
 
         str.replace(match.captured(0), QStringLiteral("[") + fileText +
@@ -2539,8 +2534,7 @@ QString Note::getFileURLFromFileName(QString fileName,
     if (_noteSubFolderId > 0) {
         const NoteSubFolder noteSubFolder = getNoteSubFolder();
         if (noteSubFolder.isFetched()) {
-            fileName.prepend(noteSubFolder.relativePath() +
-                             QStringLiteral("/"));
+            fileName.prepend(noteSubFolder.relativePath());
         }
     }
     
