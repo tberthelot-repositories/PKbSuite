@@ -931,6 +931,7 @@ p, li { white-space: pre-wrap; }
      </property>
      <addaction name="actionFormat_text_bold"/>
      <addaction name="actionFormat_text_italic"/>
+     <addaction name="actionFormat_text_underline"/>
      <addaction name="actionStrike_out_text"/>
      <addaction name="actionToggle_text_case"/>
     </widget>

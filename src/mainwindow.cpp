@@ -112,6 +112,9 @@ MainWindow::MainWindow(QWidget *parent)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
     ui->noteEditTabWidget->setTabBarAutoHide(true);
 #endif
+    ui->noteEditTabWidget->tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->noteEditTabWidget->tabBar(), &QWidget::customContextMenuRequested,
+            this, &MainWindow::showNoteEditTabWidgetContextMenu);
 
 	setWindowIcon(getSystemTrayIcon());
 
@@ -375,6 +378,10 @@ MainWindow::MainWindow(QWidget *parent)
     // restore the note tabs
     Utils::Gui::restoreNoteTabs(ui->noteEditTabWidget,
                                 ui->noteEditTabWidgetLayout);
+
+    if (isInDistractionFreeMode()) {
+        ui->noteEditTabWidget->tabBar()->hide();
+    }
 
     // restore the note history of the current note folder
     noteHistory.restoreForCurrentNoteFolder();
@@ -1323,6 +1330,8 @@ void MainWindow::setDistractionFreeMode(const bool enabled) {
                 &MainWindow::toggleDistractionFreeMode);
 
         statusBar()->addPermanentWidget(_leaveDistractionFreeModeButton);
+
+        ui->noteEditTabWidget->tabBar()->hide();
     } else {
         //
         // leave the distraction free mode
@@ -1346,6 +1355,10 @@ void MainWindow::setDistractionFreeMode(const bool enabled) {
         ui->menuBar->setFixedHeight(
             settings.value(QStringLiteral("DistractionFreeMode/menuBarHeight"))
                 .toInt());
+
+        if (ui->noteEditTabWidget->count() > 1) {
+            ui->noteEditTabWidget->tabBar()->show();
+        }
     }
 
     ui->noteTextEdit->setPaperMargins();
@@ -3841,7 +3854,7 @@ void MainWindow::setNoteTextFromNote(Note *note, bool updateNoteTextViewOnly,
     if (!updateNoteTextViewOnly) {
         qobject_cast<PKbSuiteMarkdownHighlighter *>(
             ui->noteTextEdit->highlighter())
-            ->updateCurrentNote(*note);
+            ->updateCurrentNote(note);
         ui->noteTextEdit->setText(note->getNoteText());
     }
 
@@ -6955,6 +6968,13 @@ void MainWindow::on_actionFormat_text_bold_triggered() {
 }
 
 /**
+ * Inserts a underline block at the current cursor position
+ */
+void MainWindow::on_actionFormat_text_underline_triggered() {
+    applyFormatter(QStringLiteral("__"));
+}
+
+/**
  * Inserts an italic block at the current cursor position
  */
 void MainWindow::on_actionFormat_text_italic_triggered() {
@@ -9371,6 +9391,10 @@ void MainWindow::openNotesContextMenu(const QPoint globalPos,
  */
 void MainWindow::on_noteTreeWidget_itemChanged(QTreeWidgetItem *item,
                                                int column) {
+    if (item == nullptr) {
+        return;
+    }
+    
     // handle note subfolder renaming in a note tree
     if (item->data(0, Qt::UserRole + 1) == FolderType) {
         on_noteSubFolderTreeWidget_itemChanged(item, column);
@@ -9378,7 +9402,7 @@ void MainWindow::on_noteTreeWidget_itemChanged(QTreeWidgetItem *item,
         return;
     }
 
-    if (item == nullptr || !Note::allowDifferentFileName()) {
+    if (!Note::allowDifferentFileName()) {
         return;
     }
 
@@ -10708,6 +10732,7 @@ void MainWindow::setMenuEnabled(QMenu *menu, bool enabled) {
     }
 }
 
+
 void MainWindow::noteTextEditResize(QResizeEvent *event) {
     Q_UNUSED(event)
     ui->noteTextEdit->setPaperMargins();
@@ -11240,4 +11265,41 @@ void MainWindow::on_noteEditTabWidget_tabBarClicked(int index) {
         !_currentNote.isInCurrentNoteSubFolder()) {
         jumpToNoteSubFolder(_currentNote.getNoteSubFolderId());
     }
+}
+
+/**
+ * Note tab context menu
+ */
+void MainWindow::showNoteEditTabWidgetContextMenu(const QPoint &point) {
+    if (point.isNull()) {
+        return;
+    }
+
+    int tabIndex = ui->noteEditTabWidget->tabBar()->tabAt(point);
+    auto *menu = new QMenu();
+
+    // Toggle note stickiness
+    auto *stickAction = menu->addAction(tr("Toggle note stickiness"));
+    connect(stickAction, &QAction::triggered, this, [this, tabIndex]() {
+        on_noteEditTabWidget_tabBarDoubleClicked(tabIndex);
+    });
+
+    // Close other note tabs
+    auto *closeAction = menu->addAction(tr("Close other note tabs"));
+    connect(closeAction, &QAction::triggered, this, [this, tabIndex]() {
+        const int maxIndex = ui->noteEditTabWidget->count() - 1;
+        const int keepNoteId = Utils::Gui::getTabWidgetNoteId(
+            ui->noteEditTabWidget, tabIndex);
+
+        for (int i = maxIndex; i >= 0; i--) {
+            const int noteId = Utils::Gui::getTabWidgetNoteId(
+                ui->noteEditTabWidget, i);
+
+            if (noteId != keepNoteId) {
+                removeNoteTab(i);
+            }
+        }
+    });
+
+    menu->exec(ui->noteEditTabWidget->tabBar()->mapToGlobal(point));
 }
