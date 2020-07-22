@@ -5507,11 +5507,6 @@ void MainWindow::openLocalUrl(QString urlString) {
     if (urlString.startsWith(QStringLiteral("file://..")) && !isNoteFileUrl) {
         QString windowsSlash = QString();
 
-#ifdef Q_OS_WIN32
-        // we need another slash for Windows
-        windowsSlash = QStringLiteral("/");
-#endif
-
         urlString.replace(QLatin1String("file://.."),
                           QStringLiteral("file://") + windowsSlash +
                               NoteFolder::currentLocalPath() +
@@ -5524,11 +5519,6 @@ void MainWindow::openLocalUrl(QString urlString) {
     // convert legacy attachment urls to absolute urls and open them
     if (urlString.startsWith(QStringLiteral("file://attachments"))) {
         QString windowsSlash = QString();
-
-#ifdef Q_OS_WIN32
-        // we need another slash for Windows
-        windowsSlash = QStringLiteral("/");
-#endif
 
         urlString.replace(QLatin1String("file://attachments"),
                           QStringLiteral("file://") + windowsSlash +
