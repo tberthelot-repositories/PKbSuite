@@ -70,7 +70,7 @@ void DictionaryManagerDialog::addDictionaryItem(const QString &name,
     auto *item = new QTreeWidgetItem();
     item->setText(0, name);
     item->setData(0, Qt::UserRole,
-                  QStringLiteral("https://raw.githubusercontent.com/pkbsuite/"
+                  QStringLiteral("https://raw.githubusercontent.com/qownnotes/"
                                  "dictionaries/master/") +
                       pathPart + QStringLiteral("/") + fileNamePart);
     ui->remoteDictionaryTreeWidget->addTopLevelItem(item);

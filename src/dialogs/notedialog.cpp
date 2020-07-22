@@ -2,17 +2,24 @@
 
 #include <entities/note.h>
 #include <entities/notefolder.h>
+#include <QDesktopServices>
+#include <QSettings>
+#include <QDebug>
 
 #include "ui_notedialog.h"
-
-#include <QDesktopServices>
-#include <QDebug>
 
 NoteDialog::NoteDialog(QWidget *parent)
     : MasterDialog(parent), ui(new Ui::NoteDialog) {
     ui->setupUi(this);
     ui->textEdit->initSearchFrame(ui->searchFrame);
     ui->textEdit->setReadOnly(true);
+    ui->tabWidget->setCurrentIndex(
+        QSettings().value("NoteDialog/tabWidgetIndex").toInt());
+
+    // set the note text view font
+    QFont font;
+    font.fromString(Utils::Misc::previewFontString());
+    ui->noteTextView->setFont(font);
 }
 
 void NoteDialog::setNote(Note &note) {
@@ -31,7 +38,6 @@ void NoteDialog::on_noteTextView_anchorClicked(const QUrl &url) {
 
     if ((scheme == QStringLiteral("note") ||
          scheme == QStringLiteral("noteid") ||
-         scheme == QStringLiteral("task") ||
          scheme == QStringLiteral("checkbox")) ||
         (scheme == QStringLiteral("file") &&
          Note::fileUrlIsNoteInCurrentNoteFolder(url))) {
@@ -39,4 +45,8 @@ void NoteDialog::on_noteTextView_anchorClicked(const QUrl &url) {
     }
 
     QDesktopServices::openUrl(url);
+}
+
+void NoteDialog::on_tabWidget_currentChanged(int index) {
+    QSettings().setValue("NoteDialog/tabWidgetIndex", index);
 }
