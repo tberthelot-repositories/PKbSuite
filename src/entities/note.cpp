@@ -2062,11 +2062,6 @@ QString Note::textToMarkdownHtml(QString str, const QString &notesPath,
         const QString fileText = match.captured(1);
         const QString fileLink = match.captured(2);
 
-        // ignore links to remote Nextcloud images
-        if (fileLink.startsWith(QLatin1String("/core/preview"))) {
-            continue;
-        }
-
         const QString url = Note::getFileURLFromFileName(fileLink, true);
 
         str.replace(match.captured(0), QStringLiteral("[") + fileText +
@@ -2539,8 +2534,7 @@ QString Note::getFileURLFromFileName(QString fileName,
     if (_noteSubFolderId > 0) {
         const NoteSubFolder noteSubFolder = getNoteSubFolder();
         if (noteSubFolder.isFetched()) {
-            fileName.prepend(noteSubFolder.relativePath() +
-                             QStringLiteral("/"));
+            fileName.prepend(noteSubFolder.relativePath());
         }
     }
     
@@ -3198,9 +3192,10 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 		
 		// Next, check if links are available and create/update them
 		QString path = relativeFilePath(currentNotePath);
-		match = QRegularExpression(R"(\*\s\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*\]\(()" + path.replace(" ", "%20") + R"()\))").match(text);
+
+		match = QRegularExpression(R"(\*\s\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s\*]*\]\()" + path.replace(" ","%20") + R"(\))").match(text);
 		
-		// Note link to current note in "Referenced by" section yet, add it
+		// No link to current note in "Referenced by" section yet, add it
 		if (!match.hasMatch()) {
 			text.append("* [" + _name + "](" + path.replace(" ", "%20") +")\n");
 		} 
@@ -3209,7 +3204,6 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 			text.replace(QRegularExpression(R"(\*\s\[\([)" + _name + R"(\)\]\([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md))"), "* [\\1](" + path.replace(" ", "%20") + ")");
 		}
 */
-
 		linkedNote.setNoteText(text);
 		linkedNote.setHasDirtyData(true);
 		linkedNote.store();

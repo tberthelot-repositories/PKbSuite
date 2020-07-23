@@ -2551,7 +2551,6 @@ void MainWindow::storeUpdatedNotesToDisk() {
     bool _currentNoteChanged = false;
     bool noteWasRenamed = false;
 	
-	
 	// Check and update "Referenced by" section if needed
 	_currentNote.updateReferenceBySectionInLinkedNotes();
 
@@ -2603,10 +2602,12 @@ void MainWindow::storeUpdatedNotesToDisk() {
                 updateCurrentTabData(_currentNote);
             }
         }
+        
+        QString currentNoteText = _currentNote.getNoteText();
 	
         // Check if the note has @Tags not yet linked
         QRegularExpression re = QRegularExpression(R"(@[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
-        QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
+        QRegularExpressionMatchIterator reIterator = re.globalMatch(currentNoteText);
         while (reIterator.hasNext()) {
             QRegularExpressionMatch reMatch = reIterator.next();
             QString tag = reMatch.captured().right(reMatch.capturedLength() - 1);
@@ -2616,6 +2617,24 @@ void MainWindow::storeUpdatedNotesToDisk() {
 
             linkTagNameToCurrentNote(tag);
         }
+        
+        // Check if some [[Links]] needs to be expanded but ONLY if the target note exists to prevent inserting empty note names
+		re = QRegularExpression(R"(\[\[([A-Za-z\s]*)\]\])");	// TODO Take figures into account if I want to implement filenames based on note's IDs
+		QRegularExpressionMatch reMatch = re.match(currentNoteText);
+
+		if (reMatch.hasMatch()){
+			QString candidateNoteName = reMatch.captured(reMatch.lastCapturedIndex());
+			int candidateNoteNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
+			int candidateNoteNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
+			const int cursorPos = ui->noteTextEdit->textCursor().position();
+			
+			if ((cursorPos < candidateNoteNameStart) || (cursorPos > candidateNoteNameEnd)) {
+				currentNoteText.replace(re, "[" + candidateNoteName + "](" + candidateNoteName + ".md)");
+				_currentNote.setNoteText(currentNoteText);
+				
+				ui->noteTextEdit->setText(currentNoteText);
+			}
+		}
 
         if (noteWasRenamed) {
             // reload the directory list if note name has changed
@@ -5468,7 +5487,6 @@ void MainWindow::on_noteTextView_anchorClicked(const QUrl &url) {
 
     if ((scheme == QStringLiteral("note") ||
          scheme == QStringLiteral("noteid") ||
-         scheme == QStringLiteral("task") ||
          scheme == QStringLiteral("checkbox")) ||
         (scheme == QStringLiteral("file") &&
          Note::fileUrlIsNoteInCurrentNoteFolder(url))) {
@@ -5499,18 +5517,13 @@ void MainWindow::openLocalUrl(QString urlString) {
         urlString = _currentNote.getFileURLFromFileName(urlString, true);
         urlWasNotValid = true;
     }
-
+    
     QUrl url = QUrl(urlString);
     const bool isNoteFileUrl = Note::fileUrlIsNoteInCurrentNoteFolder(url);
 
     // convert relative file urls to absolute urls and open them
     if (urlString.startsWith(QStringLiteral("file://..")) && !isNoteFileUrl) {
         QString windowsSlash = QString();
-
-#ifdef Q_OS_WIN32
-        // we need another slash for Windows
-        windowsSlash = QStringLiteral("/");
-#endif
 
         urlString.replace(QLatin1String("file://.."),
                           QStringLiteral("file://") + windowsSlash +
@@ -5521,27 +5534,9 @@ void MainWindow::openLocalUrl(QString urlString) {
         return;
     }
 
-    // convert legacy attachment urls to absolute urls and open them
-    if (urlString.startsWith(QStringLiteral("file://attachments"))) {
-        QString windowsSlash = QString();
-
-#ifdef Q_OS_WIN32
-        // we need another slash for Windows
-        windowsSlash = QStringLiteral("/");
-#endif
-
-        urlString.replace(QLatin1String("file://attachments"),
-                          QStringLiteral("file://") + windowsSlash +
-                              NoteFolder::currentLocalPath() +
-                              QStringLiteral("/attachments"));
-
-        QDesktopServices::openUrl(QUrl(urlString));
-        return;
-    }
-
     const QString scheme = url.scheme();
 
-    if (scheme == QStringLiteral("noteid")) {    // jump to a note by note id
+    if (scheme == QStringLiteral("noteid")) {    // jump to a note by note id // TODO Check if I implement ID management for the notes with insertin of links by IDs that are automatically replaced by full note paths
         QRegularExpressionMatch match =
             QRegularExpression(QStringLiteral(R"(^noteid:\/\/note-(\d+)$)"))
                 .match(urlString);
@@ -5555,45 +5550,6 @@ void MainWindow::openLocalUrl(QString urlString) {
             }
         } else {
             qDebug() << "malformed url: " << urlString;
-        }
-    } else if (scheme == QStringLiteral("note") ||
-               isNoteFileUrl) {    // jump to a note url string
-        Note note;
-
-        if (isNoteFileUrl) {
-            note = Note::fetchByFileUrl(url);
-        } else {
-            // try to fetch a note from the url string
-            note = Note::fetchByUrlString(urlString);
-        }
-
-        // does this note really exist?
-        if (note.isFetched()) {
-            // set current note
-            setCurrentNote(std::move(note));
-        } else {
-            // if the name of the linked note only consists of numbers we cannot
-            // use host() to get the filename, it would get converted to an
-            // ip-address
-            QRegularExpressionMatch match =
-                QRegularExpression(QStringLiteral(R"(^\w+:\/\/(\d+)$)"))
-                    .match(urlString);
-            QString fileName =
-                match.hasMatch() ? match.captured(1) : url.host();
-
-            // try to generate a useful title for the note
-            fileName = Utils::Misc::toStartCase(
-                fileName.replace(QStringLiteral("_"), QStringLiteral(" ")));
-
-            // ask if we want to create a new note if note wasn't found
-            if (Utils::Gui::question(this, tr("Note was not found"),
-                                     tr("Note was not found, create new note "
-                                        "<strong>%1</strong>?")
-                                         .arg(fileName),
-                                     QStringLiteral("open-url-create-note")) ==
-                QMessageBox::Yes) {
-                return createNewNote(fileName, false);
-            }
         }
     } else if (scheme == QStringLiteral("checkbox")) {
         const auto text = ui->noteTextEdit->toPlainText();
@@ -5630,6 +5586,46 @@ void MainWindow::openLocalUrl(QString urlString) {
             pos += re.matchedLength();
         }
     } else if (scheme == QStringLiteral("file") && urlWasNotValid) {
+		// First, handle the case of a note file and create it if it doesn't exists
+        Note note;
+
+        if (isNoteFileUrl) {
+            note = Note::fetchByFileUrl(url);
+        } else {
+            // try to fetch a note from the url string
+            note = Note::fetchByUrlString(urlString);
+        }
+
+        // does this note really exist?
+        if (note.isFetched()) {
+            // set current note
+            setCurrentNote(std::move(note));
+			return;
+        } else {
+            // if the name of the linked note only consists of numbers we cannot
+            // use host() to get the filename, it would get converted to an
+            // ip-address
+            QRegularExpressionMatch match =			// TODO Check management of links to URL without 3 "/"
+                QRegularExpression(QStringLiteral(R"(^\w+:\/\/(\d+)$)"))
+                    .match(urlString);
+            QString fileName =
+                match.hasMatch() ? match.captured(1) : QFileInfo(url.path()).baseName();
+
+            // try to generate a useful title for the note
+            fileName = Utils::Misc::toStartCase(
+                fileName.replace(QStringLiteral("_"), QStringLiteral(" ")));
+
+            // ask if we want to create a new note if note wasn't found
+            if (Utils::Gui::question(this, tr("Note was not found"),
+                                     tr("Note was not found, create new note "
+                                        "<strong>%1</strong>?")
+                                         .arg(fileName),
+                                     QStringLiteral("open-url-create-note")) ==
+                QMessageBox::Yes) {
+                return createNewNote(fileName, false);
+            }
+        }	
+        
         // open urls that previously were not valid
         QDesktopServices::openUrl(QUrl(urlString));
     }
