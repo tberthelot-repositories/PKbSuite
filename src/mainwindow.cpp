@@ -2551,7 +2551,6 @@ void MainWindow::storeUpdatedNotesToDisk() {
     bool _currentNoteChanged = false;
     bool noteWasRenamed = false;
 	
-	
 	// Check and update "Referenced by" section if needed
 	_currentNote.updateReferenceBySectionInLinkedNotes();
 
@@ -2630,7 +2629,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
 			const int cursorPos = ui->noteTextEdit->textCursor().position();
 			
 			if ((cursorPos < candidateNoteNameStart) || (cursorPos > candidateNoteNameEnd)) {
-				currentNoteText.replace(re, "[" + candidateNoteName + "](" + Utils::Misc::toStartCase(candidateNoteName) + ".md)");
+				currentNoteText.replace(re, "[" + candidateNoteName + "](" + candidateNoteName + ".md)");
 				_currentNote.setNoteText(currentNoteText);
 				
 				ui->noteTextEdit->setText(currentNoteText);
@@ -5488,7 +5487,6 @@ void MainWindow::on_noteTextView_anchorClicked(const QUrl &url) {
 
     if ((scheme == QStringLiteral("note") ||
          scheme == QStringLiteral("noteid") ||
-         scheme == QStringLiteral("task") ||
          scheme == QStringLiteral("checkbox")) ||
         (scheme == QStringLiteral("file") &&
          Note::fileUrlIsNoteInCurrentNoteFolder(url))) {

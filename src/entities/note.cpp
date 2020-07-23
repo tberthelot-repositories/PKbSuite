@@ -3192,9 +3192,10 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 		
 		// Next, check if links are available and create/update them
 		QString path = relativeFilePath(currentNotePath);
-		match = QRegularExpression(R"(\*\s\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*\]\(()" + path.replace(" ", "%20") + R"()\))").match(text);
+
+		match = QRegularExpression(R"(\*\s\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s\*]*\]\()" + path.replace(" ","%20") + R"(\))").match(text);
 		
-		// Note link to current note in "Referenced by" section yet, add it
+		// No link to current note in "Referenced by" section yet, add it
 		if (!match.hasMatch()) {
 			text.append("* [" + _name + "](" + path.replace(" ", "%20") +")\n");
 		} 
@@ -3203,7 +3204,6 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 			text.replace(QRegularExpression(R"(\*\s\[\([)" + _name + R"(\)\]\([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md))"), "* [\\1](" + path.replace(" ", "%20") + ")");
 		}
 */
-
 		linkedNote.setNoteText(text);
 		linkedNote.setHasDirtyData(true);
 		linkedNote.store();
