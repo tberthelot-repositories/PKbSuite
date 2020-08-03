@@ -6200,13 +6200,6 @@ bool MainWindow::insertPDF(QFile *file) {
                 } else {
                     noteText.append("\n=====\n");
                 }
-
-/*
-                noteText.append("```\n");
-                noteText.append("Creation date : " + QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:sst") + "  \n");
-                noteText.append("Notes de lecture : " + pdfFileInfo.fileName() +"\n");
-                noteText.append("```\n\n");
-*/
 				const QString embedmentLink = note.getInsertEmbedmentMarkdown(file, mediaType::pdf, dialog->copyFileToKb(), false);
 
 				noteText.append("\n-----\n");

@@ -130,7 +130,7 @@ QString PDFFile::markdownCitations(QString embedmentLink)
 {
     QString sTmp = "## Citations :\n";
     
-	embedmentLink.replace(")", "");
+	embedmentLink.chop(1);
     for (int iCitation = 0; iCitation < _listCitations.size(); iCitation++) {
         sTmp.append("### Citation " + QString::number(iCitation + 1) + " \n");
         sTmp.append("Page : " + QString::number(_listCitations.at(iCitation)->page) + "   \n");
@@ -147,6 +147,7 @@ QString PDFFile::markdownComments(QString embedmentLink)
 {
     QString sTmp = "## Commentaires :\n";
     
+	embedmentLink.chop(1);
     for (int iComment = 0; iComment < _listComments.size(); iComment++) {
         sTmp.append("### Commentaire " + QString::number(iComment + 1) + "   \n");
         sTmp.append("Page : " + QString::number(_listComments.at(iComment)->page) + "\n\n");

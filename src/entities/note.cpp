@@ -2732,6 +2732,7 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool copyF
                                      bool returnUrlOnly, QString title) {
     // file->exists() is false on Arch Linux for QTemporaryFile!
     if (file->size() > 0) {
+		QString strTmp = file->fileName();
         const QFileInfo fileInfo(file->fileName());
 		
 		QString embedmentUrlString = "";
@@ -2763,6 +2764,9 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool copyF
             title = fileInfo.baseName();
         }
 
+        // Fix for closig parenthesis
+        embedmentUrlString.replace(")", "%29");
+        
         QString strEmbedmentCode = QLatin1String("");
         switch (type) {
 			case mediaType::image: {
@@ -2775,11 +2779,11 @@ QString Note::getInsertEmbedmentMarkdown(QFile *file, mediaType type, bool copyF
 			}
 			break;
 			case mediaType::attachment: {
-				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](") + embedmentUrlString + QStringLiteral(")");
+				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](file://") + embedmentUrlString + QStringLiteral(")");
 			}
 			break;
 			case mediaType::pdf: {
-				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](") + embedmentUrlString + QStringLiteral(")") + (addNewLine ? "\n" : "");
+				strEmbedmentCode = QStringLiteral("[") + title + QStringLiteral("](file://") + embedmentUrlString + QStringLiteral(")") + (addNewLine ? "\n" : "");
 			}
 		}
 		
