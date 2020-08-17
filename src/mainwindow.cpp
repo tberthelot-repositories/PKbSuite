@@ -2550,11 +2550,11 @@ void MainWindow::storeUpdatedNotesToDisk() {
     // All flushing and syncing didn't help.
     bool _currentNoteChanged = false;
     bool noteWasRenamed = false;
-	
-	// Check and update "Referenced by" section if needed
-	_currentNote.updateReferenceBySectionInLinkedNotes();
+    
+    // Check and update "Referenced by" section if needed
+    _currentNote.updateReferenceBySectionInLinkedNotes();
 
-	// _currentNote will be set by this method if the filename has changed
+    // _currentNote will be set by this method if the filename has changed
     const int count = Note::storeDirtyNotesToDisk(
         _currentNote, &_currentNoteChanged, &noteWasRenamed);
 
@@ -2605,36 +2605,40 @@ void MainWindow::storeUpdatedNotesToDisk() {
         
         QString currentNoteText = _currentNote.getNoteText();
 	
+        const int cursorPos = ui->noteTextEdit->textCursor().position();
         // Check if the note has @Tags not yet linked
         QRegularExpression re = QRegularExpression(R"(#[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
         QRegularExpressionMatchIterator reIterator = re.globalMatch(currentNoteText);
         while (reIterator.hasNext()) {
             QRegularExpressionMatch reMatch = reIterator.next();
-            QString tag = reMatch.captured().right(reMatch.capturedLength() - 1);
-            
-            const QSignalBlocker blocker(noteDirectoryWatcher);
-            Q_UNUSED(blocker);
+            QString tagName = reMatch.captured().right(reMatch.capturedLength() - 1);
+            int tagNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
+            int tagNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
+    
+            if ((cursorPos < tagNameStart) || (cursorPos > tagNameEnd)) {
+                const QSignalBlocker blocker(noteDirectoryWatcher);
+                Q_UNUSED(blocker);
 
-            linkTagNameToCurrentNote(tag);
+                linkTagNameToCurrentNote(tagName);
+            }
         }
         
         // Check if some [[Links]] needs to be expanded but ONLY if the target note exists to prevent inserting empty note names
-		re = QRegularExpression(R"(\[\[([A-Za-z\s]*)\]\])");	// TODO Take figures into account if I want to implement filenames based on note's IDs
-		QRegularExpressionMatch reMatch = re.match(currentNoteText);
+        re = QRegularExpression(R"(\[\[([A-Za-z\s]*)\]\])");	// TODO Take figures into account if I want to implement filenames based on note's IDs
+        QRegularExpressionMatch reMatch = re.match(currentNoteText);
 
-		if (reMatch.hasMatch()){
-			QString candidateNoteName = reMatch.captured(reMatch.lastCapturedIndex());
-			int candidateNoteNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
-			int candidateNoteNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
-			const int cursorPos = ui->noteTextEdit->textCursor().position();
-			
-			if ((cursorPos < candidateNoteNameStart) || (cursorPos > candidateNoteNameEnd)) {
-				currentNoteText.replace(re, "[" + candidateNoteName + "](" + candidateNoteName + ".md)");
-				_currentNote.setNoteText(currentNoteText);
-				
-				ui->noteTextEdit->setText(currentNoteText);
-			}
-		}
+        if (reMatch.hasMatch()){
+            QString candidateNoteName = reMatch.captured(reMatch.lastCapturedIndex());
+            int candidateNoteNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
+            int candidateNoteNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
+            
+            if ((cursorPos < candidateNoteNameStart) || (cursorPos > candidateNoteNameEnd)) {
+                    currentNoteText.replace(re, "[" + candidateNoteName + "](" + candidateNoteName + ".md)");
+                    _currentNote.setNoteText(currentNoteText);
+                    
+                    ui->noteTextEdit->setText(currentNoteText);
+            }
+        }
 
         if (noteWasRenamed) {
             // reload the directory list if note name has changed
@@ -7816,7 +7820,7 @@ void MainWindow::removeNoteTagClicked() {
         const int selectedNotesCount = getSelectedNotesCount();
 
         if (selectedNotesCount <= 1) {
-			QRegularExpression re = QRegularExpression(R"((, )?@)" + tag.getName());
+			QRegularExpression re = QRegularExpression(R"((, )?#)" + tag.getName());
 			QRegularExpressionMatchIterator reIterator = re.globalMatch(ui->noteTextEdit->toPlainText());
 			
 			int lTag = 0;
