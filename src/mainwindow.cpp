@@ -2607,11 +2607,11 @@ void MainWindow::storeUpdatedNotesToDisk() {
 	
         const int cursorPos = ui->noteTextEdit->textCursor().position();
         // Check if the note has @Tags not yet linked
-        QRegularExpression re = QRegularExpression(R"(#[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
+        QRegularExpression re = QRegularExpression(R"([^A-Za-z]#[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
         QRegularExpressionMatchIterator reIterator = re.globalMatch(currentNoteText);
         while (reIterator.hasNext()) {
             QRegularExpressionMatch reMatch = reIterator.next();
-            QString tagName = reMatch.captured().right(reMatch.capturedLength() - 1);
+            QString tagName = reMatch.captured().right(reMatch.capturedLength() - 2);
             int tagNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
             int tagNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
     
@@ -6212,7 +6212,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("**Fichier :** " + embedmentLink + "  \n");
                 noteText.append("**Sujet :** " + pdfFile.subject() + "  \n");
                 noteText.append("**Mots-clés :** " + pdfFile.keywords() + "  \n");
-                noteText.append("**Tags :** @Lecture_Note, @TODO\n");
+                noteText.append("**Tags :** #Lecture_Note, #TODO\n");
                 noteText.append("**Auteur :** " + pdfFile.author() + "  \n");
 				noteText.append("\n-----\n");
 
@@ -9096,11 +9096,11 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
     setCurrentNote(std::move(note), true, false);
 
 	// Check if the note has @Tags not yet linked
-	QRegularExpression re = QRegularExpression(R"(#[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
+	QRegularExpression re = QRegularExpression(R"([^A-Za-z]#[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
 	QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
 	while (reIterator.hasNext()) {
 		QRegularExpressionMatch reMatch = reIterator.next();
-		QString tag = reMatch.captured().right(reMatch.capturedLength() - 1);
+		QString tag = reMatch.captured().right(reMatch.capturedLength() - 2);
 		
 		const QSignalBlocker blocker(noteDirectoryWatcher);
 		Q_UNUSED(blocker);
