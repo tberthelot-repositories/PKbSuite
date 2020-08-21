@@ -107,10 +107,10 @@ bool PDFFile::hasAnnotations()
             }
             
             if (pageSummary.length() > 0)
-				_summary.text += "* " + pageSummary + " " + "[Page " + iPage + "]\n";
+				_summary.text += "* " + pageSummary + " " + "[Page " + QString::number(iPage + 1) + "]\n";
             delete pageProcessed;
         }
-	}
+    }
     
     return foundAnnotations;
 }
