@@ -107,7 +107,7 @@ bool PDFFile::hasAnnotations()
             }
             
             if (pageSummary.length() > 0)
-				_summary.text += "* " + pageSummary + "\n";
+				_summary.text += "* " + pageSummary + " " + "[Page " + iPage + "]\n";
             delete pageProcessed;
         }
 	}
