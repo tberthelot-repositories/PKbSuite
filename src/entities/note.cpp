@@ -3171,7 +3171,7 @@ QDebug operator<<(QDebug dbg, const Note &note) {
 }
 
 void Note::updateReferenceBySectionInLinkedNotes() {
-	QRegularExpression re = QRegularExpression(R"(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md))");
+	QRegularExpression re = QRegularExpression(R"(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s\*\_\-]*.md))");
 	QRegularExpressionMatchIterator reIterator = re.globalMatch(_noteText);
 	while (reIterator.hasNext()) {
 		QRegularExpressionMatch reMatch = reIterator.next();
