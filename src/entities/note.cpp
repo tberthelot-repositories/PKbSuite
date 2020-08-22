@@ -3189,9 +3189,12 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 		// First, look for the "Referenced by" section
 		QRegularExpressionMatch match = QRegularExpression(R"(\n\n---\n## \*Referenced by:\*\n\n)").match(text);
 		
+                bool textModified = false;
+                
 		// No "Referenced by" section yet. Let's create it
 		if (!match.hasMatch()) {
 			text.append(QStringLiteral("\n\n---\n## \*Referenced by:\*\n\n"));
+                        textModified = true;
 		}
 		
 		// Next, check if links are available and create/update them
@@ -3202,14 +3205,17 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 		// No link to current note in "Referenced by" section yet, add it
 		if (!match.hasMatch()) {
 			text.append("* [" + _name + "](" + path.replace(" ", "%20") +")\n");
+                        textModified = true;
 		} 
 		// TODO temporarily disable link update because it should be managed by the note move function or equivalent
 /*		else { 	// Link is present, update it with current note path
 			text.replace(QRegularExpression(R"(\*\s\[\([)" + _name + R"(\)\]\([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md))"), "* [\\1](" + path.replace(" ", "%20") + ")");
 		}
 */
-		linkedNote.setNoteText(text);
-		linkedNote.setHasDirtyData(true);
-		linkedNote.store();
+                if (textModified) {
+                    linkedNote.setNoteText(text);
+                    linkedNote.setHasDirtyData(true);
+                    linkedNote.store();
+                }
 	}
 }
