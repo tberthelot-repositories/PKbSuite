@@ -2637,6 +2637,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
                     _currentNote.setNoteText(currentNoteText);
                     
                     ui->noteTextEdit->setText(currentNoteText);
+                    ui->noteTextEdit->textCursor().setPosition(cursorPos);
             }
         }
 
