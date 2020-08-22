@@ -2628,7 +2628,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
         QRegularExpressionMatch reMatch = re.match(currentNoteText);
 
         if (reMatch.hasMatch()){
-            QString candidateNoteName = reMatch.captured(reMatch.lastCapturedIndex());
+            QString candidateNoteName = Utils::Misc::toStartCase(reMatch.captured(reMatch.lastCapturedIndex()));
             int candidateNoteNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
             int candidateNoteNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
             

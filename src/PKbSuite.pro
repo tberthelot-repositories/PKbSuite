@@ -16,7 +16,7 @@ TRANSLATIONS = $$PWD/languages/PKbSuite_en.ts \
     $$PWD/languages/PKbSuite_fr.ts
 
 CODECFORTR = UTF-8
-CONFIG += c++11 with_aspell
+CONFIG += c++11 with_aspell 
 
 INCLUDEPATH += $$PWD/libraries $$PWD/libraries/diff_match_patch /usr/include/poppler
 
