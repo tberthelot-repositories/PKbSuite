@@ -2624,7 +2624,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
         }
         
         // Check if some [[Links]] needs to be expanded but ONLY if the target note exists to prevent inserting empty note names
-        re = QRegularExpression(R"(\[\[([A-Za-z\s]*)\]\])");	// TODO Take figures into account if I want to implement filenames based on note's IDs
+        re = QRegularExpression(R"(\[\[([A-Za-z\s\_\-]*)\]\])");	// TODO Take figures into account if I want to implement filenames based on note's IDs
         QRegularExpressionMatch reMatch = re.match(currentNoteText);
 
         if (reMatch.hasMatch()){
