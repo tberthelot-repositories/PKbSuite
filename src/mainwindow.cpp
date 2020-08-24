@@ -2586,12 +2586,13 @@ void MainWindow::storeUpdatedNotesToDisk() {
             cursor.setPosition(candidateNoteNameStart - 2, QTextCursor::MoveAnchor);
             cursor.setPosition(candidateNoteNameEnd + 2, QTextCursor::KeepAnchor);            
 
+            QString tstStr = cursor.selectedText();
             cursor.removeSelectedText();
             const QString strLink = "[" + candidateNoteName + "](" + candidateNoteName + ".md)";
             cursor.insertText(strLink);
 
             if (cursorPos > candidateNoteNameEnd)
-                cursor.setPosition(cursorPos + strLink.length() - ((candidateNoteNameEnd - candidateNoteNameStart) + 4));
+                cursor.setPosition(cursorPos + strLink.length() - (candidateNoteNameEnd - candidateNoteNameStart) - 4);
             else
                 cursor.setPosition(cursorPos);
             textEdit->setTextCursor(cursor);
