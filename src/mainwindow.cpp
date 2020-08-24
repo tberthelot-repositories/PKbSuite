@@ -2550,7 +2550,54 @@ void MainWindow::storeUpdatedNotesToDisk() {
     // All flushing and syncing didn't help.
     bool _currentNoteChanged = false;
     bool noteWasRenamed = false;
+         
+    QString currentNoteText = _currentNote.getNoteText();
     
+    PKbSuiteMarkdownTextEdit *textEdit = activeNoteTextEdit();
+    QTextCursor cursor = textEdit->textCursor();
+    const int cursorPos = cursor.position();
+    // Check if the note has @Tags not yet linked
+    QRegularExpression re = QRegularExpression(R"([^A-Za-z]#[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
+    QRegularExpressionMatchIterator reIterator = re.globalMatch(currentNoteText);
+    while (reIterator.hasNext()) {
+        QRegularExpressionMatch reMatch = reIterator.next();
+        QString tagName = reMatch.captured().right(reMatch.capturedLength() - 2);
+        int tagNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
+        int tagNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
+
+        if ((cursorPos < tagNameStart) || (cursorPos > tagNameEnd)) {
+            const QSignalBlocker blocker(noteDirectoryWatcher);
+            Q_UNUSED(blocker);
+
+            linkTagNameToCurrentNote(tagName);
+        }
+    }
+    
+    // Check if some [[Links]] needs to be expanded but ONLY if the target note exists to prevent inserting empty note names
+    re = QRegularExpression(R"(\[\[([A-Za-z\s\_\-]*)\]\])");	// TODO Take figures into account if I want to implement filenames based on note's IDs
+    QRegularExpressionMatch reMatch = re.match(currentNoteText);
+
+    if (reMatch.hasMatch()){
+        QString candidateNoteName = Utils::Misc::toStartCase(reMatch.captured(reMatch.lastCapturedIndex()));
+        int candidateNoteNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
+        int candidateNoteNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
+        
+        if ((cursorPos < candidateNoteNameStart) || (cursorPos > candidateNoteNameEnd)) {
+            cursor.setPosition(candidateNoteNameStart - 2, QTextCursor::MoveAnchor);
+            cursor.setPosition(candidateNoteNameEnd + 2, QTextCursor::KeepAnchor);            
+
+            cursor.removeSelectedText();
+            const QString strLink = "[" + candidateNoteName + "](" + candidateNoteName + ".md)";
+            cursor.insertText(strLink);
+
+            if (cursorPos > candidateNoteNameEnd)
+                cursor.setPosition(cursorPos + strLink.length() - ((candidateNoteNameEnd - candidateNoteNameStart) + 4));
+            else
+                cursor.setPosition(cursorPos);
+            textEdit->setTextCursor(cursor);
+        }
+    }
+   
     // Check and update "Referenced by" section if needed
     _currentNote.updateReferenceBySectionInLinkedNotes();
 
@@ -2600,44 +2647,6 @@ void MainWindow::storeUpdatedNotesToDisk() {
 
                 // update current tab name
                 updateCurrentTabData(_currentNote);
-            }
-        }
-        
-        QString currentNoteText = _currentNote.getNoteText();
-	
-        const int cursorPos = ui->noteTextEdit->textCursor().position();
-        // Check if the note has @Tags not yet linked
-        QRegularExpression re = QRegularExpression(R"([^A-Za-z]#[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
-        QRegularExpressionMatchIterator reIterator = re.globalMatch(currentNoteText);
-        while (reIterator.hasNext()) {
-            QRegularExpressionMatch reMatch = reIterator.next();
-            QString tagName = reMatch.captured().right(reMatch.capturedLength() - 2);
-            int tagNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
-            int tagNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
-    
-            if ((cursorPos < tagNameStart) || (cursorPos > tagNameEnd)) {
-                const QSignalBlocker blocker(noteDirectoryWatcher);
-                Q_UNUSED(blocker);
-
-                linkTagNameToCurrentNote(tagName);
-            }
-        }
-        
-        // Check if some [[Links]] needs to be expanded but ONLY if the target note exists to prevent inserting empty note names
-        re = QRegularExpression(R"(\[\[([A-Za-z\s\_\-]*)\]\])");	// TODO Take figures into account if I want to implement filenames based on note's IDs
-        QRegularExpressionMatch reMatch = re.match(currentNoteText);
-
-        if (reMatch.hasMatch()){
-            QString candidateNoteName = Utils::Misc::toStartCase(reMatch.captured(reMatch.lastCapturedIndex()));
-            int candidateNoteNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
-            int candidateNoteNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
-            
-            if ((cursorPos < candidateNoteNameStart) || (cursorPos > candidateNoteNameEnd)) {
-                    currentNoteText.replace(re, "[" + candidateNoteName + "](" + candidateNoteName + ".md)");
-                    _currentNote.setNoteText(currentNoteText);
-                    
-                    ui->noteTextEdit->setText(currentNoteText);
-                    ui->noteTextEdit->textCursor().setPosition(cursorPos);
             }
         }
 
