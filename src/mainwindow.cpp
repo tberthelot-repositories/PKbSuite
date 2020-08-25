@@ -2555,7 +2555,6 @@ void MainWindow::storeUpdatedNotesToDisk() {
     
     PKbSuiteMarkdownTextEdit *textEdit = activeNoteTextEdit();
     QTextCursor cursor = textEdit->textCursor();
-    const int cursorPos = cursor.position();
     // Check if the note has @Tags not yet linked
     QRegularExpression re = QRegularExpression(R"([^A-Za-z]#[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
     QRegularExpressionMatchIterator reIterator = re.globalMatch(currentNoteText);
@@ -2565,6 +2564,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
         int tagNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
         int tagNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
 
+		const int cursorPos = cursor.position();
         if ((cursorPos < tagNameStart) || (cursorPos > tagNameEnd)) {
             const QSignalBlocker blocker(noteDirectoryWatcher);
             Q_UNUSED(blocker);
@@ -2582,6 +2582,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
         int candidateNoteNameStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
         int candidateNoteNameEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
         
+		int cursorPos = cursor.position();
         if ((cursorPos < candidateNoteNameStart) || (cursorPos > candidateNoteNameEnd)) {
             cursor.setPosition(candidateNoteNameStart - 2, QTextCursor::MoveAnchor);
             cursor.setPosition(candidateNoteNameEnd + 2, QTextCursor::KeepAnchor);            
