@@ -119,9 +119,9 @@ QString PDFFile::markdownSummary()
 {
     QString sTmp = "";
     
-    sTmp.append("## Résumé : \n");
+    sTmp.append("## Summary : \n");
     sTmp.append(_summary.text + "\n\n");
-    sTmp.append("*--- Fin ---*\n\n");
+    sTmp.append("*--- End ---*\n\n");
     
     return sTmp;
 }
@@ -135,9 +135,9 @@ QString PDFFile::markdownCitations(QString embedmentLink)
         sTmp.append("### Citation " + QString::number(iCitation + 1) + " \n");
         sTmp.append("Page : " + QString::number(_listCitations.at(iCitation)->page) + "   \n");
         sTmp.append(embedmentLink + _listCitations.at(iCitation)->link + ")\n\n");
-        sTmp.append("Extrait : ");
+        sTmp.append("Extract : ");
         sTmp.append("*" + _listCitations.at(iCitation)->extract + "*\n\n");
-        sTmp.append("*--- Fin ---*\n\n");
+        sTmp.append("*--- End ---*\n\n");
     }
     
     return sTmp;
@@ -149,12 +149,12 @@ QString PDFFile::markdownComments(QString embedmentLink)
     
 	embedmentLink.chop(1);
     for (int iComment = 0; iComment < _listComments.size(); iComment++) {
-        sTmp.append("### Commentaire " + QString::number(iComment + 1) + "   \n");
+        sTmp.append("### Comment " + QString::number(iComment + 1) + "   \n");
         sTmp.append("Page : " + QString::number(_listComments.at(iComment)->page) + "\n\n");
         sTmp.append(embedmentLink + _listComments.at(iComment)->link + ")\n\n");
-        sTmp.append("Commentaire :\n\n");
+        sTmp.append("Comment :\n\n");
         sTmp.append(_listComments.at(iComment)->text + "\n\n");
-        sTmp.append("*--- Fin ---*\n\n");
+        sTmp.append("*--- End ---*\n\n");
     }
     
     return sTmp;
