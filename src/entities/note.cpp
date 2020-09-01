@@ -3171,7 +3171,7 @@ QDebug operator<<(QDebug dbg, const Note &note) {
 }
 
 void Note::updateReferenceBySectionInLinkedNotes() {
-	QRegularExpression re = QRegularExpression(R"(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s\*\_\-]*.md))");
+	QRegularExpression re = QRegularExpression(R"(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s\*\_\-\.]*.md))");
 	QRegularExpressionMatchIterator reIterator = re.globalMatch(_noteText);
 	while (reIterator.hasNext()) {
 		QRegularExpressionMatch reMatch = reIterator.next();
@@ -3200,7 +3200,7 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 		// Next, check if links are available and create/update them
 		QString path = relativeFilePath(currentNotePath);
 
-		match = QRegularExpression(R"(\*\s\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s\*\_\-]*\]\()" + path.replace(" ","%20") + R"(\))").match(text);
+		match = QRegularExpression(R"(\*\s\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s\*\_\-\.]*\]\()" + path.replace(" ","%20") + R"(\))").match(text);
 		
 		// No link to current note in "Referenced by" section yet, add it
 		if (!match.hasMatch()) {
