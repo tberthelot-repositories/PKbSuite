@@ -6247,7 +6247,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 // note folder was modified
                 noteDirectoryWatcher.removePath(notesPath);
                 noteDirectoryWatcher.removePath(noteSubFolderPath);
-
+                
                 // store the note to disk
                 // if a tag is selected add the tag to the just created note
                 Tag tag = Tag::activeTag();
