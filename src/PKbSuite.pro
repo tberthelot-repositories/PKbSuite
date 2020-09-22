@@ -6,7 +6,7 @@
 
 QT       += core gui widgets sql svg network xml xmlpatterns printsupport qml websockets concurrent quickcontrols2
 
-CONFIG += with_aspell
+CONFIG += with_aspell debug
 
 TARGET = PKbSuite
 TEMPLATE = app
