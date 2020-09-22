@@ -2556,7 +2556,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
     PKbSuiteMarkdownTextEdit *textEdit = activeNoteTextEdit();
     QTextCursor cursor = textEdit->textCursor();
     // Check if the note has @Tags not yet linked
-    QRegularExpression re = QRegularExpression(R"([^A-Za-z]#[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
+    QRegularExpression re = QRegularExpression(R"([^A-Za-z]#([A-Za-zÀ-ÖØ-öø-ÿ_]|\d+[A-Za-zÀ-ÖØ-öø-ÿ_])[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
     QRegularExpressionMatchIterator reIterator = re.globalMatch(currentNoteText);
     while (reIterator.hasNext()) {
         QRegularExpressionMatch reMatch = reIterator.next();
@@ -9108,7 +9108,7 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
     setCurrentNote(std::move(note), true, false);
 
 	// Check if the note has @Tags not yet linked
-	QRegularExpression re = QRegularExpression(R"([^A-Za-z]#[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
+	QRegularExpression re = QRegularExpression(R"([^A-Za-z]#([A-Za-zÀ-ÖØ-öø-ÿ_]|\d+[A-Za-zÀ-ÖØ-öø-ÿ_])[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
 	QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
 	while (reIterator.hasNext()) {
 		QRegularExpressionMatch reMatch = reIterator.next();
