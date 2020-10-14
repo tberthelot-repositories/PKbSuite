@@ -732,7 +732,7 @@ QVector<int> Note::searchInNotes(QString search, bool ignoreNoteSubFolder,
         qWarning() << __func__ << ": " << query.lastError();
     } else {
         for (int r = 0; query.next(); r++) {
-            noteIdList.append(query.value(QStringLiteral("_id")).toInt());
+            noteIdList.append(query.value(QStringLiteral("id")).toInt());
         }
     }
 
@@ -876,7 +876,7 @@ QVector<int> Note::fetchAllIdsByNoteTextPart(const QString &textPart) {
         qWarning() << __func__ << ": " << query.lastError();
     } else {
         for (int r = 0; query.next(); r++) {
-            list.append(query.value(QStringLiteral("_id")).toInt());
+            list.append(query.value(QStringLiteral("id")).toInt());
         }
     }
 
