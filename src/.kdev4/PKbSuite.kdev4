@@ -29,8 +29,8 @@ CMAKE_EXPORT_COMPILE_COMMANDS=ON
 Launch Configurations=Launch Configuration 0
 
 [Launch][Launch Configuration 0]
-Configured Launch Modes=execute,Valgrind
-Configured Launchers=nativeAppLauncher,Callgrind
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
 Name=Nouveau lanceur Binaire compilé
 Type=Native Application
 
@@ -41,6 +41,7 @@ Dependency Action=Nothing
 EnvironmentGroup=
 Executable=file:///home/thomas/1. Projects/PKbSuite/src
 External Terminal=konsole --noclose --workdir %workdir -e %exe
+Kill Before Executing Again=4194304
 Project Target=PKbSuite,PKbSuite
 Use External Terminal=false
 Working Directory=
