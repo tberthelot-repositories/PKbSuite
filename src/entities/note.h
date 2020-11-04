@@ -323,7 +323,6 @@ class Note {
     QDateTime _created;
     QDateTime _modified;
     int _fileSize;
-    bool _hasDirtyData;
 
     static const QString getNoteURL(const QString &baseName);
 

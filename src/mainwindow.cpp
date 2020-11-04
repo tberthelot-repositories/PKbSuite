@@ -256,13 +256,9 @@ MainWindow::MainWindow(QWidget *parent)
             &MainWindow::openLocalUrl);
 
     // handle note edit zooming
-    connect(ui->noteTextEdit, &QOwnNotesMarkdownTextEdit::zoomIn, this,
+    connect(ui->noteTextEdit, &PKbSuiteMarkdownTextEdit::zoomIn, this,
             &MainWindow::on_action_Increase_note_text_size_triggered);
-    connect(ui->noteTextEdit, &QOwnNotesMarkdownTextEdit::zoomOut, this,
-            &MainWindow::on_action_Decrease_note_text_size_triggered);
-    connect(ui->encryptedNoteTextEdit, &QOwnNotesMarkdownTextEdit::zoomIn, this,
-            &MainWindow::on_action_Increase_note_text_size_triggered);
-    connect(ui->encryptedNoteTextEdit, &QOwnNotesMarkdownTextEdit::zoomOut, this,
+    connect(ui->noteTextEdit, &PKbSuiteMarkdownTextEdit::zoomOut, this,
             &MainWindow::on_action_Decrease_note_text_size_triggered);
 
     // handle note text edit resize events
@@ -3324,8 +3320,8 @@ void MainWindow::reloadCurrentNoteByNoteId() {
     const int pos = cursor.position();
 
     // update the current note
-    currentNote = Note::fetch(currentNote.getId());
-    setCurrentNote(std::move(currentNote), false);
+    _currentNote = Note::fetch(_currentNote.getId());
+    setCurrentNote(std::move(_currentNote), false);
 
     // restore old cursor position
     cursor.setPosition(pos);
@@ -4180,7 +4176,7 @@ void MainWindow::removeSelectedTags() {
             const int tagId = item->data(0, Qt::UserRole).toInt();
             const Tag tag = Tag::fetch(tagId);
 
-            QVector<int> idsTaggedNotes = tag.fetchAllLinkedNoteIds(true);
+            QVector<int> idsTaggedNotes = tag.fetchAllLinkedNoteIds(tag.getId(), true);
             
             int idNote = 0;
             while (idNote < idsTaggedNotes.size()) {
@@ -7974,7 +7970,7 @@ void MainWindow::on_tagTreeWidget_itemChanged(QTreeWidgetItem *item,
             const QSignalBlocker blocker(this->noteDirectoryWatcher);
             Q_UNUSED(blocker)
 
-            QVector<int> idsTaggedNotes = tag.fetchAllLinkedNoteIds(true);
+            QVector<int> idsTaggedNotes = tag.fetchAllLinkedNoteIds(tag.getId(), true);
             
             int idNote = 0;
             while (idNote < idsTaggedNotes.size()) {
@@ -10004,8 +10000,6 @@ void MainWindow::on_actionSplit_note_at_cursor_position_triggered() {
         Tag::fetch(tag._id).linkToNote(_currentNote);
     }
 }
-    }
-}
 
 /**
  * Jumps to "All notes" in the note subfolder and tag tree widget and triggers
@@ -11115,7 +11109,6 @@ void MainWindow::on_actionCheck_spelling_toggled(bool checked) {
     QSettings settings;
     settings.setValue(QStringLiteral("checkSpelling"), checked);
     ui->noteTextEdit->updateSettings();
-    ui->encryptedNoteTextEdit->updateSettings();
 }
 
 void MainWindow::loadDictionaryNames() {

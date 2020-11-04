@@ -405,7 +405,7 @@ void PKbSuiteMarkdownTextEdit::setMainWindow(MainWindow *mainWindow) {
     this->mainWindow = mainWindow;
 }
 
-bool QOwnNotesMarkdownTextEdit::canInsertFromMimeData(const QMimeData *source) const
+bool PKbSuiteMarkdownTextEdit::canInsertFromMimeData(const QMimeData *source) const
 {
     return (!source->hasUrls());
 }

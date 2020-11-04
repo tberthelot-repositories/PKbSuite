@@ -72,6 +72,8 @@ class FakeVimHandler;
 class WebSocketServerService;
 class PKbSuiteMarkdownTextEdit;
 
+struct TagHeader;
+
 // forward declaration because of "xxx does not name a type"
 class SettingsDialog;
 
