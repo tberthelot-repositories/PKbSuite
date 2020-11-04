@@ -26,7 +26,6 @@ void NoteDialog::setNote(Note &note) {
     setWindowTitle(note.getName());
 
     ui->textEdit->setPlainText(note.getNoteText());
-
     ui->noteTextView->setHtml(note.toMarkdownHtml(NoteFolder::currentLocalPath()));
 }
 

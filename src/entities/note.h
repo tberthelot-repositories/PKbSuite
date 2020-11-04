@@ -322,7 +322,7 @@ class Note {
     QDateTime _fileLastModified;
     QDateTime _created;
     QDateTime _modified;
-    qint64 _fileSize;
+    int _fileSize;
 
     static const QString getNoteURL(const QString &baseName);
 

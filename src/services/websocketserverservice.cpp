@@ -62,13 +62,14 @@ void WebSocketServerService::listen(quint16 port) {
     close();
 
     if (m_pWebSocketServer->listen(QHostAddress::LocalHost, port)) {
-        Utils::Misc::printInfo(tr("PKbSuite server listening on port %1")
+        Utils::Misc::printInfo(tr("QOwnNotes server listening on port %1")
+                                   .arg(QString::number(port)));
 
         connect(m_pWebSocketServer, SIGNAL(newConnection()), this,
                 SLOT(onNewConnection()));
         m_port = port;
     } else {
-        qWarning() << tr("Could not start PKbSuite server on port %1!")
+        qWarning() << tr("Could not start QOwnNotes server on port %1!")
                           .arg(QString::number(port));
     }
 }

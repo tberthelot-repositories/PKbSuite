@@ -247,11 +247,6 @@ SettingsDialog::SettingsDialog(int page, QWidget *parent)
     ui->bookmarkTagLabel->setText(ui->bookmarkTagLabel->text().arg(
         "https://www.pkbsuite.org/Knowledge-base/"
         "PKbSuite-Web-Companion-browser-extension"));
-
-#ifndef Q_OS_LINUX
-    ui->systemIconThemeCheckBox->setHidden(true);
-    ui->systemIconThemeCheckBox->setChecked(false);
-#endif
 }
 
 /**

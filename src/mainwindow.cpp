@@ -87,6 +87,8 @@
 #include "dialogs/settingsdialog.h"
 #include "dialogs/orphanedattachmentsdialog.h"
 #include "dialogs/orphanedimagesdialog.h"
+#include "dialogs/settingsdialog.h"
+#include "helpers/pkbsuitemarkdownhighlighter.h"
 #include <diff_match_patch.h>
 #include "libraries/sonnet/src/core/speller.h"
 #include "release.h"
@@ -259,6 +261,7 @@ MainWindow::MainWindow(QWidget *parent)
             &MainWindow::on_action_Increase_note_text_size_triggered);
     connect(ui->noteTextEdit, &PKbSuiteMarkdownTextEdit::zoomOut, this,
             &MainWindow::on_action_Decrease_note_text_size_triggered);
+
     // handle note text edit resize events
     connect(ui->noteTextEdit, &PKbSuiteMarkdownTextEdit::resize, this,
             &MainWindow::noteTextEditResize);
@@ -4174,7 +4177,7 @@ void MainWindow::removeSelectedTags() {
             const int tagId = item->data(0, Qt::UserRole).toInt();
             const Tag tag = Tag::fetch(tagId);
 
-            QVector<int> idsTaggedNotes = tag.fetchAllLinkedNoteIds(tagId, true);
+            QVector<int> idsTaggedNotes = tag.fetchAllLinkedNoteIds(tag.getId(), true);
             
             int idNote = 0;
             while (idNote < idsTaggedNotes.size()) {
@@ -7426,10 +7429,10 @@ void MainWindow::buildTagTreeForParentItem(QTreeWidgetItem *parent,
 
         // set the active item
         if (activeTagId == tagId) {
-                const QSignalBlocker blocker(ui->tagTreeWidget);
-                Q_UNUSED(blocker)
+            const QSignalBlocker blocker(ui->tagTreeWidget);
+            Q_UNUSED(blocker)
 
-                ui->tagTreeWidget->setCurrentItem(item);
+            ui->tagTreeWidget->setCurrentItem(item);
         }
 
         // recursively populate the next level
@@ -7451,7 +7454,7 @@ void MainWindow::buildTagTreeForParentItem(QTreeWidgetItem *parent,
 /**
  * Ads a tag to the tag tree widget
  */
-QTreeWidgetItem *MainWindow::addTagToTagTreeWidget(QTreeWidgetItem *parent,
+QTreeWidgetItem* MainWindow::addTagToTagTreeWidget(QTreeWidgetItem *parent,
                                                    const TagHeader &tag) {
     const int parentId =
         parent == nullptr ? 0 : parent->data(0, Qt::UserRole).toInt();
@@ -7800,7 +7803,8 @@ void MainWindow::reloadCurrentNoteTags() {
     // add all new remove-tag buttons
     for (const TagHeader &tag : Utils::asConst(tagList)) {
         QPushButton *button = new QPushButton(
-            Utils::Misc::shorten(tag._name, 25), ui->noteTagButtonFrame);
+
+        Utils::Misc::shorten(tag._name, 25), ui->noteTagButtonFrame);
         button->setIcon(QIcon::fromTheme(
             QStringLiteral("tag-delete"),
             QIcon(QStringLiteral(

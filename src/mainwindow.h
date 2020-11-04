@@ -72,6 +72,8 @@ class FakeVimHandler;
 class WebSocketServerService;
 class PKbSuiteMarkdownTextEdit;
 
+struct TagHeader;
+
 // forward declaration because of "xxx does not name a type"
 class SettingsDialog;
 struct TagHeader;
@@ -484,10 +486,6 @@ class MainWindow : public QMainWindow {
     void on_tagTreeWidget_itemCollapsed(QTreeWidgetItem *item);
 
     void on_tagTreeWidget_itemExpanded(QTreeWidgetItem *item);
-
-    void on_actionScript_repository_triggered();
-
-    void on_actionScript_settings_triggered();
 
     void filterNotesByTag();
 

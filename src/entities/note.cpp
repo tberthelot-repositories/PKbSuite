@@ -47,12 +47,6 @@ QDateTime Note::getFileCreated() const { return this->_fileCreated; }
 
 QDateTime Note::getModified() const { return this->_modified; }
 
-/**
- * Check 2nd bit for edit permissions
- *
- * @return
- */
-
 int Note::getFileSize() const { return this->_fileSize; }
 
 QString Note::getFileName() const { return this->_fileName; }
@@ -2440,7 +2434,7 @@ qint64 Note::qint64Hash(const QString &str) {
     return a ^ b;
 }
 
-/*
+/**
  * Counts all notes
  */
 int Note::countAll() {
