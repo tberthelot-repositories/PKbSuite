@@ -74,6 +74,7 @@ class PKbSuiteMarkdownTextEdit;
 
 // forward declaration because of "xxx does not name a type"
 class SettingsDialog;
+struct TagHeader;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -160,9 +161,13 @@ class MainWindow : public QMainWindow {
 
     void resetBrokenTagNotesLinkFlag();
 
+
     void setCurrentNote(Note note, bool updateNoteText = true,
                         bool updateSelectedNote = true,
                         bool addPreviousNoteToHistory = true);
+
+    Q_INVOKABLE void reloadCurrentNoteByNoteId();
+
    protected:
     void closeEvent(QCloseEvent *event);
 
@@ -661,6 +666,8 @@ private:
     QList<QHotkey *> _globalShortcuts;
     int _lastNoteId = 0;
     bool _scriptUpdateFound = false;
+    bool _isMaximizedBeforeFullScreen = false;
+    bool _isMinimizedBeforeFullScreen = false;
 
     void createSystemTrayIcon();
 
@@ -786,7 +793,7 @@ private:
     void buildBulkNoteTagMenuTree(QMenu *parentMenu, int parentTagId = 0);
 
     QTreeWidgetItem *addTagToTagTreeWidget(QTreeWidgetItem *parent,
-                                           const Tag &tag);
+                                           const TagHeader &tag);
 
     bool jumpToNoteName(const QString &name);
 
@@ -887,6 +894,8 @@ private:
 
     static void handleTreeWidgetItemTagColor(QTreeWidgetItem *item,
                                              const Tag &tag);
+    static void handleTreeWidgetItemTagColor(QTreeWidgetItem *item,
+                                             int tag);
 
     void disableColorOfTagItem(QTreeWidgetItem *item);
 

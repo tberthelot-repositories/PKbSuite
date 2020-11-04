@@ -61,9 +61,8 @@ void WebSocketServerService::listen(quint16 port) {
 
     close();
 
-    if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
+    if (m_pWebSocketServer->listen(QHostAddress::LocalHost, port)) {
         Utils::Misc::printInfo(tr("PKbSuite server listening on port %1")
-                                   .arg(QString::number(port)));
 
         connect(m_pWebSocketServer, SIGNAL(newConnection()), this,
                 SLOT(onNewConnection()));
@@ -289,11 +288,11 @@ QString WebSocketServerService::getBookmarksJsonText() const {
     }
 
     Tag tag = Tag::fetchByName(getBookmarksTag());
-    QList<Note> noteList = tag.fetchAllLinkedNotes();
+    const QVector<Note> noteList = tag.fetchAllLinkedNotes();
     QVector<Bookmark> bookmarks;
 
     // get all bookmark links from notes tagged with the bookmarks tag
-    Q_FOREACH (Note note, noteList) {
+    for (const Note &note : noteList) {
         QVector<Bookmark> noteBookmarks = note.getParsedBookmarks();
 
         // merge bookmark lists

@@ -607,6 +607,8 @@ set(SOURCE_FILES
     helpers/codetohtmlconverter.h
     api/noteapi.cpp
     api/noteapi.h
+    api/notesubfolderapi.cpp
+    api/notesubfolderapi.h
     api/tagapi.cpp
     api/tagapi.h
     api/scriptapi.cpp
@@ -652,8 +654,6 @@ set(SOURCE_FILES
     services/cryptoservice.h
     services/scriptingservice.cpp
     services/scriptingservice.h
-    libraries/piwiktracker/piwiktracker.h
-    libraries/piwiktracker/piwiktracker.cpp
     libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget_p.h
     libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget.h
     libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget.cpp
@@ -854,6 +854,7 @@ SET(QON_TS_FILES
     languages/QOwnNotes_pa.ts
     languages/QOwnNotes_sq.ts
     languages/QOwnNotes_he.ts
+    languages/QOwnNotes_yi.ts
     languages/QOwnNotes_th.ts
     languages/QOwnNotes_sn.ts
     languages/QOwnNotes_km.ts

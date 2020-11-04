@@ -37,6 +37,7 @@ class PKbSuiteMarkdownTextEdit : public QMarkdownTextEdit {
     // we must not override _highlighter or Windows will create a
     // PKbSuiteMarkdownHighlighter and MarkdownHighlighter instance
     //    PKbSuiteMarkdownHighlighter *_highlighter;
+    bool canInsertFromMimeData(const QMimeData *source) const override;
     void insertFromMimeData(const QMimeData *source);
     void resizeEvent(QResizeEvent *event);
     bool eventFilter(QObject *obj, QEvent *event);

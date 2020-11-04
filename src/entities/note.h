@@ -58,6 +58,8 @@ class Note {
         const QString &noteSubFolderPathData,
         const QString& pathDataSeparator = QStringLiteral("\n"));
 
+    static int fetchNoteIdByName(const QString &name, int noteSubFolderId = -1);
+
     static QVector<Note> fetchAll(int limit = -1);
 
     static QVector<Note> fetchAllNotTagged(int activeNoteSubFolderId);
@@ -171,7 +173,8 @@ class Note {
     int countSearchTextInNote(const QString &search) const;
 
     static QStringList buildQueryStringList(
-        QString searchString, bool escapeForRegularExpression = false);
+        QString searchString, bool escapeForRegularExpression = false,
+        bool removeSearchPrefix = false);
 
     QString fileBaseName(bool withFullName = false);
 
@@ -182,6 +185,8 @@ class Note {
     void setNoteSubFolderId(int id);
 
     static QVector<Note> fetchAllByNoteSubFolderId(int noteSubFolderId);
+
+    static QVector<int> fetchAllIdsByNoteSubFolderId(int noteSubFolderId);
 
     static QVector<int> noteIdListFromNoteList(const QVector<Note> &noteList);
 
@@ -202,7 +207,7 @@ class Note {
 
     QString relativeNoteFilePath(QString separator = "");
 
-    qint64 getFileSize() const;
+    int getFileSize() const;
 
     static Note updateOrCreateFromFile(QFile &file,
                                        const NoteSubFolder &noteSubFolder);
@@ -269,6 +274,8 @@ class Note {
 
     static bool fileUrlIsNoteInCurrentNoteFolder(const QUrl &url);
 
+    static bool fileUrlIsExistingNoteInCurrentNoteFolder(const QUrl &url);
+
     static QString fileUrlInCurrentNoteFolderToRelativePath(const QUrl &url);
 
     QString relativeFilePath(const QString &path) const;
@@ -298,7 +305,13 @@ class Note {
 	
 	void updateReferenceBySectionInLinkedNotes();
 
+    static bool isNameSearch(const QString &searchTerm);
+
+    static QString removeNameSearchPrefix(QString searchTerm);
+
    protected:
+    int _id;
+    int _noteSubFolderId;
     QString _name;
     QString _fileName;
     QString _noteTextHtml;
@@ -310,8 +323,6 @@ class Note {
     QDateTime _created;
     QDateTime _modified;
     qint64 _fileSize;
-    int _id;
-    int _noteSubFolderId;
 
     static const QString getNoteURL(const QString &baseName);
 

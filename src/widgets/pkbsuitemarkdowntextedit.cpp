@@ -405,6 +405,11 @@ void PKbSuiteMarkdownTextEdit::setMainWindow(MainWindow *mainWindow) {
     this->mainWindow = mainWindow;
 }
 
+bool QOwnNotesMarkdownTextEdit::canInsertFromMimeData(const QMimeData *source) const
+{
+    return (!source->hasUrls());
+}
+
 /**
  * Handles pasting from clipboard
  */
