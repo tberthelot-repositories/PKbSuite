@@ -159,6 +159,9 @@ void PKbSuiteMarkdownHighlighter::highlightBrokenNotesLink(
 
 void PKbSuiteMarkdownHighlighter::setMisspelled(const int start,
                                                  const int count) {
+    if (MarkdownHighlighter::isPosInACodeSpan(currentBlock().blockNumber(), start))
+        return;
+
     // append to the already existing text format.
     // creating a new format will destroy pre-existing format
     QTextCharFormat format = QSyntaxHighlighter::format(start);
@@ -182,9 +185,10 @@ void PKbSuiteMarkdownHighlighter::highlightSpellChecking(const QString &text) {
         qWarning() << "Spellchecker invalid for current language!";
         return;
     }
-    if (currentBlockState() == HighlighterState::HeadlineEnd ||
-        currentBlockState() == HighlighterState::CodeBlock ||
-        currentBlockState() >= HighlighterState::CodeCpp)
+    int state = currentBlockState();
+    if (state == HighlighterState::HeadlineEnd ||
+        state == HighlighterState::CodeBlock ||
+        state >= HighlighterState::CodeCpp)
         return;
 
     // use our own settings, as KDE users might face issues with Autodetection
