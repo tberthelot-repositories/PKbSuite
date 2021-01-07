@@ -3707,7 +3707,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
                     linkTagNameToCurrentNote(tag.getName(), true);
     
 					QTextCursor tc = ui->noteTextEdit->textCursor();
-					tc.insertText("@" + tag.getName());
+					tc.insertText("#" + tag.getName());
 				}
 
                 return false;
@@ -7682,7 +7682,7 @@ void MainWindow::on_newNoteTagLineEdit_returnPressed() {
     linkTagNameToCurrentNote(text);
     
     QTextCursor tc = ui->noteTextEdit->textCursor();
-    tc.insertText("@" + text);
+    tc.insertText("#" + text);
 }
 
 /**
@@ -7978,13 +7978,13 @@ void MainWindow::on_tagTreeWidget_itemChanged(QTreeWidgetItem *item,
                 Note note = Note::fetch(idNote);
                 QString noteText = note.getNoteText();
                 
-                QRegularExpression re = QRegularExpression("@" + tag.getName());
+                QRegularExpression re = QRegularExpression("" + tag.getName());
                 QRegularExpressionMatchIterator reIterator = re.globalMatch(noteText);
 
                 while (reIterator.hasNext()) {
                     QRegularExpressionMatch reMatch = reIterator.next(); // TODO Voir si QRegularExpressionMatch ne permet pas les remplacements
                     
-                    noteText.replace("@" + tag.getName(), "@" + name);
+                    noteText.replace("#" + tag.getName(), "#" + name);
                 }
                                 
                 note.setNoteText(noteText);
