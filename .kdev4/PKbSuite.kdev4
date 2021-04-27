@@ -8,11 +8,11 @@ Current Build Directory Index-Système hôte=0
 [CMake][CMake Build Directory 0]
 Build Directory Path=/home/thomas/1. Projects/PKbSuite/build
 Build Type=Debug
-CMake Binary=/usr/bin/qmake-qt5
-CMake Executable=/usr/bin/qmake-qt5
+CMake Binary=/usr/bin/cmake
+CMake Executable=/usr/bin/cmake
 Environment Profile=
 Extra Arguments=
-Install Directory=
+Install Directory=/usr/local
 Runtime=Système hôte
 
 [Project]
