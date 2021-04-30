@@ -62,8 +62,6 @@ class Note {
 
     static QVector<Note> fetchAll(int limit = -1);
 
-    static QVector<Note> fetchAllNotTagged(int activeNoteSubFolderId);
-
     static QVector<int> fetchAllNotTaggedIds();
 
     static int countAllNotTagged(int activeNoteSubFolderId = -1);
@@ -107,7 +105,10 @@ class Note {
 
     friend QDebug operator<<(QDebug dbg, const Note &note);
 
-    void createFromFile(QFile &file, int noteSubFolderId = 0);
+    bool operator==(const Note &note) const;
+
+    void createFromFile(QFile &file, int noteSubFolderId = 0,
+                        bool withNoteNameHook = false);
 
     static bool deleteAll();
 
@@ -234,6 +235,8 @@ class Note {
 
     QString importMediaFromBase64(
         QString &data, const QString &imageSuffix = QStringLiteral("dat"));
+
+    QString importMediaFromDataUrl(const QString &dataUrl);
 
     bool canWriteToNoteFile();
 

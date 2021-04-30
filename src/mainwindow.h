@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2020 Patrizio Bekerle -- <patrizio@bekerle.com>
+ * Copyright (c) 2014-2021 Patrizio Bekerle -- <patrizio@bekerle.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 
 #include <entities/note.h>
 #include <libraries/qhotkey/QHotkey/qhotkey.h>
-
 #include <QFileSystemWatcher>
 #include <QMainWindow>
 #include <QSystemTrayIcon>
@@ -62,8 +61,8 @@ class ActionDialog;
 class TodoDialog;
 class QPrinter;
 class LogWidget;
-class OrphanedImagesDialog;
-class OrphanedAttachmentsDialog;
+class StoredImagesDialog;
+class StoredAttachmentsDialog;
 class IssueAssistantDialog;
 class NoteHistory;
 class NoteDiffDialog;
@@ -71,8 +70,7 @@ class UpdateService;
 class FakeVimHandler;
 class WebSocketServerService;
 class PKbSuiteMarkdownTextEdit;
-
-struct TagHeader;
+class CommandBar;
 
 // forward declaration because of "xxx does not name a type"
 class SettingsDialog;
@@ -168,9 +166,19 @@ class MainWindow : public QMainWindow {
                         bool updateSelectedNote = true,
                         bool addPreviousNoteToHistory = true);
 
-    Q_INVOKABLE void reloadCurrentNoteByNoteId();
+    Q_INVOKABLE QString getWorkspaceUuid(const QString &workspaceName);
+
+    Q_INVOKABLE void reloadCurrentNoteByNoteId(bool updateNoteText = false);
+
+    Q_INVOKABLE QStringList getWorkspaceUuidList();
+
+    Q_INVOKABLE void setCurrentWorkspace(const QString &uuid);
+
+    Q_INVOKABLE bool insertDataUrlAsFileIntoCurrentNote(const QString &dataUrl);
 
    protected:
+    void changeEvent(QEvent *event) override;
+
     void closeEvent(QCloseEvent *event);
 
     bool eventFilter(QObject *obj, QEvent *event);
@@ -191,8 +199,7 @@ class MainWindow : public QMainWindow {
 
     void disallowNoteEditing();
 
-    void createNewNote(QString noteName = QString(),
-                       bool withNameAppend = true);
+    void openCurrentNoteInTab();
 
    private slots:
 	   
@@ -429,7 +436,7 @@ class MainWindow : public QMainWindow {
 
 	void on_actionFind_notes_in_all_subfolders_triggered();
 
-    void on_actionDelete_orphaned_images_triggered();
+    void on_actionManage_stored_images_triggered();
 
     void on_actionUnlock_panels_toggled(bool arg1);
 
@@ -441,13 +448,11 @@ class MainWindow : public QMainWindow {
 
     void on_actionRename_current_workspace_triggered();
 
-    void setCurrentWorkspace(const QString &uuid);
-
     void on_actionSwitch_to_previous_workspace_triggered();
 
     void on_actionShow_all_panels_triggered();
 
-    void restoreCurrentWorkspace();
+    Q_SLOT void restoreCurrentWorkspace();
 
     void togglePanelVisibility(const QString &objectName);
 
@@ -505,7 +510,7 @@ class MainWindow : public QMainWindow {
 
     void on_noteTreeWidget_itemSelectionChanged();
 
-    void on_actionManage_orphaned_attachments_triggered();
+    void on_actionManage_stored_attachments_triggered();
 
     void on_noteOperationsButton_clicked();
 
@@ -518,6 +523,8 @@ class MainWindow : public QMainWindow {
     void on_navigationLineEdit_textChanged(const QString &arg1);
 
     void initWebSocketServerService();
+
+    void initWebAppClientService();
 
     void on_actionJump_to_note_list_panel_triggered();
 
@@ -557,8 +564,6 @@ class MainWindow : public QMainWindow {
 
     void on_noteEditTabWidget_tabCloseRequested(int index);
 
-    void openCurrentNoteInTab();
-
     void on_actionPrevious_note_tab_triggered();
 
     void on_actionNext_note_tab_triggered();
@@ -572,6 +577,8 @@ class MainWindow : public QMainWindow {
     void on_noteEditTabWidget_tabBarClicked(int index);
 
     void showNoteEditTabWidgetContextMenu(const QPoint &point);
+
+    void on_actionJump_to_navigation_panel_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -601,6 +608,7 @@ private:
     QToolBar *_quitToolbar;
     bool _noteViewIsRegenerated;
     QHash<int, NoteHistoryItem> _activeNoteFolderNotePositions;
+    QHash<QString, QString> _workspaceNameUuidMap;
     bool _searchLineEditFromCompleter;
     bool _isNotesDirectoryWasModifiedDisabled;
     bool _isNotesWereModifiedDisabled;
@@ -638,8 +646,8 @@ private:
     bool _noteFolderDockWidgetWasVisible;
     bool _noteSubFolderDockWidgetVisible;
     bool _closeEventWasFired;
-    OrphanedImagesDialog *_orphanedImagesDialog;
-    OrphanedAttachmentsDialog *_orphanedAttachmentsDialog;
+    StoredImagesDialog *_storedImagesDialog;
+    StoredAttachmentsDialog *_storedAttachmentsDialog;
     SettingsDialog *_settingsDialog;
     QString _previousItemText;
     bool _noteExternallyRemovedCheckEnabled;
@@ -649,6 +657,7 @@ private:
     bool _noteEditIsCentralWidget;
     bool _lastNoteSelectionWasMultiple;
     WebSocketServerService *_webSocketServerService;
+    WebAppClientService *_webAppClientService;
     QActionGroup *_languageGroup;
     QActionGroup *_spellBackendGroup;
     bool _brokenTagNoteLinksRemoved = false;
@@ -666,6 +675,7 @@ private:
     bool _scriptUpdateFound = false;
     bool _isMaximizedBeforeFullScreen = false;
     bool _isMinimizedBeforeFullScreen = false;
+    CommandBar* _commandBar;
 
     void createSystemTrayIcon();
 
@@ -807,10 +817,6 @@ private:
 
     bool isToolbarVisible();
 
-    static void setTreeWidgetItemToolTipForNote(
-        QTreeWidgetItem *item, const Note &note,
-        QDateTime *overrideFileLastModified = nullptr);
-
     QTreeWidgetItem *firstVisibleNoteTreeWidgetItem();
 
     QTreeWidgetItem *addNoteSubFolderToTreeWidget(
@@ -850,6 +856,9 @@ private:
 
     bool selectedNotesHaveTags();
 
+    void createNewNote(QString noteName = QString(),
+                       bool withNameAppend = true);
+
     void initTagButtonScrollArea();
 
     static QIcon getSystemTrayIcon();
@@ -875,8 +884,6 @@ private:
     void storeCurrentWorkspace();
 
     void initWorkspaceComboBox();
-
-    static QStringList getWorkspaceUuidList();
 
     void updateWindowToolbar();
 
@@ -985,4 +992,6 @@ private:
     void closeOrphanedTabs() const;
     void removeNoteTab(int index) const;
     void automaticScriptUpdateCheck();
+
+    void updateJumpToActionsAvailability();
 };

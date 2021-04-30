@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Waqar Ahmed <waqar.17a@gmail.com>
+ * Copyright (c) 2019-2021 Waqar Ahmed <waqar.17a@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,9 @@
 #define QOWNSPELLCHECKER_H
 
 #include <libraries/sonnet/src/core/speller.h>
+#include "libraries/sonnet/src/core/languagefilter_p.h"
 
 #include "LanguageCache.h"
-#include "libraries/sonnet/src/core/languagefilter_p.h"
-#include "libraries/sonnet/src/core/tokenizer_p.h"
 
 class QOwnSpellChecker {
    public:

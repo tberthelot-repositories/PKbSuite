@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2020 Patrizio Bekerle -- <patrizio@bekerle.com>
+ * Copyright (c) 2014-2021 Patrizio Bekerle -- <patrizio@bekerle.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,6 +114,7 @@ void loadPrinterSettings(QPrinter *printer, const QString &settingsKey);
 bool isNoteEditingAllowed();
 bool useInternalExportStylingForPreview();
 bool isSocketServerEnabled();
+bool isWebAppSupportEnabled();
 QString unescapeHtml(QString html);
 QString htmlspecialchars(QString text);
 void printInfo(const QString &text);
@@ -140,11 +141,16 @@ bool isSameFile(const QString &path1, const QString &path2);
 QString generateRandomString(int length = 8);
 QString makeFileNameRandom(const QString &fileName,
                            const QString &overrideSuffix = "");
+QString findAvailableFileName(const QString &fileName,
+                              const QString &directoryPath,
+                              const QString &overrideSuffix = "");
 QString rstrip(const QString &str);
 bool isPreviewUseEditorStyles();
 QString previewFontString();
 QString previewCodeFontString();
 bool fileExists(const QString &path);
+QString removeAcceleratorMarker(const QString &label_);
+QString fileExtensionForMimeType(const QString &mimeType);
 }    // namespace Misc
 }    // namespace Utils
 

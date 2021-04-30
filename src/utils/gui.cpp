@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2020 Patrizio Bekerle -- <patrizio@bekerle.com>
+ * Copyright (c) 2014-2021 Patrizio Bekerle -- <patrizio@bekerle.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -481,6 +481,53 @@ void Utils::Gui::copyCodeBlockText(const QTextBlock &initialBlock) {
 }
 
 /**
+ * Attempts to toggle a checkbox at the cursor position
+ *
+ * @param textEdit
+ */
+bool Utils::Gui::toggleCheckBoxAtCursor(QPlainTextEdit *textEdit) {
+    auto cursor = textEdit->textCursor();
+    const int pos = cursor.position();
+
+    // select the full range of "- [ ]" text in front and after cursor
+    cursor.movePosition(QTextCursor::Left,
+                        QTextCursor::MoveAnchor, 5);
+    cursor.movePosition(QTextCursor::Right,
+                        QTextCursor::KeepAnchor, 10);
+
+    bool result = false;
+    auto text = cursor.selectedText();
+    auto reUnchecked = QRegularExpression(R"(([-\+\*]) \[ \])");
+    auto reChecked = QRegularExpression(R"(([-\+\*]) \[x\])");
+    auto reNumberUnchecked = QRegularExpression(R"(([\d+]\.) \[ \])");
+    auto reNumberChecked = QRegularExpression(R"(([\d+]\.) \[x\])");
+
+    // try to toggle the checkbox
+    if (reUnchecked.match(text).hasMatch()) {
+        text.replace(reUnchecked, QStringLiteral("\\1 [x]"));
+        result = true;
+    } else if (reChecked.match(text).hasMatch()) {
+        text.replace(reChecked, QStringLiteral("\\1 [ ]"));
+        result = true;
+    } else if (reNumberUnchecked.match(text).hasMatch()) {
+        text.replace(reNumberUnchecked, QStringLiteral("\\1 [x]"));
+        result = true;
+    } else if (reNumberChecked.match(text).hasMatch()) {
+        text.replace(reNumberChecked, QStringLiteral("\\1 [ ]"));
+        result = true;
+    }
+
+    // insert the new checkbox text if it was toggled
+    if (result) {
+        cursor.insertText(text);
+        cursor.setPosition(pos);
+        textEdit->setTextCursor(cursor);
+    }
+
+    return result;
+}
+
+/**
  * Automatically formats a markdown table in a text edit
  *
  * @param textEdit
@@ -522,7 +569,7 @@ bool Utils::Gui::autoFormatTableAtCursor(QPlainTextEdit *textEdit) {
             prevBlockText.split(QStringLiteral("|"));
         tableTextList.prepend(stringList);
         startPosition = block.position();
-        maxColumns = std::max(maxColumns, stringList.count());
+        maxColumns = std::max(maxColumns, (int)stringList.count());
     }
 
     // check the next blocks
@@ -543,7 +590,7 @@ bool Utils::Gui::autoFormatTableAtCursor(QPlainTextEdit *textEdit) {
             nextBlockText.split(QStringLiteral("|"));
         tableTextList.append(stringList);
         endPosition = block.position() + nextBlockText.count();
-        maxColumns = std::max(maxColumns, stringList.count());
+        maxColumns = std::max(maxColumns, (int)stringList.count());
     }
 
     const QRegularExpression headlineSeparatorRegExp(QStringLiteral(R"(^(:)?-+(:)?$)"));
@@ -568,7 +615,7 @@ bool Utils::Gui::autoFormatTableAtCursor(QPlainTextEdit *textEdit) {
              }
 
              const QString &text = lineTextList.at(col).trimmed();
-             maxTextLength = std::max(text.count(), maxTextLength);
+             maxTextLength = std::max((int)text.count(), maxTextLength);
          }
 
          colLength << maxTextLength;
@@ -908,4 +955,34 @@ void Utils::Gui::setTabWidgetTabSticky(QTabWidget *tabWidget, int index,
 
 bool Utils::Gui::isTabWidgetTabSticky(QTabWidget *tabWidget, int index) {
     return tabWidget->widget(index)->property("sticky").toBool();
+}
+
+/**
+ * Sets the tree widget tooltip for a note
+ */
+void Utils::Gui::setTreeWidgetItemToolTipForNote(
+    QTreeWidgetItem *item, const Note &note,
+    QDateTime *overrideFileLastModified) {
+    if (item == nullptr) {
+        return;
+    }
+
+    QDateTime modified = note.getFileLastModified();
+    QDateTime *fileLastModified = (overrideFileLastModified != nullptr)
+                                  ? overrideFileLastModified
+                                  : &modified;
+
+    QString toolTipText =
+        QObject::tr("<strong>%1</strong><br />last modified: %2")
+            .arg(note.getFileName(), fileLastModified->toString());
+
+    NoteSubFolder noteSubFolder = note.getNoteSubFolder();
+    if (noteSubFolder.isFetched()) {
+        toolTipText += QObject::tr("<br />path: %1").arg(
+            noteSubFolder.relativePath());
+    }
+
+    item->setToolTip(0, toolTipText);
+
+    // TODO: handle item widget too
 }

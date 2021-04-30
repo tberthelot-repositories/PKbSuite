@@ -4,7 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets sql svg network xml xmlpatterns printsupport qml websockets concurrent quickcontrols2
+QT       += core gui widgets sql svg network xml printsupport qml websockets concurrent quickcontrols2
+
+lessThan(QT_MAJOR_VERSION, 6) {
+    QT += xmlpatterns
+}
 
 CONFIG += with_aspell debug
 
@@ -52,6 +56,7 @@ SOURCES += main.cpp\
     widgets/graphicsview.cpp \
     widgets/pkbsuitemarkdowntextedit.cpp \
     services/websocketserverservice.cpp \
+    services/webappclientservice.cpp \
     dialogs/masterdialog.cpp \
     utils/misc.cpp \
     utils/gui.cpp \
@@ -65,8 +70,8 @@ SOURCES += main.cpp\
     api/tagapi.cpp \
     widgets/combobox.cpp \
     widgets/fontcolorwidget.cpp \
-    dialogs/orphanedimagesdialog.cpp \
-    dialogs/orphanedattachmentsdialog.cpp \
+    dialogs/storedimagesdialog.cpp \
+    dialogs/storedattachmentsdialog.cpp \
     dialogs/tabledialog.cpp \
     libraries/qtcsv/src/sources/reader.cpp \
     dialogs/dropPDFDialog.cpp \
@@ -81,7 +86,10 @@ SOURCES += main.cpp\
     pdffile.cpp \
     widgets/layoutwidget.cpp \
     dialogs/websockettokendialog.cpp \
-    dialogs/imagedialog.cpp
+    dialogs/imagedialog.cpp \
+    dialogs/commandbar.cpp \
+    models/commandmodel.cpp \
+    libraries/fuzzy/kfuzzymatcher.cpp
 
 HEADERS  += mainwindow.h \
     build_number.h \
@@ -108,6 +116,7 @@ HEADERS  += mainwindow.h \
     dialogs/settingsdialog.h \
     dialogs/localtrashdialog.h \
     services/websocketserverservice.h \
+    services/webappclientservice.h \
     helpers/htmlentities.h \
     helpers/toolbarcontainer.h \
     helpers/pkbsuitemarkdownhighlighter.h \
@@ -129,8 +138,8 @@ HEADERS  += mainwindow.h \
     api/tagapi.h \
     widgets/combobox.h \
     widgets/fontcolorwidget.h \
-    dialogs/orphanedimagesdialog.h \
-    dialogs/orphanedattachmentsdialog.h \
+    dialogs/storedimagesdialog.h \
+    dialogs/storedattachmentsdialog.h \
     dialogs/tabledialog.h \
     libraries/qtcsv/src/include/qtcsv_global.h \
     libraries/qtcsv/src/include/abstractdata.h \
@@ -149,7 +158,10 @@ HEADERS  += mainwindow.h \
     pdffile.h \
     widgets/layoutwidget.h \
     dialogs/websockettokendialog.h \
-    dialogs/imagedialog.h
+    dialogs/imagedialog.h \
+    dialogs/commandbar.h \
+    models/commandmodel.h \
+    libraries/fuzzy/kfuzzymatcher.h
 
 FORMS    += mainwindow.ui \
     dialogs/attachmentdialog.ui \
@@ -162,8 +174,8 @@ FORMS    += mainwindow.ui \
     dialogs/welcomedialog.ui \
     dialogs/tagadddialog.ui \
     widgets/fontcolorwidget.ui \
-    dialogs/orphanedimagesdialog.ui \
-    dialogs/orphanedattachmentsdialog.ui \
+    dialogs/storedimagesdialog.ui \
+    dialogs/storedattachmentsdialog.ui \
     dialogs/tabledialog.ui \
     dialogs/notedialog.ui \
     dialogs/dictionarymanagerdialog.ui \

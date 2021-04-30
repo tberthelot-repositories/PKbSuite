@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014-2020 Patrizio Bekerle -- <patrizio@bekerle.com>
+ * Copyright (c) 2014-2021 Patrizio Bekerle -- <patrizio@bekerle.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,7 +205,7 @@ void PKbSuiteMarkdownHighlighter::highlightSpellChecking(const QString &text) {
     auto languageFilter = QOwnSpellChecker::instance()->languageFilter();
     languageFilter->setBuffer(text);
     while (languageFilter->hasNext()) {
-        const QStringRef sentence = languageFilter->next();
+        const Sonnet::Token sentence = languageFilter->next();
         if (autodetectLanguage) {
             QString lang;
             const QPair<int, int> spos =
@@ -231,20 +231,13 @@ void PKbSuiteMarkdownHighlighter::highlightSpellChecking(const QString &text) {
         wordTokenizer->setBuffer(sentence.toString());
         const int offset = sentence.position();
         while (wordTokenizer->hasNext()) {
-            QStringRef word = wordTokenizer->next();
+            Sonnet::Token w = wordTokenizer->next();
 
             // if the word has _ at the end, word tokenizer misses that, so cut
             // it off
+            QString word = w.token;
             if (word.endsWith(QLatin1Char('_'))) {
-#if QT_VERSION >= 0x050800
                 word.chop(1);
-#elif QT_VERSION >= 0x050600
-                word.truncate(word.length() - 1);
-#else
-                QString temp = word.toString();
-                temp.chop(1);
-                word = QStringRef(&temp);
-#endif
             }
 
             // in case it's not a word, like an email or a number
@@ -252,9 +245,8 @@ void PKbSuiteMarkdownHighlighter::highlightSpellChecking(const QString &text) {
                 continue;
             }
             // if the word is misspelled
-            if (QOwnSpellChecker::instance()->isWordMisspelled(
-                    word.toString())) {
-                setMisspelled(word.position() + offset, word.length());
+            if (QOwnSpellChecker::instance()->isWordMisspelled(word)) {
+                setMisspelled(w.position() + offset, w.length());
             } else {
                 // unsetMisspelled(word.position()+offset, word.length());
             }

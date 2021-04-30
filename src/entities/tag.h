@@ -27,9 +27,9 @@ class Tag : protected TagHeader {
     Tag() noexcept;
     explicit Tag(int id) noexcept : TagHeader{id, QString()}, _parentId{0} {}
 
-//    bool operator==(const Tag &tag) const;
+    bool operator==(const Tag &tag) const;
 
-//    bool operator<(const Tag &tag) const;
+    bool operator<(const Tag &tag) const;
 
     friend QDebug operator<<(QDebug dbg, const Tag &tag);
 
@@ -75,11 +75,12 @@ class Tag : protected TagHeader {
 
     bool isLinkedToNote(const Note &note) const;
 
-    int countLinkedNoteFileNames(const bool fromAllSubfolder,
-                                 const bool recursive) const;
+    static int countLinkedNoteFileNames(int tagId, bool fromAllSubfolders,
+                                        bool recursive);
 
-    int countLinkedNoteFileNamesForNoteSubFolder(
-        const NoteSubFolder &noteSubFolder, const bool recursive) const;
+    static int countLinkedNoteFileNamesForNoteSubFolder(
+        int tagId, const NoteSubFolder &noteSubFolder,
+        bool fromAllSubfolders, bool recursive);
 
     int getParentId() const;
 
@@ -108,7 +109,7 @@ class Tag : protected TagHeader {
 
     static Tag fetchByName(const QString &name, const int parentId);
 
-    static QVector<TagHeader> fetchAllOfNote(const Note &note);
+    static QVector<Tag> fetchAllOfNote(const Note &note);
 
     static QStringList fetchAllNames();
 
@@ -138,7 +139,7 @@ class Tag : protected TagHeader {
 
     static int countAllParentId(const int parentId);
 
-    static int countAllOfNote(const Note &note);
+    static bool noteHasTags(const Note &note, const QString& path);
 
     static void setAsActive(const int tagId);
 
@@ -164,7 +165,7 @@ class Tag : protected TagHeader {
 
     static bool isTaggingShowNotesRecursively();
 
-    static QVector<TagHeader> fetchAllOfNotes(const QVector<Note> &notes);
+    static QVector<Tag> fetchAllOfNotes(const QVector<Note> &notes);
 
     static bool mergeFromDatabase(QSqlDatabase &db);
 

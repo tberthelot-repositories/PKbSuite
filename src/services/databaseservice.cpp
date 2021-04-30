@@ -71,6 +71,29 @@ bool DatabaseService::reinitializeDiskDatabase() {
     return removeDiskDatabase() && createDiskConnection() && setupTables();
 }
 
+bool DatabaseService::checkDiskDatabaseIntegrity() {
+    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("disk"));
+    QSqlQuery query(db);
+
+    if (!query.exec(QStringLiteral("PRAGMA integrity_check"))) {
+        qWarning() << __func__ << ": " << query.lastError();
+
+        return false;
+    } else if (query.first()) {
+        const auto result = query.value(0).toString();
+
+        if (result == QStringLiteral("ok")) {
+            return true;
+        }
+
+        qWarning() << __func__ << ": " << result;
+
+        return false;
+    }
+
+    return false;
+}
+
 bool DatabaseService::createMemoryConnection() {
     QSqlDatabase dbMemory = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"),
                                                       QStringLiteral("memory"));
@@ -78,7 +101,7 @@ bool DatabaseService::createMemoryConnection() {
 
     if (!dbMemory.open()) {
         QMessageBox::critical(
-            0, QWidget::tr("Cannot open memory database"),
+            nullptr, QWidget::tr("Cannot open memory database"),
             QWidget::tr("Unable to establish a memory database connection."),
             QMessageBox::Ok);
         return false;
@@ -400,8 +423,8 @@ bool DatabaseService::setupTables() {
     queryMemory.exec(
         QStringLiteral("CREATE TABLE IF NOT EXISTS note ("
                        "id INTEGER PRIMARY KEY,"
-                       "name VARCHAR(255),"
-                       "file_name VARCHAR(255),"
+                       "name VARCHAR(255) COLLATE NOCASE,"
+                       "file_name VARCHAR(255) COLLATE NOCASE,"
                        "file_size INT64 DEFAULT 0,"
                        "note_sub_folder_id int,"
                        "note_text TEXT,"
@@ -689,6 +712,27 @@ bool DatabaseService::setupTables() {
         settings.remove(QStringLiteral("allowDifferentNoteFileName"));
 
         version = 33;
+    }
+
+
+    if (version < 35) {
+        // migrate setting with typo
+        settings.setValue(
+            QStringLiteral("Editor/removeTrailingSpaces"),
+            settings.value(QStringLiteral("Editor/removeTrainingSpaces")).toBool());
+        settings.remove(QStringLiteral("Editor/removeTrainingSpaces"));
+
+        version = 35;
+    }
+
+    if (version < 36) {
+        // remove possibly corrupted printer dialog settings from
+        // https://github.com/pbek/QOwnNotes/commit/ef0475692a4baf6f0b30bb200c0ee10157e7c2a6
+        // so they can be generated new
+        settings.remove(QStringLiteral("Printer/NotePrinting"));
+        settings.remove(QStringLiteral("Printer/NotePDFExport"));
+
+        version = 36;
     }
 
     if (version != oldVersion) {

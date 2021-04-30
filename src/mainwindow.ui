@@ -946,8 +946,6 @@ p, li { white-space: pre-wrap; }
      <addaction name="actionCopy_headline"/>
      <addaction name="actionSearch_text_on_the_web"/>
      <addaction name="actionAutocomplete"/>
-     <addaction name="actionDelete_orphaned_images"/>
-     <addaction name="actionManage_orphaned_attachments"/>
      <addaction name="actionSplit_note_at_cursor_position"/>
      <addaction name="actionActivate_context_menu"/>
     </widget>
@@ -985,6 +983,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionSelect_all_notes"/>
     <addaction name="actionPaste_image"/>
     <addaction name="separator"/>
+    <addaction name="actionManage_stored_images"/>
+    <addaction name="actionManage_stored_attachments"/>
     <addaction name="menuExtra"/>
     <addaction name="separator"/>
     <addaction name="actionCheck_spelling"/>
@@ -1056,6 +1056,7 @@ p, li { white-space: pre-wrap; }
      <addaction name="actionJump_to_note_list_panel"/>
      <addaction name="actionJump_to_note_subfolder_panel"/>
      <addaction name="actionJump_to_tags_panel"/>
+     <addaction name="actionJump_to_navigation_panel"/>
     </widget>
     <addaction name="menuShow"/>
     <addaction name="menuJumpTo"/>
@@ -1761,7 +1762,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</iconset>
    </property>
    <property name="text">
-    <string notr="true">IRC</string>
+    <string notr="true">IRC (Kiwi)</string>
    </property>
    <property name="toolTip">
     <string>Open the #pkbsuite IRC channel, you have to stay online to get a response</string>
@@ -1922,13 +1923,13 @@ p, li { white-space: pre-wrap; }
     <string>Import notes from text files</string>
    </property>
   </action>
-  <action name="actionDelete_orphaned_images">
+  <action name="actionManage_stored_images">
    <property name="icon">
     <iconset theme="archive-remove" resource="breeze-pkbsuite.qrc">
      <normaloff>:/icons/breeze-pkbsuite/16x16/archive-remove.svg</normaloff>:/icons/breeze-pkbsuite/16x16/archive-remove.svg</iconset>
    </property>
    <property name="text">
-    <string>Manage orphaned image files</string>
+    <string>Manage stored image files</string>
    </property>
   </action>
   <action name="actionTelegram">
@@ -1946,19 +1947,19 @@ p, li { white-space: pre-wrap; }
     <string>Open the Telegram group</string>
    </property>
   </action>
-  <action name="actionRiot">
+  <action name="actionElementMatrix">
    <property name="icon">
     <iconset theme="im-user-online" resource="breeze-pkbsuite.qrc">
      <normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</iconset>
    </property>
    <property name="text">
-    <string notr="true">Riot</string>
+    <string notr="true">Matrix (Element)</string>
    </property>
    <property name="toolTip">
-    <string extracomment="&quot;Riot&quot; as in the chat service">Open the Riot room</string>
+    <string extracomment="&quot;Element&quot; as in the chat service">Open the QOwnNotes Matrix (Element) room</string>
    </property>
    <property name="statusTip">
-    <string extracomment="&quot;Riot&quot; as in the chat service">Open the Riot room</string>
+    <string extracomment="&quot;Element&quot; as in the chat service">Open the QOwnNotes Matrix (Element) room</string>
    </property>
   </action>
   <action name="actionGitter">
@@ -2223,13 +2224,13 @@ p, li { white-space: pre-wrap; }
     <string notr="true">F4</string>
    </property>
   </action>
-  <action name="actionManage_orphaned_attachments">
+  <action name="actionManage_stored_attachments">
    <property name="icon">
     <iconset theme="mail-attachment" resource="breeze-pkbsuite.qrc">
      <normaloff>:/icons/breeze-pkbsuite/16x16/mail-attachment.svg</normaloff>:/icons/breeze-pkbsuite/16x16/mail-attachment.svg</iconset>
    </property>
    <property name="text">
-    <string>Manage orphaned attachments</string>
+    <string>Manage stored attachments</string>
    </property>
   </action>
   <action name="actionJump_to_note_subfolder_panel">
@@ -2395,6 +2396,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Prévisualiser la note&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionJump_to_navigation_panel">
+   <property name="text">
+    <string>Jump to navigation panel</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">F8</string>
    </property>
   </action>
  </widget>

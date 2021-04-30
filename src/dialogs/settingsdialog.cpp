@@ -6,6 +6,7 @@
 #include <helpers/toolbarcontainer.h>
 #include <libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget.h>
 #include <services/websocketserverservice.h>
+#include <services/webappclientservice.h>
 #include <utils/gui.h>
 #include <utils/misc.h>
 
@@ -198,6 +199,12 @@ SettingsDialog::SettingsDialog(int page, QWidget *parent)
             this, SLOT(needRestart()));
     connect(ui->enableSocketServerCheckBox, SIGNAL(toggled(bool)), this,
             SLOT(needRestart()));
+    connect(ui->enableWebApplicationCheckBox, SIGNAL(toggled(bool)), this,
+            SLOT(needRestart()));
+    connect(ui->webAppServerUrlLineEdit, SIGNAL(textChanged(QString)), this,
+            SLOT(needRestart()));
+    connect(ui->webAppTokenLineEdit, SIGNAL(textChanged(QString)), this,
+            SLOT(needRestart()));
     //    connect(ui->layoutWidget, SIGNAL(settingsStored()),
     //            this, SLOT(needRestart()));
 
@@ -321,6 +328,8 @@ void SettingsDialog::storeSettings() {
                       ui->localTrashClearTimeSpinBox->value());
     settings.setValue(QStringLiteral("enableSocketServer"),
                       ui->enableSocketServerCheckBox->isChecked());
+    settings.setValue(QStringLiteral("enableWebAppSupport"),
+                      ui->enableWebApplicationCheckBox->isChecked());
 
     // make the path relative to the portable data path if we are in
     // portable mode
@@ -365,8 +374,8 @@ void SettingsDialog::storeSettings() {
                       ui->autoBracketClosingCheckBox->isChecked());
     settings.setValue(QStringLiteral("Editor/autoBracketRemoval"),
                       ui->autoBracketRemovalCheckBox->isChecked());
-    settings.setValue(QStringLiteral("Editor/removeTrainingSpaces"),
-                      ui->removeTrainingSpacesCheckBox->isChecked());
+    settings.setValue(QStringLiteral("Editor/removeTrailingSpaces"),
+                      ui->removeTrailingSpacesCheckBox->isChecked());
     settings.setValue(QStringLiteral("Editor/highlightCurrentLine"),
                       ui->highlightCurrentLineCheckBox->isChecked());
     settings.setValue(QStringLiteral("Editor/editorWidthInDFMOnly"),
@@ -462,6 +471,11 @@ void SettingsDialog::storeSettings() {
     settings.setValue(
         QStringLiteral("webSocketServerService/bookmarksNoteName"),
         ui->bookmarksNoteNameLineEdit->text());
+
+    settings.setValue(QStringLiteral("webAppClientService/serverUrl"),
+                      ui->webAppServerUrlLineEdit->text());
+    settings.setValue(QStringLiteral("webAppClientService/token"),
+                      ui->webAppTokenLineEdit->text());
 }
 
 /**
@@ -603,6 +617,9 @@ void SettingsDialog::readSettings() {
     ui->enableSocketServerCheckBox->setChecked(
         Utils::Misc::isSocketServerEnabled());
     on_enableSocketServerCheckBox_toggled();
+    ui->enableWebApplicationCheckBox->setChecked(
+        Utils::Misc::isWebAppSupportEnabled());
+    on_enableWebApplicationCheckBox_toggled();
 
 #ifdef Q_OS_MAC
     bool restoreCursorPositionDefault = false;
@@ -641,8 +658,8 @@ void SettingsDialog::readSettings() {
     ui->autoBracketRemovalCheckBox->setChecked(
         settings.value(QStringLiteral("Editor/autoBracketRemoval"), true)
             .toBool());
-    ui->removeTrainingSpacesCheckBox->setChecked(
-        settings.value(QStringLiteral("Editor/removeTrainingSpaces")).toBool());
+    ui->removeTrailingSpacesCheckBox->setChecked(
+        settings.value(QStringLiteral("Editor/removeTrailingSpaces")).toBool());
     ui->highlightCurrentLineCheckBox->setChecked(
         settings.value(QStringLiteral("Editor/highlightCurrentLine"), true)
             .toBool());
@@ -824,6 +841,9 @@ void SettingsDialog::readSettings() {
         WebSocketServerService::getBookmarksTag());
     ui->bookmarksNoteNameLineEdit->setText(
         WebSocketServerService::getBookmarksNoteName());
+
+    ui->webAppServerUrlLineEdit->setText(WebAppClientService::getServerUrl());
+    ui->webAppTokenLineEdit->setText(WebAppClientService::getOrGenerateToken());
 }
 
 /**
@@ -1693,6 +1713,13 @@ void SettingsDialog::on_noteFolderNameLineEdit_editingFinished() {
                        .remove(QStringLiteral("\n"))
                        .trimmed();
     text.truncate(50);
+
+    // fallback to directory name in case name edit is empty
+    if (text.isEmpty()) {
+        const QString localPath = ui->noteFolderLocalPathLineEdit->text();
+        text = QDir(localPath).dirName();
+    }
+
     _selectedNoteFolder.setName(text);
     _selectedNoteFolder.store();
 
@@ -2383,4 +2410,43 @@ void SettingsDialog::on_languageSearchLineEdit_textChanged(const QString &arg1) 
 
 void SettingsDialog::on_noteTextViewUseEditorStylesCheckBox_toggled(bool checked) {
     ui->previewFontsGroupBox->setDisabled(checked);
+}
+
+void SettingsDialog::on_databaseIntegrityCheckButton_clicked() {
+    if (DatabaseService::checkDiskDatabaseIntegrity()) {
+        Utils::Gui::information(
+            this, tr("Database"),
+            tr("The integrity of the disk database is valid."),
+            QStringLiteral("database-integrity-check-valid"));
+    } else {
+        Utils::Gui::warning(
+            this, tr("Database"),
+            tr("The integrity of the disk database is not valid!"),
+            QStringLiteral("database-integrity-check-not-valid"));
+    }
+}
+
+void SettingsDialog::on_webAppServerUrlResetButton_clicked() {
+    ui->webAppServerUrlLineEdit->setText(
+        WebAppClientService::getDefaultServerUrl());
+}
+
+void SettingsDialog::on_webAppShowTokenButton_clicked() {
+    ui->webAppTokenLineEdit->setEchoMode(
+        ui->webAppTokenLineEdit->echoMode() == QLineEdit::EchoMode::Password ?
+            QLineEdit::EchoMode::Normal : QLineEdit::EchoMode::Password);
+}
+
+void SettingsDialog::on_webAppCopyTokenButton_clicked() {
+    QApplication::clipboard()->setText(ui->webAppTokenLineEdit->text());
+}
+
+void SettingsDialog::on_webAppGenerateTokenButton_clicked() {
+    ui->webAppTokenLineEdit->setText(Utils::Misc::generateRandomString(32));
+    ui->webAppTokenLineEdit->setEchoMode(QLineEdit::EchoMode::Normal);
+}
+
+void SettingsDialog::on_enableWebApplicationCheckBox_toggled() {
+    bool checked = ui->enableWebApplicationCheckBox->isChecked();
+    ui->webAppFrame->setEnabled(checked);
 }

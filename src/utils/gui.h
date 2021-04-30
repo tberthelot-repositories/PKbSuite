@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2020 Patrizio Bekerle -- <patrizio@bekerle.com>
+ * Copyright (c) 2014-2021 Patrizio Bekerle -- <patrizio@bekerle.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,6 +113,7 @@ QFont fontDialogGetFont(
 
 void copyCodeBlockText(const QTextBlock &initialBlock);
 
+bool toggleCheckBoxAtCursor(QPlainTextEdit *textEdit);
 bool autoFormatTableAtCursor(QPlainTextEdit *textEdit);
 
 void updateInterfaceFontSize(int fontSize = -1);
@@ -130,5 +131,8 @@ void restoreNoteTabs(QTabWidget *tabWidget, QVBoxLayout *layout);
 void setTabWidgetTabSticky(QTabWidget *tabWidget, int index, bool sticky);
 bool isTabWidgetTabSticky(QTabWidget *tabWidget, int index);
 void updateTabWidgetTabData(QTabWidget *tabWidget, int index, const Note &note);
+void reloadNoteTabs(QTabWidget *tabWidget);
+void setTreeWidgetItemToolTipForNote(QTreeWidgetItem *item, const Note &note,
+                                     QDateTime *overrideFileLastModified = nullptr);
 }    // namespace Gui
 }    // namespace Utils

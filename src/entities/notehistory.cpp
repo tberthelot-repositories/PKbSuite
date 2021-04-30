@@ -99,7 +99,7 @@ bool NoteHistoryItem::isValid() const {
 
 bool NoteHistoryItem::isNoteValid() const {
     Note note = getNote();
-    return note.exists();
+    return note.isFetched();
 }
 
 bool NoteHistoryItem::operator==(const NoteHistoryItem &item) const {
@@ -244,11 +244,11 @@ void NoteHistory::updateCursorPositionOfNote(Note note,
         add(note, textEdit);
     }
 
-    int position = noteHistory->indexOf(item);
+    int index = noteHistory->indexOf(item);
 
     // check if we really found the item
-    if (position > -1) {
-        noteHistory->replace(position, item);
+    if (index > -1) {
+        noteHistory->replace(index, item);
     }
 }
 
