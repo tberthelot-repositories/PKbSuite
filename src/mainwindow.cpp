@@ -7753,6 +7753,32 @@ void MainWindow::linkTagNameToCurrentNote(const QString &tagName,
     directoryWatcherWorkaround(false, true);
 }
 
+void MainWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::WindowStateChange) {
+        QString windowStateString;
+        switch(windowState()) {
+        case Qt::WindowMinimized:
+            windowStateString = "minimized";
+            break;
+        case Qt::WindowMaximized:
+            windowStateString = "maximized";
+            break;
+        case Qt::WindowFullScreen:
+            windowStateString = "fullscreen";
+            break;
+        case Qt::WindowActive:
+            windowStateString = "active";
+            break;
+        default:
+            windowStateString = "nostate";
+            break;
+        }
+    }
+
+    QMainWindow::changeEvent(event);
+}
+
 /**
  * Hides the note tag line edit after editing
  */
