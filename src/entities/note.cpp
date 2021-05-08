@@ -338,72 +338,11 @@ bool Note::moveToPath(const QString &destinationPath,
 }
 
 /**
- * Returns a list of all linked image files of the note folder of the current
- * note
- * @return
- */
-QStringList Note::getEmbedmentFileList(bool onlyImages) const{
-    QStringList fileList;
-	const QString text = getNoteText();
-	
-    // match image links in note's embedment folders
-	QString noteName = getName().replace(" ", "_");
-
-    QRegularExpression re((onlyImages?QStringLiteral(R"(!)"):"") + QStringLiteral(R"(\[.*?\]\(.*)") + noteName + QStringLiteral(R"(/(.+?)\))"));
-    QRegularExpressionMatchIterator i = re.globalMatch(text);
-
-    // remove all found images from the orphaned files list
-	const QString noteEmbedmentDir = getNoteSubFolder().fullPath() + QDir::separator() + getName().replace(" ", "_") + QDir::separator();
-    // match image links like ![media-qV920](file://media/608766373.gif)
-    // or  ![media-qV920](media/608766373.gif)
-    QRegularExpression re(QStringLiteral(R"(!\[.*?\]\(.*media/(.+?)\))"));
-    QRegularExpressionMatchIterator i = re.globalMatch(_noteText);
-
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        const QString fileName = match.captured(1);
-        fileList << fileName;
-    }
-
-    return fileList;
-}
-
-bool Note::updateRelativeMediaFileLinks() {
-    QRegularExpression re(QStringLiteral(R"((!\[.*?\])\((.*media/(.+?))\))"));
-    QRegularExpressionMatchIterator i = re.globalMatch(_noteText);
-    bool textWasUpdated = false;
-    QString newText = getNoteText();
-
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        QString filePath = match.captured(2);
-
-        if (filePath.startsWith(QLatin1String("file://"))) {
-            continue;
-        }
-
-        const QString wholeLinkText = match.captured(0);
-        const QString titlePart = match.captured(1);
-        const QString fileName = match.captured(3);
-
-        filePath = mediaUrlStringForFileName(fileName);
-        newText.replace(wholeLinkText,
-                        titlePart + QChar('(') + filePath + QChar(')'));
-        textWasUpdated = true;
-    }
-
-    if (textWasUpdated) {
-        storeNewText(std::move(newText));
-    }
-
-    return textWasUpdated;
-}
-
-/**
  * Returns a list of all linked attachments of the current note
  * @return
  */
-QStringList Note::getAttachmentsFileList() const {
+QStringList Note::getEmbedmentFileList() const
+{
     const QString text = getNoteText();
     QStringList fileList;
 
@@ -420,25 +359,6 @@ QStringList Note::getAttachmentsFileList() const {
     }
 
     return fileList;
-}
-
-bool Note::updateRelativeAttachmentFileLinks() {
-    const QRegularExpression re(
-        QStringLiteral(R"((\[.*?\])\((.*attachments/(.+?))\))"));
-    QRegularExpressionMatchIterator i = re.globalMatch(_noteText);
-    bool textWasUpdated = false;
-    QString newText = getNoteText();
-
-    while (i.hasNext()) {
-        QRegularExpressionMatch match = i.next();
-        QString fileName = match.captured(1);
-		if (fileName.indexOf('#') != -1)
-			fileName.truncate(fileName.indexOf('#'));
-        fileList << noteEmbedmentDir + fileName;
-    }
-
-    fileList.removeDuplicates();
-	return fileList;
 }
 
 Note Note::fetchByName(const QString &name,
@@ -1785,7 +1705,8 @@ QString Note::detectNewlineCharacters() {
     return QStringLiteral("\n");
 }
 
-void Note::createFromFile(QFile &file, int noteSubFolderId) {
+void Note::createFromFile(QFile &file, int noteSubFolderId,
+                          bool withNoteNameHook) {
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream in(&file);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -1829,7 +1750,8 @@ void Note::createFromFile(QFile &file, int noteSubFolderId) {
  * @return
  */
 Note Note::updateOrCreateFromFile(QFile &file,
-                                  const NoteSubFolder &noteSubFolder) {
+                                  const NoteSubFolder &noteSubFolder,
+                                  bool withNoteNameHook) {
     const QFileInfo fileInfo(file);
     Note note = fetchByFileName(fileInfo.fileName(), noteSubFolder.getId());
 
@@ -2004,7 +1926,8 @@ bool Note::removeNoteFile() {
  * @return
  */
 QString Note::toMarkdownHtml(const QString &notesPath, int maxImageWidth,
-                             bool forExport, bool base64Images) {
+                           bool forExport, bool decrypt,
+                           bool base64Images) {
     const QString str = getNoteText();
 
     // create a hash of the note text and the parameters
@@ -3398,12 +3321,14 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 			text.replace(QRegularExpression(R"(\*\s\[\([)" + _name + R"(\)\]\([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s]*.md))"), "* [\\1](" + path.replace(" ", "%20") + ")");
 		}
 */
-                if (textModified) {
-                    linkedNote.setNoteText(text);
-                    linkedNote.setHasDirtyData(true);
-                    linkedNote.store();
-                }
+        if (textModified) {
+            linkedNote.setNoteText(text);
+            linkedNote.setHasDirtyData(true);
+            linkedNote.store();
+        }
+
 	}
+}
 
 bool Note::operator==(const Note &note) const {
     return _id == note.getId() && _fileName == note.getFileName() &&

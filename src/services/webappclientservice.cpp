@@ -26,8 +26,6 @@
 #include <QSslError>
 #include <QWebSocket>
 
-#include "metricsservice.h"
-
 using namespace std;
 
 QT_USE_NAMESPACE
@@ -116,7 +114,6 @@ void WebAppClientService::onTextMessageReceived(const QString &message) {
     QJsonDocument jsonResponse = QJsonDocument::fromJson(message.toUtf8());
     QJsonObject jsonObject = jsonResponse.object();
     const QString command = jsonObject.value(QStringLiteral("command")).toString();
-    MetricsService::instance()->sendVisitIfEnabled("webapp/command/" + command);
 
     if (command == "showWarning") {
         const QString msg = jsonObject.value(QStringLiteral("msg")).toString();

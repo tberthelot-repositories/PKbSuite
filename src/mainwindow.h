@@ -16,6 +16,7 @@
 
 #include <entities/note.h>
 #include <libraries/qhotkey/QHotkey/qhotkey.h>
+#include <services/webappclientservice.h>
 #include <QFileSystemWatcher>
 #include <QMainWindow>
 #include <QSystemTrayIcon>

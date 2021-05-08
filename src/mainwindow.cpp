@@ -23,6 +23,7 @@
 #include <dialogs/tabledialog.h>
 #include <dialogs/tagadddialog.h>
 #include <dialogs/dropPDFDialog.h>
+#include <diff_match_patch.h>
 #include <entities/notefolder.h>
 #include <entities/notesubfolder.h>
 #include <entities/tag.h>
@@ -451,6 +452,10 @@ void MainWindow::initGlobalKeyboardShortcuts() {
 
 void MainWindow::initWebSocketServerService() {
     _webSocketServerService = new WebSocketServerService();
+}
+
+void MainWindow::initWebAppClientService() {
+    _webAppClientService = new WebAppClientService();
 }
 
 /**
@@ -6383,11 +6388,6 @@ bool MainWindow::insertAttachment(QFile *file, const QString &title) {
     QString text = _currentNote.getInsertEmbedmentMarkdown(file, mediaType::attachment, true, false, false, title);
 
     if (!text.isEmpty()) {
-        ScriptingService *scriptingService = ScriptingService::instance();
-        // attempts to ask a script for another markdown text
-        text = scriptingService->callInsertAttachmentHook(file, text);
-        qDebug() << __func__ << " - 'text': " << text;
-
         PKbSuiteMarkdownTextEdit *textEdit = activeNoteTextEdit();
         QTextCursor c = textEdit->textCursor();
 
@@ -10900,7 +10900,7 @@ void MainWindow::on_noteTreeWidget_itemSelectionChanged() {
     if (ui->noteTreeWidget->selectedItems().size() == 1) {
         int noteId = ui->noteTreeWidget->selectedItems()[0]->data(0, Qt::UserRole).toInt();
         Note note = Note::fetch(noteId);
-        bool currentNoteChanged = currentNote.getId() != noteId;
+        bool currentNoteChanged = _currentNote.getId() != noteId;
         setCurrentNote(std::move(note), true, false);
 
         // let's highlight the text from the search line edit and do a "in note
@@ -11439,7 +11439,7 @@ void MainWindow::on_actionJump_to_navigation_panel_triggered() {
  * @return
  */
 bool MainWindow::insertDataUrlAsFileIntoCurrentNote(const QString &dataUrl) {
-    QString markdownCode = currentNote.importMediaFromDataUrl(dataUrl);
+    QString markdownCode = _currentNote.importMediaFromDataUrl(dataUrl);
 
     if (markdownCode.isEmpty()) {
         return false;

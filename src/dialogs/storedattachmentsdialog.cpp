@@ -20,7 +20,7 @@
 #include <QtWidgets/QMessageBox>
 
 #include "ui_storedattachmentsdialog.h"
-#include "widgets/qownnotesmarkdowntextedit.h"
+#include "widgets/pkbsuitemarkdowntextedit.h"
 
 StoredAttachmentsDialog::StoredAttachmentsDialog(QWidget *parent)
     : MasterDialog(parent), ui(new Ui::StoredAttachmentsDialog) {
@@ -34,7 +34,7 @@ StoredAttachmentsDialog::StoredAttachmentsDialog(QWidget *parent)
 StoredAttachmentsDialog::~StoredAttachmentsDialog() { delete ui; }
 
 void StoredAttachmentsDialog::refreshAttachmentFiles() {
-    QDir attachmentsDir(NoteFolder::currentAttachmentsPath());
+    QDir attachmentsDir(NoteFolder::currentLocalPath());
 
     if (!attachmentsDir.exists()) {
         ui->progressBar->setValue(ui->progressBar->maximum());
@@ -53,7 +53,7 @@ void StoredAttachmentsDialog::refreshAttachmentFiles() {
     ui->progressBar->show();
 
     Q_FOREACH (Note note, noteList) {
-            QStringList attachmentsFileList = note.getAttachmentsFileList();
+            QStringList attachmentsFileList = note.getEmbedmentFileList();
             // we don't want to keep the whole note text
             note.setNoteText("");
 
@@ -181,7 +181,7 @@ QString StoredAttachmentsDialog::getFilePath(QTreeWidgetItem *item) {
         return QString();
     }
 
-    QString fileName = NoteFolder::currentAttachmentsPath() +
+    QString fileName = NoteFolder::currentLocalPath() +
                        QDir::separator() +
                        item->data(0, Qt::UserRole).toString();
     return fileName;
@@ -253,7 +253,7 @@ void StoredAttachmentsDialog::on_insertButton_clicked() {
         return;
     }
 
-    QOwnNotesMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
+    PKbSuiteMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
     Note note = mainWindow->getCurrentNote();
 
     // insert all selected attachments
@@ -261,7 +261,7 @@ void StoredAttachmentsDialog::on_insertButton_clicked() {
         QString filePath = getFilePath(item);
         QFileInfo fileInfo(filePath);
         QString attachmentsUrlString =
-            note.attachmentUrlStringForFileName(fileInfo.fileName());
+            note.embedmentUrlStringForFileName(fileInfo.fileName());
         QString attachmentLink =
             "[" + fileInfo.baseName() + "](" + attachmentsUrlString + ")\n";
         textEdit->insertPlainText(attachmentLink);
@@ -405,7 +405,7 @@ void StoredAttachmentsDialog::on_fileTreeWidget_itemChanged(
     qDebug() << __func__ << " - 'oldFileName': " << oldFileName;
     qDebug() << __func__ << " - 'newFileName': " << newFileName;
 
-    const QString oldFilePath = NoteFolder::currentAttachmentsPath() +
+    const QString oldFilePath = NoteFolder::currentLocalPath() +
                                 QDir::separator() + oldFileName;
     QFile oldFile(oldFilePath);
     if (!oldFile.exists()) {
@@ -417,7 +417,7 @@ void StoredAttachmentsDialog::on_fileTreeWidget_itemChanged(
         return;
     }
 
-    const QString newFilePath = NoteFolder::currentAttachmentsPath() +
+    const QString newFilePath = NoteFolder::currentLocalPath() +
                                 QDir::separator() + newFileName;
     QFile newFile(newFilePath);
 

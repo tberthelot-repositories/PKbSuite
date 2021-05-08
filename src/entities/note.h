@@ -131,7 +131,8 @@ class Note {
     bool remove(bool withFile = false);
 
     QString toMarkdownHtml(const QString &notesPath, int maxImageWidth = 980,
-                           bool forExport = false, bool base64Images = false);
+                           bool forExport = false, bool decrypt = true,
+                           bool base64Images = false);
 
     bool isFetched() const;
 
@@ -211,7 +212,8 @@ class Note {
     int getFileSize() const;
 
     static Note updateOrCreateFromFile(QFile &file,
-                                       const NoteSubFolder &noteSubFolder);
+                                       const NoteSubFolder &noteSubFolder,
+                                       bool withNoteNameHook = false);
 
     static QVector<int> fetchAllIds(int limit = -1, int offset = -1);
 
@@ -248,7 +250,7 @@ class Note {
                                int maxImageWidth = 980, bool forExport = false,
                                bool base64Images = false);
 
-    QStringList getEmbedmentFileList(bool onlyImages = false) const;
+    QStringList getEmbedmentFileList() const;
 
     static Note fetchByUrlString(const QString &urlString);
 
@@ -291,6 +293,8 @@ class Note {
                                    bool forceLegacy = false) const;
 
     QString embedmentUrlStringForFileName(const QString &fileName) const;
+
+    bool updateRelativeAttachmentFileLinks();
 
     Note fetchByRelativeFileName(const QString &fileName) const;
 

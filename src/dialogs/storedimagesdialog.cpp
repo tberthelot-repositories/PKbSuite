@@ -17,7 +17,7 @@
 #include <QtWidgets/QMessageBox>
 
 #include "ui_storedimagesdialog.h"
-#include "widgets/qownnotesmarkdowntextedit.h"
+#include "widgets/pkbsuitemarkdowntextedit.h"
 
 StoredImagesDialog::StoredImagesDialog(QWidget *parent)
     : MasterDialog(parent), ui(new Ui::StoredImagesDialog) {
@@ -31,7 +31,7 @@ StoredImagesDialog::StoredImagesDialog(QWidget *parent)
 StoredImagesDialog::~StoredImagesDialog() { delete ui; }
 
 void StoredImagesDialog::refreshMediaFiles() {
-    QDir mediaDir(NoteFolder::currentMediaPath());
+    QDir mediaDir(NoteFolder::currentLocalPath());
 
     if (!mediaDir.exists()) {
         ui->progressBar->setValue(ui->progressBar->maximum());
@@ -50,7 +50,7 @@ void StoredImagesDialog::refreshMediaFiles() {
     ui->progressBar->show();
 
     Q_FOREACH (Note note, noteList) {
-            QStringList mediaFileList = note.getMediaFileList();
+            QStringList mediaFileList = note.getEmbedmentFileList();
             // we don't want to keep the whole note text
             note.setNoteText("");
 
@@ -169,7 +169,7 @@ QString StoredImagesDialog::getFilePath(QTreeWidgetItem *item) {
         return QString();
     }
 
-    QString fileName = NoteFolder::currentMediaPath() + QDir::separator() +
+    QString fileName = NoteFolder::currentLocalPath() + QDir::separator() +
                        item->data(0, Qt::UserRole).toString();
     return fileName;
 }
@@ -241,7 +241,7 @@ void StoredImagesDialog::on_insertButton_clicked() {
         return;
     }
 
-    QOwnNotesMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
+    PKbSuiteMarkdownTextEdit *textEdit = mainWindow->activeNoteTextEdit();
     Note note = mainWindow->getCurrentNote();
 
     // insert all selected images
@@ -249,7 +249,7 @@ void StoredImagesDialog::on_insertButton_clicked() {
         QString filePath = getFilePath(item);
         QFileInfo fileInfo(filePath);
         QString mediaUrlString =
-            note.mediaUrlStringForFileName(fileInfo.fileName());
+            note.embedmentUrlStringForFileName(fileInfo.fileName());
         QString imageLink =
             "![" + fileInfo.baseName() + "](" + mediaUrlString + ")\n";
         textEdit->insertPlainText(imageLink);
@@ -328,7 +328,7 @@ void StoredImagesDialog::on_fileTreeWidget_itemChanged(
     qDebug() << __func__ << " - 'oldFileName': " << oldFileName;
     qDebug() << __func__ << " - 'newFileName': " << newFileName;
 
-    const QString oldFilePath = NoteFolder::currentMediaPath() +
+    const QString oldFilePath = NoteFolder::currentLocalPath() +
                                 QDir::separator() + oldFileName;
     QFile oldFile(oldFilePath);
     if (!oldFile.exists()) {
@@ -340,7 +340,7 @@ void StoredImagesDialog::on_fileTreeWidget_itemChanged(
         return;
     }
 
-    const QString newFilePath = NoteFolder::currentMediaPath() +
+    const QString newFilePath = NoteFolder::currentLocalPath() +
                                 QDir::separator() + newFileName;
     QFile newFile(newFilePath);
 
