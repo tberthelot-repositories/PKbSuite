@@ -88,8 +88,6 @@
 #include "dialogs/linkdialog.h"
 #include "dialogs/notediffdialog.h"
 #include "dialogs/settingsdialog.h"
-#include "dialogs/storedattachmentsdialog.h"
-#include "dialogs/storedimagesdialog.h"
 #include "helpers/pkbsuitemarkdownhighlighter.h"
 #include "libraries/sonnet/src/core/speller.h"
 #include "release.h"
@@ -374,7 +372,6 @@ MainWindow::MainWindow(QWidget *parent)
     // initialize the editor soft wrapping
     initEditorSoftWrap();
 
-    _storedImagesDialog = Q_NULLPTR;
     _storedAttachmentsDialog = Q_NULLPTR;
 
     // track cursor position changes for the line number label
@@ -10065,15 +10062,6 @@ void MainWindow::selectAllNotesInTagTreeWidget() const {
 }
 
 /**
- * Shows a dialog to manage stored images
- */
-void MainWindow::on_actionManage_stored_images_triggered() {
-    delete (_storedImagesDialog);
-    _storedImagesDialog = new StoredImagesDialog(this);
-    _storedImagesDialog->show();
-}
-
-/**
  * Writes text to the note text edit (for ScriptingService)
  *
  * @param text
@@ -10943,15 +10931,6 @@ void MainWindow::on_noteTreeWidget_itemSelectionChanged() {
 
     // we also need to do this in setCurrentNote because of different timings
     reloadCurrentNoteTags();
-}
-
-/**
- * Shows a dialog to delete stored attachments
- */
-void MainWindow::on_actionManage_stored_attachments_triggered() {
-    delete (_storedAttachmentsDialog);
-    _storedAttachmentsDialog = new StoredAttachmentsDialog(this);
-    _storedAttachmentsDialog->show();
 }
 
 void MainWindow::on_noteOperationsButton_clicked() {

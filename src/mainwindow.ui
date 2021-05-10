@@ -931,7 +931,6 @@ p, li { white-space: pre-wrap; }
      </property>
      <addaction name="actionFormat_text_bold"/>
      <addaction name="actionFormat_text_italic"/>
-     <addaction name="actionFormat_text_underline"/>
      <addaction name="actionStrike_out_text"/>
      <addaction name="actionToggle_text_case"/>
     </widget>
@@ -983,8 +982,6 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionSelect_all_notes"/>
     <addaction name="actionPaste_image"/>
     <addaction name="separator"/>
-    <addaction name="actionManage_stored_images"/>
-    <addaction name="actionManage_stored_attachments"/>
     <addaction name="menuExtra"/>
     <addaction name="separator"/>
     <addaction name="actionCheck_spelling"/>

@@ -437,8 +437,6 @@ class MainWindow : public QMainWindow {
 
 	void on_actionFind_notes_in_all_subfolders_triggered();
 
-    void on_actionManage_stored_images_triggered();
-
     void on_actionUnlock_panels_toggled(bool arg1);
 
     void on_actionStore_as_new_workspace_triggered();
@@ -510,8 +508,6 @@ class MainWindow : public QMainWindow {
     void on_noteTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
     void on_noteTreeWidget_itemSelectionChanged();
-
-    void on_actionManage_stored_attachments_triggered();
 
     void on_noteOperationsButton_clicked();
 
@@ -647,7 +643,6 @@ private:
     bool _noteFolderDockWidgetWasVisible;
     bool _noteSubFolderDockWidgetVisible;
     bool _closeEventWasFired;
-    StoredImagesDialog *_storedImagesDialog;
     StoredAttachmentsDialog *_storedAttachmentsDialog;
     SettingsDialog *_settingsDialog;
     QString _previousItemText;

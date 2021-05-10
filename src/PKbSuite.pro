@@ -70,8 +70,6 @@ SOURCES += main.cpp\
     api/tagapi.cpp \
     widgets/combobox.cpp \
     widgets/fontcolorwidget.cpp \
-    dialogs/storedimagesdialog.cpp \
-    dialogs/storedattachmentsdialog.cpp \
     dialogs/tabledialog.cpp \
     libraries/qtcsv/src/sources/reader.cpp \
     dialogs/dropPDFDialog.cpp \
@@ -138,8 +136,6 @@ HEADERS  += mainwindow.h \
     api/tagapi.h \
     widgets/combobox.h \
     widgets/fontcolorwidget.h \
-    dialogs/storedimagesdialog.h \
-    dialogs/storedattachmentsdialog.h \
     dialogs/tabledialog.h \
     libraries/qtcsv/src/include/qtcsv_global.h \
     libraries/qtcsv/src/include/abstractdata.h \
@@ -174,8 +170,6 @@ FORMS    += mainwindow.ui \
     dialogs/welcomedialog.ui \
     dialogs/tagadddialog.ui \
     widgets/fontcolorwidget.ui \
-    dialogs/storedimagesdialog.ui \
-    dialogs/storedattachmentsdialog.ui \
     dialogs/tabledialog.ui \
     dialogs/notedialog.ui \
     dialogs/dictionarymanagerdialog.ui \
