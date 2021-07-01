@@ -5,8 +5,6 @@
 #include <entities/notesubfolder.h>
 #include <helpers/toolbarcontainer.h>
 #include <libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget.h>
-#include <services/websocketserverservice.h>
-#include <services/webappclientservice.h>
 #include <utils/gui.h>
 #include <utils/misc.h>
 
@@ -35,7 +33,6 @@
 #include <utility>
 
 #include "build_number.h"
-#include "dialogs/websockettokendialog.h"
 #include "filedialog.h"
 #include "mainwindow.h"
 #include "release.h"
@@ -197,14 +194,6 @@ SettingsDialog::SettingsDialog(int page, QWidget *parent)
             SLOT(needRestart()));
     connect(ui->ignoreNoteSubFoldersLineEdit, SIGNAL(textChanged(QString)),
             this, SLOT(needRestart()));
-    connect(ui->enableSocketServerCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(needRestart()));
-    connect(ui->enableWebApplicationCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(needRestart()));
-    connect(ui->webAppServerUrlLineEdit, SIGNAL(textChanged(QString)), this,
-            SLOT(needRestart()));
-    connect(ui->webAppTokenLineEdit, SIGNAL(textChanged(QString)), this,
-            SLOT(needRestart()));
     //    connect(ui->layoutWidget, SIGNAL(settingsStored()),
     //            this, SLOT(needRestart()));
 
@@ -245,15 +234,6 @@ SettingsDialog::SettingsDialog(int page, QWidget *parent)
         ui->enableNoteTreeCheckBox->setText(ui->enableNoteTreeCheckBox->text() +
                                             " (work in progress)");
     }
-
-    ui->webCompannionLabel->setText(ui->webCompannionLabel->text().arg(
-        "https://github.com/pkbsuite/web-companion",
-        "https://chrome.google.com/webstore/detail/pkbsuite-web-companion/"
-        "pkgkfnampapjbopomdpnkckbjdnpkbkp",
-        "https://addons.mozilla.org/firefox/addon/pkbsuite-web-companion"));
-    ui->bookmarkTagLabel->setText(ui->bookmarkTagLabel->text().arg(
-        "https://www.pkbsuite.org/Knowledge-base/"
-        "PKbSuite-Web-Companion-browser-extension"));
 }
 
 /**
@@ -326,10 +306,6 @@ void SettingsDialog::storeSettings() {
                       ui->localTrashClearCheckBox->isChecked());
     settings.setValue(QStringLiteral("localTrash/autoCleanupDays"),
                       ui->localTrashClearTimeSpinBox->value());
-    settings.setValue(QStringLiteral("enableSocketServer"),
-                      ui->enableSocketServerCheckBox->isChecked());
-    settings.setValue(QStringLiteral("enableWebAppSupport"),
-                      ui->enableWebApplicationCheckBox->isChecked());
 
     // make the path relative to the portable data path if we are in
     // portable mode
@@ -463,19 +439,6 @@ void SettingsDialog::storeSettings() {
     settings.setValue(
         QStringLiteral("automaticNoteFolderDatabaseClosing"),
         ui->automaticNoteFolderDatabaseClosingCheckBox->isChecked());
-
-    settings.setValue(QStringLiteral("webSocketServerService/port"),
-                      ui->webSocketServerServicePortSpinBox->value());
-    settings.setValue(QStringLiteral("webSocketServerService/bookmarksTag"),
-                      ui->bookmarksTagLineEdit->text());
-    settings.setValue(
-        QStringLiteral("webSocketServerService/bookmarksNoteName"),
-        ui->bookmarksNoteNameLineEdit->text());
-
-    settings.setValue(QStringLiteral("webAppClientService/serverUrl"),
-                      ui->webAppServerUrlLineEdit->text());
-    settings.setValue(QStringLiteral("webAppClientService/token"),
-                      ui->webAppTokenLineEdit->text());
 }
 
 /**
@@ -614,12 +577,6 @@ void SettingsDialog::readSettings() {
     ui->localTrashClearTimeSpinBox->setValue(
         settings.value(QStringLiteral("localTrash/autoCleanupDays"), 30)
             .toInt());
-    ui->enableSocketServerCheckBox->setChecked(
-        Utils::Misc::isSocketServerEnabled());
-    on_enableSocketServerCheckBox_toggled();
-    ui->enableWebApplicationCheckBox->setChecked(
-        Utils::Misc::isWebAppSupportEnabled());
-    on_enableWebApplicationCheckBox_toggled();
 
 #ifdef Q_OS_MAC
     bool restoreCursorPositionDefault = false;
@@ -834,16 +791,6 @@ void SettingsDialog::readSettings() {
 
     ui->automaticNoteFolderDatabaseClosingCheckBox->setChecked(
         Utils::Misc::doAutomaticNoteFolderDatabaseClosing());
-
-    ui->webSocketServerServicePortSpinBox->setValue(
-        WebSocketServerService::getSettingsPort());
-    ui->bookmarksTagLineEdit->setText(
-        WebSocketServerService::getBookmarksTag());
-    ui->bookmarksNoteNameLineEdit->setText(
-        WebSocketServerService::getBookmarksNoteName());
-
-    ui->webAppServerUrlLineEdit->setText(WebAppClientService::getServerUrl());
-    ui->webAppTokenLineEdit->setText(WebAppClientService::getOrGenerateToken());
 }
 
 /**
@@ -2368,16 +2315,6 @@ void SettingsDialog::on_overrideInterfaceFontSizeGroupBox_toggled(bool arg1) {
     Utils::Gui::updateInterfaceFontSize();
 }
 
-void SettingsDialog::on_webSocketServerServicePortResetButton_clicked() {
-    ui->webSocketServerServicePortSpinBox->setValue(
-        WebSocketServerService::getDefaultPort());
-}
-
-void SettingsDialog::on_enableSocketServerCheckBox_toggled() {
-    bool checked = ui->enableSocketServerCheckBox->isChecked();
-    ui->browserExtensionFrame->setEnabled(checked);
-}
-
 void SettingsDialog::on_internalIconThemeCheckBox_toggled(bool checked) {
     if (checked) {
         const QSignalBlocker blocker(ui->systemIconThemeCheckBox);
@@ -2396,12 +2333,6 @@ void SettingsDialog::on_systemIconThemeCheckBox_toggled(bool checked) {
 
     ui->internalIconThemeCheckBox->setDisabled(checked);
     ui->darkModeIconThemeCheckBox->setDisabled(checked);
-}
-
-void SettingsDialog::on_webSocketTokenButton_clicked() {
-    auto webSocketTokenDialog = new WebSocketTokenDialog();
-    webSocketTokenDialog->exec();
-    delete (webSocketTokenDialog);
 }
 
 void SettingsDialog::on_languageSearchLineEdit_textChanged(const QString &arg1) {
@@ -2424,29 +2355,4 @@ void SettingsDialog::on_databaseIntegrityCheckButton_clicked() {
             tr("The integrity of the disk database is not valid!"),
             QStringLiteral("database-integrity-check-not-valid"));
     }
-}
-
-void SettingsDialog::on_webAppServerUrlResetButton_clicked() {
-    ui->webAppServerUrlLineEdit->setText(
-        WebAppClientService::getDefaultServerUrl());
-}
-
-void SettingsDialog::on_webAppShowTokenButton_clicked() {
-    ui->webAppTokenLineEdit->setEchoMode(
-        ui->webAppTokenLineEdit->echoMode() == QLineEdit::EchoMode::Password ?
-            QLineEdit::EchoMode::Normal : QLineEdit::EchoMode::Password);
-}
-
-void SettingsDialog::on_webAppCopyTokenButton_clicked() {
-    QApplication::clipboard()->setText(ui->webAppTokenLineEdit->text());
-}
-
-void SettingsDialog::on_webAppGenerateTokenButton_clicked() {
-    ui->webAppTokenLineEdit->setText(Utils::Misc::generateRandomString(32));
-    ui->webAppTokenLineEdit->setEchoMode(QLineEdit::EchoMode::Normal);
-}
-
-void SettingsDialog::on_enableWebApplicationCheckBox_toggled() {
-    bool checked = ui->enableWebApplicationCheckBox->isChecked();
-    ui->webAppFrame->setEnabled(checked);
 }

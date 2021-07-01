@@ -16,7 +16,6 @@
 
 #include <entities/note.h>
 #include <libraries/qhotkey/QHotkey/qhotkey.h>
-#include <services/webappclientservice.h>
 #include <QFileSystemWatcher>
 #include <QMainWindow>
 #include <QSystemTrayIcon>
@@ -519,10 +518,6 @@ class MainWindow : public QMainWindow {
 
     void on_navigationLineEdit_textChanged(const QString &arg1);
 
-    void initWebSocketServerService();
-
-    void initWebAppClientService();
-
     void on_actionJump_to_note_list_panel_triggered();
 
     void on_actionJump_to_tags_panel_triggered();
@@ -652,8 +647,6 @@ private:
     QString _notePreviewHash;
     bool _noteEditIsCentralWidget;
     bool _lastNoteSelectionWasMultiple;
-    WebSocketServerService *_webSocketServerService;
-    WebAppClientService *_webAppClientService;
     QActionGroup *_languageGroup;
     QActionGroup *_spellBackendGroup;
     bool _brokenTagNoteLinksRemoved = false;

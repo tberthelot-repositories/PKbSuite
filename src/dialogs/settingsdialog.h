@@ -164,15 +164,9 @@ class SettingsDialog : public MasterDialog {
 
     void on_overrideInterfaceFontSizeGroupBox_toggled(bool arg1);
 
-    void on_webSocketServerServicePortResetButton_clicked();
-
-    void on_enableSocketServerCheckBox_toggled();
-
     void on_internalIconThemeCheckBox_toggled(bool checked);
 
     void on_systemIconThemeCheckBox_toggled(bool checked);
-
-    void on_webSocketTokenButton_clicked();
 
     void on_allowDifferentNoteFileNameCheckBox_toggled(bool checked);
 
@@ -181,16 +175,6 @@ class SettingsDialog : public MasterDialog {
     void on_noteTextViewUseEditorStylesCheckBox_toggled(bool checked);
 
     void on_databaseIntegrityCheckButton_clicked();
-
-    void on_webAppServerUrlResetButton_clicked();
-
-    void on_webAppShowTokenButton_clicked();
-
-    void on_webAppCopyTokenButton_clicked();
-
-    void on_webAppGenerateTokenButton_clicked();
-
-    void on_enableWebApplicationCheckBox_toggled();
 
 private:
     Ui::SettingsDialog *ui;

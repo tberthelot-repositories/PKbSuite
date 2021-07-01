@@ -55,8 +55,6 @@ SOURCES += main.cpp\
     services/databaseservice.cpp \
     widgets/graphicsview.cpp \
     widgets/pkbsuitemarkdowntextedit.cpp \
-    services/websocketserverservice.cpp \
-    services/webappclientservice.cpp \
     dialogs/masterdialog.cpp \
     utils/misc.cpp \
     utils/gui.cpp \
@@ -83,7 +81,6 @@ SOURCES += main.cpp\
     widgets/notetreewidgetitem.cpp \
     pdffile.cpp \
     widgets/layoutwidget.cpp \
-    dialogs/websockettokendialog.cpp \
     dialogs/imagedialog.cpp \
     dialogs/commandbar.cpp \
     models/commandmodel.cpp \
@@ -113,8 +110,6 @@ HEADERS  += mainwindow.h \
     dialogs/notediffdialog.h \
     dialogs/settingsdialog.h \
     dialogs/localtrashdialog.h \
-    services/websocketserverservice.h \
-    services/webappclientservice.h \
     helpers/htmlentities.h \
     helpers/toolbarcontainer.h \
     helpers/pkbsuitemarkdownhighlighter.h \
@@ -153,7 +148,6 @@ HEADERS  += mainwindow.h \
     widgets/notetreewidgetitem.h \
     pdffile.h \
     widgets/layoutwidget.h \
-    dialogs/websockettokendialog.h \
     dialogs/imagedialog.h \
     dialogs/commandbar.h \
     models/commandmodel.h \
@@ -177,7 +171,6 @@ FORMS    += mainwindow.ui \
     widgets/notetreewidgetitem.ui \
     dialogs/dropPDFDialog.ui \
     widgets/layoutwidget.ui \
-    dialogs/websockettokendialog.ui
 
 RESOURCES += \
     images.qrc \

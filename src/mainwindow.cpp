@@ -92,8 +92,6 @@
 #include "libraries/sonnet/src/core/speller.h"
 #include "release.h"
 #include "services/databaseservice.h"
-#include "services/websocketserverservice.h"
-#include "services/webappclientservice.h"
 #include "ui_mainwindow.h"
 #include "version.h"
 #include "widgets/pkbsuitemarkdowntextedit.h"
@@ -134,7 +132,6 @@ MainWindow::MainWindow(QWidget *parent)
     _readOnlyButton = new QPushButton(this);
     _settingsDialog = Q_NULLPTR;
     _lastNoteSelectionWasMultiple = false;
-    _webSocketServerService = Q_NULLPTR;
     _closeEventWasFired = false;
     _leaveFullScreenModeButton = nullptr;
     _useNoteFolderButtons = settings.value("useNoteFolderButtons").toBool();
@@ -445,14 +442,6 @@ void MainWindow::initGlobalKeyboardShortcuts() {
             action->trigger();
         });
     }
-}
-
-void MainWindow::initWebSocketServerService() {
-    _webSocketServerService = new WebSocketServerService();
-}
-
-void MainWindow::initWebAppClientService() {
-    _webAppClientService = new WebAppClientService();
 }
 
 /**
@@ -2251,17 +2240,6 @@ void MainWindow::readSettingsFromSettingsDialog(const bool isAppLaunch) {
     ui->noteTextEdit->setCursorWidth(cursorWidth);
 
     ui->noteTextEdit->setPaperMargins();
-
-    if (_webSocketServerService == Q_NULLPTR) {
-        QTimer::singleShot(250, this, SLOT(initWebSocketServerService()));
-    } else if (Utils::Misc::isSocketServerEnabled()) {
-        if (_webSocketServerService->getPort() !=
-            WebSocketServerService::getSettingsPort()) {
-            _webSocketServerService->listen();
-        }
-    } else {
-        _webSocketServerService->close();
-    }
 
     if (settings.value(QStringLiteral("Editor/disableCursorBlinking"))
             .toBool()) {
