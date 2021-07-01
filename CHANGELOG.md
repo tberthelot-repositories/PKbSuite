@@ -1,5 +1,136 @@
 # QOwnNotes Changelog
 
+## 21.7.0
+- added more translation (thank you rawfreeamy, amirkbrpr, whenwesober)
+
+## 21.6.9
+- the x86 64bit AppImage is now built with Ubuntu 18.04 instead of Ubuntu 16.04,
+  because it was now made possible by [linuxdeployqt](https://github.com/probonopd/linuxdeployqt/issues/340)
+- you now are able to **update the AppImage version of QOwnNotes** directly from
+  within the application if you have write permissions to the AppImage executable
+  (for [#2176](https://github.com/pbek/QOwnNotes/issues/2176))
+    - you can now also choose to just download the latest app image in the update dialog
+- an attempt was made to fix more builds for older Qt versions
+  (for [#2134](https://github.com/pbek/QOwnNotes/issues/2134), thank you @Waqar144)
+- added more translation (thank you rawfreeamy, mguerra, amirkbrpr)
+
+## 21.6.8
+- the *Insert image* dialog now allows the selection of webp images by default
+  (for [#2172](https://github.com/pbek/QOwnNotes/issues/2172))
+- when automatic downscaling of images is enabled in the *General settings* the images
+  are now not scaled up any more when they are smaller than the chosen resolution
+  (for [#2170](https://github.com/pbek/QOwnNotes/issues/2170))
+- when automatic downscaling of images is enabled in the *General settings* and a too large
+  SVG image is inserted into a note then it now will not get resized automatically, because
+  Qt can't resize SVG images and this this would result into a 0 byte file
+  (for [#2171](https://github.com/pbek/QOwnNotes/issues/2171))
+- an attempt was made to fix the builds for Qt versions older than 5.8 for the fakevim library
+  (for [#2134](https://github.com/pbek/QOwnNotes/issues/2134), thank you @Waqar144)
+
+## 21.6.7
+- the fakevim library was updated and adapted to work with qmake and cmake and integrated
+  into QOwnNotes (for [#2134](https://github.com/pbek/QOwnNotes/issues/2134), thank you @Waqar144)
+- added more Spanish, Chinese Traditional, Polish translation thank you hubertm, rawfreeamy)
+
+## 21.6.6
+- the monospaced font detection was improved by comparing the width of `iiiii`
+  to `WWWWW` (for [#2163](https://github.com/pbek/QOwnNotes/issues/2163))
+- added more Italian, Catalan translation (thank you marcoxbresciani, mguerra)
+
+## 21.6.5
+- when you are changing the editor font in the settings you will get now a dialog box that
+  you might need to restart the application (for [#2163](https://github.com/pbek/QOwnNotes/issues/2163))
+- an attempt was made to improve the editor margin calculation by searching
+  for the word `mono` in the font family and handling those potentially monospaced
+  fonts differently (for [#2163](https://github.com/pbek/QOwnNotes/issues/2163))
+
+## 21.6.4
+- fixed a problem when turning on the sub-folders panel after it was turned off
+  for note folders with sub-folders (for [#2162](https://github.com/pbek/QOwnNotes/issues/2162))
+- the note preview can now also highlight code blocks with uppercase identifiers
+  (for [#2161](https://github.com/pbek/QOwnNotes/issues/2161))
+- now the shorter <https://web.libera.chat/#qownnotes> link is used for the 
+  IRC channel in the chat menu
+
+## 21.6.3
+- updated the link of the IRC chat menu entry to Libera.Chat because the Freenode
+  IRC channel had a "hostile takeover"
+- added more Italian translation (thank you marcoxbresciani)
+
+## 21.6.2
+- added more Hungarian, German, Dutch, Persian, Russian translation (thank you
+  rawfreeamy, mariiaalt, amirkbrpr)
+
+## 21.6.1
+- the code block syntax highlighting for python triple quotes was improved
+  (for [#2147](https://github.com/pbek/QOwnNotes/pull/2147), thank you @Waqar144)
+- spell checking is now disabled in encrypted notes as long as the encrypted text
+  is shown (for [#2156](https://github.com/pbek/QOwnNotes/issues/2156))
+- added more Persian translation (thank you amirkbrpr)
+
+## 21.6.0
+- the [Web Companion browser extension](https://github.com/qownnotes/web-companion)
+  was updated to version 21.6.0 to fix a problem with cut-off security tokens when
+  they start with a number (for [#33](https://github.com/qownnotes/web-companion/issues/33))
+- fixed build process on Qt 5.3
+- added more Persian, Catalan translation (thank you amirkbrpr, mguerra)
+
+## 21.5.5
+- the cli parameter `--action <name>` that triggers a menu action after the application
+  was started now also works in single application mode when the application is
+  started a second time (for [#2143](https://github.com/pbek/QOwnNotes/issues/2143))
+    - additionally, desktop actions to create a new note and to open the todo list
+      dialog were added to the desktop files for Linux (thank you @fabianski7)
+- now the `>` character will also be checked at automatic bracket closing when
+  it was already entered (for [#2144](https://github.com/pbek/QOwnNotes/issues/2144))
+- added more translation (thank you starship10, baptistou, rawfreeamy)
+
+## 21.5.4
+- there now is a new cli parameter `--action <name>` that triggers a menu action after
+  the application was started (for [#2143](https://github.com/pbek/QOwnNotes/issues/2143))
+    - for example `QOwnNotes --action actionShow_Todo_List` will open the todo
+      list dialog after startup
+    - this parameter also works with scripted custom actions 
+    - for more information please take a look at
+      [Trigger menu actions after startup](https://www.qownnotes.org/getting-started/cli-parameters.html#trigger-menu-actions-after-startup)
+- added more translation (thank you yanjun_sun, amirkbrpr, rawfreeamy, whenwesober,
+  mguerra, rogepix, seanos, gbabin)
+
+## 21.5.3
+- there now is a new shortcut <kbd>Ctrl</kbd> + <kbd>⇧</kbd> + <kbd>L</kbd> that opens
+  the link dialog on the tab to add a note link (for [#2137](https://github.com/pbek/QOwnNotes/issues/2137))
+    - please visit [QOwnNotes shortcuts](https://www.qownnotes.org/getting-started/shortcuts.html)
+      for a list of all shortcuts
+- version 0.1.10 of the **QOwnNotes Web application** [app.qownnotes.org](https://app.qownnotes.org/)
+  was released (for [#2104](https://github.com/pbek/QOwnNotes/issues/2104))
+    - heic/heif images can now also be loaded by converting them to jpg images
+    - the form elements in the mobile layout were improved
+    - you can now set the maximum image height and width
+    - you can now set the output image format
+    - in case you don't see the version number in the headline of the app page
+      you need to clear the browser cache for the `app.qownnotes.org` webpage
+- added more Sinhala, Polish translation (thank you helabasa, rawfreeamy)
+
+## 21.5.2
+- a problem with showing a `&` character in the tab text of notes was fixed
+  (for [#2135](https://github.com/pbek/QOwnNotes/issues/2135))
+- a problem with a resetting note sub-folder panel when clicking links to notes
+  in sub-folders was fixed (for [#2128](https://github.com/pbek/QOwnNotes/issues/2128))
+
+## 21.5.1
+- fixed more Qt 6 build errors (for [#1304](https://github.com/pbek/QOwnNotes/issues/1304), thank you @Waqar144)
+- version 0.1.6 of the **QOwnNotes Web application** [app.qownnotes.org](https://app.qownnotes.org/)
+  was released that features an image preview and allows rotating images before sending them
+  to your **QOwnNotes desktop app** (for [#2104](https://github.com/pbek/QOwnNotes/issues/2104))
+    - in case you don't see the version number in the headline of the app page
+      you need to clear the browser cache for the `app.qownnotes.org` webpage
+
+## 21.5.0
+- a PPA for Ubuntu 21.10 (Impish Indri) was added, a repository for Fedora 34
+  was added and another attempt to fix the Fedora 33 build was made
+- added more translation (thank you unchase, golublarysa, polkillas, smarquespt,
+  rawfreeamy, starship10, marcoxbresciani)
+
 ## 21.4.6
 - a possible problem with generating the header tree in the navigation panel when
   starting the application minimized was fixed (for [#2110](https://github.com/pbek/QOwnNotes/issues/2110))
@@ -12,7 +143,7 @@
 - added more translation (thank you amirkbrpr, rakekniven, rawfreeamy)
 
 ## 21.4.4
-- more improvements for the wep application integration have been made
+- more improvements for the web application integration have been made
   (for [#2104](https://github.com/pbek/QOwnNotes/issues/2104))
     - now a confirmation is requested before an image received from the
       QOwnNotes web application is inserted into the current note
@@ -20,7 +151,7 @@
   amirkbrpr, marterra)
 
 ## 21.4.3
-- more improvements for the wep application integration have been made
+- more improvements for the web application integration have been made
   (for [#2104](https://github.com/pbek/QOwnNotes/issues/2104))
     - you can now edit the security token manually
     - the link to the QOwnNotes web app was fixed in the settings dialog
@@ -45,8 +176,8 @@
     - don't forget to copy your secret token from the settings page to the web
       service to be able to communicate with your local instance of QOwnNotes
     - you can find the source code of the web service at [web-app](https://github.com/qownnotes/web-app)
-    - you can also host this web service yourself, the freshly built docker
-      container is at [qownnotes-web-app](https://hub.docker.com/repository/docker/pbeke/qownnotes-web-app)
+    - you can also host this web service yourself, the freshly built docker images
+      are at [qownnotes-web-app](https://hub.docker.com/repository/docker/pbeke/qownnotes-web-app)
 - added more translation (thank you whenwesober, fitoschido, rawfreeamy, mguerra, amirkbrpr)
 
 ## 21.4.1

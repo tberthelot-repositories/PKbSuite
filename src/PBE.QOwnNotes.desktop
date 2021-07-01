@@ -1,0 +1,22 @@
+[Desktop Entry]
+Name=QOwnNotes
+Comment=Plain-text file markdown note taking with Nextcloud/ownCloud integration
+Exec=QOwnNotes
+Keywords=markdown;owncloud;nextcloud;notes;
+Icon=QOwnNotes
+Type=Application
+Terminal=false
+StartupNotify=true
+Categories=Utility;TextEditor;
+StartupWMClass=QOwnNotes
+Actions=NewNote;ShowTodoList;
+
+[Desktop Action NewNote]
+Name=New note
+Icon=document-new
+Exec=QOwnNotes --action action_New_note
+
+[Desktop Action ShowTodoList]
+Name=Show todo list
+Icon=view-calendar-tasks
+Exec=QOwnNotes --action actionShow_Todo_List

@@ -1328,6 +1328,9 @@ void SettingsDialog::on_noteTextEditButton_clicked() {
         // store the font settings
         storeFontSettings();
 
+        // we will need a restart after changing the font
+        needRestart();
+
         // update the text items after the font was changed
         ui->editorFontColorWidget->updateAllTextItems();
     }
@@ -1344,6 +1347,9 @@ void SettingsDialog::on_noteTextEditCodeButton_clicked() {
 
         // store the font settings
         storeFontSettings();
+
+        // we will need a restart after changing the font
+        needRestart();
 
         // update the text items after the font was changed
         ui->editorFontColorWidget->updateAllTextItems();
@@ -1437,6 +1443,9 @@ void SettingsDialog::on_noteTextEditResetButton_clicked() {
     // store the font settings
     storeFontSettings();
 
+    // we will need a restart after changing the font
+    needRestart();
+
     // update the text items after the font was changed
     ui->editorFontColorWidget->updateAllTextItems();
 }
@@ -1450,6 +1459,9 @@ void SettingsDialog::on_noteTextEditCodeResetButton_clicked() {
 
     // store the font settings
     storeFontSettings();
+
+    // we will need a restart after changing the font
+    needRestart();
 
     // update the text items after the font was changed
     ui->editorFontColorWidget->updateAllTextItems();

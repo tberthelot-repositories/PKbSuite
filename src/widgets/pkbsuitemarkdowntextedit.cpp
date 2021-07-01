@@ -359,9 +359,10 @@ void PKbSuiteMarkdownTextEdit::setPaperMargins(int width) {
                 QStringLiteral("O").repeated(characterAmount));
 #endif
 
-            // apply a factor to correct the faulty calculated margin
+            // Apply a factor to correct the faulty calculated margin
+            // Use a different factor for monospaced fonts
             // TODO(pbek): I don't know better way to get around this yet
-            proposedEditorWidth /= 1.332;
+            proposedEditorWidth /= usesMonospacedFont() ? 0.95 : 1.332;
 
             // calculate the margin to be applied
             margin = (width - proposedEditorWidth) / 2;
@@ -377,6 +378,25 @@ void PKbSuiteMarkdownTextEdit::setPaperMargins(int width) {
     }
 }
 
+/**
+ * Try to determine if the used font is monospaced
+ *
+ * @return
+ */
+bool PKbSuiteMarkdownTextEdit::usesMonospacedFont() {
+    QFontMetrics metrics(font());
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
+    int widthNarrow = metrics.width(QStringLiteral("iiiii"));
+    int widthWide = metrics.width(QStringLiteral("WWWWW"));
+#else
+    int widthNarrow = metrics.horizontalAdvance(QStringLiteral("iiiii"));
+    int widthWide = metrics.horizontalAdvance(QStringLiteral("WWWWW"));
+#endif
+
+    return widthNarrow == widthWide;
+}
+
 QMargins PKbSuiteMarkdownTextEdit::viewportMargins() {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 0))
     return QMarkdownTextEdit::viewportMargins();
@@ -389,8 +409,12 @@ void PKbSuiteMarkdownTextEdit::setText(const QString &text) {
     QMarkdownTextEdit::setText(text);
 }
 
-void PKbSuiteMarkdownTextEdit::setSpellcheckingEnabled(bool enabled) {
+void PKbSuiteMarkdownTextEdit::setSpellCheckingEnabled(bool enabled) {
     QOwnSpellChecker::instance()->setActive(enabled);
+}
+
+bool PKbSuiteMarkdownTextEdit::isSpellCheckingEnabled() {
+    return QOwnSpellChecker::instance()->isActive();
 }
 
 void PKbSuiteMarkdownTextEdit::resizeEvent(QResizeEvent *event) {

@@ -31,7 +31,9 @@ class PKbSuiteMarkdownTextEdit : public QMarkdownTextEdit {
     void updateSettings();
     QMargins viewportMargins();
     void setText(const QString &text);
-    static void setSpellcheckingEnabled(bool enabled);
+    static void setSpellCheckingEnabled(bool enabled);
+    bool isSpellCheckingEnabled();
+    bool usesMonospacedFont();
 
    protected:
     // we must not override _highlighter or Windows will create a

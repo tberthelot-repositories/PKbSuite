@@ -1987,7 +1987,7 @@ static void highlightCode(QString &str, const QString &type, int cbCount) {
             // find the codeBlock end
             int next = str.indexOf(type, currentCbPos);
             // extract the codeBlock
-#if QT_VERSION <= QT_VERSION_CHECK(5, 15, 0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 2)
             const QStringRef codeBlock =
                 str.midRef(currentCbPos, next - currentCbPos);
 #else
@@ -3000,6 +3000,14 @@ bool Note::scaleDownImageFileIfNeeded(QFile &file) {
         return true;
     }
 
+    QMimeDatabase db;
+    QMimeType type = db.mimeTypeForFile(file);
+
+    // we don't want to resize SVGs because Qt can't store them
+    if (type.name().contains("image/svg")) {
+        return true;
+    }
+
     QImage image;
 
     if (!image.load(file.fileName())) {
@@ -3012,6 +3020,12 @@ bool Note::scaleDownImageFileIfNeeded(QFile &file) {
     const int height =
         settings.value(QStringLiteral("imageScaleDownMaximumHeight"), 1024)
             .toInt();
+
+    // don't scale if image is already small enough
+    if (image.width() <= width && image.height() <= height) {
+        return true;
+    }
+
 
     const QPixmap &pixmap = QPixmap::fromImage(image.scaled(
         width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation));

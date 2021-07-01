@@ -55,6 +55,7 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <QPageSetupDialog>
+#include <QPointer>
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QProcess>
@@ -796,7 +797,7 @@ void MainWindow::initToolbars() {
     addToolBar(_formattingToolbar);
 
     _insertingToolbar = new QToolBar(tr("inserting toolbar"), this);
-    _insertingToolbar->addAction(ui->actionInsert_Link_to_note);
+    _insertingToolbar->addAction(ui->actionInsert_text_link);
     _insertingToolbar->addAction(ui->actionInsert_image);
     _insertingToolbar->addAction(ui->actionInsert_current_time);
     _insertingToolbar->setObjectName(QStringLiteral("insertingToolbar"));
@@ -1062,9 +1063,9 @@ void MainWindow::togglePanelVisibility(const QString &objectName) {
         _noteSubFolderDockWidgetVisible = newVisibility;
 
         // don't allow the note subfolder dock widget to be visible if the
-        // note folder has no subfolders activated
+        // note folder has no subfolders activated or if the note tree feature is enabled
         if (newVisibility) {
-            newVisibility = NoteFolder::isCurrentNoteTreeEnabled();
+            newVisibility = NoteFolder::isCurrentShowSubfolders() && !Utils::Misc::isEnableNoteTree();
         }
     }
 
@@ -4628,9 +4629,9 @@ PKbSuiteMarkdownTextEdit *MainWindow::activeNoteTextEdit() {
 /**
  * @brief Handles the linking of text
  */
-void MainWindow::handleTextNoteLinking() {
+void MainWindow::handleTextNoteLinking(int page) {
     PKbSuiteMarkdownTextEdit *textEdit = activeNoteTextEdit();
-    auto *dialog = new LinkDialog(QString(), this);
+    auto *dialog = new LinkDialog(page, QString(), this);
 
     QString selectedText = textEdit->textCursor().selectedText();
     if (!selectedText.isEmpty()) {
@@ -5579,18 +5580,41 @@ void MainWindow::openLocalUrl(QString urlString) {
         const auto text = ui->noteTextEdit->toPlainText();
 
         int index = url.host().midRef(1).toInt();
+#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0))
         QRegExp re(R"((^|\n)\s*[-*+]\s\[([xX ]?)\])", Qt::CaseInsensitive);
+#else
+        static const QRegularExpression re(R"((^|\n)\s*[-*+]\s\[([xX ]?)\])", QRegularExpression::CaseInsensitiveOption);
+#endif
         int pos = 0;
         while (true) {
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0))
             pos = re.indexIn(text, pos);
+#else
+            QRegularExpressionMatch match;
+            pos = text.indexOf(re, pos, &match);
+#endif
             if (pos == -1)    // not found
                 return;
             auto cursor = ui->noteTextEdit->textCursor();
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0))
+            int matchedLength = re.matchedLength();
             cursor.setPosition(pos + re.matchedLength() - 1);
+#else
+            int matchedLength = match.capturedLength();
+            qDebug() << __func__ << "match.capturedLength(): " << match.capturedLength();
+            cursor.setPosition(pos + match.capturedLength() - 1);
+#endif
             if (cursor.block().userState() ==
                 MarkdownHighlighter::HighlighterState::List) {
                 if (index == 0) {
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0))
                     auto ch = re.cap(2);
+#else
+                    auto ch = match.captured(2);
+#endif
                     if (ch.isEmpty())
                         cursor.insertText(QStringLiteral("x"));
                     else {
@@ -5607,7 +5631,7 @@ void MainWindow::openLocalUrl(QString urlString) {
                 }
                 --index;
             }
-            pos += re.matchedLength();
+            pos += matchedLength;
         }
     } else if (scheme == QStringLiteral("file") && urlWasNotValid) {
 		// First, handle the case of a note file and create it if it doesn't exists
@@ -5853,7 +5877,7 @@ void MainWindow::noteTextEditCustomContextMenuRequested(
     const QString linkTextActionName =
         isTextSelected ? tr("&Link selected text") : tr("Insert &link");
     QAction *linkTextAction = menu->addAction(linkTextActionName);
-    linkTextAction->setShortcut(ui->actionInsert_Link_to_note->shortcut());
+    linkTextAction->setShortcut(ui->actionInsert_text_link->shortcut());
     linkTextAction->setEnabled(isAllowNoteEditing);
 
     QString blockQuoteTextActionName =
@@ -6013,9 +6037,14 @@ bool MainWindow::isNoteTextSelected() {
     return !selectedText.isEmpty();
 }
 
-void MainWindow::on_actionInsert_Link_to_note_triggered() {
-    // handle the linking of text with a note
-    handleTextNoteLinking();
+void MainWindow::on_actionInsert_text_link_triggered() {
+    // handle the linking of text
+    handleTextNoteLinking(LinkDialog::TextLinkPage);
+}
+
+void MainWindow::on_actionInsert_note_link_triggered() {
+    // handle the linking of a note
+    handleTextNoteLinking(LinkDialog::NoteLinkPage);
 }
 
 void MainWindow::on_action_DuplicateText_triggered() {

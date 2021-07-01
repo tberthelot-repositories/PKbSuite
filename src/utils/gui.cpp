@@ -937,13 +937,20 @@ void Utils::Gui::updateTabWidgetTabData(QTabWidget *tabWidget, int index,
                         note.getNoteSubFolder().pathData());
 
     QString text = note.getName();
+    const bool isSticky = isTabWidgetTabSticky(tabWidget, index);
 
-    if (isTabWidgetTabSticky(tabWidget, index)) {
+    if (isSticky) {
         // https://unicode-table.com/en/search/?q=flag
         text.prepend(QStringLiteral("\u2690 "));
     }
 
-    tabWidget->setTabText(index, text);
+    // you need to use "&&" to show a "&" in the tab text
+    // see https://github.com/pbek/QOwnNotes/issues/2135
+    tabWidget->setTabText(index, text.replace("&", "&&"));
+
+    tabWidget->setTabToolTip(index, isSticky ?
+            QObject::tr("Double-click to unstick note from tab") :
+            QObject::tr("Double-click to stick note to tab"));
 }
 
 void Utils::Gui::setTabWidgetTabSticky(QTabWidget *tabWidget, int index,

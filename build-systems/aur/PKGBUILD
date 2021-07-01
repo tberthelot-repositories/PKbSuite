@@ -34,8 +34,12 @@ package() {
     install -D -m755 PKbSuite "${pkgdir}/usr/bin/PKbSuite"
 
     # install visuals
+<<<<<<< HEAD
     install -D -m644 PKbSuite.desktop "${pkgdir}/usr/share/applications/PKbSuite.desktop"
     install -D -m644 "images/icons/128x128/apps/PKbSuite.png" "${pkgdir}/usr/share/pixmaps/PKbSuite.png"
+=======
+    install -D -m644 PBE.QOwnNotes.desktop "${pkgdir}/usr/share/applications/PBE.QOwnNotes.desktop"
+>>>>>>> 68e8fad6c6a433e69976d0f2863a4d2a3ac09e15
     for format in {16x16,24x24,32x32,48x48,64x64,96x96,128x128,256x256,512x512}; do
         install -D -m644 "images/icons/${format}/apps/PKbSuite.png" "${pkgdir}/usr/share/icons/hicolor/$format/apps/PKbSuite.png"
     done
