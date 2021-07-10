@@ -59,10 +59,12 @@ SOURCES += main.cpp\
     utils/misc.cpp \
     utils/gui.cpp \
     utils/schema.cpp \
+    utils/kbgraph.cpp \
     dialogs/welcomedialog.cpp \
     dialogs/tagadddialog.cpp \
     widgets/navigationwidget.cpp \
     widgets/notepreviewwidget.cpp \
+    widgets/kbgraphwidget.cpp \
     api/noteapi.cpp \
     api/notesubfolderapi.cpp \
     api/tagapi.cpp \
@@ -122,10 +124,12 @@ HEADERS  += mainwindow.h \
     utils/misc.h \
     utils/gui.h \
     utils/schema.h \
+    utils/kbgraph.h \
     dialogs/welcomedialog.h \
     dialogs/tagadddialog.h \
     widgets/navigationwidget.h \
     widgets/notepreviewwidget.h \
+    widgets/kbgraphwidget.h \
     api/noteapi.h \
     api/notesubfolderapi.h \
     api/tagapi.h \

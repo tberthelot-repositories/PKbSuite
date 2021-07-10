@@ -24,6 +24,8 @@
 
 #include "entities/notehistory.h"
 
+#include "utils/kbgraph.h"
+
 #define SORT_ALPHABETICAL 0
 #define SORT_BY_LAST_CHANGE 1
 #define ORDER_ASCENDING 0     // Qt::AscendingOrder // = 0
@@ -625,6 +627,7 @@ private:
     QDockWidget *_noteEditDockWidget;
     QDockWidget *_noteTagDockWidget;
     QDockWidget *_notePreviewDockWidget;
+    QDockWidget *_graphDockWidget;
     QWidget *_taggingDockTitleBarWidget;
     QWidget *_noteSubFolderDockTitleBarWidget;
     QWidget *_noteSearchDockTitleBarWidget;
@@ -634,6 +637,7 @@ private:
     QWidget *_noteEditDockTitleBarWidget;
     QWidget *_noteTagDockTitleBarWidget;
     QWidget *_notePreviewDockTitleBarWidget;
+    QWidget *_graphDockTitleBarWidget;
     QWidget *_logDockTitleBarWidget;
     QWidget *_scriptingDockTitleBarWidget;
     QComboBox *_workspaceComboBox;
@@ -669,6 +673,7 @@ private:
     bool _isMaximizedBeforeFullScreen = false;
     bool _isMinimizedBeforeFullScreen = false;
     CommandBar* _commandBar;
+    kbGraph* _kbGraphScene;
 
     void createSystemTrayIcon();
 

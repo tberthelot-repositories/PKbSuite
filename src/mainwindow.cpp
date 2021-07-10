@@ -611,6 +611,16 @@ void MainWindow::initDockWidgets() {
     addDockWidget(Qt::RightDockWidgetArea, _notePreviewDockWidget,
                   Qt::Horizontal);
 
+    _kbGraphScene = (kbGraph*) new kbGraph();
+    ui->kbGraphView->setScene(_kbGraphScene);
+
+    _graphDockWidget = new QDockWidget(tr("Note graph"), this);
+    _graphDockWidget->setObjectName(QStringLiteral("graphDockWidget"));
+    _graphDockWidget->setWidget(ui->kbGraphFrame);
+    _graphDockTitleBarWidget = _graphDockWidget->titleBarWidget();
+    addDockWidget(Qt::RightDockWidgetArea, _graphDockWidget,
+                  Qt::Horizontal);
+
     QSettings settings;
 
     // forcing some dock widget sizes on the first application start
@@ -624,6 +634,7 @@ void MainWindow::initDockWidgets() {
         // giving the preview pane a third of the screen, the rest goes to the
         // note edit pane
         _notePreviewDockWidget->setMaximumWidth(width() / 3);
+        _graphDockWidget->setMaximumWidth(width() / 3);
 
         settings.setValue(QStringLiteral("dockWasInitializedOnce"), true);
 
@@ -656,6 +667,9 @@ void MainWindow::initDockWidgets() {
 
     // initialize the panel menu
     initPanelMenu();
+
+    // initialize the KB graph
+    _kbGraphScene->GenerateKBGraph(notesPath);
 }
 
 /**
@@ -664,6 +678,7 @@ void MainWindow::initDockWidgets() {
 void MainWindow::releaseDockWidgetSizes() {
     _noteListDockWidget->setMaximumWidth(10000);
     _notePreviewDockWidget->setMaximumWidth(10000);
+    _graphDockWidget->setMaximumWidth(10000);
     _noteTagDockWidget->setMaximumHeight(10000);
 }
 
@@ -2138,9 +2153,6 @@ void MainWindow::restoreToolbars() {
 
     // update the toolbar menu
     updateToolbarMenu();
-
-    // initialize web app websocket connection
-    QTimer::singleShot(250, this, SLOT(initWebAppClientService()));
 }
 
 /**
@@ -10141,6 +10153,8 @@ void MainWindow::on_actionUnlock_panels_toggled(bool arg1) {
         _noteTagDockWidget->setTitleBarWidget(_noteTagDockTitleBarWidget);
         _notePreviewDockWidget->setTitleBarWidget(
             _notePreviewDockTitleBarWidget);
+        _graphDockWidget->setTitleBarWidget(
+            _graphDockTitleBarWidget);
 
         for (QDockWidget *dockWidget : dockWidgets) {
             // reset the top margin of the enclosed widget
