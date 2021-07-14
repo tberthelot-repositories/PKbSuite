@@ -17,13 +17,17 @@
 #include <QTextStream>
 #include <QPainter>
 #include <QRegularExpression>
-#include "math.h"
+#include <QGraphicsSceneMouseEvent>
+#include <entities/note.h>
+#include <mainwindow.h>
 
 /*
  * kbGraph : main class to manage the graph of notes
 */
-kbGraph::kbGraph() {
+kbGraph::kbGraph(MainWindow* wnd) {
     QGraphicsScene();
+    _mainWindow = wnd;
+    _pointedNode = nullptr;
 }
 
 void kbGraph::GenerateKBGraph(const QString noteFolder) {
@@ -77,6 +81,34 @@ void kbGraph::GenerateKBGraph(const QString noteFolder) {
     }
 }
 
+void kbGraph::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
+    if (mouseEvent->button() == Qt::LeftButton)
+    {
+        QGraphicsItem *item = itemAt(mouseEvent->scenePos(), QTransform());
+        _pointedNode = qgraphicsitem_cast<kbGraphNode*>(item);
+        if(_pointedNode)
+        {
+            _pointedPos = mouseEvent->scenePos();
+        }
+    }
+
+    QGraphicsScene::mousePressEvent(mouseEvent);
+}
+
+void kbGraph::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
+    if ((_pointedNode) && (mouseEvent->button() == Qt::LeftButton))
+    {
+        QPointF pos = mouseEvent->lastScenePos();
+        if (pos == _pointedPos) {
+            Note note = Note::fetchByName(_pointedNode->name());
+            _mainWindow->setCurrentNote(std::move(note));
+        }
+        _pointedNode = nullptr;
+    }
+
+    QGraphicsScene::mouseReleaseEvent(mouseEvent);
+}
+
 /*
  * kbGraphNode : class representing each note in the graph
 */
@@ -127,6 +159,8 @@ void kbGraphNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
     if (_noteLinks.size() == 0)
         painter->setPen(QPen(Qt::red, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    else if (_noteLinks.size() == 1)
+        painter->setPen(QPen(Qt::darkYellow, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     else {
 
         painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));

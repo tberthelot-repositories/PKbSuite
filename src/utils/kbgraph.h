@@ -16,6 +16,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+class MainWindow;
 
 class kbGraphNode;
 
@@ -61,12 +62,19 @@ private:
 
 class kbGraph : public QGraphicsScene {
 public:
-    kbGraph();
+    kbGraph(MainWindow* wnd);
 
-public:
     void GenerateKBGraph(const QString noteFolder);
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
 
 private:
     QVector<kbGraphNode*> _noteNodes;
     int _maxLinkNumber;
+    MainWindow* _mainWindow;
+
+    kbGraphNode* _pointedNode;
+    QPointF _pointedPos;
 };

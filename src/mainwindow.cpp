@@ -611,7 +611,7 @@ void MainWindow::initDockWidgets() {
     addDockWidget(Qt::RightDockWidgetArea, _notePreviewDockWidget,
                   Qt::Horizontal);
 
-    _kbGraphScene = (kbGraph*) new kbGraph();
+    _kbGraphScene = (kbGraph*) new kbGraph(this);
     ui->kbGraphView->setScene(_kbGraphScene);
 
     _graphDockWidget = new QDockWidget(tr("Note graph"), this);

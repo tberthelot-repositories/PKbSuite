@@ -27,10 +27,20 @@ class kbGraphWidget : public QGraphicsView {
 
 //    void contextMenuEvent(QContextMenuEvent *event) override;
 
+    void wheelEvent(QWheelEvent *event) override;
+
    public slots:
 //    void hide();
 
    signals:
 //    void resize(QSize size, QSize oldSize);
+
+private:
+    int _numScheduledScalings;
+    QPointF _eventPos;
+
+protected slots:
+    void scalingTime(qreal x);
+    void animFinished();
 };
 

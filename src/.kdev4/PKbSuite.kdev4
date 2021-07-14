@@ -1,6 +1,9 @@
 [Buildset]
 BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 
+[ClangTidy]
+CheckSystemHeaders=true
+
 [Cppcheck]
 checkConfig=true
 checkInformation=true
