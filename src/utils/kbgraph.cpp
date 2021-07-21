@@ -20,14 +20,17 @@
 #include <QGraphicsSceneMouseEvent>
 #include <entities/note.h>
 #include <mainwindow.h>
+#include <QGraphicsView>
 
 /*
  * kbGraph : main class to manage the graph of notes
 */
-kbGraph::kbGraph(MainWindow* wnd) {
+kbGraph::kbGraph(MainWindow* wnd, QGraphicsView* kbGraphView) {
     QGraphicsScene();
     _mainWindow = wnd;
     _pointedNode = nullptr;
+    _initialPos = QPointF(-1, -1);
+    _kbGraphView = kbGraphView;
 }
 
 void kbGraph::GenerateKBGraph(const QString noteFolder) {
@@ -85,10 +88,9 @@ void kbGraph::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     if (mouseEvent->button() == Qt::LeftButton)
     {
         QGraphicsItem *item = itemAt(mouseEvent->scenePos(), QTransform());
-        _pointedNode = qgraphicsitem_cast<kbGraphNode*>(item);
-        if(_pointedNode)
-        {
-            _pointedPos = mouseEvent->scenePos();
+        if (item) {
+            _pointedNode = qgraphicsitem_cast<kbGraphNode*>(item);
+            _initialPos = mouseEvent->screenPos();
         }
     }
 
@@ -96,14 +98,19 @@ void kbGraph::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 }
 
 void kbGraph::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
-    if ((_pointedNode) && (mouseEvent->button() == Qt::LeftButton))
+    if (mouseEvent->button() == Qt::LeftButton)
     {
-        QPointF pos = mouseEvent->lastScenePos();
-        if (pos == _pointedPos) {
-            Note note = Note::fetchByName(_pointedNode->name());
-            _mainWindow->setCurrentNote(std::move(note));
+        QPointF newPt = mouseEvent->screenPos();
+        if ((_pointedNode) && (_initialPos == newPt)) {
+            if (_pointedNode->name().length() > 0) {
+                Note note = Note::fetchByName(_pointedNode->name());
+                _mainWindow->setCurrentNote(std::move(note));
+                _kbGraphView->centerOn(_pointedNode);
+                _pointedNode = nullptr;
+            }
+            else
+                _pointedNode = nullptr;
         }
-        _pointedNode = nullptr;
     }
 
     QGraphicsScene::mouseReleaseEvent(mouseEvent);
@@ -115,6 +122,7 @@ void kbGraph::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 kbGraphNode::kbGraphNode(QString note) : _noteName(note) {
     setFlag(ItemIsMovable);
     setFlag(ItemSendsGeometryChanges);
+    setFlag(ItemIsFocusable);
     setCacheMode(DeviceCoordinateCache);
     setZValue(10);
 

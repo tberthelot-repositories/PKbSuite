@@ -14,8 +14,10 @@
 
 #pragma once
 
+#include <QObject>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+
 class MainWindow;
 
 class kbGraphNode;
@@ -62,7 +64,7 @@ private:
 
 class kbGraph : public QGraphicsScene {
 public:
-    kbGraph(MainWindow* wnd);
+    kbGraph(MainWindow* wnd, QGraphicsView* kbGraphView);
 
     void GenerateKBGraph(const QString noteFolder);
 
@@ -74,7 +76,8 @@ private:
     QVector<kbGraphNode*> _noteNodes;
     int _maxLinkNumber;
     MainWindow* _mainWindow;
+    QGraphicsView* _kbGraphView;
 
     kbGraphNode* _pointedNode;
-    QPointF _pointedPos;
+    QPointF _initialPos;
 };
