@@ -21,6 +21,7 @@
 #include <entities/note.h>
 #include <mainwindow.h>
 #include <QGraphicsView>
+#include "math.h"
 
 /*
  * kbGraph : main class to manage the graph of notes
@@ -45,14 +46,13 @@ void kbGraph::GenerateKBGraph(const QString noteFolder) {
 
         kbGraphNode* node = new kbGraphNode(filename.left(filename.length() - 3));
         _noteNodes << node;
-        addItem(node);
         noteFile.close();
     }
 
     foreach(kbGraphNode* node, _noteNodes) {
         QString fullFileName = noteFolder + "/" + node->name() + ".md";
         QFile noteFile(fullFileName);
-        if (!noteFile.open(QIODevice::ReadOnly)) // | QIODevice::Text))
+        if (!noteFile.open(QIODevice::ReadOnly))
             return;
 
         QTextStream flux(&noteFile);
@@ -79,12 +79,28 @@ void kbGraph::GenerateKBGraph(const QString noteFolder) {
         if (node->getNumberOfLinks() > _maxLinkNumber)
             _maxLinkNumber = node->getNumberOfLinks();
 
-        addItem(node);
         noteFile.close();
+    }
+
+    // Sort the vector to have heavier nodes first
+    for (int i=0; i < _noteNodes.size(); i++) {
+        for (int j=i + 1; j < _noteNodes.size(); j++) {
+            if (_noteNodes.at(i)->getNumberOfLinks() < _noteNodes.at(j)->getNumberOfLinks())
+                _noteNodes.swapItemsAt(i, j);
+        }
+    }
+
+    // Position the nodes
+    foreach(kbGraphNode* node, _noteNodes) {
+        qDebug() << "Note en cours : " << node->name();
+        node->positionChildNodes();
+        addItem(node);
     }
 }
 
 void kbGraph::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
+    _pointedNode = nullptr;
+    _initialPos = QPointF(-1, -1);
     if (mouseEvent->button() == Qt::LeftButton)
     {
         QGraphicsItem *item = itemAt(mouseEvent->scenePos(), QTransform());
@@ -102,7 +118,7 @@ void kbGraph::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
     {
         QPointF newPt = mouseEvent->screenPos();
         if ((_pointedNode) && (_initialPos == newPt)) {
-            if (_pointedNode->name().length() > 0) {
+            if (!_pointedNode->name().isEmpty()) {
                 Note note = Note::fetchByName(_pointedNode->name());
                 _mainWindow->setCurrentNote(std::move(note));
                 _kbGraphView->centerOn(_pointedNode);
@@ -126,8 +142,9 @@ kbGraphNode::kbGraphNode(QString note) : _noteName(note) {
     setCacheMode(DeviceCoordinateCache);
     setZValue(10);
 
-    _position = QPointF(rand() % 1000, rand() % 1000);
+    _position = QPointF(rand() % 1500, rand() % 1500);
     setPos(_position);
+    _positionned = false;
 
     _noteLinkCount = 0;
 }
@@ -142,7 +159,7 @@ QString kbGraphNode::name() {
     return _noteName;
 }
 
-int kbGraphNode::getNumberOfLinks() {
+int kbGraphNode::getNumberOfLinks() const {
     return _noteLinkCount;
 }
 
@@ -154,7 +171,7 @@ QRectF kbGraphNode::boundingRect() const
 void kbGraphNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     QFont font = painter->font();
-    font.setPointSize(font.pointSize() * (1 + getNumberOfLinks() / 20));
+    font.setPointSize(font.pointSize() * (1 + getNumberOfLinks() / 40));
     painter->setFont(font);
     QFontMetrics fontMetrics (font);
     _rectText = fontMetrics.boundingRect(_noteName);
@@ -192,11 +209,97 @@ QVariant kbGraphNode::itemChange(GraphicsItemChange change, const QVariant &valu
     return QGraphicsItem::itemChange(change, value);
 }
 
+void kbGraphNode::setPositionFlag() {
+    _positionned = true;
+}
+
+bool kbGraphNode::isPositionned() {
+    return _positionned;
+}
+
+
+void kbGraphNode::positionChildNodes() {
+    for (int i = 0; i < _noteLinkCount; i++) {
+        kbGraphNode* dest = _noteLinks.at(i)->dest();
+
+        int factorLink = (getNumberOfLinks() + dest->getNumberOfLinks()) / 2;
+        qreal angle = 180 / getNumberOfLinks();
+        qreal distance = sqrt(pow(pos().x(), 2) + pow(pos().y(), 2));
+        if (!isPositionned()) {
+            // Calculate position of new node
+
+            if (factorLink) {
+                qreal destX = pos().x() + distance * sin(angle * i) / factorLink;
+                qreal destY = pos().y() + distance * cos(angle * i) / factorLink;
+
+                dest->setPos(QPointF(destX, destY));
+                dest->setPositionFlag();
+            }
+        }
+    }
+}
+
+void kbGraphNode::calculateForces() {
+    if (!scene() || scene()->mouseGrabberItem() == this) {
+        _position = pos();
+        return;
+    }
+
+    // Sum up all forces pushing this item away
+    qreal xvel = 0;
+    qreal yvel = 0;
+    const QList<QGraphicsItem *> items = scene()->items();
+    for (QGraphicsItem *item : items) {
+        kbGraphNode* node = qgraphicsitem_cast<kbGraphNode*>(item);
+        if (!node)
+            continue;
+
+        QPointF vec = mapToItem(node, 0, 0);
+        qreal dx = vec.x();
+        qreal dy = vec.y();
+        double l = 2.0 * (dx * dx + dy * dy);
+        if (l > 0) {
+            xvel += (dx * 150.0) / l;
+            yvel += (dy * 150.0) / l;
+        }
+    }
+
+    // Now subtract all forces pulling items together
+    double weight = (_noteLinks.size() + 1) * 10;
+    for (const kbGraphLink* edge : qAsConst(_noteLinks)) {
+        QPointF vec;
+        if (edge->source() == this)
+            vec = mapToItem(edge->dest(), 0, 0);
+        else
+            vec = mapToItem(edge->source(), 0, 0);
+        xvel -= vec.x() / weight;
+        yvel -= vec.y() / weight;
+    }
+
+    if (qAbs(xvel) < 0.1 && qAbs(yvel) < 0.1)
+        xvel = yvel = 0;
+
+    QRectF sceneRect = scene()->sceneRect();
+    _position = pos() + QPointF(xvel, yvel);
+    _position.setX(qMin(qMax(_position.x(), sceneRect.left() + 10), sceneRect.right() - 10));
+    _position.setY(qMin(qMax(_position.y(), sceneRect.top() + 10), sceneRect.bottom() - 10));
+
+}
+
+bool kbGraphNode::advancePosition() {
+    if (_position == pos())
+        return false;
+
+    setPos(_position);
+    return true;
+}
+
 /*
  * kbGraphLink : class representing each relation between notes in the graph
 */
 kbGraphLink::kbGraphLink(kbGraphNode* source, kbGraphNode* dest) : _source(source), _dest(dest) {
     setAcceptedMouseButtons(Qt::NoButton);
+
     _source->addLink(this);
     _dest->addLink(this);
     adjust();
@@ -249,4 +352,12 @@ void kbGraphLink::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     // Draw the line itself
     painter->setPen(QPen(Qt::lightGray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->drawLine(line);
+}
+
+kbGraphNode* kbGraphLink::source() const {
+    return _source;
+}
+
+kbGraphNode* kbGraphLink::dest() const {
+    return _dest;
 }

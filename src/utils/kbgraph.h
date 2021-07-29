@@ -28,6 +28,9 @@ public:
 
     void adjust();
 
+    kbGraphNode* source() const;
+    kbGraphNode* dest() const;
+
 protected:
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -44,12 +47,22 @@ class kbGraphNode : public QGraphicsItem {
 public:
     kbGraphNode(QString note);
 
+    enum { Type = UserType + 1 };
+     int type() const override { return Type; }
+
     void addLink(kbGraphLink* link);
     QString name();
-    int getNumberOfLinks();
+    int getNumberOfLinks() const;
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
+    void positionChildNodes();
+    bool isPositionned();
+    void setPositionFlag();
+
+    void calculateForces();
+    bool advancePosition();
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
@@ -60,9 +73,11 @@ private:
     QVector<kbGraphLink*> _noteLinks;
     int _noteLinkCount;
     QRect _rectText;
+    bool _positionned;
 };
 
 class kbGraph : public QGraphicsScene {
+Q_OBJECT
 public:
     kbGraph(MainWindow* wnd, QGraphicsView* kbGraphView);
 
