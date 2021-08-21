@@ -209,7 +209,9 @@ class MainWindow : public QMainWindow {
 	   
 	void on_actionShow_Preview_Panel_triggered(bool checked);
 
-	void on_actionNew_note_in_new_tab_triggered();
+	void on_actionShow_Note_Graph_triggered(bool checked);
+
+    void on_actionNew_note_in_new_tab_triggered();
 	
     void on_noteTextEdit_textChanged();
 
@@ -673,7 +675,6 @@ private:
     bool _isMaximizedBeforeFullScreen = false;
     bool _isMinimizedBeforeFullScreen = false;
     CommandBar* _commandBar;
-    kbGraph* _kbGraphScene;
 
     void createSystemTrayIcon();
 

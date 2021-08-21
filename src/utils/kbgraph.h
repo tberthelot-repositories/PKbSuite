@@ -21,6 +21,7 @@
 class MainWindow;
 
 class kbGraphNode;
+class kbGraphWidget;
 
 class kbGraphLink : public QGraphicsItem {
 public:
@@ -45,21 +46,20 @@ private:
 
 class kbGraphNode : public QGraphicsItem {
 public:
-    kbGraphNode(QString note);
+    kbGraphNode(QString note, kbGraphWidget* graph);
 
     enum { Type = UserType + 1 };
-     int type() const override { return Type; }
+    int type() const override { return Type; }
 
     void addLink(kbGraphLink* link);
+    bool linkToNodeExists(kbGraphNode* toNode);
+    bool reverseLinkExists(kbGraphNode* fromNode);
     QString name();
     int getNumberOfLinks() const;
+    float getCircleSize() const;
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-
-    void positionChildNodes();
-    bool isPositionned();
-    void setPositionFlag();
 
     void calculateForces();
     bool advancePosition();
@@ -73,26 +73,5 @@ private:
     QVector<kbGraphLink*> _noteLinks;
     int _noteLinkCount;
     QRect _rectText;
-    bool _positionned;
-};
-
-class kbGraph : public QGraphicsScene {
-Q_OBJECT
-public:
-    kbGraph(MainWindow* wnd, QGraphicsView* kbGraphView);
-
-    void GenerateKBGraph(const QString noteFolder);
-
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
-
-private:
-    QVector<kbGraphNode*> _noteNodes;
-    int _maxLinkNumber;
-    MainWindow* _mainWindow;
-    QGraphicsView* _kbGraphView;
-
-    kbGraphNode* _pointedNode;
-    QPointF _initialPos;
+    kbGraphWidget* _graph;
 };

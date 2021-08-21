@@ -14,30 +14,38 @@
 #pragma once
 
 #include <QGraphicsView>
+#include <utils/kbgraph.h>
+
+class MainWindow;
 
 class kbGraphWidget : public QGraphicsView {
     Q_OBJECT
 
-   public:
+public:
     explicit kbGraphWidget(QWidget *parent = nullptr);
 
-   protected:
-//    void resizeEvent(QResizeEvent *event) override;
-//    bool eventFilter(QObject *obj, QEvent *event) override;
+    void GenerateKBGraph(const QString noteFolder);
+    void itemMoved();
+    void setMainWindowPtr(MainWindow* mainWindow);
 
-//    void contextMenuEvent(QContextMenuEvent *event) override;
-
+protected:
     void wheelEvent(QWheelEvent *event) override;
-
-   public slots:
-//    void hide();
-
-   signals:
-//    void resize(QSize size, QSize oldSize);
+    void timerEvent(QTimerEvent *event) override;
+    void mousePressEvent(QMouseEvent *mouseEvent) override;
+    void mouseReleaseEvent(QMouseEvent *mouseEvent) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
+    QVector<kbGraphNode*> _noteNodes;
     int _numScheduledScalings;
-    QPointF _eventPos;
+    int timerId = 0;
+    int _maxLinkNumber;
+    kbGraphNode* _pointedNode;
+    QPointF _initialPos;
+    MainWindow* _mainWindow = nullptr;
+    bool _middleButtonPressed = false;
+    int _panStartX;
+    int _panStartY;
 
 protected slots:
     void scalingTime(qreal x);

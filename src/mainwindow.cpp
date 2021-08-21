@@ -390,6 +390,9 @@ MainWindow::MainWindow(QWidget *parent)
 	// initialize the note preview button. State is updated afterwards.
 	ui->actionShow_Preview_Panel->setChecked(_notePreviewDockWidget->isVisible());
 
+    // initialize the note graph button. State is updated afterwards.
+	ui->actionShow_Note_Graph->setChecked(_graphDockWidget->isVisible());
+
     if (settings.value(QStringLiteral("restoreLastNoteAtStartup"), true)
             .toBool()) {
         // try to restore the last note before the app was quit
@@ -611,9 +614,6 @@ void MainWindow::initDockWidgets() {
     addDockWidget(Qt::RightDockWidgetArea, _notePreviewDockWidget,
                   Qt::Horizontal);
 
-    _kbGraphScene = (kbGraph*) new kbGraph(this, ui->kbGraphView);
-    ui->kbGraphView->setScene(_kbGraphScene);
-
     _graphDockWidget = new QDockWidget(tr("Note graph"), this);
     _graphDockWidget->setObjectName(QStringLiteral("graphDockWidget"));
     _graphDockWidget->setWidget(ui->kbGraphFrame);
@@ -669,7 +669,8 @@ void MainWindow::initDockWidgets() {
     initPanelMenu();
 
     // initialize the KB graph
-    _kbGraphScene->GenerateKBGraph(notesPath);
+    ui->kbGraphView->setMainWindowPtr(this);
+    ui->kbGraphView->GenerateKBGraph(notesPath);
 }
 
 /**
@@ -11396,6 +11397,15 @@ void MainWindow::on_actionShow_Preview_Panel_triggered(bool checked) {
 		_notePreviewDockWidget->show();
 	else
 		_notePreviewDockWidget->hide();
+}
+
+void MainWindow::on_actionShow_Note_Graph_triggered(bool checked) {
+    // update the preview in case it was disable previously
+
+	if (checked)
+		_graphDockWidget->show();
+	else
+		_graphDockWidget->hide();
 }
 
 /**

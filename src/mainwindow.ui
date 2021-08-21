@@ -1142,6 +1142,7 @@ p, li { white-space: pre-wrap; }
     <bool>false</bool>
    </attribute>
    <addaction name="actionShow_Preview_Panel"/>
+   <addaction name="actionShow_Note_Graph"/>
   </widget>
   <action name="action_Quit">
    <property name="icon">
@@ -1945,21 +1946,6 @@ p, li { white-space: pre-wrap; }
     <string>Manage stored image files</string>
    </property>
   </action>
-  <action name="actionTelegram">
-   <property name="icon">
-    <iconset theme="im-user-online" resource="breeze-pkbsuite.qrc">
-     <normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</iconset>
-   </property>
-   <property name="text">
-    <string notr="true">Telegram</string>
-   </property>
-   <property name="toolTip">
-    <string>Open the Telegram group</string>
-   </property>
-   <property name="statusTip">
-    <string>Open the Telegram group</string>
-   </property>
-  </action>
   <action name="actionElementMatrix">
    <property name="icon">
     <iconset theme="im-user-online" resource="breeze-pkbsuite.qrc">
@@ -2429,6 +2415,21 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+L</string>
+   </property>
+  </action>
+  <action name="actionShow_Note_Graph">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/breeze-pkbsuite/16x16/show-graph.svg</normaloff>:/icons/breeze-pkbsuite/16x16/show-graph.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Affiche la cartographie des notes</string>
+   </property>
+   <property name="toolTip">
+    <string>Affice la carte des notes</string>
    </property>
   </action>
  </widget>
