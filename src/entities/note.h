@@ -16,7 +16,7 @@ typedef enum mediaType {
 	image,
 	attachment,
 	pdf
-};
+} mediaType;
 	
 class Note {
    public:

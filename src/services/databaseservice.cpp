@@ -414,10 +414,6 @@ bool DatabaseService::setupTables() {
     int oldVersion = version;
     qDebug() << __func__ << " - 'database_version': " << version;
 
-    if (version > 0) {
-        settings.setValue(QStringLiteral("guiFirstRunInit"), true);
-    }
-
     QSqlDatabase dbMemory = QSqlDatabase::database(QStringLiteral("memory"));
     QSqlQuery queryMemory(dbMemory);
     queryMemory.exec(

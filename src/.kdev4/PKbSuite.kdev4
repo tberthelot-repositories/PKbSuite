@@ -33,7 +33,7 @@ Launch Configurations=Launch Configuration 0
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=execute,Valgrind
-Configured Launchers=nativeAppLauncher,Memcheck
+Configured Launchers=nativeAppLauncher,Callgrind
 Name=Nouveau lanceur Binaire compilé
 Type=Native Application
 

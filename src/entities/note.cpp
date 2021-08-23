@@ -1330,14 +1330,6 @@ bool Note::handleNoteTextFileName() {
             }
         }
 
-        // update the first line of the note text
-        // TODO(pbek): UI has to be updated too then!
-        // update: we now try not to change the first line of the note,
-        //         this doesn't seem to trouble ownCloud / Nextcloud notes
-        //         a lot, but it renames the notes to its own liking
-        //        _noteTextLines[0] = name;
-        //        this->_noteText = _noteTextLines.join("\n");
-
         // set the new name and filename
         this->_name = name;
         generateFileNameFromName();

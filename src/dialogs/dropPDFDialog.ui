@@ -9,15 +9,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>290</width>
-    <height>95</height>
+    <width>387</width>
+    <height>102</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
    <enum>Qt::PreventContextMenu</enum>
   </property>
   <property name="windowTitle">
-   <string>Import de fichier PDF</string>
+   <string>PDF file import</string>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -25,7 +28,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Insérer un lien ou créer une note de lecture :</string>
+        <string>Insert a link to file or create a Lecture Note:</string>
        </property>
       </widget>
      </item>
@@ -34,14 +37,14 @@
        <item>
         <widget class="QPushButton" name="linkButton">
          <property name="text">
-          <string>Lien</string>
+          <string>Link</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="createNoteButton">
          <property name="text">
-          <string>Créer une note...</string>
+          <string>Create a note...</string>
          </property>
         </widget>
        </item>
@@ -58,7 +61,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Copie le fichier dans le dossier d'attachements de la note</string>
+      <string>Copy the file in the note attachment folder</string>
      </property>
      <property name="checked">
       <bool>true</bool>

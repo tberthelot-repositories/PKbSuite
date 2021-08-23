@@ -124,8 +124,6 @@ class SettingsDialog : public MasterDialog {
 
     void on_toolbarIconSizeResetButton_clicked();
 
-    void on_ignoreNonTodoCalendarsCheckBox_toggled(bool checked);
-
     void on_applyToolbarButton_clicked();
 
     void on_resetToolbarPushButton_clicked();

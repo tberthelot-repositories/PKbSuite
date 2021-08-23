@@ -136,6 +136,7 @@ MainWindow::MainWindow(QWidget *parent)
     _closeEventWasFired = false;
     _leaveFullScreenModeButton = nullptr;
     _useNoteFolderButtons = settings.value("useNoteFolderButtons").toBool();
+    _noteViewNeedsUpdate = false;
 
     this->setWindowTitle(QStringLiteral("PKbSuite - version ") +
                          QStringLiteral(VERSION) + QStringLiteral(" - build ") +
@@ -167,12 +168,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // initialize the toolbars
     initToolbars();
-
-    if (!settings.value(QStringLiteral("guiFirstRunInit")).toBool()) {
-        // hide the custom action toolbar initially
-        _customActionToolbar->hide();
-        settings.setValue(QStringLiteral("guiFirstRunInit"), true);
-    }
 
     // adding some alternate shortcuts for changing the current note
     auto *shortcut =
@@ -823,16 +818,6 @@ void MainWindow::initToolbars() {
     updateWindowToolbar();
     _windowToolbar->setObjectName(QStringLiteral("windowToolbar"));
     addToolBar(_windowToolbar);
-
-    _customActionToolbar = new QToolBar(tr("custom action toolbar"), this);
-    _customActionToolbar->setObjectName(QStringLiteral("customActionsToolbar"));
-    //    _customActionToolbar->hide();
-    addToolBar(_customActionToolbar);
-
-    _quitToolbar = new QToolBar(tr("quit toolbar"), this);
-    _quitToolbar->addAction(ui->action_Quit);
-    _quitToolbar->setObjectName(QStringLiteral("quitToolbar"));
-    addToolBar(_quitToolbar);
 }
 
 /**
@@ -1037,7 +1022,7 @@ void MainWindow::updatePanelMenu() {
 void MainWindow::updateToolbarMenu() {
     ui->menuToolbars->clear();
 
-    const auto toolbars = findChildren<QToolBar *>();
+    const auto toolbars = findChildren<QToolBar*>();
     for (QToolBar *toolbar : toolbars) {
         auto *action = new QAction(this);
         action->setText(tr("Show %1").arg(toolbar->windowTitle()));
@@ -2202,10 +2187,8 @@ void MainWindow::readSettingsFromSettingsDialog(const bool isAppLaunch) {
         QSize size(toolBarIconSize, toolBarIconSize);
         ui->mainToolBar->setIconSize(size);
         _formattingToolbar->setIconSize(size);
-        _customActionToolbar->setIconSize(size);
         _insertingToolbar->setIconSize(size);
         _windowToolbar->setIconSize(size);
-        _quitToolbar->setIconSize(size);
     }
 
     // change the search notes symbol between dark and light mode
@@ -3047,8 +3030,7 @@ void MainWindow::removeConflictedNotesDatabaseCopies() {
     if (Utils::Gui::question(
             this, tr("Delete conflicted database copies"),
                 tr("Proceed with automatic deletion of <strong>%n</strong>"
-                   " conflicted database copies that may block your ownCloud"
-                   " sync process?",
+                   " conflicted database copies?",
                    "", count) +
                 QStringLiteral("<br /><br />") +
                 files.join(QStringLiteral("<br />")),
@@ -3257,8 +3239,7 @@ QString MainWindow::selectPKbSuiteNotesFolder() {
         if (this->notesPath.isEmpty()) {
             switch (QMessageBox::information(
                 this, tr("No folder was selected"),
-                    tr("You have to select your ownCloud notes "
-                       "folder to make this software work!"),
+                    tr("You have to select your folder to make this software work!"),
                 tr("&Retry"), tr("&Exit"), QString(), 0, 1)) {
                 case 0:
                     selectPKbSuiteNotesFolder();
@@ -4021,10 +4002,7 @@ void MainWindow::removeSelectedNotes() {
 
     if (Utils::Gui::question(
             this, tr("Remove selected notes"),
-                tr("Remove <strong>%n</strong> selected note(s)?\n\n"
-                   "If the trash is enabled on your "
-                   "ownCloud server you should be able to restore "
-                   "them from there.",
+                tr("Remove <strong>%n</strong> selected note(s)?\n",
                    "", selectedItemsCount),
             QStringLiteral("remove-notes")) == QMessageBox::Yes) {
         const QSignalBlocker blocker(this->noteDirectoryWatcher);
@@ -4520,9 +4498,9 @@ void MainWindow::handleNoteTreeTagColoringForNote(const Note &note) {
  * @brief Updates the current folder tooltip
  */
 void MainWindow::updateCurrentFolderTooltip() {
-    ui->actionSet_ownCloud_Folder->setStatusTip(tr("Current notes folder: ") +
+    ui->actionSet_pkbsuite_Folder->setStatusTip(tr("Current notes folder: ") +
                                                 this->notesPath);
-    ui->actionSet_ownCloud_Folder->setToolTip(
+    ui->actionSet_pkbsuite_Folder->setToolTip(
         tr("Set the notes folder. Current notes folder: ") + this->notesPath);
 }
 

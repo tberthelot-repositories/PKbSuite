@@ -3,12 +3,6 @@ Welcome to PKbSuite
 
 Welcome to your installation of **PKbSuite**!
 
-## TODO
-
-- [ ] Be sure to setup your *Nextcloud/ownCloud server* in the **settings dialog**.
-    - Keep in mind that you still need to install the *Nextcloud/ownCloud* sync client to synchronize your notes! 
-- [ ] Install [PKbSuiteAPI](https://apps.nextcloud.com/apps/pkbsuiteapi) to access **note versions** and **trashed notes**.
-
 ## Later
 
 - [ ] Check out the [Important-Shortcuts](https://www.pkbsuite.org/shortcuts/PKbSuite) with a `Ctrl + Click` (or `Cmd + Click` on macOS) for more productivity.

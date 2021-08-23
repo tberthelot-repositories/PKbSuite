@@ -313,7 +313,7 @@
          <item>
           <widget class="QStackedWidget" name="settingsStackedWidget">
            <property name="currentIndex">
-            <number>10</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="noteFoldersPage">
             <layout class="QGridLayout" name="gridLayout_19">
@@ -471,7 +471,7 @@
                    <item row="5" column="0" colspan="2">
                     <widget class="QCheckBox" name="noteFolderShowSubfoldersCheckBox">
                      <property name="toolTip">
-                      <string>Be aware that the ownCloud notes app doesn't support sub-folders!</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>Use note sub-folders</string>
@@ -684,15 +684,24 @@
                      <string>Interface language</string>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_10">
-                     <item row="3" column="0">
-                      <widget class="Label" name="helpTranslateLabel">
-                       <property name="text">
-                        <string>If you want to help to translate QOwnNotes or update an existing translation please read: &lt;a href=&quot;%1&quot;&gt;How can I help to translate QOwnNotes?&lt;/a&gt;</string>
+                     <item row="1" column="0">
+                      <widget class="QLineEdit" name="languageSearchLineEdit">
+                       <property name="styleSheet">
+                        <string notr="true">QLineEdit {
+        /* the background image doesn't work without the border definition */
+	border: none;
+	padding: 2px 5px 2px 27px;
+	background-image: url(:/images/search-notes.svg);
+	background-repeat: no-repeat;
+	background-position: center left;
+	margin-right: 0px;
+}
+</string>
                        </property>
-                       <property name="wordWrap">
-                        <bool>true</bool>
+                       <property name="placeholderText">
+                        <string>Search for language</string>
                        </property>
-                       <property name="openExternalLinks">
+                       <property name="clearButtonEnabled">
                         <bool>true</bool>
                        </property>
                       </widget>
@@ -742,28 +751,6 @@
                          <string notr="true">fr</string>
                         </property>
                        </item>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QLineEdit" name="languageSearchLineEdit">
-                       <property name="styleSheet">
-                        <string notr="true">QLineEdit {
-        /* the background image doesn't work without the border definition */
-	border: none;
-	padding: 2px 5px 2px 27px;
-	background-image: url(:/images/search-notes.svg);
-	background-repeat: no-repeat;
-	background-position: center left;
-	margin-right: 0px;
-}
-</string>
-                       </property>
-                       <property name="placeholderText">
-                        <string>Search for language</string>
-                       </property>
-                       <property name="clearButtonEnabled">
-                        <bool>true</bool>
-                       </property>
                       </widget>
                      </item>
                     </layout>

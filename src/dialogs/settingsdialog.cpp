@@ -1534,9 +1534,6 @@ void SettingsDialog::setupNoteFolderPage() {
 //    const QSignalBlocker blocker(ui->noteFolderListWidget);
     //Q_UNUSED(blocker)
 
-    // hide the owncloud server settings
-    ui->noteFolderEditFrame->setEnabled(NoteFolder::countAll() > 0);
-
     QList<NoteFolder> noteFolders = NoteFolder::fetchAll();
     int noteFoldersCount = noteFolders.count();
 
@@ -2021,12 +2018,6 @@ void SettingsDialog::on_itemHeightResetButton_clicked() {
 void SettingsDialog::on_toolbarIconSizeResetButton_clicked() {
     QToolBar toolbar(this);
     ui->toolbarIconSizeSpinBox->setValue(toolbar.iconSize().height());
-}
-
-void SettingsDialog::on_ignoreNonTodoCalendarsCheckBox_toggled(bool checked) {
-    QSettings settings;
-    settings.setValue(QStringLiteral("ownCloud/ignoreNonTodoCalendars"),
-                      checked);
 }
 
 void SettingsDialog::on_applyToolbarButton_clicked() {

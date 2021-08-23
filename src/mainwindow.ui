@@ -901,11 +901,10 @@ p, li { white-space: pre-wrap; }
     <addaction name="action_Reload_note_folder"/>
     <addaction name="actionSelect_note_folder"/>
     <addaction name="noteFoldersMenu"/>
-    <addaction name="actionSet_ownCloud_Folder"/>
+    <addaction name="actionSet_pkbsuite_Folder"/>
     <addaction name="separator"/>
     <addaction name="action_Settings"/>
     <addaction name="separator"/>
-    <addaction name="action_Quit"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -1144,22 +1143,7 @@ p, li { white-space: pre-wrap; }
    <addaction name="actionShow_Preview_Panel"/>
    <addaction name="actionShow_Note_Graph"/>
   </widget>
-  <action name="action_Quit">
-   <property name="icon">
-    <iconset theme="application-exit" resource="breeze-pkbsuite.qrc">
-     <normaloff>:/icons/breeze-pkbsuite/16x16/application-exit.svg</normaloff>:/icons/breeze-pkbsuite/16x16/application-exit.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Quit</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true">Ctrl+Q</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::QuitRole</enum>
-   </property>
-  </action>
-  <action name="actionSet_ownCloud_Folder">
+  <action name="actionSet_pkbsuite_Folder">
    <property name="icon">
     <iconset theme="folder-sync" resource="breeze-pkbsuite.qrc">
      <normaloff>:/icons/breeze-pkbsuite/16x16/folder-sync.svg</normaloff>:/icons/breeze-pkbsuite/16x16/folder-sync.svg</iconset>
@@ -1770,21 +1754,6 @@ p, li { white-space: pre-wrap; }
     <string>Export note as HTML</string>
    </property>
   </action>
-  <action name="actionOpen_IRC_Channel">
-   <property name="icon">
-    <iconset theme="im-user-online" resource="breeze-pkbsuite.qrc">
-     <normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</iconset>
-   </property>
-   <property name="text">
-    <string notr="true">IRC (Kiwi)</string>
-   </property>
-   <property name="toolTip">
-    <string>Open the #pkbsuite IRC channel, you have to stay online to get a response</string>
-   </property>
-   <property name="statusTip">
-    <string>Open the #pkbsuite IRC channel, you have to stay online to get a response</string>
-   </property>
-  </action>
   <action name="actionInsert_headline_from_note_filename">
    <property name="icon">
     <iconset theme="format-font-size-more" resource="breeze-pkbsuite.qrc">
@@ -1944,36 +1913,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Manage stored image files</string>
-   </property>
-  </action>
-  <action name="actionElementMatrix">
-   <property name="icon">
-    <iconset theme="im-user-online" resource="breeze-pkbsuite.qrc">
-     <normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</iconset>
-   </property>
-   <property name="text">
-    <string notr="true">Matrix (Element)</string>
-   </property>
-   <property name="toolTip">
-    <string extracomment="&quot;Element&quot; as in the chat service">Open the QOwnNotes Matrix (Element) room</string>
-   </property>
-   <property name="statusTip">
-    <string extracomment="&quot;Element&quot; as in the chat service">Open the QOwnNotes Matrix (Element) room</string>
-   </property>
-  </action>
-  <action name="actionGitter">
-   <property name="icon">
-    <iconset theme="im-user-online" resource="breeze-pkbsuite.qrc">
-     <normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</normaloff>:/icons/breeze-pkbsuite/16x16/im-user-online.svg</iconset>
-   </property>
-   <property name="text">
-    <string notr="true">Gitter</string>
-   </property>
-   <property name="toolTip">
-    <string>Open the pkbsuite Gitter room, you need a GitHub or Twitter account to login, but you can get offline messages</string>
-   </property>
-   <property name="statusTip">
-    <string>Open the pkbsuite Gitter room, you need a GitHub or Twitter account to login, but you can get offline messages</string>
    </property>
   </action>
   <action name="actionUnlock_panels">
@@ -2391,10 +2330,10 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/icons/breeze-pkbsuite/16x16/show-preview.svg</normaloff>:/icons/breeze-pkbsuite/16x16/show-preview.svg</iconset>
    </property>
    <property name="text">
-    <string>Afficher la prévisualisation</string>
+    <string>Show note preview</string>
    </property>
    <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Prévisualiser la note&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>Show note preview</string>
    </property>
   </action>
   <action name="actionJump_to_navigation_panel">
@@ -2426,10 +2365,10 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/icons/breeze-pkbsuite/16x16/show-graph.svg</normaloff>:/icons/breeze-pkbsuite/16x16/show-graph.svg</iconset>
    </property>
    <property name="text">
-    <string>Affiche la cartographie des notes</string>
+    <string>Show note graph</string>
    </property>
    <property name="toolTip">
-    <string>Affice la carte des notes</string>
+    <string>Display note graph</string>
    </property>
   </action>
  </widget>

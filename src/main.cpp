@@ -70,20 +70,6 @@ inline void loadReleaseTranslations(T &app, QTranslator &translatorRelease,
 }
 
 /**
- * Function for loading the translations on OS X
- */
-template <typename T>
-inline void loadMacTranslations(T &app, QTranslator &translatorOSX,
-                                QTranslator &translatorOSX2,
-                                const QString &appPath,
-                                const QString &locale) noexcept {
-    translatorOSX.load(appPath + "/../Resources/PKbSuite_" + locale);
-    app.installTranslator(&translatorOSX);
-    translatorOSX2.load("../Resources/PKbSuite_" + locale);
-    app.installTranslator(&translatorOSX2);
-}
-
-/**
  * Does the miscellaneous startup
  * If false is returned the app is supposed to quit
  */
@@ -160,7 +146,7 @@ bool mainStartupMisc(const QStringList &arguments) {
         bool internalIconTheme =
             settings.value(QStringLiteral("internalIconTheme")).toBool();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         if (!internalIconTheme && QIcon::themeName().isEmpty()) {
             QIcon::setThemeName(QIcon::fallbackThemeName());
         }
@@ -191,12 +177,6 @@ bool mainStartupMisc(const QStringList &arguments) {
     QString platform = QStringLiteral("other");
 #ifdef Q_OS_LINUX
     platform = QStringLiteral("linux");
-#endif
-#ifdef Q_OS_MAC
-    platform = QStringLiteral("mac");
-#endif
-#ifdef Q_OS_WIN
-    platform = QStringLiteral("windows");
 #endif
 
     // disable the automatic update dialog per default for repositories and
@@ -264,21 +244,6 @@ bool mainStartupMisc(const QStringList &arguments) {
 
     return true;
 }
-
-/**
- * Shows the command line help
- */
-// void showHelp() {
-//    qWarning() << "\nPKbSuite " << VERSION << "\n";
-//    qWarning() << QObject::tr("Application Options") << ":";
-//    qWarning() << "  --portable          " <<
-//                  QObject::tr("Runs the application in portable mode");
-//    qWarning("  --clear-settings    " +
-//                     QObject::tr("Clears the settings and runs "
-//                                         "the application").toUtf8());
-//    qWarning()  <<  QCoreApplication::translate("main", "Copy all source "
-//            "files into <directory>.");
-//}
 
 /**
  * Temporary log output until LogWidget::logMessageOutput takes over
@@ -506,7 +471,7 @@ int main(int argc, char *argv[]) {
         if (app.isSecondary()) {
             qWarning() << QCoreApplication::translate(
                 "main",
-                "Another instance of QOwnNotes was already started! "
+                "Another instance of PKbSuite was already started! "
                 "You can turn off the single instance mode in the settings"
                 " or use the parameter --allow-multiple-instances.");
 
