@@ -39,7 +39,7 @@ private:
     QVector<kbGraphNode*> _noteNodes;
     int _numScheduledScalings = 0;
     int timerId = 0;
-    int _maxLinkNumber;
+    int _maxLinkNumber = 0;
     kbGraphNode* _pointedNode;
     QPointF _initialPos;
     MainWindow* _mainWindow = nullptr;
