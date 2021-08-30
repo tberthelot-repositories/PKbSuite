@@ -86,9 +86,6 @@ if [[ ! -f ${_PKbSuiteCheckSumVarFile} ]]; then
 	exit 1
 fi
 
-source ${_PKbSuiteCheckSumVarFile}
-
-# check checksum variable from build-systems/tuxfamily/build-tuxfamily-src.sh
 if [ -z ${PKBSUITE_ARCHIVE_SHA256} ]; then
     echo "PKBSUITE_ARCHIVE_SHA256 was not set!"
 	exit 1
