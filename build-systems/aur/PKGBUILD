@@ -1,7 +1,7 @@
 # Maintainer: Thomas Berthelot <thomas dot berthelot at gmail dot com>
 
 pkgname=pkbsuite
-pkgver=0.95
+pkgver=VERSION-STRING
 tag="COMMIT-HASH"
 pkgrel=1
 pkgdesc="PKbSuite is a Personal Knowledge Management (PKM) tool forked from the excellent QOwnNotes. It is focused on my needs and to be used with LInux/KDE."
