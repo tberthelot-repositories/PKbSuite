@@ -4,8 +4,8 @@
 # uncomment this if you want to force a version
 #PKBSUITE_VERSION=16.05.2
 
-BRANCH=develop
-#BRANCH=master
+#BRANCH=develop
+BRANCH=master
 
 PROJECT_PATH="/tmp/PKbSuite-aur-$$"
 CUR_DIR=$(pwd)
@@ -22,6 +22,10 @@ echo "Project path: $PROJECT_PATH"
 # checkout the source code
 git clone --depth=1 https://github.com/tberthelot-repositories/PKbSuite.git PKbSuite -b $BRANCH
 cd PKbSuite || exit 1
+
+
+gitCommitHash=`git rev-parse HEAD`
+echo "Current commit: $gitCommitHash"
 
 # checkout submodules
 git submodule update --init
@@ -112,7 +116,8 @@ echo "Archive sha256: ${PKBSUITE_ARCHIVE_SHA256}"
 # replace the version in the .SRCINFO file
 sed -i "s/VERSION-STRING/$PKBSUITE_VERSION/g" .SRCINFO
 
-yay -U $archiveFile
+makepkg -si
+
 
 # remove everything after we are done
 if [ -d $PROJECT_PATH ]; then
