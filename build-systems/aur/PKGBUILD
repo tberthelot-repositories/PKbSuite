@@ -1,7 +1,7 @@
 # Maintainer: Thomas Berthelot <thomas dot berthelot at gmail dot com>
 
 pkgname=pkbsuite
-pkgver=VERSION-STRING
+pkgver=0.95
 tag="COMMIT-HASH"
 pkgrel=1
 pkgdesc="PKbSuite is a Personal Knowledge Management (PKM) tool forked from the excellent QOwnNotes. It is focused on my needs and to be used with LInux/KDE."
@@ -11,7 +11,7 @@ groups=('pkbsuite')
 depends=('qt5-base' 'qt5-svg' 'qt5-declarative' 'openssl' 'qt5-xmlpatterns' 'qt5-websockets' 'qt5-x11extras' 'aspell')
 makedepends=('qt5-tools')
 source=("${pkgname}-${pkgver}.tar.xz")
-sha256sums=('c903f6b66112d3f2de3dc92c9f045ddc42eddf6834550d65e3143f1951d0351b')
+sha256sums=('368028d05ad765e53524b3f90159edcdc68e07647439cb1841d76b21a81dcf54')
 
 
 prepare() {
@@ -34,12 +34,8 @@ package() {
     install -D -m755 PKbSuite "${pkgdir}/usr/bin/PKbSuite"
 
     # install visuals
-<<<<<<< HEAD
     install -D -m644 PKbSuite.desktop "${pkgdir}/usr/share/applications/PKbSuite.desktop"
     install -D -m644 "images/icons/128x128/apps/PKbSuite.png" "${pkgdir}/usr/share/pixmaps/PKbSuite.png"
-=======
-    install -D -m644 PBE.QOwnNotes.desktop "${pkgdir}/usr/share/applications/PBE.QOwnNotes.desktop"
->>>>>>> 68e8fad6c6a433e69976d0f2863a4d2a3ac09e15
     for format in {16x16,24x24,32x32,48x48,64x64,96x96,128x128,256x256,512x512}; do
         install -D -m644 "images/icons/${format}/apps/PKbSuite.png" "${pkgdir}/usr/share/icons/hicolor/$format/apps/PKbSuite.png"
     done
