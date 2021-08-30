@@ -60,62 +60,59 @@ archiveFile="$pkbsuiteSrcDir.tar.xz"
 echo "Creating archive $archiveFile..."
 tar -cJf $archiveFile $pkbsuiteSrcDir
 
-yay -U $archiveFile
+PKBSUITE_ARCHIVE_MD5=`md5sum ${archiveFile} | awk '{ print $1 }' | tee ${archiveFile}.md5`
+PKBSUITE_ARCHIVE_SHA256=`sha256sum ${archiveFile} | awk '{ print $1 }' | tee ${archiveFile}.sha256`
+PKBSUITE_ARCHIVE_SHA512=`sha512sum ${archiveFile} | awk '{ print $1 }' | tee ${archiveFile}.sha512`
+PKBSUITE_ARCHIVE_SIZE=`stat -c "%s" ${archiveFile}`
 
-#
-# PKBSUITE_ARCHIVE_MD5=`md5sum ${archiveFile} | awk '{ print $1 }' | tee ${archiveFile}.md5`
-# PKBSUITE_ARCHIVE_SHA256=`sha256sum ${archiveFile} | awk '{ print $1 }' | tee ${archiveFile}.sha256`
-# PKBSUITE_ARCHIVE_SHA512=`sha512sum ${archiveFile} | awk '{ print $1 }' | tee ${archiveFile}.sha512`
-# PKBSUITE_ARCHIVE_SIZE=`stat -c "%s" ${archiveFile}`
-#
-# echo ""
-# echo "Sums:"
-# echo $PKBSUITE_ARCHIVE_MD5
-# echo $PKBSUITE_ARCHIVE_SHA256
-# echo $PKBSUITE_ARCHIVE_SHA512
-# echo ""
-# echo "Size:"
-# echo $PKBSUITE_ARCHIVE_SIZE
-#
-# # write temporary checksum variable file for the deployment scripts
-# _PKbSuiteCheckSumVarFile="/tmp/PKbSuite.checksum.vars"
-# echo "PKBSUITE_ARCHIVE_MD5=$PKBSUITE_ARCHIVE_MD5" > ${_PKbSuiteCheckSumVarFile}
-# echo "PKBSUITE_ARCHIVE_SHA256=$PKBSUITE_ARCHIVE_SHA256" >> ${_PKbSuiteCheckSumVarFile}
-# echo "PKBSUITE_ARCHIVE_SHA512=$PKBSUITE_ARCHIVE_SHA512" >> ${_PKbSuiteCheckSumVarFile}
-# echo "PKBSUITE_ARCHIVE_SIZE=$PKBSUITE_ARCHIVE_SIZE" >> ${_PKbSuiteCheckSumVarFile}
-#
-# if [[ ! -f ${_PKbSuiteCheckSumVarFile} ]]; then
-# 	echo "${_PKbSuiteCheckSumVarFile} doesn't exist."
-# 	exit 1
-# fi
-#
-# if [ -z ${PKBSUITE_ARCHIVE_SHA256} ]; then
-#     echo "PKBSUITE_ARCHIVE_SHA256 was not set!"
-# 	exit 1
-# fi
-#
-# if [ -z $PKBSUITE_VERSION ]; then
-#     # get version from version.h
-#     PKBSUITE_VERSION=`cat src/version.h | sed "s/[^0-9,.]//g"`
-# fi
-#
-# cp ../PKbSuite/build-systems/aur/PKGBUILD .
-# cp ../PKbSuite/build-systems/aur/.SRCINFO .
-#
-# # replace the version in the PKGBUILD file
-# sed -i "s/VERSION-STRING/$PKBSUITE_VERSION/g" PKGBUILD
-#
-# # replace the commit hash in the PKGBUILD file
-# sed -i "s/COMMIT-HASH/$gitCommitHash/g" PKGBUILD
-#
-# # replace the archive sha256 hash in the PKGBUILD file
-# sed -i "s/ARCHIVE-SHA256/$PKBSUITE_ARCHIVE_SHA256/g" PKGBUILD
-# echo "Archive sha256: ${PKBSUITE_ARCHIVE_SHA256}"
-#
-# # replace the version in the .SRCINFO file
-# sed -i "s/VERSION-STRING/$PKBSUITE_VERSION/g" .SRCINFO
-#
-# makepkg -si PKGBUILD
+echo ""
+echo "Sums:"
+echo $PKBSUITE_ARCHIVE_MD5
+echo $PKBSUITE_ARCHIVE_SHA256
+echo $PKBSUITE_ARCHIVE_SHA512
+echo ""
+echo "Size:"
+echo $PKBSUITE_ARCHIVE_SIZE
+
+# write temporary checksum variable file for the deployment scripts
+_PKbSuiteCheckSumVarFile="/tmp/PKbSuite.checksum.vars"
+echo "PKBSUITE_ARCHIVE_MD5=$PKBSUITE_ARCHIVE_MD5" > ${_PKbSuiteCheckSumVarFile}
+echo "PKBSUITE_ARCHIVE_SHA256=$PKBSUITE_ARCHIVE_SHA256" >> ${_PKbSuiteCheckSumVarFile}
+echo "PKBSUITE_ARCHIVE_SHA512=$PKBSUITE_ARCHIVE_SHA512" >> ${_PKbSuiteCheckSumVarFile}
+echo "PKBSUITE_ARCHIVE_SIZE=$PKBSUITE_ARCHIVE_SIZE" >> ${_PKbSuiteCheckSumVarFile}
+
+if [[ ! -f ${_PKbSuiteCheckSumVarFile} ]]; then
+	echo "${_PKbSuiteCheckSumVarFile} doesn't exist."
+	exit 1
+fi
+
+if [ -z ${PKBSUITE_ARCHIVE_SHA256} ]; then
+    echo "PKBSUITE_ARCHIVE_SHA256 was not set!"
+	exit 1
+fi
+
+if [ -z $PKBSUITE_VERSION ]; then
+    # get version from version.h
+    PKBSUITE_VERSION=`cat src/version.h | sed "s/[^0-9,.]//g"`
+fi
+
+cp ../PKbSuite/build-systems/aur/PKGBUILD .
+cp ../PKbSuite/build-systems/aur/.SRCINFO .
+
+# replace the version in the PKGBUILD file
+sed -i "s/VERSION-STRING/$PKBSUITE_VERSION/g" PKGBUILD
+
+# replace the commit hash in the PKGBUILD file
+sed -i "s/COMMIT-HASH/$gitCommitHash/g" PKGBUILD
+
+# replace the archive sha256 hash in the PKGBUILD file
+sed -i "s/ARCHIVE-SHA256/$PKBSUITE_ARCHIVE_SHA256/g" PKGBUILD
+echo "Archive sha256: ${PKBSUITE_ARCHIVE_SHA256}"
+
+# replace the version in the .SRCINFO file
+sed -i "s/VERSION-STRING/$PKBSUITE_VERSION/g" .SRCINFO
+
+yay -U $archiveFile
 
 # remove everything after we are done
 if [ -d $PROJECT_PATH ]; then
