@@ -58,6 +58,9 @@ cp CHANGELOG.md src
 # rename the src directory
 mv src $pkbsuiteSrcDir
 
+# make sure we are in RELEASE mode
+sed -i "s/debug//g" $pkbsuiteSrcDir/PKbSuite.pro
+
 archiveFile="$pkbsuiteSrcDir.tar.xz"
 
 # archive the source code
