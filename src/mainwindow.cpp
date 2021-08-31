@@ -96,7 +96,7 @@
 #include "ui_mainwindow.h"
 #include "version.h"
 #include "widgets/pkbsuitemarkdowntextedit.h"
-#include "pdffile.h"
+#include "utils/pdffile.h"
 #include <QGraphicsDropShadowEffect>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -6270,7 +6270,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("**File:** " + embedmentLink + "  \n");
                 noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
                 noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
-                noteText.append("**Tags:** #Lecture_Note, #TODO\n");
+                noteText.append("**Tags:** #REFERENCE, #TODO\n");
                 noteText.append("**Author:** " + pdfFile.author() + "  \n");
 				noteText.append("\n-----\n");
 

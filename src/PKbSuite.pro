@@ -60,6 +60,7 @@ SOURCES += main.cpp\
     utils/gui.cpp \
     utils/schema.cpp \
     utils/kbgraph.cpp \
+    utils/pdffile.cpp \
     dialogs/welcomedialog.cpp \
     dialogs/tagadddialog.cpp \
     widgets/navigationwidget.cpp \
@@ -81,7 +82,6 @@ SOURCES += main.cpp\
     widgets/qtexteditsearchwidget.cpp \
     widgets/notefolderlistwidget.cpp \
     widgets/notetreewidgetitem.cpp \
-    pdffile.cpp \
     widgets/layoutwidget.cpp \
     dialogs/imagedialog.cpp \
     dialogs/commandbar.cpp \
@@ -125,6 +125,7 @@ HEADERS  += mainwindow.h \
     utils/gui.h \
     utils/schema.h \
     utils/kbgraph.h \
+    utils/pdffile.h \
     dialogs/welcomedialog.h \
     dialogs/tagadddialog.h \
     widgets/navigationwidget.h \
@@ -150,7 +151,6 @@ HEADERS  += mainwindow.h \
     widgets/qtexteditsearchwidget.h \
     widgets/notefolderlistwidget.h \
     widgets/notetreewidgetitem.h \
-    pdffile.h \
     widgets/layoutwidget.h \
     dialogs/imagedialog.h \
     dialogs/commandbar.h \

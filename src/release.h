@@ -1,1 +1,1 @@
-#define RELEASE "Self-build"
+#define RELEASE "Production"
