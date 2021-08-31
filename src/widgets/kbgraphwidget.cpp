@@ -91,6 +91,9 @@ void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
         noteFile.close();
     }
 
+    if (!_maxLinkNumber)
+        _maxLinkNumber = 1;
+
     foreach (kbGraphNode* node, _noteNodes) {
         node->setPos((qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360), (qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360));
     }
