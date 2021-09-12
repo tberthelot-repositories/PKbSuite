@@ -2561,7 +2561,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
 
             QString tstStr = cursor.selectedText();
             cursor.removeSelectedText();
-            const QString strLink = "[" + candidateNoteName + "](" + candidateNoteName + ".md)";
+            const QString strLink = "[" + candidateNoteName + "](" + candidateNoteName.replace(" ", "%20") + ".md)";
             cursor.insertText(strLink);
 
             if (cursorPos > candidateNoteNameEnd)
@@ -6270,7 +6270,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("**File:** " + embedmentLink + "  \n");
                 noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
                 noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
-                noteText.append("**Tags:** #REFERENCE, #TODO\n");
+                noteText.append("**Tags:** #REFERENCE_NOTE, #TODO\n");
                 noteText.append("**Author:** " + pdfFile.author() + "  \n");
 				noteText.append("\n-----\n");
 
