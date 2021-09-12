@@ -2561,7 +2561,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
 
             QString tstStr = cursor.selectedText();
             cursor.removeSelectedText();
-            const QString strLink = "[" + candidateNoteName + "](" + candidateNoteName + ".md)";
+            const QString strLink = "[" + candidateNoteName + "](" + candidateNoteName.replace(" ", "%20") + ".md)";
             cursor.insertText(strLink);
 
             if (cursorPos > candidateNoteNameEnd)
