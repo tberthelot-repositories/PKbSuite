@@ -305,9 +305,9 @@ class MainWindow : public QMainWindow {
 
     void dfmEditorWidthActionTriggered(QAction *action);
 
-    void dragEnterEvent(QDragEnterEvent *e);
+    void dragEnterEvent(QDragEnterEvent *e) override;
 
-    void dropEvent(QDropEvent *e);
+    void dropEvent(QDropEvent *e) override;
 
     void on_actionPaste_image_triggered();
 

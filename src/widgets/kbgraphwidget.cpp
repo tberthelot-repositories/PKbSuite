@@ -96,6 +96,14 @@ void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
     }
 }
 
+void kbGraphWidget::addNoteToGraph(QString noteName) {
+        kbGraphNode* node = new kbGraphNode(noteName, this);
+        _noteNodes << node;
+        scene()->addItem(node);
+
+        itemMoved();
+}
+
 void kbGraphWidget::mousePressEvent(QMouseEvent *mouseEvent) {
     _pointedNode = nullptr;
     _initialPos = QPointF(-1, -1);

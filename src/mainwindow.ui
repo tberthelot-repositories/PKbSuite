@@ -13,6 +13,9 @@
     <height>1032</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>false</bool>
+  </property>
   <property name="windowTitle">
    <string notr="true">PKbSuite</string>
   </property>
@@ -579,6 +582,9 @@
              </property>
              <property name="contextMenuPolicy">
               <enum>Qt::CustomContextMenu</enum>
+             </property>
+             <property name="acceptDrops">
+              <bool>false</bool>
              </property>
              <property name="cursorWidth" stdset="0">
               <number>1</number>

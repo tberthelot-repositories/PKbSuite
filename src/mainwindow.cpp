@@ -5377,6 +5377,8 @@ void MainWindow::jumpToNoteOrCreateNew(bool disableLoadNoteDirectoryList) {
 
             // adds the note to the note tree widget
             addNoteToNoteTreeWidget(note);
+
+            ui->kbGraphView->addNoteToGraph(text);
         }
 
         //        buildNotesIndex();
