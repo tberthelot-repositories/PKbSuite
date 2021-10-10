@@ -17,6 +17,7 @@
 #include <utils/kbgraph.h>
 
 class MainWindow;
+class Note;
 
 class kbGraphWidget : public QGraphicsView {
     Q_OBJECT
@@ -25,6 +26,7 @@ public:
     explicit kbGraphWidget(QWidget *parent = nullptr);
 
     void GenerateKBGraph(const QString noteFolder);
+    void addNoteToGraph(QString noteName);
     void itemMoved();
     void setMainWindowPtr(MainWindow* mainWindow);
 
