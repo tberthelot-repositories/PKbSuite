@@ -38,8 +38,9 @@ QString DatabaseService::getDiskDatabasePath() {
  * @return string
  */
 QString DatabaseService::getNoteFolderDatabasePath() {
-    return NoteFolder::currentLocalPath() + Utils::Misc::dirSeparator() +
-           QStringLiteral("notes.sqlite");
+    QString pathNotes = NoteFolder::currentLocalPath();
+    QString nameDatabase = pathNotes.remove(0, pathNotes.lastIndexOf(Utils::Misc::dirSeparator())) + QStringLiteral(".sqlite");
+    return Utils::Misc::appDataPath() + nameDatabase;
 }
 
 bool DatabaseService::removeDiskDatabase() {
