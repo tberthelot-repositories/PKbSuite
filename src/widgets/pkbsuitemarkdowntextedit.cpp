@@ -15,6 +15,7 @@
 #include "entities/notefolder.h"
 #include "helpers/qownspellchecker.h"
 #include "mainwindow.h"
+#include "libraries/qmarkdowntextedit/linenumberarea.h"
 
 PKbSuiteMarkdownTextEdit::PKbSuiteMarkdownTextEdit(QWidget *parent)
     : QMarkdownTextEdit(parent, false) {
@@ -133,6 +134,7 @@ void PKbSuiteMarkdownTextEdit::setStyles() {
     setFormatStyle(MarkdownHighlighter::HighlighterState::CheckBoxUnChecked);
     setFormatStyle(MarkdownHighlighter::HighlighterState::Bold);
     setFormatStyle(MarkdownHighlighter::HighlighterState::Italic);
+    setFormatStyle(MarkdownHighlighter::HighlighterState::StUnderline);
     setFormatStyle(MarkdownHighlighter::HighlighterState::BlockQuote);
     setFormatStyle(MarkdownHighlighter::HighlighterState::CodeBlock);
     setFormatStyle(MarkdownHighlighter::HighlighterState::Comment);
@@ -374,7 +376,11 @@ void PKbSuiteMarkdownTextEdit::setPaperMargins(int width) {
 
         setViewportMargins(margin, 20, margin, 0);
     } else {
-        setViewportMargins(10, 10, 10, 0);
+        int lineWidthLeftMargin = lineNumberArea()->isLineNumAreaEnabled() ?
+            lineNumberArea()->lineNumAreaWidth() : 0;
+
+        setLineNumberLeftMarginOffset(10);
+        setViewportMargins(10 + lineWidthLeftMargin, 10, 10, 0);
     }
 }
 
@@ -401,12 +407,21 @@ QMargins PKbSuiteMarkdownTextEdit::viewportMargins() {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 0))
     return QMarkdownTextEdit::viewportMargins();
 #else
+    // This most likely will break line numbers, they aren't really supported in Qt < 5.5
     return QMargins();
 #endif
 }
 
 void PKbSuiteMarkdownTextEdit::setText(const QString &text) {
     QMarkdownTextEdit::setText(text);
+}
+
+/**
+ * Since spell checking can only be enabled and disabled globally this allows to
+ * disable it in one QOwnNotesMarkdownTextEdit
+ */
+void PKbSuiteMarkdownTextEdit::disableSpellChecking() {
+    _isSpellCheckingDisabled = true;
 }
 
 void PKbSuiteMarkdownTextEdit::setSpellCheckingEnabled(bool enabled) {
@@ -432,6 +447,10 @@ void PKbSuiteMarkdownTextEdit::setMainWindow(MainWindow *mainWindow) {
 /**
  * Handles pasting from clipboard
  */
+bool PKbSuiteMarkdownTextEdit::canInsertFromMimeData(const QMimeData *source) const {
+    return (!source->hasUrls());
+}
+
 void PKbSuiteMarkdownTextEdit::insertFromMimeData(const QMimeData *source) {
     // if there is text in the clipboard do the normal pasting process
     if (source->hasText()) {
@@ -610,7 +629,7 @@ bool PKbSuiteMarkdownTextEdit::onContextMenuEvent(QContextMenuEvent *event) {
         return false;
     }
 
-    // create the suggesstion menu
+    // create the suggestion menu
     QMenu menu;
     // Add the suggestions to the menu
     const QStringList reps =
@@ -659,7 +678,7 @@ bool PKbSuiteMarkdownTextEdit::onContextMenuEvent(QContextMenuEvent *event) {
 bool PKbSuiteMarkdownTextEdit::eventFilter(QObject *obj, QEvent *event) {
     auto spellchecker = QOwnSpellChecker::instance();
     if (event->type() == QEvent::ContextMenu && spellchecker) {
-        if (spellchecker->isActive())
+        if (spellchecker->isActive() && !_isSpellCheckingDisabled)
             return onContextMenuEvent(static_cast<QContextMenuEvent *>(event));
     }
     if (event->type() == QEvent::KeyPress) {

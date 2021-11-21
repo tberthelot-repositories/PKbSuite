@@ -30,6 +30,8 @@
 #include <QStyleFactory>
 #include <QTextBrowser>
 #include <QToolBar>
+#include <QTimer>
+#include <QJsonDocument>
 #include <utility>
 
 #include "build_number.h"
@@ -299,7 +301,7 @@ void SettingsDialog::storeSettings() {
                       ui->noteSaveIntervalTime->value());
     settings.setValue(
         QStringLiteral("defaultNoteFileExtension"),
-        getSelectedListWidgetValue(ui->defaultNoteFileExtensionListWidget));
+        ui->defaultNoteFileExtensionListWidget->currentItem()->text());
     settings.setValue(QStringLiteral("localTrash/supportEnabled"),
                       ui->localTrashEnabledCheckBox->isChecked());
     settings.setValue(QStringLiteral("localTrash/autoCleanupEnabled"),
@@ -352,6 +354,8 @@ void SettingsDialog::storeSettings() {
                       ui->autoBracketRemovalCheckBox->isChecked());
     settings.setValue(QStringLiteral("Editor/removeTrailingSpaces"),
                       ui->removeTrailingSpacesCheckBox->isChecked());
+    settings.setValue(QStringLiteral("Editor/showLineNumbers"),
+                      ui->showLineNumbersInEditorCheckBox->isChecked());
     settings.setValue(QStringLiteral("Editor/highlightCurrentLine"),
                       ui->highlightCurrentLineCheckBox->isChecked());
     settings.setValue(QStringLiteral("Editor/editorWidthInDFMOnly"),
@@ -385,10 +389,9 @@ void SettingsDialog::storeSettings() {
 
     // store the custom note file extensions
     QStringList customNoteFileExtensionList;
-    for (int i = 2; i < ui->defaultNoteFileExtensionListWidget->count(); i++) {
+    for (int i = 0; i < ui->defaultNoteFileExtensionListWidget->count(); i++) {
         QListWidgetItem *item = ui->defaultNoteFileExtensionListWidget->item(i);
-
-        customNoteFileExtensionList.append(item->whatsThis());
+        customNoteFileExtensionList.append(item->text());
     }
     customNoteFileExtensionList.removeDuplicates();
     settings.setValue(QStringLiteral("customNoteFileExtensionList"),
@@ -617,6 +620,8 @@ void SettingsDialog::readSettings() {
             .toBool());
     ui->removeTrailingSpacesCheckBox->setChecked(
         settings.value(QStringLiteral("Editor/removeTrailingSpaces")).toBool());
+    ui->showLineNumbersInEditorCheckBox->setChecked(
+        settings.value(QStringLiteral("Editor/showLineNumbers")).toBool());
     ui->highlightCurrentLineCheckBox->setChecked(
         settings.value(QStringLiteral("Editor/highlightCurrentLine"), true)
             .toBool());
@@ -749,8 +754,13 @@ void SettingsDialog::readSettings() {
         addCustomNoteFileExtension(fileExtension);
     }
 
-    selectListWidgetValue(ui->defaultNoteFileExtensionListWidget,
-                          Note::defaultNoteFileExtension());
+    auto noteFileExtensionItems = ui->defaultNoteFileExtensionListWidget->
+              findItems(Note::defaultNoteFileExtension(), Qt::MatchExactly);
+
+    if (noteFileExtensionItems.count() > 0) {
+        ui->defaultNoteFileExtensionListWidget->setCurrentItem(
+            noteFileExtensionItems.at(0));
+    }
 
     // load the shortcut settings
     loadShortcutSettings();
@@ -1387,7 +1397,7 @@ void SettingsDialog::on_reinitializeDatabaseButton_clicked() {
         NoteFolder::migrateToNoteFolders();
 
         Utils::Gui::information(this, tr("Database"),
-                                tr("The Database was reinitialized."),
+                                tr("The Database was reinitialized. Please restart the application now!"),
                                 QStringLiteral("database-reinitialized"));
     }
 }
@@ -1739,7 +1749,7 @@ void SettingsDialog::on_addCustomNoteFileExtensionButton_clicked() {
     bool ok;
     QString fileExtension;
     fileExtension = QInputDialog::getText(
-        this, tr("File extension"), tr("Enter your custom file extension:"),
+        this, tr("File extension"), tr("Please enter a new note file extension:"),
         QLineEdit::Normal, fileExtension, &ok);
 
     if (!ok) {
@@ -1761,15 +1771,23 @@ void SettingsDialog::on_addCustomNoteFileExtensionButton_clicked() {
  * Adds a custom note file extension
  */
 QListWidgetItem *SettingsDialog::addCustomNoteFileExtension(
-    const QString &fileExtension) {
-    if (listWidgetValueExists(ui->defaultNoteFileExtensionListWidget,
-                              fileExtension)) {
+    QString fileExtension) {
+    fileExtension = fileExtension.trimmed();
+
+    if (ui->defaultNoteFileExtensionListWidget->findItems(
+            fileExtension, Qt::MatchExactly).count() > 0) {
         return Q_NULLPTR;
     }
 
     auto *item = new QListWidgetItem(fileExtension);
     item->setFlags(item->flags() | Qt::ItemIsEditable);
-    item->setWhatsThis(fileExtension);
+
+    if (fileExtension == "md") {
+        item->setToolTip(tr("Markdown file"));
+    } else if (fileExtension == "txt") {
+        item->setToolTip(tr("Plain text file"));
+    }
+
     ui->defaultNoteFileExtensionListWidget->addItem(item);
 
     return item;
@@ -1779,7 +1797,24 @@ QListWidgetItem *SettingsDialog::addCustomNoteFileExtension(
  * Removes a custom file extension
  */
 void SettingsDialog::on_removeCustomNoteFileExtensionButton_clicked() {
-    delete (ui->defaultNoteFileExtensionListWidget->currentItem());
+    if (ui->defaultNoteFileExtensionListWidget->count() <= 1) {
+        return;
+    }
+
+    auto *item = ui->defaultNoteFileExtensionListWidget->currentItem();
+
+    if (Utils::Gui::question(this, tr("Remove note file extension"),
+             tr("Do you really want to remove the note file extension "
+                        "<strong>%1</strong>? You will not see files with this "
+                        "extension in the note list any more!").arg(item->text()),
+            QStringLiteral("remove-note-file-extension")) != QMessageBox::Yes) {
+        return;
+    }
+
+    delete item;
+
+    ui->removeCustomNoteFileExtensionButton->setEnabled(
+        ui->defaultNoteFileExtensionListWidget->count() > 1);
 }
 
 /**
@@ -1789,21 +1824,12 @@ void SettingsDialog::on_defaultNoteFileExtensionListWidget_itemChanged(
     QListWidgetItem *item) {
     // make sure the file extension doesn't start with a point
     QString fileExtension =
-        Utils::Misc::removeIfStartsWith(item->text(), QStringLiteral("."));
+        Utils::Misc::removeIfStartsWith(item->text(), QStringLiteral("."))
+            .trimmed();
 
     if (fileExtension != item->text()) {
         item->setText(fileExtension);
     }
-
-    item->setWhatsThis(fileExtension);
-}
-
-/**
- * Disables the remove custom file extension button for the first two rows
- */
-void SettingsDialog::on_defaultNoteFileExtensionListWidget_currentRowChanged(
-    int currentRow) {
-    ui->removeCustomNoteFileExtensionButton->setEnabled(currentRow > 1);
 }
 
 void SettingsDialog::on_darkModeCheckBox_toggled() {
@@ -2158,7 +2184,7 @@ void SettingsDialog::on_searchLineEdit_textChanged(const QString &arg1) {
             }
         }
 
-        // show and hide items according of if index was found in pageIndexList
+        // show and hide items according to if index was found in pageIndexList
         Q_FOREACH (QTreeWidgetItem *item, allItems) {
             // get stored index of list widget item
             int pageIndex = item->whatsThis(0).toInt();

@@ -2,6 +2,7 @@
 
 #include <QStringBuilder>
 #include <QtCore/QRegularExpression>
+#include <QDebug>
 
 #include "libraries/qmarkdowntextedit/qownlanguagedata.h"
 
@@ -11,7 +12,8 @@ QHash<QString, CodeToHtmlConverter::Lang>
 CodeToHtmlConverter::CodeToHtmlConverter(const QString &lang) Q_DECL_NOTHROW {
     if (_langStringToEnum.isEmpty()) initCodeLangs();
 
-    _currentLang = _langStringToEnum.value(lang.toLower());
+    _currentLang = _langStringToEnum.value(lang.trimmed().toLower());
+    qDebug() << "Code block of lang detected:" << lang << _currentLang;
 }
 
 void CodeToHtmlConverter::initCodeLangs() Q_DECL_NOTHROW {
@@ -52,8 +54,10 @@ void CodeToHtmlConverter::initCodeLangs() Q_DECL_NOTHROW {
 
 QString CodeToHtmlConverter::process(const QString &input) const {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+    qDebug() << "Going to highlight input:" << StringView(input).mid(0, 12) << ", with lang:" << _currentLang;
     return process(StringView(input));
 #else
+    qDebug() << "Going to highlight input:" << StringView(&input).mid(0, 12) << ", with lang:" << _currentLang;
     return process(StringView(&input));
 #endif
 }
@@ -519,7 +523,7 @@ QString CodeToHtmlConverter::xmlHighlighter(StringView input) const {
 
                 StringView tag = input.mid(i, found - i);
 
-                QRegularExpression re(R"(([a-zA-Z0-9]+(\s*=\s*"[^"]*")?))");
+                static const QRegularExpression re(R"(([a-zA-Z0-9]+(\s*=\s*"[^"]*")?))");
                 QRegularExpressionMatchIterator matchIt = re.globalMatch(TO_QSTRING(tag));
 
                 while (matchIt.hasNext()) {

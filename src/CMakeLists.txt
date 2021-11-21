@@ -167,6 +167,7 @@ set(SOURCE_FILES
     libraries/md4c/md4c/md4c.c
     libraries/md4c/md2html/render_html.c
     libraries/md4c/md2html/entity.c
+    libraries/qmarkdowntextedit/linenumberarea.h
     libraries/qmarkdowntextedit/qownlanguagedata.cpp
     libraries/qmarkdowntextedit/qownlanguagedata.h
     libraries/qmarkdowntextedit/markdownhighlighter.cpp
@@ -242,6 +243,8 @@ set(SOURCE_FILES
     widgets/fontcolorwidget.h
     widgets/label.cpp
     widgets/label.h
+    widgets/qrcodewidget.cpp
+    widgets/qrcodewidget.h
     widgets/lineedit.cpp
     widgets/lineedit.h
     widgets/scriptsettingwidget.cpp
@@ -256,6 +259,8 @@ set(SOURCE_FILES
     widgets/layoutwidget.cpp
     widgets/layoutwidget.h
     widgets/layoutwidget.ui
+    widgets/todoitemtreewidget.cpp
+    widgets/todoitemtreewidget.h
     utils/misc.cpp
     utils/misc.h
     utils/gui.cpp

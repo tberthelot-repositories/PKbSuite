@@ -108,7 +108,7 @@ QStringList NotePreviewWidget::extractGifUrls(const QString &text) const {
     QSet<QString> urlSet;
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0))
-    static QRegExp regex(R"(<img[^>]+src=\"(file:\/\/\/[^\"]+\.gif)\")",
+    QRegExp regex(R"(<img[^>]+src=\"(file:\/\/\/[^\"]+\.gif)\")",
                          Qt::CaseInsensitive);
 
     int pos = 0;
@@ -255,12 +255,31 @@ void NotePreviewWidget::contextMenuEvent(QContextMenuEvent *event) {
         menu->addSeparator();
     }
 
-    auto *copyImageAction = new QAction(this);
-    auto *copyLinkLocationAction = new QAction(this);
+    QAction *copyImageAction = nullptr;
+    QAction *copyLinkLocationAction = nullptr;
 
     // check if clicked object was an image
     if (isImageFormat) {
         copyImageAction = menu->addAction(tr("Copy image file path"));
+        auto *copyImageClipboardAction = menu->addAction(tr("Copy image to clipboard"));
+
+        connect(copyImageClipboardAction, &QAction::triggered, this,
+                [format]() {
+                    QString imagePath = format.toImageFormat().name();
+                    QUrl imageUrl = QUrl(imagePath);
+                    QClipboard *clipboard = QApplication::clipboard();
+                    if (imageUrl.isLocalFile()) {
+                        clipboard->setImage(QImage(imageUrl.toLocalFile()));
+                    } else if (imagePath.startsWith(
+                        QLatin1String("data:image/"), Qt::CaseInsensitive)) {
+                        QStringList parts = imagePath.split(
+                            QStringLiteral(";base64,"));
+                        if (parts.count() == 2) {
+                            clipboard->setImage(QImage::fromData(
+                                QByteArray::fromBase64(parts[1].toLatin1())));
+                        }
+                    }
+                });
     }
 
     if (isAnchor) {
@@ -298,6 +317,48 @@ void NotePreviewWidget::contextMenuEvent(QContextMenuEvent *event) {
     
     delete copyLinkLocationAction;
 	delete copyImageAction;
+}
+
+QVariant NotePreviewWidget::loadResource(int type, const QUrl &file)
+{
+    if (type == QTextDocument::ImageResource && file.isValid()) {
+        QString fileName = file.toLocalFile();
+        int fileSize = QFileInfo(fileName).size();
+
+        // We only use our cache for images > 512KB
+        if (fileSize > (512 * 1000)) {
+            QPixmap pm;
+            if (lookupCache(fileName, pm)) {
+                return pm;
+            }
+
+            pm = QPixmap(fileName);
+            insertInCache(fileName, pm);
+            return pm;
+        }
+    }
+
+    return QTextBrowser::loadResource(type, file);
+}
+
+bool NotePreviewWidget::lookupCache(const QString &key, QPixmap &pm)
+{
+    auto it = std::find_if(_largePixmapCache.begin(), _largePixmapCache.end(), [key](const LargePixmap& l) {
+        return key == l.fileName;
+    });
+    if (it == _largePixmapCache.end())
+        return false;
+    pm = it->pixmap;
+    return true;
+}
+
+void NotePreviewWidget::insertInCache(const QString &key, const QPixmap &pm)
+{
+    _largePixmapCache.push_back({key, std::move(pm)});
+
+    // limit to 6 images
+    while (_largePixmapCache.size() > 6)
+        _largePixmapCache.erase(_largePixmapCache.begin());
 }
 
 void NotePreviewWidget::exportAsHTMLFile() {

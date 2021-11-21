@@ -12,9 +12,14 @@
 [Telegram Group](https://t.me/QOwnNotes) |
 [IRC Chat](https://web.libera.chat/#qownnotes) |
 [Gitter Chat](https://gitter.im/qownnotes/qownnotes) |
-[QOwnNotes Web Companion Chrome extension](https://chrome.google.com/webstore/detail/qownnotes-web-companion/pkgkfnampapjbopomdpnkckbjdnpkbkp)
+[Mastodon](https://social.qownnotes.org/@qownnotes) |
+[Twitter](https://twitter.com/QOwnNotes) |
+[Facebook](https://www.facebook.com/QOwnNotes) |
+[QOwnNotes Web Companion Chrome extension](https://chrome.google.com/webstore/detail/qownnotes-web-companion/pkgkfnampapjbopomdpnkckbjdnpkbkp) |
+[QOwnNotes Web App](https://app.qownnotes.org/) |
+[QOwnNotes Tor Hidden Service](http://qownnotn3bknenanjs5u4nf3f2law2tzmqklux3c5e2xbvzcksmxm6yd.onion/)
 
-[![Build Status GitHub Actions](https://github.com/pbek/QOwnNotes/workflows/build-test/badge.svg?branch=develop)](https://github.com/pbek/QOwnNotes/actions)
+[![Build Status GitHub Actions](https://github.com/pbek/QOwnNotes/actions/workflows/build-test.yml/badge.svg)](https://github.com/pbek/QOwnNotes/actions/workflows/build-test.yml)
 [![Build Status Windows](https://ci.appveyor.com/api/projects/status/github/pbek/QOwnNotes)](https://ci.appveyor.com/project/pbek/qownnotes)
 [![Snap Status](https://snapcraft.io/qownnotes/badge.svg)](https://snapcraft.io/qownnotes)
 [![Coverage Status](https://coveralls.io/repos/pbek/QOwnNotes/badge.svg?branch=develop&service=github)](https://coveralls.io/github/pbek/QOwnNotes?branch=develop)
@@ -74,6 +79,7 @@ You can visit the [QOwnNotes project page](https://www.qownnotes.org) for more *
 
 ## Features
 
+- written in C++ and optimized for **low resource consumption** (no CPU and memory-hungry Electron app)
 - **multiple note folders** can be used
 - you can **use your existing text or markdown files**, no need for an import most of the times
 - older **versions of your notes** can be restored from your Nextcloud / ownCloud server
@@ -115,7 +121,7 @@ You can visit the [QOwnNotes project page](https://www.qownnotes.org) for more *
 - **portable mode** for carrying QOwnNotes around on USB sticks
 - **Vim mode**
 - **distraction free mode**, **full-screen mode**, **typewriter mode**
-- Evernote import
+- Evernote and Joplin import
 - QOwnNotes is **available in over 60 different languages** like English, German,
   French, Polish, Chinese, Japanese, Russian, Portuguese, Hungarian, Dutch and Spanish
 	- [Your help](https://www.qownnotes.org/contributing/translation.html) is

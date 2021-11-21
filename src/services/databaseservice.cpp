@@ -357,6 +357,14 @@ bool DatabaseService::setupNoteFolderTables() {
         version = 14;
     }
 
+    if (version < 15) {
+        // https://github.com/pbek/QOwnNotes/issues/2292
+        queryDisk.exec(QStringLiteral(
+            "ALTER TABLE noteTagLink ADD stale_date DATETIME DEFAULT NULL"));
+
+        version = 15;
+    }
+
     if (version != oldVersion) {
         setAppData(QStringLiteral("database_version"), QString::number(version),
                    QStringLiteral("note_folder"));
@@ -730,6 +738,19 @@ bool DatabaseService::setupTables() {
         settings.remove(QStringLiteral("Printer/NotePDFExport"));
 
         version = 36;
+    }
+
+    if (version < 37) {
+        // add "txt" and "md" to the note file extensions, so they can also be removed
+        auto extensions = settings.value(
+              QStringLiteral("customNoteFileExtensionList")).toStringList();
+        extensions << "md" << "txt";
+
+        settings.setValue(
+            QStringLiteral("customNoteFileExtensionList"),
+            extensions);
+
+        version = 37;
     }
 
     if (version != oldVersion) {

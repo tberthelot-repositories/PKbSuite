@@ -16,14 +16,18 @@
 
 #include <entities/note.h>
 
-#include <QComboBox>
 #include <QFontDialog>
-#include <QListWidget>
 #include <QMessageBox>
-#include <QPlainTextEdit>
-#include <QTextBlock>
-#include <QTreeWidgetItem>
-#include <QVBoxLayout>
+
+class QTreeWidgetItem;
+class QTreeWidget;
+class QListWidget;
+class QListWidgetItem;
+class QTextBlock;
+class QTabWidget;
+class QComboBox;
+class QPlainTextEdit;
+class QVBoxLayout;
 
 /*  Gui functions that can be useful */
 
@@ -134,5 +138,6 @@ void updateTabWidgetTabData(QTabWidget *tabWidget, int index, const Note &note);
 void reloadNoteTabs(QTabWidget *tabWidget);
 void setTreeWidgetItemToolTipForNote(QTreeWidgetItem *item, const Note &note,
                                      QDateTime *overrideFileLastModified = nullptr);
+bool doWindowsDarkModeCheck();
 }    // namespace Gui
 }    // namespace Utils

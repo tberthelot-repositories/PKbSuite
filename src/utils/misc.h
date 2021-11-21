@@ -14,21 +14,15 @@
 
 #pragma once
 
-#include <QDataStream>
-#include <QPrinter>
 #include <QString>
 #include <QStringList>
 #include <QVector>
-
-struct TerminalCmd {
-    QString executablePath;
-    QStringList parameters;
-    QByteArray data;
-    int exitCode;
-    QByteArray resultSet;
-};
+#include <QHash>
+#include <QMetaType>
 
 class QFile;
+class QDataStream;
+class QPrinter;
 
 /*  Miscellaneous functions that can be useful */
 namespace Utils {
@@ -57,6 +51,7 @@ Q_DECLARE_METATYPE(Utils::Misc::ExternalImageHash *)
 
 namespace Utils {
 namespace Misc {
+
 struct SearchEngine {
     QString name;
     QString searchUrl;
@@ -93,15 +88,15 @@ QString parseTaskList(const QString &html, bool clickable);
 QByteArray startSynchronousProcess(const QString &executablePath,
                                    const QStringList &parameters,
                                    const QByteArray &data = QByteArray());
-bool startSynchronousResultProcess(TerminalCmd &cmd);
 QList<QObject *> getParents(QObject *object);
 QString appDataPath();
 QString logFilePath();
 QString transformLineFeeds(QString text);
 void restartApplication();
+QString appendSingleAppInstanceTextIfNeeded(QString text = "");
 void needRestart();
 bool downloadUrlToFile(const QUrl &url, QFile *file);
-QByteArray downloadUrl(const QUrl &url);
+QByteArray downloadUrl(const QUrl &url, bool usePost = false, QByteArray postData = nullptr);
 QString genericCSS();
 QHash<int, SearchEngine> getSearchEnginesHashMap();
 int getDefaultSearchEngineId();
@@ -113,9 +108,8 @@ void storePrinterSettings(QPrinter *printer, const QString &settingsKey);
 void loadPrinterSettings(QPrinter *printer, const QString &settingsKey);
 bool isNoteEditingAllowed();
 bool useInternalExportStylingForPreview();
-bool isSocketServerEnabled();
-bool isWebAppSupportEnabled();
-QString unescapeHtml(QString html);
+bool isRestoreCursorPosition();
+QString unescapeHtml(QString html, bool soft = false);
 QString htmlspecialchars(QString text);
 void printInfo(const QString &text);
 bool doAutomaticNoteFolderDatabaseClosing();
@@ -151,6 +145,19 @@ QString previewCodeFontString();
 bool fileExists(const QString &path);
 QString removeAcceleratorMarker(const QString &label_);
 QString fileExtensionForMimeType(const QString &mimeType);
+QByteArray friendlyUserAgentString();
+QLatin1String platform();
+void switchToDarkOrLightMode(bool darkMode);
+void switchToDarkMode();
+void switchToLightMode();
+void transformEvernoteImportText(QString &content, bool withCleanup = false);
+void cleanupEvernoteImportText(QString &content);
+QString testEvernoteImportText(const QString& data);
+void logToFileIfAllowed(QtMsgType msgType, const QString &msg);
+QString logMsgTypeText(QtMsgType logType);
+bool isSimilar(const QString &str1, const QString &str2, int threshold = 3);
+QString getBaseUrlFromUrlString(const QString &urlString, bool withBasePath = false);
+QString createAbsolutePathsInHtml(const QString &html, const QString &url);
 }    // namespace Misc
 }    // namespace Utils
 

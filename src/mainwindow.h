@@ -67,6 +67,7 @@ class UpdateService;
 class FakeVimHandler;
 class PKbSuiteMarkdownTextEdit;
 class CommandBar;
+struct TagHeader;
 
 // forward declaration because of "xxx does not name a type"
 class SettingsDialog;
@@ -119,7 +120,7 @@ class MainWindow : public QMainWindow {
 
     void enableShowTrashButton();
 
-    void showStatusBarMessage(const QString &message, const int timeout = 0);
+    void showStatusBarMessage(const QString &message, const int timeout = 4000);
 
     void handleInsertingFromMimeData(const QMimeData *mimeData);
 
@@ -151,8 +152,6 @@ class MainWindow : public QMainWindow {
 
     QString noteTextEditCurrentWord(bool withPreviousCharacters = false);
 
-    Q_INVOKABLE void focusNoteTextEdit();
-
     Note currentNote() const;
 
     void insertHtml(QString html);
@@ -177,11 +176,11 @@ class MainWindow : public QMainWindow {
    protected:
     void changeEvent(QEvent *event) override;
 
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
 
-    bool eventFilter(QObject *obj, QEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent *event) override;
 
    public slots:
     void setCurrentNoteFromNoteId(const int noteId);
@@ -198,6 +197,8 @@ class MainWindow : public QMainWindow {
     void disallowNoteEditing();
 
     void openCurrentNoteInTab();
+
+    Q_INVOKABLE void focusNoteTextEdit();
 
    private slots:
 	   
@@ -281,7 +282,7 @@ class MainWindow : public QMainWindow {
 
     void on_action_Export_note_as_markdown_triggered();
 
-    void showEvent(QShowEvent *event);
+    void showEvent(QShowEvent *event) override;
 
     void gotoNoteBookmark(int slot = 0);
 
@@ -584,9 +585,11 @@ private:
     bool showSystemTray;
     QSystemTrayIcon *trayIcon;
     QDateTime _currentNoteLastEdited;
+    QDateTime _lastHeartbeat;
     bool notifyAllExternalModifications;
     int noteSaveIntervalTime;
     QTimer *noteSaveTimer;
+    QTimer *_frequentPeriodicTimer;
     QTimer *_noteViewUpdateTimer;
     bool _noteViewNeedsUpdate;
     NoteHistory noteHistory;
@@ -687,7 +690,8 @@ private:
     int openNoteDiffDialog(Note changedNote);
 
     void setNoteTextFromNote(Note *note, bool updateNoteTextViewOnly = false,
-                             bool ignorePreviewVisibility = false);
+                             bool ignorePreviewVisibility = false,
+                             bool allowRestoreCursorPosition = false);
 
     void loadNoteFolderListMenu();
 
@@ -899,7 +903,7 @@ private:
 
     void handleNoteTreeTagColoringForNote(const Note &note);
 
-    bool showRestartNotificationIfNeeded();
+    bool showRestartNotificationIfNeeded(bool force = false);
 
     void unsetCurrentNote();
 

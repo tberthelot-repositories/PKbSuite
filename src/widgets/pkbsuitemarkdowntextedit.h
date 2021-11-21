@@ -33,21 +33,24 @@ class PKbSuiteMarkdownTextEdit : public QMarkdownTextEdit {
     void setText(const QString &text);
     static void setSpellCheckingEnabled(bool enabled);
     bool isSpellCheckingEnabled();
+    void disableSpellChecking();
     bool usesMonospacedFont();
 
    protected:
     // we must not override _highlighter or Windows will create a
     // PKbSuiteMarkdownHighlighter and MarkdownHighlighter instance
     //    PKbSuiteMarkdownHighlighter *_highlighter;
-    void insertFromMimeData(const QMimeData *source);
-    void resizeEvent(QResizeEvent *event);
-    bool eventFilter(QObject *obj, QEvent *event);
+    bool canInsertFromMimeData(const QMimeData *source) const override;
+    void insertFromMimeData(const QMimeData *source) override;
+    void resizeEvent(QResizeEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
-   private slots:
+   public slots:
     void highlightCurrentLine();
 
    private:
     MainWindow *mainWindow;
+    bool _isSpellCheckingDisabled = false;
 
     void setFormatStyle(MarkdownHighlighter::HighlighterState index);
 

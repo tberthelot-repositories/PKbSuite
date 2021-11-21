@@ -147,7 +147,7 @@ jobs:
         echo "#define RELEASE \"AppImage\"" > release.h
         qmake PREFIX=/usr
         lrelease QOwnNotes.pro
-        make -j2
+        make -j 8
         # Create DEB
         #cd ../travis
         #dpkg-deb -x QOwnNotes.deb build
@@ -160,7 +160,7 @@ jobs:
         #dpkg -b build QOwnNotes.deb
         #cd ../src
         # Create AppImage (needs Ubuntu 16.04)
-        make INSTALL_ROOT=appdir -j2 install ; find appdir/
+        make INSTALL_ROOT=appdir -j 8 install ; find appdir/
         wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
         chmod a+x linuxdeployqt-continuous-x86_64.AppImage
         # export VERSION=... # linuxdeployqt uses this for naming the file
@@ -175,7 +175,7 @@ jobs:
         lrelease QOwnNotes.pro
         #ls ${Qt5_Dir}/bin
         qmake
-        make -j2
+        make -j 8
         ../build-systems/github/macos/create-dmg.sh
 
     - if: contains( matrix.os, 'windows')
@@ -235,7 +235,7 @@ jobs:
         upload_url: ${{ needs.create_release.outputs.upload_url }}
         asset_path: ./src/QOwnNotes-x86_64.AppImage.sha256sum
         asset_name: QOwnNotes-x86_64.AppImage.sha256sum
-        asset_content_type: application/vnd.appimage
+        asset_content_type: text/plain
 
     - if: contains( matrix.os, 'macos')
       name: Release DMG for macOS
@@ -258,6 +258,16 @@ jobs:
         asset_path: ./QOwnNotes.zip
         asset_name: QOwnNotes.zip
         asset_content_type: application/zip
+    - if: contains( matrix.os, 'windows')
+      name: Upload sha256 sum for Windows
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create_release.outputs.upload_url }}
+        asset_path: ./QOwnNotes.zip.sha256
+        asset_name: QOwnNotes.zip.sha256
+        asset_content_type: text/plain
 
   publish_release:
     name: Publish release
