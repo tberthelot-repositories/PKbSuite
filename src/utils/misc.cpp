@@ -41,6 +41,12 @@
 #include <QUuid>
 #include <QtGui/QIcon>
 #include <utility>
+#include <QHttpMultiPart>
+#include <QDataStream>
+#include <QPrinter>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 6, 0))
+#include <QHostInfo>
+#endif
 
 #include "build_number.h"
 #include "libraries/sonnet/src/core/speller.h"
@@ -61,6 +67,11 @@
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
 #include <QRandomGenerator>
 #include <QStandardPaths>
+#endif
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+#include <QXmlQuery>
+#include <QXmlResultItems>
 #endif
 
 enum SearchEngines {
@@ -135,7 +146,7 @@ void Utils::Misc::openFolderSelect(const QString &absolutePath) {
         openPath(path.left(path.lastIndexOf("/")));
     }
 #elif defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-    if (QFileInfo().exists(path)) {
+    if (QFileInfo(path).exists()) {
         QProcess proc;
         QString output;
         proc.start(QStringLiteral("xdg-mime"),
@@ -306,14 +317,14 @@ QString Utils::Misc::toSentenceCase(const QString &text) {
     //     whitespace) or
     // (any of [.?!] followed by at least one horizontal or vertical
     //     whitespace)
-    QRegularExpression sentenceSplitter(
+    static const QRegularExpression sentenceSplitter(
         QStringLiteral(R"((^[\s\v]*|[.?!][\s\v]+)\K)"));
 
     QStringList sentences = text.toLower().split(sentenceSplitter);
 
     for (QString &sentence : sentences) {
         if (sentence.length() > 0) {
-            sentence = sentence.at(0).toUpper() +
+            sentence = sentence.left(1).toUpper() +
                        sentence.right(sentence.length() - 1);
         }
     }
@@ -327,7 +338,7 @@ QString Utils::Misc::toSentenceCase(const QString &text) {
 QString Utils::Misc::toStartCase(const QString &text) {
     // A word is a string of characters immediately preceded by horizontal or
     // vertical whitespace
-    QRegularExpression wordSplitter(QStringLiteral("(?<=[\\s\\v])"));
+    static const QRegularExpression wordSplitter(QStringLiteral("(?<=[\\s\\v])"));
 
     QStringList words = text.toLower().split(wordSplitter);
 
@@ -437,36 +448,6 @@ QByteArray Utils::Misc::startSynchronousProcess(const QString &executablePath,
 }
 
 /**
- * Starts a synchronous process and waits for its result
- *
- * @param cmd the terminal command containing all input and output information
- * @return true on success, false otherwise
- */
-bool Utils::Misc::startSynchronousResultProcess(TerminalCmd &cmd) {
-    QProcess process;
-
-    // start executablePath synchronous with parameters
-    process.start(cmd.executablePath, cmd.parameters);
-
-    if (!process.waitForStarted()) {
-        qWarning() << __func__ << " - 'process.waitForStarted' returned false";
-        return false;
-    }
-
-    process.write(cmd.data);
-    process.closeWriteChannel();
-
-    if (!process.waitForFinished()) {
-        qWarning() << __func__ << " - 'process.waitForFinished' returned false";
-        return false;
-    }
-
-    cmd.resultSet = process.readAll();
-    cmd.exitCode = process.exitCode();
-    return process.exitStatus() == QProcess::NormalExit;
-}
-
-/**
  * Returns the default notes path we are suggesting
  *
  * @return
@@ -481,8 +462,8 @@ QString Utils::Misc::defaultNotesPath() {
     path += Utils::Misc::dirSeparator() % QStringLiteral("Notes");
 
     // remove the snap path for Snapcraft builds
-    path.remove(
-        QRegularExpression(QStringLiteral(R"(snap\/pkbsuite\/\w\d+\/)")));
+    static const QRegularExpression re(QStringLiteral(R"(snap\/pkbsuite\/\w\d+\/)"));
+    path.remove(re);
 
     return path;
 }
@@ -510,8 +491,8 @@ void Utils::Misc::waitMsecs(int msecs) {
  */
 QString Utils::Misc::htmlToMarkdown(QString text) {
     // replace Windows line breaks
-    text.replace(QRegularExpression(QStringLiteral("\r\n")),
-                 QStringLiteral("\n"));
+    static const QRegularExpression re(QStringLiteral("\r\n"));
+    text.replace(re, QStringLiteral("\n"));
 
     // remove all null characters
     // we can get those from Google Chrome via the clipboard
@@ -634,15 +615,16 @@ QString Utils::Misc::parseTaskList(const QString &html, bool clickable) {
     // using a css class didn't work because the styling seems to affects the sub-items too
     const auto listTag = QStringLiteral("<li style=\"list-style-type:square\">");
 
+    static const QRegularExpression re1(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[ ?\])"),
+                            QRegularExpression::CaseInsensitiveOption);
+    static const QRegularExpression re2(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[[xX]\])"),
+                            QRegularExpression::CaseInsensitiveOption);
+    static const QRegularExpression re3(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[-\])"),
+                            QRegularExpression::CaseInsensitiveOption);
     if (!clickable) {
-        text.replace(
-            QRegularExpression(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[ ?\])"),
-                               QRegularExpression::CaseInsensitiveOption),
-            listTag % QStringLiteral("\\1&#9744;"));
-        text.replace(
-            QRegularExpression(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[[xX]\])"),
-                               QRegularExpression::CaseInsensitiveOption),
-            listTag % QStringLiteral("\\1&#9745;"));
+        text.replace(re1, listTag % QStringLiteral("\\1&#9744;"));
+        text.replace(re2, listTag % QStringLiteral("\\1&#9745;"));
+        text.replace(re3, listTag % QStringLiteral("\\1&#10005;"));
         return text;
     }
 
@@ -651,18 +633,14 @@ QString Utils::Misc::parseTaskList(const QString &html, bool clickable) {
     // line numbers of checkboxes in the original markdown text
     // should be provided by the markdown parser
 
+    text.replace(re3, listTag % QStringLiteral("\\1&#10005;"));
+
     const QString checkboxStart = QStringLiteral(
         R"(<a class="task-list-item-checkbox" href="checkbox://_)");
-    text.replace(
-        QRegularExpression(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[ ?\])"),
-                           QRegularExpression::CaseInsensitiveOption),
-        listTag % QStringLiteral("\\1") % checkboxStart %
-            QStringLiteral("\">&#9744;</a>"));
-    text.replace(
-        QRegularExpression(QStringLiteral(R"(<li>(\s*(<p>)*\s*)\[[xX]\])"),
-                           QRegularExpression::CaseInsensitiveOption),
-        listTag % QStringLiteral("\\1") % checkboxStart %
-            QStringLiteral("\">&#9745;</a>"));
+    text.replace(re1,
+        listTag % QStringLiteral("\\1") % checkboxStart % QStringLiteral("\">&#9744;</a>"));
+    text.replace(re2,
+        listTag % QStringLiteral("\\1") % checkboxStart % QStringLiteral("\">&#9745;</a>"));
 
     int count = 0;
     int pos = 0;
@@ -728,9 +706,7 @@ QString Utils::Misc::appDataPath() {
  * @return
  */
 QString Utils::Misc::logFilePath() {
-    return appDataPath() % QStringLiteral("/") %
-               qAppName().replace(QStringLiteral(" "), QStringLiteral("-")) +
-           QStringLiteral(".log");
+    return appDataPath() % QStringLiteral("/QOwnNotes.log");
 }
 
 /**
@@ -740,9 +716,8 @@ QString Utils::Misc::logFilePath() {
  * @return
  */
 QString Utils::Misc::transformLineFeeds(QString text) {
-    return text.replace(
-        QRegularExpression(QStringLiteral(R"((\r\n)|(\n\r)|\r|\n)")),
-        QStringLiteral("\n"));
+    static const QRegularExpression re(QStringLiteral(R"((\r\n)|(\n\r)|\r|\n)"));
+    return text.replace(re, QStringLiteral("\n"));
 }
 
 /**
@@ -754,14 +729,73 @@ void Utils::Misc::needRestart() { qApp->setProperty("needsRestart", true); }
  * Restarts the application
  */
 void Utils::Misc::restartApplication() {
-    QStringList parameters = QApplication::arguments();
+    // QApplication::arguments() didn't contain any parameters!
+    QStringList parameters = qApp->property("arguments").toStringList();
     const QString appPath = parameters.takeFirst();
 
     // we don't want to have our settings cleared again after a restart
     parameters.removeOne(QStringLiteral("--clear-settings"));
 
+    // If only one app instance is allowed force allowing multiple for the
+    // next launch, so we can launch the application before we quit the
+    // current instance
+    if (qApp->property("singleApplication").toBool() &&
+        !parameters.contains("--allow-multiple-instances")) {
+        parameters.append("--allow-multiple-instances");
+    }
+
     startDetachedProcess(appPath, parameters);
     QApplication::quit();
+}
+
+QString Utils::Misc::appendSingleAppInstanceTextIfNeeded(QString text) {
+    if (QSettings().value("allowOnlyOneAppInstance").toBool()) {
+        text.append(QStringLiteral("\n\n") +
+            QObject::tr("You are using the single app instance mode, that "
+                "prevents the application be be started a second time. For the "
+                "next launch of the application the single app instance mode "
+                "will be disabled, so that the application can be restarted "
+                "before quitting this instance."));
+    }
+
+    return text;
+}
+
+
+QByteArray Utils::Misc::friendlyUserAgentString() {
+    const auto pattern = QStringLiteral("%1 (QOwnNotes - %2)");
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+    const auto userAgent = pattern.arg(QSysInfo::machineHostName(), platform());
+#else
+    const auto userAgent = pattern.arg(QHostInfo::localHostName(), platform());
+#endif
+
+    return userAgent.toUtf8();
+}
+
+QLatin1String Utils::Misc::platform() {
+#if defined(Q_OS_WIN)
+    return QLatin1String("Windows");
+#elif defined(Q_OS_MAC)
+    return QLatin1String("macOS");
+#elif defined(Q_OS_LINUX)
+    return QLatin1String("Linux");
+#elif defined(Q_OS_FREEBSD) || defined(Q_OS_FREEBSD_KERNEL)
+    return QLatin1String("FreeBSD");
+#elif defined(Q_OS_NETBSD)
+    return QLatin1String("NetBSD");
+#elif defined(Q_OS_OPENBSD)
+    return QLatin1String("OpenBSD");
+#elif defined(Q_OS_SOLARIS)
+    return QLatin1String("Solaris");
+#else
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
+    return QSysInfo::productType();
+#else
+    return " Qt " + QString(QT_VERSION_STR);
+#endif
+#endif
 }
 
 /**
@@ -770,7 +804,7 @@ void Utils::Misc::restartApplication() {
  * @param url
  * @return {QByteArray} the content of the downloaded url
  */
-QByteArray Utils::Misc::downloadUrl(const QUrl &url) {
+QByteArray Utils::Misc::downloadUrl(const QUrl &url, bool usePost, QByteArray postData) {
     auto *manager = new QNetworkAccessManager();
     QEventLoop loop;
     QTimer timer;
@@ -785,6 +819,8 @@ QByteArray Utils::Misc::downloadUrl(const QUrl &url) {
     timer.start(10000);
 
     QNetworkRequest networkRequest = QNetworkRequest(url);
+    networkRequest.setHeader(QNetworkRequest::UserAgentHeader,
+                             Utils::Misc::friendlyUserAgentString());
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)) && (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     networkRequest.setAttribute(QNetworkRequest::FollowRedirectsAttribute,
@@ -792,7 +828,19 @@ QByteArray Utils::Misc::downloadUrl(const QUrl &url) {
 #endif
 
     QByteArray data;
-    QNetworkReply *reply = manager->get(networkRequest);
+    QNetworkReply *reply;
+
+    if (usePost) {
+        if (postData == nullptr) {
+            postData = QByteArray();
+        }
+
+        networkRequest.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+        reply = manager->post(networkRequest, postData);
+    } else {
+        reply = manager->get(networkRequest);
+    }
+
     loop.exec();
 
     // if we didn't get a timeout let us return the content
@@ -1157,21 +1205,19 @@ bool Utils::Misc::isPreviewUseEditorStyles() {
 }
 
 /**
- * Returns if "enableSocketServer" is turned on
+ * Returns if "restoreCursorPosition" is turned on
  *
  * @return
  */
-bool Utils::Misc::isSocketServerEnabled() {
-    return QSettings().value(QStringLiteral("enableSocketServer"), true).toBool();
-}
+bool Utils::Misc::isRestoreCursorPosition() {
+#ifdef Q_OS_MAC
+    const bool defaultValue = false;
+#else
+    const bool defaultValue = true;
+#endif
 
-/**
- * Returns if "enableWebAppSupport" is turned on
- *
- * @return
- */
-bool Utils::Misc::isWebAppSupportEnabled() {
-    return QSettings().value(QStringLiteral("enableWebAppSupport"), false).toBool();
+    return QSettings().value(QStringLiteral("restoreCursorPosition"),
+                             defaultValue).toBool();
 }
 
 /**
@@ -1240,22 +1286,30 @@ int Utils::Misc::indentSize() {
  * @param html
  * @return
  */
-QString Utils::Misc::unescapeHtml(QString html) {
-    //    html.replace("&lt;","<");
-    //    html.replace("&gt;",">");
-    //    html.replace("&amp;","&");
-    //    return html;
+QString Utils::Misc::unescapeHtml(QString html, bool soft) {
+    // It looks like "text.toPlainText();" also destroys "<a" tags, so we
+    // also want a "soft" un-escaping method
+    if (soft) {
+        html.replace("&lt;","<");
+        html.replace("&gt;",">");
+        html.replace("&amp;","&");
+        html.replace("&quot;","\"");
+        html.replace("&apos;","'");
+
+        return html;
+    }
 
     // text.toPlainText() will remove all line breaks, we don't want that
     html.replace(QStringLiteral("\n"), QStringLiteral("<br>"));
 
     QTextDocument text;
     text.setHtml(html);
+
     return text.toPlainText();
 }
 
 /**
- * Unescapes some html special characters
+ * Escapes some html special characters
  *
  * @param text
  * @return
@@ -1333,11 +1387,11 @@ bool Utils::Misc::regExpInListMatches(const QString &text,
  */
 void Utils::Misc::transformRemotePreviewImages(
     QString &html, int maxImageWidth, ExternalImageHash *externalImageHash) {
-    QRegularExpression re(
+    static const QRegularExpression re(
         QStringLiteral(R"(<img src=\"(https?:\/\/.+)\".*\/?>)"),
         QRegularExpression::CaseInsensitiveOption |
-            QRegularExpression::MultilineOption |
-            QRegularExpression::InvertedGreedinessOption);
+        QRegularExpression::MultilineOption |
+        QRegularExpression::InvertedGreedinessOption);
     QRegularExpressionMatchIterator i = re.globalMatch(html);
 
     while (i.hasNext()) {
@@ -1377,7 +1431,7 @@ QString Utils::Misc::remotePreviewImageTagToInlineImageTag(QString imageTag,
                                                            int &imageWidth) {
     imageTag.replace(QStringLiteral("&amp;"), QStringLiteral("&"));
 
-    QRegularExpression re(QStringLiteral(R"(<img src=\"(https?:\/\/.+)\")"),
+    static const QRegularExpression re(QStringLiteral(R"(<img src=\"(https?:\/\/.+)\")"),
                           QRegularExpression::CaseInsensitiveOption |
                               QRegularExpression::InvertedGreedinessOption);
 
@@ -1656,9 +1710,332 @@ QString Utils::Misc::fileExtensionForMimeType(const QString &mimeType) {
         return "png";
     } else if (mimeType == "image/gif") {
         return "gif";
+    } else if (mimeType == "image/webp") {
+        return "webp";
     } else if (mimeType == "application/pdf") {
         return "pdf";
     }
 
     return "";
+}
+
+void Utils::Misc::switchToDarkOrLightMode(bool darkMode) {
+    QSettings settings;
+    settings.setValue("darkMode", darkMode);
+    settings.setValue("darkModeColors", darkMode);
+    settings.setValue("darkModeIconTheme", darkMode);
+    settings.setValue("darkModeTrayIcon", darkMode);
+    settings.setValue("Editor/CurrentSchemaKey", darkMode ?
+        "EditorColorSchema-cdbf28fc-1ddc-4d13-bb21-6a4043316a2f" :
+        "EditorColorSchema-6033d61b-cb96-46d5-a3a8-20d5172017eb");
+}
+
+void Utils::Misc::switchToDarkMode() {
+    switchToDarkOrLightMode(true);
+}
+
+void Utils::Misc::switchToLightMode() {
+    switchToDarkOrLightMode(false);
+}
+
+void Utils::Misc::transformEvernoteImportText(QString &content, bool withCleanup) {
+    content.replace(QStringLiteral("\\\""), QStringLiteral("\""));
+
+    // decode HTML entities
+    content = Utils::Misc::unescapeHtml(std::move(content));
+
+    // add a newline in front of lists
+    //            content.replace(QRegularExpression("<ul.*?>"),
+    //            "\n<ul>");
+    //            content.replace(QRegularExpression("<ol.*?>"),
+    //            "\n<ol>");
+
+    // remove web-clip code
+    //            content.remove("<div
+    //            style=\"-evernote-webclip:true;\">");
+
+    // replace code blocks
+    content.replace(
+        QRegularExpression(
+            QStringLiteral(
+                R"(<div style="box-sizing.+?-en-codeblock:\s*true;"><div>(.+?)<\/div><\/div>)"),
+            QRegularExpression::MultilineOption),
+        QStringLiteral("\n```\n\\1\n```\n"));
+    content.replace(
+        QRegularExpression(
+            QStringLiteral(
+                R"(<div style="-en-codeblock:\s*true;.+?"><div>(.+?)<\/div><\/div>)"),
+            QRegularExpression::MultilineOption),
+        QStringLiteral("\n```\n\\1\n```\n"));
+
+    // add a linebreak instead of div-containers
+    content.replace(QRegularExpression(QStringLiteral("<\\/div>")),
+                    QStringLiteral("\n"));
+
+    // preserve hyperlinks
+    content.replace("<a ", "&lt;a ");
+    content.replace("</a>", "&lt;/a&gt;");
+
+    // convert remaining special characters
+    content = Utils::Misc::unescapeHtml(std::move(content));
+
+    // convert html tags to markdown
+    content = Utils::Misc::htmlToMarkdown(std::move(content));
+
+    if (withCleanup) {
+        cleanupEvernoteImportText(content);
+    }
+}
+
+void Utils::Misc::cleanupEvernoteImportText(QString &content) {
+    // remove all html tags
+    content.remove(QRegularExpression(QStringLiteral("<.+?>")));
+
+    // remove multiple \n
+    content.replace(QRegularExpression(QStringLiteral("\n\n+")),
+                    QLatin1String("\n\n"));
+    content.replace(QRegularExpression(QStringLiteral("\n\n\\s+")),
+                    QLatin1String("\n\n"));
+}
+
+QString Utils::Misc::testEvernoteImportText(const QString& data) {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    QXmlQuery query;
+    query.setFocus(data);
+    query.setQuery(QStringLiteral("en-export/note"));
+
+    QXmlResultItems result;
+    if (!query.isValid()) {
+        return "";
+    }
+
+    query.evaluateTo(&result);
+
+    result.next();
+    query.setFocus(result.current());
+
+    QString content;
+    query.setQuery(QStringLiteral("content/text()"));
+
+    // content seems to be html encoded
+    query.evaluateTo(&content);
+
+    Utils::Misc::transformEvernoteImportText(content, true);
+
+    return content.trimmed();
+#endif
+}
+
+/**
+ * Logs to the log file if allowed
+ *
+ * @param msgType
+ * @param msg
+ */
+void Utils::Misc::logToFileIfAllowed(QtMsgType msgType, const QString &msg) {
+    if (!QSettings().value(QStringLiteral("Debug/fileLogging")).toBool()) {
+        return;
+    }
+
+    QFile logFile(Utils::Misc::logFilePath());
+
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Text |
+                     QIODevice::Append)) {
+        QTextStream out(&logFile);
+        QDateTime dateTime = QDateTime::currentDateTime();
+        QString typeStr = logMsgTypeText(msgType);
+        QString text =
+            QStringLiteral("[%1] [%2]: %3\n")
+                .arg(dateTime.toString(QStringLiteral("MMM dd hh:mm:ss"))
+                         .remove(QStringLiteral(".")),
+                     typeStr, msg);
+        out << text;
+        logFile.close();
+    }
+}
+
+/**
+ * Returns the text for a LogType
+ *
+ * @param logType
+ * @return
+ */
+QString Utils::Misc::logMsgTypeText(QtMsgType logType) {
+    QString type;
+
+    switch (logType) {
+        case QtMsgType::QtDebugMsg:
+            type = QStringLiteral("Debug");
+            break;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 0))
+        case QtMsgType::QtInfoMsg:
+            type = QStringLiteral("Info");
+            break;
+#endif
+        case QtMsgType::QtWarningMsg:
+            type = QStringLiteral("Warning");
+            break;
+        case QtMsgType::QtCriticalMsg:
+            type = QStringLiteral("Critical");
+            break;
+        case QtMsgType::QtFatalMsg:
+            type = QStringLiteral("Fatal");
+            break;
+        default:
+            type = QStringLiteral("Unknown");
+            break;
+    }
+
+    return type;
+}
+
+/**
+ * Borrowed from https://nasauber.de/blog/2019/levenshtein-distance-and-longest-common-subsequence-in-qt/
+ *
+ * @param source
+ * @param target
+ * @return
+ */
+int levenshteinDistance(const QString &source, const QString &target)
+{
+    if (source == target) {
+        return 0;
+    }
+
+    const int sourceCount = source.count();
+    const int targetCount = target.count();
+
+    if (source.isEmpty()) {
+        return targetCount;
+    }
+
+    if (target.isEmpty()) {
+        return sourceCount;
+    }
+
+    if (sourceCount > targetCount) {
+        return levenshteinDistance(target, source);
+    }
+
+    QVector<int> column;
+    column.fill(0, targetCount + 1);
+    QVector<int> previousColumn;
+    previousColumn.reserve(targetCount + 1);
+    for (int i = 0; i < targetCount + 1; i++) {
+        previousColumn.append(i);
+    }
+
+    for (int i = 0; i < sourceCount; i++) {
+        column[0] = i + 1;
+        for (int j = 0; j < targetCount; j++) {
+            column[j + 1] = std::min({
+                1 + column.at(j),
+                1 + previousColumn.at(1 + j),
+                previousColumn.at(j) + ((source.at(i) == target.at(j)) ? 0 : 1)
+            });
+        }
+        column.swap(previousColumn);
+    }
+
+    return previousColumn.at(targetCount);
+}
+
+/**
+ * Returns if two strings are equal or similar
+ *
+ * @param str1
+ * @param str2
+ * @param threshold
+ * @return
+ */
+bool Utils::Misc::isSimilar(const QString &str1, const QString &str2, int threshold) {
+    if (str1 == str2) {
+        return true;
+    }
+
+    if (threshold == 0) {
+        return false;
+    }
+
+    // Checks if one string contains the other and just a few characters are different
+    if ((str1.contains(str2) || str2.contains(str1)) &&
+        (abs(str1.length() - str2.length()) <= threshold)) {
+        return true;
+    }
+
+    // Use levenshtein if the middle part of the strings is different
+    if (levenshteinDistance(str1, str2) <= threshold) {
+        return true;
+    }
+
+    if (str1.length() != str2.length()) {
+        return false;
+    }
+
+    int diff = 0;
+    for (int i = 0; i < str1.length(); i++) {
+        // QChar provides a 16-bit Unicode character, so Emojis will not be detected
+        if (str1[i] != str2[i]) {
+            diff++;
+        }
+    }
+
+    return diff <= threshold;
+}
+
+/**
+ * Returns the base url from a string
+ * e.g. for "https://www.domain.com/test/page.html" it returns "https://www.domain.com"
+ *
+ * with withBasePath == true:
+ * e.g. for "https://www.domain.com/test/page.html" it returns "https://www.domain.com/test/"
+ */
+QString Utils::Misc::getBaseUrlFromUrlString(const QString &urlString, bool withBasePath) {
+    QUrl url(urlString);
+    QString result = url.scheme() + QStringLiteral("://") + url.host();
+
+    if (url.port() != -1) {
+        result += QStringLiteral(":") + QString::number(url.port());
+    }
+
+    if (withBasePath) {
+        result += url.path();
+
+        // cut everything after the last slash
+        result = result.left(result.lastIndexOf(QStringLiteral("/")) + 1);
+    }
+
+    return result;
+}
+
+/**
+ * Attempts to transform links to the same webpage to absolute links with url
+ * So for an url: https://www.example.com/path/to/file.html
+ * This: <a href="/absolute.html">Link</a> <a href="relative.html">Link</a>
+ * Would get: <a href="https://www.example.com/absolute.html">Link</a> <a href="https://www.example.com/path/to/relative.html">Link</a>
+ *
+ * @param html
+ * @param url
+ * @return
+ */
+QString Utils::Misc::createAbsolutePathsInHtml(const QString &html, const QString &url) {
+    const QString baseUrl = getBaseUrlFromUrlString(url);
+    const QString baseUrlWithBasePath = getBaseUrlFromUrlString(url, true);
+    QString result = html;
+
+    QRegularExpression regex("(href|src)=\"(?!http)([^\"]+)\"");
+    QRegularExpressionMatchIterator i = regex.globalMatch(html);
+
+    while (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        const QString attribute = match.captured(1);
+        const QString value = match.captured(2);
+        const QString replaceUrl = value.startsWith('/') ? baseUrl : baseUrlWithBasePath;
+        const QString newValue = QStringLiteral("%1=\"%2\"")
+                                     .arg(attribute, replaceUrl + value);
+
+        result.replace(match.captured(0), newValue);
+    }
+
+    return result;
 }

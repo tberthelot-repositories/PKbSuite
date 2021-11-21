@@ -62,7 +62,7 @@ void PKbSuiteMarkdownHighlighter::highlightBlock(const QString &text) {
     // if we do it afterwards, it overwrites the spellcheck highlighting
     MarkdownHighlighter::highlightMarkdown(text);
     if (text.contains(QLatin1String("note://")) ||
-        text.contains(QLatin1String(".md"))) {
+        text.contains(QChar('.') + Note::defaultNoteFileExtension())) {
         highlightBrokenNotesLink(text);
     }
 
@@ -76,6 +76,15 @@ void PKbSuiteMarkdownHighlighter::highlightBlock(const QString &text) {
     _highlightingFinished = true;
 }
 
+void PKbSuiteMarkdownHighlighter::updateCachedRegexes(const QString& newExt)
+{
+    if (newExt == _defaultNoteFileExt)
+        return;
+
+    _regexTagStyleLink = QRegularExpression(R"(<([^\s`][^`]*?\.)" + newExt + R"()>)");
+    _regexBracketLink = QRegularExpression(R"(\[[^\[\]]+\]\((\S+\.)" + newExt + R"(|.+?\.)" + newExt + R"()(#[^\)]+)?\)\B)");
+}
+
 /**
  * Highlight broken note links
  *
@@ -83,7 +92,7 @@ void PKbSuiteMarkdownHighlighter::highlightBlock(const QString &text) {
  */
 void PKbSuiteMarkdownHighlighter::highlightBrokenNotesLink(
     const QString &text) {
-    QRegularExpression regex(QStringLiteral(R"(note:\/\/[^\s\)>]+)"));
+    static const QRegularExpression regex(QStringLiteral(R"(note:\/\/[^\s\)>]+)"));
     QRegularExpressionMatch match = regex.match(text);
 
     if (match.hasMatch()) {    // check legacy note:// links
@@ -101,11 +110,13 @@ void PKbSuiteMarkdownHighlighter::highlightBrokenNotesLink(
         if (_currentNote == nullptr) {
             return;
         }
+        updateCachedRegexes(Note::defaultNoteFileExtension());
+
+        const QString ext = Note::defaultNoteFileExtension();
 
         // check <note file.md> links
-        regex = QRegularExpression(
-            QStringLiteral("<([^\\s`][^`]*?\\.[^`]*?[^\\s`]\\.md)>"));
-        match = regex.match(text);
+        // Example: <([^\s`][^`]*?\.md)>
+        match = _regexTagStyleLink.match(text);
 
         if (match.hasMatch()) {
             const QString fileName = Note::urlDecodeNoteUrl(match.captured(1));
@@ -122,10 +133,9 @@ void PKbSuiteMarkdownHighlighter::highlightBrokenNotesLink(
             if (note.isFetched()) {
                 return;
             }
-        } else {    // check [note](note file.md) links
-            regex = QRegularExpression(
-                QStringLiteral(R"(\[[^\[\]]+\]\((\S+\.md|.+?\.md)\)\B)"));
-            match = regex.match(text);
+        } else {    // check [note](note file.md) or [note](note file.md#heading) links
+            // Example: R"(\[[^\[\]]+\]\((\S+\.md|.+?\.md)(#[^\)]+)?\)\B)")
+            match = _regexBracketLink.match(text);
 
             if (match.hasMatch()) {
                 const QString fileName =

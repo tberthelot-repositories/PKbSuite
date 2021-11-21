@@ -20,7 +20,7 @@ typedef enum mediaType {
 	
 class Note {
    public:
-    explicit Note();
+    Note();
 
     int getId() const;
 
@@ -86,6 +86,7 @@ class Note {
 
     bool storeNewText(QString text);
 
+    bool storeNoteTextFileToDisk(bool &currentNoteTextChanged);
     bool storeNoteTextFileToDisk();
 
     static QString defaultNoteFileExtension();
@@ -99,7 +100,8 @@ class Note {
 
     static int storeDirtyNotesToDisk(Note &currentNote,
                                      bool *currentNoteChanged = Q_NULLPTR,
-                                     bool *noteWasRenamed = Q_NULLPTR);
+                                     bool *noteWasRenamed = Q_NULLPTR,
+                                     bool *currentNoteTextChanged = Q_NULLPTR);
 
     bool updateNoteTextFromDisk();
 
@@ -138,6 +140,8 @@ class Note {
 
     bool copyToPath(const QString &destinationPath,
                     QString noteFolderPath = QString());
+
+    bool exportToPath(const QString &destinationPath, bool withAttachedFiles = false);
 
     bool moveToPath(const QString &destinationPath,
                     const QString &noteFolderPath = QString());
@@ -219,7 +223,7 @@ class Note {
 
     QVector<int> findLinkedNoteIds() const;
 
-    void handleNoteMoving(const Note &oldNote) const;
+    bool handleNoteMoving(const Note &oldNote);
 
     static QString createNoteHeader(const QString &name);
 
@@ -252,9 +256,13 @@ class Note {
 
     QStringList getEmbedmentFileList() const;
 
+    bool hasMediaFiles();
+
     static Note fetchByUrlString(const QString &urlString);
 
     static QVector<int> fetchAllIdsByNoteTextPart(const QString &textPart);
+
+    bool hasAttachments();
 
     QString getNotePreviewText(bool asHtml = false, int lines = 3) const;
 
@@ -275,7 +283,10 @@ class Note {
     void resetNoteTextHtmlConversionHash();
 
     QString getFileURLFromFileName(QString fileName,
-                                   bool urlDecodeFileName = false) const;
+                                   bool urlDecodeFileName = false,
+                                   bool withFragment = false) const;
+
+    static QString getURLFragmentFromFileName(const QString& fileName);
 
     static bool fileUrlIsNoteInCurrentNoteFolder(const QUrl &url);
 
@@ -315,6 +326,8 @@ class Note {
     static bool isNameSearch(const QString &searchTerm);
 
     static QString removeNameSearchPrefix(QString searchTerm);
+
+    QStringList getHeadingList();
 
    protected:
     int _id;

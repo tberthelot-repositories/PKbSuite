@@ -28,7 +28,11 @@
 #include <QSettings>
 #include <QTextBlock>
 #include <QTextCursor>
-
+#include <QComboBox>
+#include <QListWidget>
+#include <QPlainTextEdit>
+#include <QTreeWidgetItem>
+#include <QVBoxLayout>
 /**
  * Checks if there is at least one child that is visible
  */
@@ -52,7 +56,8 @@ void Utils::Gui::searchForTextInTreeWidget(QTreeWidget *treeWidget,
     QStringList searchList;
 
     if (searchFlags & TreeWidgetSearchFlag::EveryWordSearch) {
-        searchList = text.split(QRegularExpression(QStringLiteral("\\s+")));
+        static const QRegularExpression re(QStringLiteral("\\s+"));
+        searchList = text.split(re);
     } else {
         searchList << text;
     }
@@ -348,7 +353,7 @@ QMessageBox::StandardButton Utils::Gui::showMessageBox(
             msgBox.setDefaultButton(button);
     }
 
-    // set the checkbox in the end so it doesn't get the focus on the dialog.
+    // set the checkbox in the end, so it doesn't get the focus on the dialog
     // this would lead to accidentally checking the checkbox
     msgBox.setCheckBox(checkBox);
 
@@ -497,10 +502,10 @@ bool Utils::Gui::toggleCheckBoxAtCursor(QPlainTextEdit *textEdit) {
 
     bool result = false;
     auto text = cursor.selectedText();
-    auto reUnchecked = QRegularExpression(R"(([-\+\*]) \[ \])");
-    auto reChecked = QRegularExpression(R"(([-\+\*]) \[x\])");
-    auto reNumberUnchecked = QRegularExpression(R"(([\d+]\.) \[ \])");
-    auto reNumberChecked = QRegularExpression(R"(([\d+]\.) \[x\])");
+    static const auto reUnchecked = QRegularExpression(R"(([-\+\*]) \[ \])");
+    static const auto reChecked = QRegularExpression(R"(([-\+\*]) \[x\])");
+    static const auto reNumberUnchecked = QRegularExpression(R"(([\d+]\.) \[ \])");
+    static const auto reNumberChecked = QRegularExpression(R"(([\d+]\.) \[x\])");
 
     // try to toggle the checkbox
     if (reUnchecked.match(text).hasMatch()) {
@@ -593,7 +598,7 @@ bool Utils::Gui::autoFormatTableAtCursor(QPlainTextEdit *textEdit) {
         maxColumns = std::max(maxColumns, (int)stringList.count());
     }
 
-    const QRegularExpression headlineSeparatorRegExp(QStringLiteral(R"(^(:)?-+(:)?$)"));
+    static const QRegularExpression headlineSeparatorRegExp(QStringLiteral(R"(^(:)?-+(:)?$)"));
     QString justifiedText;
 
     const int lineCount = tableTextList.size();
@@ -615,8 +620,19 @@ bool Utils::Gui::autoFormatTableAtCursor(QPlainTextEdit *textEdit) {
              }
 
              const QString &text = lineTextList.at(col).trimmed();
+
+             // don't count the headline separator line, so it can shrink
+             // down to 3 characters if needed
+             if (line == 1 && headlineSeparatorRegExp.match(text).hasMatch()) {
+                 continue;
+             }
+
              maxTextLength = std::max((int)text.count(), maxTextLength);
          }
+
+         // a minimum of 3 headline separator characters are needed for
+         // valid Markdown tables
+         maxTextLength = std::max(3, maxTextLength);
 
          colLength << maxTextLength;
      }
@@ -761,10 +777,11 @@ void Utils::Gui::updateInterfaceFontSize(int fontSize) {
             .toBool();
 
     // remove old style
-    QString stylesheet = qApp->styleSheet().remove(QRegularExpression(
+    static const QRegularExpression re(
         QRegularExpression::escape(INTERFACE_OVERRIDE_STYLESHEET_PRE_STRING) +
         QStringLiteral(".*") +
-        QRegularExpression::escape(INTERFACE_OVERRIDE_STYLESHEET_POST_STRING)));
+        QRegularExpression::escape(INTERFACE_OVERRIDE_STYLESHEET_POST_STRING));
+    QString stylesheet = qApp->styleSheet().remove(re);
 
     if (overrideInterfaceFontSize) {
         int interfaceFontSize =
@@ -992,4 +1009,49 @@ void Utils::Gui::setTreeWidgetItemToolTipForNote(
     item->setToolTip(0, toolTipText);
 
     // TODO: handle item widget too
+}
+
+/**
+ * Checks if Windows is in dark or light mode and if we want to switch to those modes too.
+ * This only works under Windows 10 (or newer).
+ */
+bool Utils::Gui::doWindowsDarkModeCheck() {
+    QSettings settings(R"(HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize)",
+                       QSettings::NativeFormat);
+
+    // If setting wasn't found we are not on Windows 10 (or newer)
+    if (!settings.contains("AppsUseLightTheme")) {
+        return false;
+    }
+
+    bool windowsDarkMode = settings.value("AppsUseLightTheme") == 0;
+    bool appDarkMode = QSettings().value("darkMode").toBool();
+
+    // Check for Windows dark mode and application default mode
+    if (windowsDarkMode && !appDarkMode) {
+        if (Utils::Gui::questionNoSkipOverride(
+                nullptr, QObject::tr("Dark mode detected"),
+                QObject::tr("Your Windows system seems to use the dark mode. "
+                        "Do you also want to turn on dark mode in QOwnNotes?"),
+        QStringLiteral("windows-dark-mode")) == QMessageBox::Yes) {
+            Utils::Misc::switchToDarkMode();
+
+            return true;
+        }
+    }
+
+    // Check for Windows light mode and application dark mode
+    if (!windowsDarkMode && appDarkMode) {
+        if (Utils::Gui::questionNoSkipOverride(
+                nullptr, QObject::tr("Light mode detected"),
+                QObject::tr("Your Windows system seems to use the light mode. "
+                    "Do you also want to turn off dark mode in QOwnNotes?"),
+                QStringLiteral("windows-light-mode")) == QMessageBox::Yes) {
+            Utils::Misc::switchToLightMode();
+
+            return true;
+        }
+    }
+
+    return false;
 }

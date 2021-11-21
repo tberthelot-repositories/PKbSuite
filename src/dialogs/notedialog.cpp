@@ -2,6 +2,7 @@
 
 #include <entities/note.h>
 #include <entities/notefolder.h>
+
 #include <QDesktopServices>
 #include <QSettings>
 #include <QDebug>
