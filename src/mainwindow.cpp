@@ -2557,7 +2557,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
     // All flushing and syncing didn't help.
     bool currentNoteChanged = false;
     bool noteWasRenamed = false;
-    bool currentNoteTextChanged = false;;
+    bool currentNoteTextChanged = false;
          
     QString currentNoteText = _currentNote.getNoteText();
     
@@ -5534,6 +5534,30 @@ void MainWindow::createNewNote(QString noteName, bool withNameAppend) {
     jumpToNoteOrCreateNew();
 }
 
+void MainWindow::on_actionNew_note_from_selected_text_triggered() {
+/*****
+ * - Create a new note named from the selected text
+ * - Create a link to the new note from the selected text
+ * - Open the new note in a new tab
+
+    Check in the function to link selected text how to handle the selected text
+
+
+*****/
+
+    PKbSuiteMarkdownTextEdit *textEdit = activeNoteTextEdit();
+    QString selectedText = textEdit->textCursor().selectedText();
+    if (!selectedText.isEmpty()) {
+        textEdit->textCursor().removeSelectedText();
+        const QString strLink = "[[" + selectedText + "]]";
+        textEdit->textCursor().insertText(strLink);
+
+        createNewNote(selectedText, false);
+    }
+
+    openCurrentNoteInTab();
+}
+
 /*
  * Handles urls in the noteTextView
  *
@@ -5924,6 +5948,12 @@ void MainWindow::noteTextEditCustomContextMenuRequested(
     const bool isAllowNoteEditing = Utils::Misc::isNoteEditingAllowed();
     const bool isTextSelected = isNoteTextSelected();
 
+    const QString createNoteFromSelectedText =
+        isTextSelected ? tr("New note from selected text"):tr("");
+    QAction *createNoteFromSelectedTextAction = menu->addAction(createNoteFromSelectedText);
+    createNoteFromSelectedTextAction->setShortcut(ui->actionNew_note_from_selected_text->shortcut());
+    createNoteFromSelectedTextAction->setEnabled(isAllowNoteEditing);
+
     const QString linkTextActionName =
         isTextSelected ? tr("&Link selected text") : tr("Insert &link");
     QAction *linkTextAction = menu->addAction(linkTextActionName);
@@ -6024,6 +6054,10 @@ void MainWindow::noteTextEditCustomContextMenuRequested(
         if (selectedItem == linkTextAction) {
             // handle the linking of text with a note
             handleTextNoteLinking();
+        }
+        else if (selectedItem == createNoteFromSelectedTextAction) {
+            // handle the block quoting of text
+            on_actionNew_note_from_selected_text_triggered();
         } else if (selectedItem == blockQuoteTextAction) {
             // handle the block quoting of text
             on_actionInsert_block_quote_triggered();

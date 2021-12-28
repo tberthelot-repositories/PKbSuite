@@ -230,6 +230,8 @@ class MainWindow : public QMainWindow {
 
     void on_action_New_note_triggered();
 
+    void on_actionNew_note_from_selected_text_triggered();
+
     void on_noteTextView_anchorClicked(const QUrl &arg1);
 
     void on_actionAlphabetical_triggered(bool checked);

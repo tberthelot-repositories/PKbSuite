@@ -890,6 +890,7 @@ p, li { white-space: pre-wrap; }
     </widget>
     <addaction name="action_New_note"/>
     <addaction name="actionNew_note_in_new_tab"/>
+    <addaction name="actionNew_note_from_selected_text"/>
     <addaction name="action_Find_note"/>
     <addaction name="actionFind_notes_in_all_subfolders"/>
     <addaction name="menuNavigation"/>
@@ -2374,6 +2375,18 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>Display note graph</string>
+   </property>
+  </action>
+  <action name="actionNew_note_from_selected_text">
+   <property name="icon">
+    <iconset theme="document-new" resource="breeze-dark-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-dark-pkbsuite/16x16/document-new.svg</normaloff>:/icons/breeze-dark-pkbsuite/16x16/document-new.svg</iconset>
+   </property>
+   <property name="text">
+    <string>New note from selected text</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+N</string>
    </property>
   </action>
  </widget>
