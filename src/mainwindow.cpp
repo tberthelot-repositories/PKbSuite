@@ -5535,16 +5535,6 @@ void MainWindow::createNewNote(QString noteName, bool withNameAppend) {
 }
 
 void MainWindow::on_actionNew_note_from_selected_text_triggered() {
-/*****
- * - Create a new note named from the selected text
- * - Create a link to the new note from the selected text
- * - Open the new note in a new tab
-
-    Check in the function to link selected text how to handle the selected text
-
-
-*****/
-
     PKbSuiteMarkdownTextEdit *textEdit = activeNoteTextEdit();
     QString selectedText = textEdit->textCursor().selectedText();
     if (!selectedText.isEmpty()) {
