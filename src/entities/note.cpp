@@ -3061,7 +3061,7 @@ QString Note::createNoteHeader(const QString &name) {
  * 
 **/
 QString Note::createNoteFooter() {
-	QString footer = QStringLiteral("\n\n*Link to Litterature Note*\n") + QStringLiteral("** BibTex reference:** *bibref*\n") + QStringLiteral("\n\n## **Tags:**\n\n") + QStringLiteral("\n\n## **Citation:**\n\n") + QStringLiteral("---\n\n*Body of the Zettel*\n\n---\n") + QStringLiteral("\n\n## **Analysis and explanations:**\n\n") + QStringLiteral("\n\n## **Related notes:**\n\n") + QStringLiteral("\n\n---\n## *Referenced by:*\n\n");
+	QString footer = QStringLiteral("\n\n* **Link to Reference/Litterature Note:** \n") + QStringLiteral("* **Link to source document:** \n") + QStringLiteral("\n\n## **Tags:** #LITERATURE, #PERMANENT, #INDEX, #TODO\n\n") + QStringLiteral("---\n\n*Body of the Zettel*\n\n---\n") + QStringLiteral("\n\n---\n## *Referenced by:*\n\n");
 	return footer;
 }
 

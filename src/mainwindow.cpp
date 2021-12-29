@@ -6353,7 +6353,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("**File:** " + embedmentLink + "  \n");
                 noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
                 noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
-                noteText.append("**Tags:** #REFERENCE_NOTE, #TODO\n");
+                noteText.append("**Tags:** #REFERENCE, #TODO\n");
                 noteText.append("**Author:** " + pdfFile.author() + "  \n");
 				noteText.append("\n-----\n");
 
