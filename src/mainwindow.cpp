@@ -5421,15 +5421,13 @@ void MainWindow::jumpToNoteOrCreateNew(bool disableLoadNoteDirectoryList) {
                           : tr("Current note could not be stored to disk"),
             3000);
 
-        {
-            const QSignalBlocker blocker2(ui->noteTreeWidget);
-            Q_UNUSED(blocker2)
+        const QSignalBlocker blocker2(ui->noteTreeWidget);
+        Q_UNUSED(blocker2)
 
-            // adds the note to the note tree widget
-            addNoteToNoteTreeWidget(note);
+        // adds the note to the note tree widget
+        addNoteToNoteTreeWidget(note);
 
-            ui->kbGraphView->addNoteToGraph(text);
-        }
+        ui->kbGraphView->addNoteToGraph(text);
 
         //        buildNotesIndex();
         if (!disableLoadNoteDirectoryList) {
@@ -6353,7 +6351,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("**File:** " + embedmentLink + "  \n");
                 noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
                 noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
-                noteText.append("**Tags:** #REFERENCE, #TODO\n");
+                noteText.append("**Tags:** #LITERATURE, #TODO\n");
                 noteText.append("**Author:** " + pdfFile.author() + "  \n");
 				noteText.append("\n-----\n");
 
