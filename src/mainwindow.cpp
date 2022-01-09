@@ -6366,6 +6366,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 note.setNoteText(noteText);
 
                 note.store();
+                ui->kbGraphView->addNoteToGraph(pdfFileInfo.baseName());
 
                 // workaround when signal block doesn't work correctly
                 _isNotesDirectoryWasModifiedDisabled = true;
