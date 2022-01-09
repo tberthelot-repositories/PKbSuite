@@ -120,8 +120,7 @@ QString PDFFile::markdownSummary()
     QString sTmp = "";
     
     sTmp.append("## Summary : \n\n");
-    sTmp.append(_summary.text + "\n");
-    sTmp.append("*--- End ---*\n\n");
+    sTmp.append(_summary.text + "\n\n");
     
     return sTmp;
 }
