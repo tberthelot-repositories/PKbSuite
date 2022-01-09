@@ -10,7 +10,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
     QT += xmlpatterns
 }
 
-CONFIG += with_aspell
+CONFIG += with_aspell debug
 
 TARGET = PKbSuite
 TEMPLATE = app
