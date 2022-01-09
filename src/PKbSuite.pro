@@ -10,7 +10,7 @@ lessThan(QT_MAJOR_VERSION, 6) {
     QT += xmlpatterns
 }
 
-CONFIG += with_aspell debug
+CONFIG += with_aspell
 
 TARGET = PKbSuite
 TEMPLATE = app
@@ -20,7 +20,7 @@ TRANSLATIONS = $$PWD/languages/PKbSuite_en.ts \
     $$PWD/languages/PKbSuite_fr.ts
 
 CODECFORTR = UTF-8
-CONFIG += c++11 with_aspell
+CONFIG += c++17 with_aspell
 
 INCLUDEPATH += $$PWD/libraries $$PWD/libraries/diff_match_patch /usr/include/poppler
 
