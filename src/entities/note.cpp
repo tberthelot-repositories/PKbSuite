@@ -1770,6 +1770,8 @@ QUrl Note::fullNoteFileUrl() const {
 int Note::storeDirtyNotesToDisk(Note &currentNote, bool *currentNoteChanged,
                                 bool *noteWasRenamed,
                                 bool *currentNoteTextChanged) {
+    currentNote.updateReferencedBySectionInLinkedNotes();
+
     const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
     QSqlQuery query(db);
     //    qDebug() << "storeDirtyNotesToDisk";
@@ -3578,7 +3580,7 @@ QDebug operator<<(QDebug dbg, const Note &note) {
     return dbg.space();
 }
 
-void Note::updateReferenceBySectionInLinkedNotes() {
+void Note::updateReferencedBySectionInLinkedNotes() {
 	QRegularExpression re = QRegularExpression(R"(([A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s\*\_\-\.]*.md))");
 	QRegularExpressionMatchIterator reIterator = re.globalMatch(_noteText);
 	while (reIterator.hasNext()) {

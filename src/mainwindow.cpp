@@ -6349,17 +6349,18 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("**Title:** " + pdfFile.title() + "  \n");
                 noteText.append("**Creation date:** " + QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:sst") + "  \n");
                 noteText.append("**File:** " + embedmentLink + "  \n");
-                noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
-                noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
+                if (pdfFile.subject().length() > 0)
+                    noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
+                if (pdfFile.keywords().length() > 0)
+                    noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
                 noteText.append("**Tags:** #LITERATURE, #TODO\n");
-                noteText.append("**Author:** " + pdfFile.author() + "  \n");
+                if (pdfFile.author().length() > 0)
+                    noteText.append("**Author:** " + pdfFile.author() + "  \n");
 				noteText.append("\n-----\n");
 
 				pdfFile.setDocumentFolder(noteSubFolderPath);
 				
                 noteText.append(pdfFile.markdownSummary());
-				noteText.append("## Analysis/Observations :\n");
-				noteText.append("\n\n");
                 noteText.append(pdfFile.markdownCitations(embedmentLink));
                 noteText.append(pdfFile.markdownComments(embedmentLink));
 				

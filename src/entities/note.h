@@ -321,7 +321,7 @@ class Note {
 
     QString detectNewlineCharacters();
 	
-	void updateReferenceBySectionInLinkedNotes();
+	void updateReferencedBySectionInLinkedNotes();
 
     static bool isNameSearch(const QString &searchTerm);
 
