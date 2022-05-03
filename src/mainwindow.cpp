@@ -2319,9 +2319,22 @@ void MainWindow::updateTreeWidgetItemHeight(QTreeWidget *treeWidget,
 
 void MainWindow::updateNoteTextFromDisk(Note note) {
     note.updateNoteTextFromDisk();
+
+    // Check if the note has @Tags not yet linked
+	QRegularExpression re = QRegularExpression(R"([^A-Za-z]#([A-Za-zÀ-ÖØ-öø-ÿ_]|\d+[A-Za-zÀ-ÖØ-öø-ÿ_])[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
+	QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
+	while (reIterator.hasNext()) {
+		QRegularExpressionMatch reMatch = reIterator.next();
+		QString tag = reMatch.captured().right(reMatch.capturedLength() - 2);
+
+        const QSignalBlocker blocker(noteDirectoryWatcher);
+		Q_UNUSED(blocker);
+		linkTagNameToCurrentNote(tag);
+	}
+
     note.store();
 
-	const QSignalBlocker blocker(this->ui->noteTextEdit);
+    const QSignalBlocker blocker(this->ui->noteTextEdit);
 	Q_UNUSED(blocker)
 	this->setNoteTextFromNote(&note);
 }
@@ -2580,7 +2593,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
             linkTagNameToCurrentNote(tagName);
         }
     }
-    
+
     // Check if some [[Links]] needs to be expanded but ONLY if the target note exists to prevent inserting empty note names
     re = QRegularExpression(R"(\[\[([A-Za-z\s\_\-]*)\]\])");	// TODO Take figures into account if I want to implement filenames based on note's IDs
     QRegularExpressionMatch reMatch = re.match(currentNoteText);
@@ -2607,7 +2620,10 @@ void MainWindow::storeUpdatedNotesToDisk() {
             textEdit->setTextCursor(cursor);
         }
     }
-   
+
+    // Check if some links are not existing in the graph
+    ui->kbGraphView->updateLinks(ui->kbGraphView->getNodeFromNote(&_currentNote), currentNoteText);
+
     // _currentNote will be set by this method if the filename has changed
     const int count = Note::storeDirtyNotesToDisk(
         _currentNote, &currentNoteChanged, &noteWasRenamed, &currentNoteTextChanged);
@@ -3395,6 +3411,9 @@ void MainWindow::setCurrentNote(Note note, bool updateNoteText,
     // because of different timings
     reloadCurrentNoteTags();
     updateNoteTextEditReadOnly();
+
+    // Update graph
+    ui->kbGraphView->centerOnNote(&note);
 
     QSettings settings;
     const bool restoreCursorPositionDefault = true;
@@ -4187,14 +4206,14 @@ void MainWindow::removeSelectedTags() {
                 Note note = Note::fetch(idsTaggedNotes.at(idNote));
                 QString noteText = note.getNoteText();
                    
-                QRegularExpression re = QRegularExpression(R"((, )?@)" + tag.getName());
+                QRegularExpression re = QRegularExpression(R"(#)" + tag.getName() + R"(|(, )#)" + tag.getName() + R"((, )|#)" + tag.getName());
                 QRegularExpressionMatchIterator reIterator = re.globalMatch(noteText);
 
                 while (reIterator.hasNext()) {
                     QRegularExpressionMatch reMatch = reIterator.next();
                     int lTag = reMatch.capturedLength() + 1;
                     
-                    noteText.replace(reMatch.capturedStart(), lTag, "\n");
+                    noteText.replace(reMatch.capturedStart(), lTag, "");
                 }
                                 
                 const QSignalBlocker blocker(this->noteDirectoryWatcher);
@@ -4988,19 +5007,11 @@ void MainWindow::handleNoteTextChanged() {
 }
 
 void MainWindow::on_action_Quit_triggered() {
-    // this will be done again in the destructor, but we want to make sure
-    // nothing is logged to the log widget that might already be destroyed
-    qApp->setProperty("loggingEnabled", false);
-
     storeSettings();
     QApplication::quit();
 }
 
 void MainWindow::quitApp() {
-    // this will be done again in the destructor, but we want to make sure
-    // nothing is logged to the log widget that might already be destroyed
-    qApp->setProperty("loggingEnabled", false);
-
     QApplication::quit();
 }
 
@@ -5564,10 +5575,7 @@ void MainWindow::on_noteTextView_anchorClicked(const QUrl &url) {
     qDebug() << __func__ << " - 'url': " << url;
     const QString scheme = url.scheme();
 
-    if ((scheme == QStringLiteral("note") ||
-         scheme == QStringLiteral("noteid") ||
-         scheme == QStringLiteral("checkbox")) ||
-        (scheme == QStringLiteral("file") &&
+    if ((scheme == QStringLiteral("file") &&
          Note::fileUrlIsNoteInCurrentNoteFolder(url))) {
         openLocalUrl(url.toString());
     } else {
@@ -5624,78 +5632,7 @@ void MainWindow::openLocalUrl(QString urlString) {
 
     const QString scheme = url.scheme();
 
-    if (scheme == QStringLiteral("noteid")) {    // jump to a note by note id
-        static const QRegularExpression re(QStringLiteral(R"(^noteid:\/\/note-(\d+)$)"));
-        QRegularExpressionMatch match = re.match(urlString);
-
-        if (match.hasMatch()) {
-            int noteId = match.captured(1).toInt();
-            Note note = Note::fetch(noteId);
-            if (note.isFetched()) {
-                // set current note
-                setCurrentNote(std::move(note));
-            }
-        } else {
-            qDebug() << "malformed url: " << urlString;
-        }
-    } else if (scheme == QStringLiteral("checkbox")) {
-        const auto text = ui->noteTextEdit->toPlainText();
-
-        int index = url.host().midRef(1).toInt();
-#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0))
-        QRegExp re(R"((^|\n)\s*[-*+]\s\[([xX ]?)\])", Qt::CaseInsensitive);
-#else
-        static const QRegularExpression re(R"((^|\n)\s*[-*+]\s\[([xX ]?)\])", QRegularExpression::CaseInsensitiveOption);
-#endif
-        int pos = 0;
-        while (true) {
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0))
-            pos = re.indexIn(text, pos);
-#else
-            QRegularExpressionMatch match;
-            pos = text.indexOf(re, pos, &match);
-#endif
-            if (pos == -1)    // not found
-                return;
-            auto cursor = ui->noteTextEdit->textCursor();
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0))
-            int matchedLength = re.matchedLength();
-            cursor.setPosition(pos + re.matchedLength() - 1);
-#else
-            int matchedLength = match.capturedLength();
-            qDebug() << __func__ << "match.capturedLength(): " << match.capturedLength();
-            cursor.setPosition(pos + match.capturedLength() - 1);
-#endif
-            if (cursor.block().userState() ==
-                MarkdownHighlighter::HighlighterState::List) {
-                if (index == 0) {
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0))
-                    auto ch = re.cap(2);
-#else
-                    auto ch = match.captured(2);
-#endif
-                    if (ch.isEmpty())
-                        cursor.insertText(QStringLiteral("x"));
-                    else {
-                        cursor.movePosition(QTextCursor::PreviousCharacter,
-                                            QTextCursor::KeepAnchor);
-                        cursor.insertText(ch == QStringLiteral(" ")
-                                              ? QStringLiteral("x")
-                                              : QStringLiteral(" "));
-                    }
-
-                    // refresh instantly
-                    _noteViewUpdateTimer->start(1);
-                    break;
-                }
-                --index;
-            }
-            pos += matchedLength;
-        }
-    } else if (scheme == QStringLiteral("file") && urlWasNotValid) {
+    if (scheme == QStringLiteral("file") && urlWasNotValid) {
 		// First, handle the case of a note file and create it if it doesn't exists
         Note note;
 
@@ -8003,7 +7940,7 @@ void MainWindow::removeNoteTagClicked() {
         const int selectedNotesCount = getSelectedNotesCount();
 
         if (selectedNotesCount <= 1) {
-			QRegularExpression re = QRegularExpression(R"((, )?#)" + tag.getName());
+			QRegularExpression re = QRegularExpression(R"((, )#)" + tag.getName() + R"(|#)" + tag.getName() + R"((, )|#)" + tag.getName());
 			QRegularExpressionMatchIterator reIterator = re.globalMatch(ui->noteTextEdit->toPlainText());
 			
 			int lTag = 0;
@@ -8015,7 +7952,7 @@ void MainWindow::removeNoteTagClicked() {
 				tc.setPosition(reMatch.capturedStart() - lTag);
 				tc.setPosition(reMatch.capturedEnd() - lTag, QTextCursor::KeepAnchor);
 				
-				lTag = reMatch.capturedLength() + 1;
+				lTag = reMatch.capturedLength() + 1;  // lTag is the offset to apply for new pos calculations as text has been removed
 				
 				tc.removeSelectedText();  
 			}
@@ -9295,29 +9232,6 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
 
         return;
     }
-
-    int noteId = current->data(0, Qt::UserRole).toInt();
-    Note note = Note::fetch(noteId);
-    qDebug() << __func__;
-
-    setCurrentNote(std::move(note), true, false);
-
-	// Check if the note has @Tags not yet linked
-	QRegularExpression re = QRegularExpression(R"([^A-Za-z]#([A-Za-zÀ-ÖØ-öø-ÿ_]|\d+[A-Za-zÀ-ÖØ-öø-ÿ_])[A-Za-zÀ-ÖØ-öø-ÿ0-9_]*)");       // Take care of accented characters
-	QRegularExpressionMatchIterator reIterator = re.globalMatch(_currentNote.getNoteText());
-	while (reIterator.hasNext()) {
-		QRegularExpressionMatch reMatch = reIterator.next();
-		QString tag = reMatch.captured().right(reMatch.capturedLength() - 2);
-		
-		const QSignalBlocker blocker(noteDirectoryWatcher);
-		Q_UNUSED(blocker);
-
-		linkTagNameToCurrentNote(tag);
-	}
-
-    // let's highlight the text from the search line edit and do a "in note
-    // search"
-    searchForSearchLineTextInNoteTextEdit();
 }
 
 void MainWindow::openCurrentNoteInTab() {
@@ -10996,8 +10910,46 @@ void MainWindow::on_tagTreeWidget_itemDoubleClicked(QTreeWidgetItem *item,
 
         if (tag.isLinkedToNote(_currentNote)) {
             tag.removeLinkToNote(_currentNote);
+
+			QRegularExpression re = QRegularExpression(R"((, )#)" + tag.getName() + R"(|#)" + tag.getName() + R"((, )|#)" + tag.getName());
+			QRegularExpressionMatchIterator reIterator = re.globalMatch(ui->noteTextEdit->toPlainText());
+
+			int lTag = 0;
+
+			QTextCursor tc = ui->noteTextEdit->textCursor();
+			while (reIterator.hasNext()) {
+				QRegularExpressionMatch reMatch = reIterator.next();
+
+				tc.setPosition(reMatch.capturedStart() - lTag);
+				tc.setPosition(reMatch.capturedEnd() - lTag, QTextCursor::KeepAnchor);
+
+				lTag = reMatch.capturedLength() + 1;  // lTag is the offset to apply for new pos calculations as text has been removed
+
+				tc.removeSelectedText();
+            }
         } else {
             tag.linkToNote(_currentNote);
+
+            QRegularExpression re = QRegularExpression(R"(## \*\*Tags:\*\*\n(#[A-Za-zÀ-ÖØ-öø-ÿ0-9_, ]*)*)");
+            QRegularExpressionMatch reMatch = re.match(ui->noteTextEdit->toPlainText());
+            if (reMatch.hasMatch()) {
+                int tagListStart = reMatch.capturedStart(reMatch.lastCapturedIndex());
+                int tagListEnd = reMatch.capturedEnd(reMatch.lastCapturedIndex());
+
+                QTextCursor cursor = ui->noteTextEdit->textCursor();
+                int cursorPos = cursor.position();
+
+                cursor.setPosition(tagListEnd);
+                const QString strNewTag = ", #" + tag.getName();
+                cursor.insertText(strNewTag);
+
+                if (cursorPos < tagListStart)
+                    cursor.setPosition(cursorPos);
+                else if (cursorPos > tagListEnd)
+                    cursor.setPosition(cursorPos + strNewTag.length());
+
+                ui->noteTextEdit->setTextCursor(cursor);
+            }
         }
 
         if (!NoteFolder::isCurrentNoteTreeEnabled()) {
@@ -11033,6 +10985,9 @@ void MainWindow::on_noteTreeWidget_itemSelectionChanged() {
         int noteId = ui->noteTreeWidget->selectedItems()[0]->data(0, Qt::UserRole).toInt();
         Note note = Note::fetch(noteId);
         bool currentNoteChanged = _currentNote.getId() != noteId;
+
+        _currentNote.updateReferencedBySectionInLinkedNotes();
+
         setCurrentNote(std::move(note), true, false);
 
         // Let's highlight the text from the search line edit and do an "in-note
@@ -11191,7 +11146,6 @@ void MainWindow::on_navigationLineEdit_textChanged(const QString &arg1) {
 Note MainWindow::getCurrentNote() { return _currentNote; }
 
 void MainWindow::on_actionJump_to_note_list_panel_triggered() {
-    ui->noteTreeWidget->setFocus();
 }
 
 void MainWindow::on_actionJump_to_tags_panel_triggered() {

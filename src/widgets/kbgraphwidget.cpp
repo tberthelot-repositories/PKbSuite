@@ -40,6 +40,37 @@ void kbGraphWidget::setMainWindowPtr(MainWindow* mainWindow) {
     _mainWindow = mainWindow;
 }
 
+void kbGraphWidget::updateLinks(kbGraphNode* node, QString textNote) {
+    QRegularExpression re = QRegularExpression(R"(\[([A-Za-zÀ-ÖØ-öø-ÿ_\s]*)\]\([AA-Za-zÀ-ÖØ-öø-ÿ_\s\d?%]*\.md\))");
+    QRegularExpressionMatchIterator reIterator = re.globalMatch(textNote);
+    while (reIterator.hasNext()) {
+        QRegularExpressionMatch reMatch = reIterator.next();
+        QString targetNoteName = reMatch.captured(1);
+
+        for (int i = 0; i < _noteNodes.size(); i++) {
+            if (_noteNodes.at(i)->name() == targetNoteName) {
+                if ((!node->linkToNodeExists(_noteNodes.at(i))) & (!node->reverseLinkExists(_noteNodes.at(i)))) {
+                    kbGraphLink* link = new kbGraphLink(node, _noteNodes.at(i));
+                    node->addLink(link);
+                    link->adjust();
+                    scene()->addItem(link);
+                }
+
+                break;
+            }
+        }
+    }
+}
+
+kbGraphNode* kbGraphWidget::getNodeFromNote(Note* note) {
+    foreach (kbGraphNode* node, _noteNodes) {
+        if (node->name() == note->getName())
+            return node;
+    }
+
+    return NULL;
+}
+
 void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
     QDir dir = QDir(noteFolder);
 
@@ -65,25 +96,7 @@ void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
         QTextStream flux(&noteFile);
         QString fluxText = flux.readAll();
 
-        QRegularExpression re = QRegularExpression(R"(\[([A-Za-zÀ-ÖØ-öø-ÿ_\s]*)\]\([AA-Za-zÀ-ÖØ-öø-ÿ_\s\d?%]*\.md\))");
-        QRegularExpressionMatchIterator reIterator = re.globalMatch(fluxText);
-        while (reIterator.hasNext()) {
-            QRegularExpressionMatch reMatch = reIterator.next();
-            QString targetNoteName = reMatch.captured(1);
-
-            for (int i = 0; i < _noteNodes.size(); i++) {
-                if (_noteNodes.at(i)->name() == targetNoteName) {
-                    if ((!node->linkToNodeExists(_noteNodes.at(i))) & (!node->reverseLinkExists(_noteNodes.at(i)))) {
-                        kbGraphLink* link = new kbGraphLink(node, _noteNodes.at(i));
-                        node->addLink(link);
-                        link->adjust();
-                        scene()->addItem(link);
-                    }
-
-                    break;
-                }
-            }
-        }
+        updateLinks(node, fluxText);
 
         if (node->getNumberOfLinks() > _maxLinkNumber)
             _maxLinkNumber = node->getNumberOfLinks();
@@ -125,8 +138,6 @@ void kbGraphWidget::mousePressEvent(QMouseEvent *mouseEvent) {
         _panStartY = mouseEvent->y();
         setCursor(Qt::ClosedHandCursor);
         mouseEvent->accept();
-        mouseEvent->accept();
-        mouseEvent->accept();
     }
 
     update();
@@ -141,7 +152,6 @@ void kbGraphWidget::mouseReleaseEvent(QMouseEvent *mouseEvent) {
             if (!_pointedNode->name().isEmpty()) {
                 Note note = Note::fetchByName(_pointedNode->name());
                 _mainWindow->setCurrentNote(std::move(note));
-                centerOn(_pointedNode);
                 _pointedNode = nullptr;
             }
         }
@@ -191,8 +201,19 @@ void kbGraphWidget::wheelEvent(QWheelEvent *event) {
         QGraphicsView::wheelEvent(event);
 }
 
-void kbGraphWidget::itemMoved()
-{
+void kbGraphWidget::centerOnNote(Note* note) {
+    QList<QGraphicsItem*> sceneItems = scene()->items();
+    foreach (QGraphicsItem* item, sceneItems) {
+        kbGraphNode* itemNode = qgraphicsitem_cast<kbGraphNode*>(item);
+        if (itemNode)
+            if (itemNode->name() == note->getName()) {
+                centerOn(item);
+                exit;
+            }
+    }
+}
+
+void kbGraphWidget::itemMoved() {
     if (!timerId)
         timerId = startTimer(1000 / 500); // 25);
 }
