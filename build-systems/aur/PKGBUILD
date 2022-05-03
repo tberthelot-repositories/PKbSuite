@@ -16,7 +16,7 @@ sha256sums=('ARCHIVE-SHA256')
 
 prepare() {
     cd "pkbsuite-VERSION-STRING"
-    echo "#define RELEASE \"AUR\"" > release.h
+#    echo "#define RELEASE \"AUR\"" > release.h
 }
 
 build() {
