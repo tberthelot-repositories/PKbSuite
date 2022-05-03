@@ -1770,7 +1770,6 @@ QUrl Note::fullNoteFileUrl() const {
 int Note::storeDirtyNotesToDisk(Note &currentNote, bool *currentNoteChanged,
                                 bool *noteWasRenamed,
                                 bool *currentNoteTextChanged) {
-    currentNote.updateReferencedBySectionInLinkedNotes();
 
     const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
     QSqlQuery query(db);
@@ -3063,7 +3062,7 @@ QString Note::createNoteHeader(const QString &name) {
  * 
 **/
 QString Note::createNoteFooter() {
-	QString footer = QStringLiteral("\n\n* **Link to Reference/Litterature Note:** \n") + QStringLiteral("* **Link to source document:** \n") + QStringLiteral("\n## **Tags:**\n#LITERATURE, #PERMANENT, #INDEX, #TODO\n\n") + QStringLiteral("---\n\n*Body of the Zettel*\n\n---\n") + QStringLiteral("\n\n---\n## *Referenced by:*\n\n");
+	QString footer = QStringLiteral("\n## *Tags:*\n#LITERATURE, #PERMANENT, #INDEX, #TODO\n\n") + QStringLiteral("---\n\n*Body of the Zettel*\n\n---\n") + QStringLiteral("\n\n---\n## *Referenced by:*\n\n");
 	return footer;
 }
 

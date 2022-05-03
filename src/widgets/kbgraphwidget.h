@@ -26,9 +26,12 @@ public:
     explicit kbGraphWidget(QWidget *parent = nullptr);
 
     void GenerateKBGraph(const QString noteFolder);
+    void updateLinks(kbGraphNode* node, QString textNote);
     void addNoteToGraph(QString noteName);
     void itemMoved();
     void setMainWindowPtr(MainWindow* mainWindow);
+    void centerOnNote(Note* note);
+    kbGraphNode* getNodeFromNote(Note* note);
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
