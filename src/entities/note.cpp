@@ -3597,20 +3597,23 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 	if (text.length() != 0) {
 		// First, look for the "Referenced by" section
 		QRegularExpressionMatch match = QRegularExpression(R"(\n\n---\n## \*Referenced by:\*\n\n)").match(text);
-		
-                bool textModified = false;
-                
+		bool textModified = false;
+
+        QString strReferences = "";
 		// No "Referenced by" section yet. Let's create it
 		if (!match.hasMatch()) {
 			text.append(QStringLiteral("\n\n---\n## \*Referenced by:\*\n\n"));
                         textModified = true;
 		}
-		
+		else {
+            strReferences = text.right(match.capturedStart(text.length() - match.capturedStart()));
+        }
 		// Next, check if links are available and create/update them
 		QString path = relativeFilePath(currentNotePath);
 
-		match = QRegularExpression(R"(\*\s\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s\*\_\-\.]*\]\()" + path.replace(" ","%20") + R"(\))").match(text);
-		
+// TODO Remove when tested		match = QRegularExpression(R"(\*\s\[[A-Za-zÀ-ÖØ-öø-ÿ0-9\%\s\*\_\-\.]*\]\()" + path.replace(" ","%20") + R"(\))").match(strReferences);
+		match = QRegularExpression(R"(\()" + path.replace(" ","%20") + R"(\))").match(strReferences);
+
 		// No link to current note in "Referenced by" section yet, add it
 		if (!match.hasMatch()) {
 			text.append("* [" + _name + "](" + path.replace(" ", "%20") +")\n");
