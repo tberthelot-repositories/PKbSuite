@@ -401,6 +401,10 @@ MainWindow::MainWindow(QWidget *parent)
     // wait some time for the tagTree to get visible, if selected, and apply
     // last selected tag search
     QTimer::singleShot(250, this, SLOT(filterNotesByTag()));
+
+    // attempt to quit the application when a logout is initiated
+    connect(qApp, &QApplication::commitDataRequest, this,
+            &MainWindow::on_action_Quit_triggered);
 }
 
 /**
