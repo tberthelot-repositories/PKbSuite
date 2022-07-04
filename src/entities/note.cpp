@@ -1129,9 +1129,6 @@ bool Note::allowDifferentFileName() {
 // inserts or updates a note object in the database
 //
 bool Note::store() {
-    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
-    QSqlQuery query(db);
-
     if (_fileName.isEmpty()) {
         // don't store notes with empty filename and empty name
         if (_name.isEmpty()) {
@@ -1155,16 +1152,7 @@ bool Note::store() {
                               "WHERE id = :id"));
         query.bindValue(QStringLiteral(":id"), _id);
     } else {
-        query.prepare(QStringLiteral("INSERT INTO note"
-                              "(name, file_name, "
-                              "file_size, note_text, has_dirty_data, "
-                              "file_last_modified, file_created,"
-                              "modified, note_sub_folder_id) "
-                              "VALUES (:name, "
-                              ":file_name, :file_size, :note_text,"
-                              ":has_dirty_data, :file_last_modified,"
-                              ":file_created, :modified,"
-                              ":note_sub_folder_id)"));
+        
     }
 
     const QDateTime modified = QDateTime::currentDateTime();

@@ -11,6 +11,8 @@
 class NoteMap {
 public:
 	NoteMap();
+	
+	void addNoteToMap(Note note, QList<Note> linkedNotes);
 private:
 	QMap<Note, QList<Note>> _noteMap;
 };
