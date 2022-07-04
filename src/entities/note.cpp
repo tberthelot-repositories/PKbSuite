@@ -1153,9 +1153,9 @@ bool Note::store() {
         query.bindValue(QStringLiteral(":id"), _id);
     } else {
         /*
-         * 
-         * Voir pour construire la liste des liens avant d'ajouter la note
-         * 
+         * TODO
+         * Voir dans NoteMappour construire la liste des liens avant d'ajouter la note
+         * Ca permettra d'avoir une fonction génériqu epour ajouter les notes en listant les fichiers
          */
     }
 
