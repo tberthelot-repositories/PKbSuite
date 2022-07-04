@@ -2832,18 +2832,6 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
             wasModified = true;
         }
 
-        // update the UI
-        // this causes to show notes twice in the ui->noteTreeWidget if a
-        // not selected note is modified externally
-        // https://github.com/pbek/PKbSuite/issues/242
-        // using a blocker on noteTreeWidget or just processing every 10th
-        // time doesn't work neither
-        //            QCoreApplication::processEvents();
-
-        // we try these two instead to update the UI
-        // QCoreApplication::flush() is obsolete since Qt 5.9
-        //            QCoreApplication::flush();
-
         // this still causes double entries on OS X and maybe Windows
 #ifdef Q_OS_LINUX
         QCoreApplication::sendPostedEvents();

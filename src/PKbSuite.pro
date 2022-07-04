@@ -86,7 +86,8 @@ SOURCES += main.cpp\
     dialogs/imagedialog.cpp \
     dialogs/commandbar.cpp \
     models/commandmodel.cpp \
-    libraries/fuzzy/kfuzzymatcher.cpp
+    libraries/fuzzy/kfuzzymatcher.cpp \
+    entities\notemap.cpp
 
 HEADERS  += mainwindow.h \
     build_number.h \
@@ -155,7 +156,8 @@ HEADERS  += mainwindow.h \
     dialogs/imagedialog.h \
     dialogs/commandbar.h \
     models/commandmodel.h \
-    libraries/fuzzy/kfuzzymatcher.h
+    libraries/fuzzy/kfuzzymatcher.h \
+    entities\notemap.h
 
 FORMS    += mainwindow.ui \
     dialogs/attachmentdialog.ui \
