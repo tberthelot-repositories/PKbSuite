@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <note.h>
+#include "note.h"
 
 #include <QMap>
 #include <QList>
@@ -12,7 +12,7 @@ class NoteMap {
 public:
 	NoteMap();
 private:
-	QMap _noteMap<Note, QList<Note>>;
-}
+	QMap<Note, QList<Note>> _noteMap;
+};
 
 #endif
