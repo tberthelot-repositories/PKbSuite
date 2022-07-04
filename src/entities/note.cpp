@@ -1152,7 +1152,11 @@ bool Note::store() {
                               "WHERE id = :id"));
         query.bindValue(QStringLiteral(":id"), _id);
     } else {
-        
+        /*
+         * 
+         * Voir pour construire la liste des liens avant d'ajouter la note
+         * 
+         */
     }
 
     const QDateTime modified = QDateTime::currentDateTime();
