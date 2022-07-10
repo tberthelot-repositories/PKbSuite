@@ -910,6 +910,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="separator"/>
     <addaction name="action_Settings"/>
     <addaction name="separator"/>
+    <addaction name="action_Quit"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -2376,7 +2377,16 @@ p, li { white-space: pre-wrap; }
     <string>Display note graph</string>
    </property>
   </action>
- </widget>
+  <action name="action_Quit">
+   <property name="icon">
+    <iconset resource="breeze-dark-pkbsuite.qrc">
+     <normaloff>:/icons/breeze-dark-pkbsuite/16x16/application-exit.svg</normaloff>
+     <normalon>:/icons/breeze-dark-pkbsuite/16x16/application-exit.svg</normalon>:/icons/breeze-dark-pkbsuite/16x16/application-exit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action> </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>

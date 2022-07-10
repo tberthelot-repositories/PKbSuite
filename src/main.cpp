@@ -227,6 +227,8 @@ bool mainStartupMisc(const QStringList &arguments) {
     DatabaseService::createConnection();
     DatabaseService::setupTables();
 
+
+
     // if the notes path is empty or doesn't exist open the welcome dialog
     if (notesPath.isEmpty() || !dir.exists()) {
         WelcomeDialog welcomeDialog;
@@ -492,10 +494,6 @@ int main(int argc, char *argv[]) {
 
         loadTranslations(translators, locale);
 
-#ifdef Q_OS_MAC
-        loadMacTranslations(translatorOSX, translatorOSX2, translatorOSX3, translatorOSX4,
-                            QCoreApplication::applicationDirPath(), locale);
-#endif
         const bool result = mainStartupMisc(arguments);
         if (!result) {
             return 0;
@@ -541,11 +539,6 @@ int main(int argc, char *argv[]) {
 #endif
 
         loadTranslations(translators, locale);
-
-#ifdef Q_OS_MAC
-        loadMacTranslations(translatorOSX, translatorOSX2, translatorOSX3, translatorOSX4,
-                            QCoreApplication::applicationDirPath(), locale);
-#endif
 
         const bool result = mainStartupMisc(arguments);
         if (!result) {

@@ -25,6 +25,7 @@
 #include "entities/notehistory.h"
 
 #include "utils/kbgraph.h"
+#include "entities/notemap.h"
 
 #define SORT_ALPHABETICAL 0
 #define SORT_BY_LAST_CHANGE 1
@@ -143,6 +144,8 @@ class MainWindow : public QMainWindow {
 
     Q_INVOKABLE void reloadNoteSubFolderTree();
 
+    void initKbNoteMap();
+
     Q_INVOKABLE void buildNotesIndexAndLoadNoteDirectoryList(
         bool forceBuild = false, bool forceLoad = false);
 
@@ -172,6 +175,8 @@ class MainWindow : public QMainWindow {
     Q_INVOKABLE void setCurrentWorkspace(const QString &uuid);
 
     Q_INVOKABLE bool insertDataUrlAsFileIntoCurrentNote(const QString &dataUrl);
+
+    NoteMap* getNoteMap();
 
    protected:
     void changeEvent(QEvent *event) override;
@@ -670,6 +675,7 @@ private:
     bool _isMaximizedBeforeFullScreen = false;
     bool _isMinimizedBeforeFullScreen = false;
     CommandBar* _commandBar;
+    NoteMap* _kbNoteMap;
 
     void createSystemTrayIcon();
 

@@ -41,6 +41,8 @@ void kbGraphWidget::setMainWindowPtr(MainWindow* mainWindow) {
 }
 
 void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
+    _mainWindow->getNoteMap()
+
     QDir dir = QDir(noteFolder);
 
     QStringList noteFiles = dir.entryList(QStringList() << "*.md" << "*.Md" << "*.MD", QDir::Files);

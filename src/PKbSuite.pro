@@ -20,7 +20,7 @@ TRANSLATIONS = $$PWD/languages/PKbSuite_en.ts \
     $$PWD/languages/PKbSuite_fr.ts
 
 CODECFORTR = UTF-8
-CONFIG += c++11 with_aspell
+CONFIG += c++latest with_aspell
 
 INCLUDEPATH += $$PWD/libraries $$PWD/libraries/diff_match_patch /usr/include/poppler
 
@@ -87,7 +87,7 @@ SOURCES += main.cpp\
     dialogs/commandbar.cpp \
     models/commandmodel.cpp \
     libraries/fuzzy/kfuzzymatcher.cpp \
-    entities\notemap.cpp
+    entities/notemap.cpp
 
 HEADERS  += mainwindow.h \
     build_number.h \
@@ -157,7 +157,7 @@ HEADERS  += mainwindow.h \
     dialogs/commandbar.h \
     models/commandmodel.h \
     libraries/fuzzy/kfuzzymatcher.h \
-    entities\notemap.h
+    entities/notemap.h
 
 FORMS    += mainwindow.ui \
     dialogs/attachmentdialog.ui \

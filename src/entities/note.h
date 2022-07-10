@@ -27,6 +27,7 @@ class Note {
     QString getName() const;
 
     QString getFileName() const;
+    void setFileName(QString filename);
 
     QString getNoteText() const;
 
@@ -160,11 +161,17 @@ class Note {
 
     QDateTime getFileLastModified() const;
 
+    void setFileLastModified(QDateTime dateLastModified);
+
+    static int countAll();
+
     QDateTime getFileCreated() const;
+
+    void setFileCreated(QDateTime dateCreated);
 
     QDateTime getModified() const;
 
-    static int countAll();
+    void setModified(QDateTime dateModified);
 
     static bool allowDifferentFileName();
 
@@ -214,6 +221,8 @@ class Note {
     QString relativeNoteFilePath(QString separator = "");
 
     int getFileSize() const;
+
+    void setFileSize(int fileSize);
 
     static Note updateOrCreateFromFile(QFile &file,
                                        const NoteSubFolder &noteSubFolder,

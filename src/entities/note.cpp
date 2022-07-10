@@ -43,13 +43,23 @@ QString Note::getName() const { return this->_name; }
 
 QDateTime Note::getFileLastModified() const { return this->_fileLastModified; }
 
+void Note::setFileLastModified(QDateTime dateLastModified) { _fileLastModified = dateLastModified; }
+
 QDateTime Note::getFileCreated() const { return this->_fileCreated; }
+
+void Note::setFileCreated(QDateTime dateCreated) { _fileCreated = dateCreated; }
 
 QDateTime Note::getModified() const { return this->_modified; }
 
+void Note::setModified(QDateTime dateModified) { _modified = dateModified; }
+
 int Note::getFileSize() const { return this->_fileSize; }
 
+void Note::setFileSize(int fileSize) { _fileSize = fileSize; }
+
 QString Note::getFileName() const { return this->_fileName; }
+
+void Note::setFileName(QString fileName) { this->_fileName = fileName; }
 
 NoteSubFolder Note::getNoteSubFolder() const {
     return NoteSubFolder::fetch(this->_noteSubFolderId);
@@ -1129,6 +1139,9 @@ bool Note::allowDifferentFileName() {
 // inserts or updates a note object in the database
 //
 bool Note::store() {
+    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
+    QSqlQuery query(db);
+
     if (_fileName.isEmpty()) {
         // don't store notes with empty filename and empty name
         if (_name.isEmpty()) {
@@ -1139,24 +1152,43 @@ bool Note::store() {
     }
 
     if (_id > 0) {
-        query.prepare(QStringLiteral("UPDATE note SET "
-                              "name = :name,"
-                              "file_name = :file_name,"
-                              "file_size = :file_size,"
-                              "note_sub_folder_id = :note_sub_folder_id,"
-                              "note_text = :note_text,"
-                              "has_dirty_data = :has_dirty_data, "
-                              "file_last_modified = :file_last_modified,"
-                              "file_created = :file_created,"
-                              "modified = :modified "
-                              "WHERE id = :id"));
+        /*
+         * TODO
+         * Voir dans NoteMap pour updater la liste des liens avant d'ajouter la note
+         * Ca permettra d'avoir une fonction génériqu epour ajouter les notes en listant les fichiers
+         */
+        query.prepare(
+            QStringLiteral("UPDATE note SET "
+                           "name = :name,"
+                           "file_name = :file_name,"
+                           "file_size = :file_size,"
+                           "note_sub_folder_id = :note_sub_folder_id,"
+                           "note_text = :note_text,"
+                           "has_dirty_data = :has_dirty_data, "
+                           "file_last_modified = :file_last_modified,"
+                           "file_created = :file_created,"
+                           "modified = :modified "
+                           "WHERE id = :id"));
         query.bindValue(QStringLiteral(":id"), _id);
     } else {
         /*
          * TODO
-         * Voir dans NoteMappour construire la liste des liens avant d'ajouter la note
+         *
+         * Appeler addNoteToMap()
+         *
+         * Voir dans NoteMap pour construire la liste des liens avant d'ajouter la note
          * Ca permettra d'avoir une fonction génériqu epour ajouter les notes en listant les fichiers
-         */
+         */        query.prepare(QStringLiteral(
+            "INSERT INTO note"
+            "(name, file_name, "
+            "file_size, note_text, has_dirty_data, "
+            "file_last_modified, file_created,"
+            "modified, note_sub_folder_id) "
+            "VALUES (:name,"
+            ":file_name, :file_size, :note_text,"
+            ":has_dirty_data, :file_last_modified,"
+            ":file_created, :modified,"
+            ":note_sub_folder_id)"));
     }
 
     const QDateTime modified = QDateTime::currentDateTime();
@@ -1183,7 +1215,7 @@ bool Note::store() {
         _id = query.lastInsertId().toInt();
     }
 
-    this->_modified = modified;
+   this->_modified = modified;
     return true;
 }
 
