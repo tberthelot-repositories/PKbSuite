@@ -185,6 +185,9 @@ MainWindow::MainWindow(QWidget *parent)
     // do a bit more styling
     initStyling();
 
+    // initialize the note graph
+    initKbNoteMap();
+
     // initialize the dock widgets
     initDockWidgets();
 
@@ -201,7 +204,7 @@ MainWindow::MainWindow(QWidget *parent)
     initShowHidden();
 
     createSystemTrayIcon();
-    initKbNoteMap();
+
     buildNotesIndexAndLoadNoteDirectoryList();
 
     // setup the update available button
@@ -762,7 +765,7 @@ QAction *MainWindow::findAction(const QString &objectName) {
  * Initialize the memory QMap to manage the graph of Notes
  */
 void MainWindow::initKbNoteMap() {
-    _kbNoteMap = new NoteMap();
+    _kbNoteMap = NoteMap::getInstance();
 
     QString notePath = Utils::Misc::removeIfEndsWith(this->notesPath, QDir::separator());
     _kbNoteMap->createNoteList(notePath);
@@ -2361,7 +2364,7 @@ void MainWindow::notesWereModified(const QString &str) {
     qDebug() << "notesWereModified: " << str;
 
     QFileInfo fi(str);
-    Note note = Note::fetchByFileName(fi.fileName());
+    Note note = NoteMap::getInstance()->fetchNoteByFileName(fi.fileName());
 
     // load note from disk if current note was changed
     if (note.getFileName() == this->_currentNote.getFileName()) {
@@ -2977,7 +2980,7 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
 
         // remove all missing notes
         for (const int noteId : removedNoteIdList) {
-            Note note = Note::fetch(noteId);
+            Note note = NoteMap::getInstance()->fetchNoteById(noteId);
             if (note.isFetched()) {
                 note.remove();
                 wasModified = true;
@@ -3309,7 +3312,7 @@ void MainWindow::setCurrentNoteFromNoteId(const int noteId) {
     // make sure the main window is visible
     show();
 
-    Note note = Note::fetch(noteId);
+    Note note = NoteMap::getInstance()->fetchNoteById(noteId);
     if (note.isFetched()) {
         setCurrentNote(std::move(note));
     }
@@ -3325,7 +3328,7 @@ void MainWindow::reloadCurrentNoteByNoteId(bool updateNoteText) {
     const int pos = cursor.position();
 
     // update the current note
-    _currentNote = Note::fetch(_currentNote.getId());
+    _currentNote = NoteMap::getInstance()->fetchNoteById(_currentNote.getId());
     setCurrentNote(std::move(_currentNote), updateNoteText);
 
     // restore old cursor position
@@ -4079,7 +4082,7 @@ void MainWindow::removeSelectedNotes() {
                 }
 
                 const int id = item->data(0, Qt::UserRole).toInt();
-                Note note = Note::fetch(id);
+                Note note = NoteMap::getInstance()->fetchNoteById(id);
 
                 // search and remove note from the note tree widget
                 removeNoteFromNoteTreeWidget(note);
@@ -4192,7 +4195,7 @@ void MainWindow::removeSelectedTags() {
             
             int idNote = 0;
             while (idNote < idsTaggedNotes.size()) {
-                Note note = Note::fetch(idsTaggedNotes.at(idNote));
+                Note note = NoteMap::getInstance()->fetchNoteById(idsTaggedNotes.at(idNote));
                 QString noteText = note.getNoteText();
                    
                 QRegularExpression re = QRegularExpression(R"((, )?@)" + tag.getName());
@@ -4260,7 +4263,7 @@ void MainWindow::moveSelectedNotesToFolder(const QString &destinationFolder) {
             }
 
             const int noteId = item->data(0, Qt::UserRole).toInt();
-            Note note = Note::fetch(noteId);
+            Note note = NoteMap::getInstance()->fetchNoteById(noteId);
 
             if (!note.isFetched()) {
                 continue;
@@ -4302,7 +4305,7 @@ QVector<Note> MainWindow::selectedNotes() {
         }
 
         const int noteId = item->data(0, Qt::UserRole).toInt();
-        const Note note = Note::fetch(noteId);
+        const Note note = NoteMap::getInstance()->fetchNoteById(noteId);
 
         if (note.isFetched()) {
             selectedNotes << note;
@@ -4356,7 +4359,7 @@ void MainWindow::copySelectedNotesToFolder(const QString &destinationFolder,
             }
 
             const int noteId = item->data(0, Qt::UserRole).toInt();
-            Note note = Note::fetch(noteId);
+            Note note = NoteMap::getInstance()->fetchNoteById(noteId);
 
             if (!note.isFetched()) {
                 continue;
@@ -4405,7 +4408,7 @@ void MainWindow::tagSelectedNotes(const Tag &tag) {
             }
 
             const int noteId = item->data(0, Qt::UserRole).toInt();
-            Note note = Note::fetch(noteId);
+            Note note = NoteMap::getInstance()->fetchNoteById(noteId);
 
             if (!note.isFetched()) {
                 continue;
@@ -4474,7 +4477,7 @@ void MainWindow::removeTagFromSelectedNotes(const Tag &tag) {
             }
 
             const int noteId = item->data(0, Qt::UserRole).toInt();
-            const Note note = Note::fetch(noteId);
+            const Note note = NoteMap::getInstance()->fetchNoteById(noteId);
 
             if (!note.isFetched()) {
                 continue;
@@ -5111,7 +5114,7 @@ void MainWindow::filterNotesBySearchLineEditText() {
 
             // count occurrences of search terms in notes
             if (!isHidden && showMatches) {
-                const Note note = Note::fetch(noteId);
+                const Note note = NoteMap::getInstance()->fetchNoteById(noteId);
                 item->setForeground(1, QColor(Qt::gray));
                 int count = 0;
 
@@ -5626,7 +5629,7 @@ void MainWindow::openLocalUrl(QString urlString) {
 
         if (match.hasMatch()) {
             int noteId = match.captured(1).toInt();
-            Note note = Note::fetch(noteId);
+            Note note = NoteMap::getInstance()->fetchNoteById(noteId);
             if (note.isFetched()) {
                 // set current note
                 setCurrentNote(std::move(note));
@@ -8071,7 +8074,7 @@ void MainWindow::on_tagTreeWidget_itemChanged(QTreeWidgetItem *item,
             
             int idNote = 0;
             while (idNote < idsTaggedNotes.size()) {
-                Note note = Note::fetch(idNote);
+                Note note = _kbNoteMap->fetchNoteById(idNote);
                 QString noteText = note.getNoteText();
                 
                 QRegularExpression re = QRegularExpression("" + tag.getName());
@@ -8670,7 +8673,7 @@ void MainWindow::moveSelectedNotesToNoteSubFolder(
             }
 
             const int noteId = item->data(0, Qt::UserRole).toInt();
-            Note note = Note::fetch(noteId);
+            Note note = _kbNoteMap->fetchNoteById(noteId);
             Note oldNote = note;
 
             if (!note.isFetched()) {
@@ -8784,7 +8787,7 @@ void MainWindow::copySelectedNotesToNoteSubFolder(
             }
 
             const int noteId = item->data(0, Qt::UserRole).toInt();
-            Note note = Note::fetch(noteId);
+            Note note = _kbNoteMap->fetchNoteById(noteId);
 
             if (!note.isFetched()) {
                 continue;
@@ -9281,7 +9284,7 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
     }
 
     int noteId = current->data(0, Qt::UserRole).toInt();
-    Note note = Note::fetch(noteId);
+    Note note = _kbNoteMap->fetchNoteById(noteId);
     qDebug() << __func__;
 
     setCurrentNote(std::move(note), true, false);
@@ -9307,7 +9310,7 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
 void MainWindow::openCurrentNoteInTab() {
     // simulate a newly opened tab by updating the current tab with the last note
     if (_lastNoteId > 0) {
-        auto previousNote = Note::fetch(_lastNoteId);
+        auto previousNote = _kbNoteMap->fetchNoteById(_lastNoteId);
         if (previousNote.isFetched()) {
             updateCurrentTabData(previousNote);
         }
@@ -9597,7 +9600,7 @@ void MainWindow::on_noteTreeWidget_itemChanged(QTreeWidgetItem *item,
     }
 
     const int noteId = item->data(0, Qt::UserRole).toInt();
-    Note note = Note::fetch(noteId);
+    Note note = _kbNoteMap->fetchNoteById(noteId);
     if (note.isFetched()) {
         qDebug() << __func__ << " - 'note': " << note;
 
@@ -11015,7 +11018,7 @@ void MainWindow::on_noteTreeWidget_itemSelectionChanged() {
     qDebug() << __func__;
     if (ui->noteTreeWidget->selectedItems().size() == 1) {
         int noteId = ui->noteTreeWidget->selectedItems()[0]->data(0, Qt::UserRole).toInt();
-        Note note = Note::fetch(noteId);
+        Note note = _kbNoteMap->fetchNoteById(noteId);
         bool currentNoteChanged = _currentNote.getId() != noteId;
         setCurrentNote(std::move(note), true, false);
 

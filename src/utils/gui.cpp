@@ -33,6 +33,7 @@
 #include <QPlainTextEdit>
 #include <QTreeWidgetItem>
 #include <QVBoxLayout>
+#include <entities/notemap.h>
 /**
  * Checks if there is at least one child that is visible
  */
@@ -843,7 +844,7 @@ Note Utils::Gui::getTabWidgetNote(QTabWidget *tabWidget, int index,
         return Note::fetchByName(noteName, noteSubFolderPathData);
     } else {
         const int noteId = getTabWidgetNoteId(tabWidget, index);
-        return Note::fetch(noteId);
+        return NoteMap::getInstance()->fetchNoteById(noteId);
     }
 }
 

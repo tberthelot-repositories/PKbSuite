@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include <entities/note.h>
 #include <libraries/qhotkey/QHotkey/qhotkey.h>
 #include <QFileSystemWatcher>
 #include <QMainWindow>
@@ -26,6 +25,7 @@
 
 #include "utils/kbgraph.h"
 #include "entities/notemap.h"
+#include "entities/note.h"
 
 #define SORT_ALPHABETICAL 0
 #define SORT_BY_LAST_CHANGE 1
@@ -64,8 +64,6 @@ class StoredImagesDialog;
 class StoredAttachmentsDialog;
 class NoteHistory;
 class NoteDiffDialog;
-class UpdateService;
-class FakeVimHandler;
 class PKbSuiteMarkdownTextEdit;
 class CommandBar;
 struct TagHeader;

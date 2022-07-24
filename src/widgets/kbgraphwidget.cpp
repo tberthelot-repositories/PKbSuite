@@ -41,56 +41,46 @@ void kbGraphWidget::setMainWindowPtr(MainWindow* mainWindow) {
 }
 
 void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
-    _mainWindow->getNoteMap()
+    QMap<Note*, QList<Note*>> noteMap = NoteMap::getInstance()->getNoteMap();
 
-    QDir dir = QDir(noteFolder);
-
-    QStringList noteFiles = dir.entryList(QStringList() << "*.md" << "*.Md" << "*.MD", QDir::Files);
-    foreach (QString filename, noteFiles) {
-        QString fullFileName = noteFolder + "/" + filename;
-        QFile noteFile(fullFileName);
-        if (!noteFile.open(QIODevice::ReadOnly)) // | QIODevice::Text))
-            return;
-
-        kbGraphNode* node = new kbGraphNode(filename.left(filename.length() - 3), this);
+    // Insert all nodes
+    QMapIterator<Note*, QList<Note*>> iterator(noteMap);
+    while (iterator.hasNext()) {
+        iterator.next();
+        kbGraphNode* node = new kbGraphNode(iterator.key()->getName(), this);
         _noteNodes << node;
         scene()->addItem(node);
-        noteFile.close();
     }
 
+    // Insert all links
+    QList<Note*> notes = noteMap.keys();
     foreach (kbGraphNode* node, _noteNodes) {
-        QString fullFileName = noteFolder + "/" + node->name() + ".md";
-        QFile noteFile(fullFileName);
-        if (!noteFile.open(QIODevice::ReadOnly))
-            return;
+        foreach (Note* note, notes) {
+            if (node->name() == note->getName()) {
+                QList<Note*> targetNotes = noteMap.value(note);
+                foreach (Note* targetNote, targetNotes) {
+                    for (int i = 0; i < _noteNodes.size(); i++) {
+                        QString notenodename = _noteNodes.at(i)->name(); //TODO
+                        QString targetnodename = targetNote->getName(); // TODO
+                        if (_noteNodes.at(i)->name() == targetNote->getName()) {
+//                            if ((!node->linkToNodeExists(_noteNodes.at(i))) && (!node->reverseLinkExists(_noteNodes.at(i)))) {
+                                kbGraphLink* link = new kbGraphLink(node, _noteNodes.at(i));
+                                node->addLink(link);
+                                link->adjust();
+                                scene()->addItem(link);
+//                            }
 
-        QTextStream flux(&noteFile);
-        QString fluxText = flux.readAll();
-
-        QRegularExpression re = QRegularExpression(R"(\[([A-Za-zÀ-ÖØ-öø-ÿ_\s]*)\]\([AA-Za-zÀ-ÖØ-öø-ÿ_\s\d?%]*\.md\))");
-        QRegularExpressionMatchIterator reIterator = re.globalMatch(fluxText);
-        while (reIterator.hasNext()) {
-            QRegularExpressionMatch reMatch = reIterator.next();
-            QString targetNoteName = reMatch.captured(1);
-
-            for (int i = 0; i < _noteNodes.size(); i++) {
-                if (_noteNodes.at(i)->name() == targetNoteName) {
-                    if ((!node->linkToNodeExists(_noteNodes.at(i))) & (!node->reverseLinkExists(_noteNodes.at(i)))) {
-                        kbGraphLink* link = new kbGraphLink(node, _noteNodes.at(i));
-                        node->addLink(link);
-                        link->adjust();
-                        scene()->addItem(link);
+                            break;
+                        }
                     }
-
-                    break;
                 }
             }
         }
 
         if (node->getNumberOfLinks() > _maxLinkNumber)
             _maxLinkNumber = node->getNumberOfLinks();
-
-        noteFile.close();
+        else
+            _maxLinkNumber = 1;
     }
 
     foreach (kbGraphNode* node, _noteNodes) {
@@ -98,6 +88,7 @@ void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
     }
 }
 
+// TODO Check if has to be modified to take note graph into acount
 void kbGraphWidget::addNoteToGraph(QString noteName) {
         kbGraphNode* node = new kbGraphNode(noteName, this);
         _noteNodes << node;

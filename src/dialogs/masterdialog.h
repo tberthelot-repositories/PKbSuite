@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QDialog>
+#include <mainwindow.h>
+
 class QKeyEvent;
 
 class MasterDialog : public QDialog {
@@ -13,6 +15,8 @@ class MasterDialog : public QDialog {
     virtual void show();
 
     virtual void open() override;
+
+    MainWindow* GetMainWindow();
 
    protected:
     bool _ignoreReturnKey = false;

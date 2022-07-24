@@ -24,6 +24,8 @@ class Note {
 
     int getId() const;
 
+    void setId(const int id);
+
     QString getName() const;
 
     QString getFileName() const;
@@ -39,27 +41,14 @@ class Note {
 
     void setNoteText(QString text);
 
-    static bool addNote(const QString &name, const QString &fileName,
-                        const QString &text);
-
-    static Note fetch(int id);
-
     static Note fetchByName(const QRegularExpression &regExp,
                             int noteSubFolderId = -1);
-
-    static Note fetchByFileName(const QString &fileName,
-                                int noteSubFolderId = -1);
-
-    static Note fetchByFileName(const QString &fileName,
-                                const QString &noteSubFolderPathData);
 
     static Note fetchByName(const QString &name, int noteSubFolderId = -1);
 
     static Note fetchByName(const QString &name,
         const QString &noteSubFolderPathData,
         const QString& pathDataSeparator = QStringLiteral("\n"));
-
-    static int fetchNoteIdByName(const QString &name, int noteSubFolderId = -1);
 
     static QVector<Note> fetchAll(int limit = -1);
 
@@ -126,8 +115,6 @@ class Note {
     bool refetch();
 
     Note fillFromQuery(const QSqlQuery &query);
-
-    bool fillByFileName(const QString &fileName, int noteSubFolderId = -1);
 
     bool removeNoteFile();
 

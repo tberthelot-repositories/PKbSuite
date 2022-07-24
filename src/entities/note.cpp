@@ -20,7 +20,6 @@
 #include <QUrl>
 #include <utility>
 
-#include "api/noteapi.h"
 #include "entities/bookmark.h"
 #include "helpers/codetohtmlconverter.h"
 
@@ -31,6 +30,8 @@
 #include "tag.h"
 #include "trashitem.h"
 
+#include "notemap.h"
+
 Note::Note()
       : _id{0},
       _noteSubFolderId{0},
@@ -38,6 +39,8 @@ Note::Note()
       _hasDirtyData{false} {}
 
 int Note::getId() const { return this->_id; }
+
+void Note::setId(const int id) {_id = id;};
 
 QString Note::getName() const { return this->_name; }
 
@@ -95,38 +98,6 @@ bool Note::getHasDirtyData() const { return this->_hasDirtyData; }
 void Note::setName(QString text) { this->_name = std::move(text); }
 
 void Note::setNoteText(QString text) { this->_noteText = std::move(text); }
-
-bool Note::addNote(const QString &name, const QString &fileName,
-                   const QString &text) {
-    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
-    QSqlQuery query(db);
-
-    query.prepare(
-        QStringLiteral("INSERT INTO note ( name, file_name, note_text ) "
-                       "VALUES ( :name, :file_name, :note_text )"));
-    query.bindValue(QStringLiteral(":name"), name);
-    query.bindValue(QStringLiteral(":file_name"), fileName);
-    query.bindValue(QStringLiteral(":note_text"), text);
-    return query.exec();
-}
-
-Note Note::fetch(int _id) {
-    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
-    QSqlQuery query(db);
-
-    query.prepare(QStringLiteral("SELECT * FROM note WHERE id = :id"));
-    query.bindValue(QStringLiteral(":id"), _id);
-
-    if (!query.exec()) {
-        qWarning() << __func__ << ": " << query.lastError();
-    } else {
-        if (query.first()) {
-            return noteFromQuery(query);
-        }
-    }
-
-    return Note();
-}
 
 bool Note::hasAttachments() {
     return !getEmbedmentFileList().empty();
@@ -188,51 +159,6 @@ Note Note::fetchByName(const QRegularExpression &regExp, int noteSubFolderId) {
     return Note();
 }
 
-Note Note::fetchByFileName(const QString &fileName, int noteSubFolderId) {
-    Note note;
-    // get the active note subfolder _id if none was set
-    if (noteSubFolderId == -1) {
-        noteSubFolderId = NoteSubFolder::activeNoteSubFolderId();
-    }
-
-    note.fillByFileName(fileName, noteSubFolderId);
-    return note;
-}
-
-Note Note::fetchByFileName(const QString &fileName,
-						   const QString &noteSubFolderPathData) {
-    auto noteSubFolder = NoteSubFolder::fetchByPathData(noteSubFolderPathData,
-                                                        QStringLiteral("/"));
-    return fetchByFileName(fileName, noteSubFolder.getId());
-}
-
-bool Note::fillByFileName(const QString &fileName, int noteSubFolderId) {
-    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
-    QSqlQuery query(db);
-
-    // get the active note subfolder _id if none was set
-    if (noteSubFolderId == -1) {
-        noteSubFolderId = NoteSubFolder::activeNoteSubFolderId();
-    }
-
-    query.prepare(
-        QStringLiteral("SELECT * FROM note WHERE file_name = :file_name AND "
-                       "note_sub_folder_id = :note_sub_folder_id"));
-    query.bindValue(QStringLiteral(":file_name"), fileName);
-    query.bindValue(QStringLiteral(":note_sub_folder_id"), noteSubFolderId);
-
-    if (!query.exec()) {
-        qWarning() << __func__ << ": " << query.lastError();
-    } else {
-        if (query.first()) {
-            this->fillFromQuery(query);
-            return true;
-        }
-    }
-
-    return false;
-}
-
 /**
  * Fetches a note by its file path relative to the note folder it is in
  *
@@ -253,7 +179,7 @@ Note Note::fetchByRelativeFilePath(const QString &relativePath) {
         return Note();
     }
 
-    return Note::fetchByFileName(fileInfo.fileName(), noteSubFolder.getId());
+//    return Note::fetchByFileName(fileInfo.fileName(), noteSubFolder.getId()); // TODO Check if this function is called with a breakpoint within
 }
 
 /**
@@ -272,25 +198,16 @@ Note Note::fetchByFileUrl(const QUrl &url) {
 }
 
 bool Note::remove(bool withFile) {
-    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
-    QSqlQuery query(db);
+    NoteMap::getInstance()->removeNote(this);
 
-    query.prepare(QStringLiteral("DELETE FROM note WHERE id = :id"));
-    query.bindValue(QStringLiteral(":id"), this->_id);
+    if (withFile) {
+        this->removeNoteFile();
 
-    if (!query.exec()) {
-        qWarning() << __func__ << ": " << query.lastError();
-        return false;
-    } else {
-        if (withFile) {
-            this->removeNoteFile();
-
-            // remove all links to tags
-            Tag::removeAllLinksToNote(*this);
-        }
-
-        return true;
+        // remove all links to tags
+        Tag::removeAllLinksToNote(*this);
     }
+
+    return true;
 }
 
 /**
@@ -513,32 +430,6 @@ Note Note::fetchByName(const QString &name,
             .getId();
 
     return fetchByName(name, noteSubFolderId);
-}
-
-int Note::fetchNoteIdByName(const QString &name, int noteSubFolderId)
-{
-    const QSqlDatabase db = QSqlDatabase::database(QStringLiteral("memory"));
-    QSqlQuery query(db);
-
-    // get the active note subfolder id if none was set
-    if (noteSubFolderId == -1) {
-        noteSubFolderId = NoteSubFolder::activeNoteSubFolderId();
-    }
-
-    query.prepare(
-        QStringLiteral("SELECT id FROM note WHERE name = :name AND "
-                       "note_sub_folder_id = :note_sub_folder_id"));
-    query.bindValue(QStringLiteral(":name"), name);
-    query.bindValue(QStringLiteral(":note_sub_folder_id"), noteSubFolderId);
-
-    if (!query.exec()) {
-        qWarning() << __func__ << ": " << query.lastError();
-    } else {
-        if (query.first()) {
-            return query.value(QStringLiteral("id")).toInt();
-        }
-    }
-    return -1;
 }
 
 Note Note::fetchByName(const QString &name, int noteSubFolderId) {
@@ -1496,7 +1387,7 @@ bool Note::handleNoteTextFileName() {
             const QString nameBase = name;
 
             // check if note with this filename already exists
-            while (Note::fetchByFileName(fileName).isFetched()) {
+            while (NoteMap::getInstance()->fetchNoteByFileName(fileName).isFetched()) {
                 // find new filename for the note
                 name = nameBase + QStringLiteral(" ") +
                        QString::number(++nameCount);
@@ -1940,7 +1831,7 @@ Note Note::updateOrCreateFromFile(QFile &file,
                                   const NoteSubFolder &noteSubFolder,
                                   bool withNoteNameHook) {
     const QFileInfo fileInfo(file);
-    Note note = fetchByFileName(fileInfo.fileName(), noteSubFolder.getId());
+    Note note = NoteMap::getInstance()->fetchNoteByFileName(fileInfo.fileName());
 
     // regardless if the file was found or not, if the size differs or the
     // file was modified after the internal note was modified we want to load
@@ -1999,13 +1890,13 @@ bool Note::fileWriteable() const {
 //
 bool Note::exists() const { return noteIdExists(this->_id); }
 
-bool Note::noteIdExists(int _id) { return fetch(_id)._id > 0; }
+bool Note::noteIdExists(int _id) { return NoteMap::getInstance()->fetchNoteById(_id)._id > 0; }
 
 //
 // reloads the current Note (by fileName)
 //
 bool Note::refetch() {
-    return this->fillByFileName(_fileName, _noteSubFolderId);
+    return NoteMap::getInstance()->fillByFileName(_fileName, this);
 }
 
 /**
@@ -2987,7 +2878,7 @@ bool Note::handleNoteMoving(const Note &oldNote) {
             QStringLiteral("note-replace-links")) == QMessageBox::Yes) {
         // replace the urls in all found notes
         for (const int noteId : noteIdList) {
-            Note note = Note::fetch(noteId);
+            Note note = NoteMap::getInstance()->fetchNoteById(noteId);
 
             if (!note.isFetched()) {
                 continue;
@@ -3614,7 +3505,7 @@ void Note::updateReferenceBySectionInLinkedNotes() {
 }
 
 void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath) {
-	Note linkedNote = Note::fetchByFileName(linkedNotePath);
+	Note linkedNote = NoteMap::getInstance()->fetchNoteByFileName(linkedNotePath);
 	QString text = linkedNote.getNoteText();
 
 	if (text.length() != 0) {

@@ -99,7 +99,7 @@ Note LinkDialog::getSelectedNote() const {
     const int noteId =
         ui->notesListWidget->currentItem()->data(Qt::UserRole).toInt();
 
-    return Note::fetch(noteId);
+    return NoteMap::getInstance()->fetchNoteById(noteId);
 }
 
 QString LinkDialog::getSelectedHeading() const {

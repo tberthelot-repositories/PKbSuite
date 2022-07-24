@@ -10,6 +10,18 @@ MasterDialog::MasterDialog(QWidget *parent) : QDialog(parent) {
     installEventFilter(this);
 }
 
+MainWindow* MasterDialog::GetMainWindow() {
+    const QWidgetList &list = QApplication::topLevelWidgets();
+
+    for(QWidget * w : list){
+        MainWindow *mainWindow = qobject_cast<MainWindow*>(w);
+        if(mainWindow)
+            return mainWindow;
+    }
+
+    return NULL;
+}
+
 void MasterDialog::closeEvent(QCloseEvent *event) {
     //    storeGeometrySettings();
     QDialog::closeEvent(event);

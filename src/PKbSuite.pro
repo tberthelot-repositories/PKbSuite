@@ -66,9 +66,6 @@ SOURCES += main.cpp\
     widgets/navigationwidget.cpp \
     widgets/notepreviewwidget.cpp \
     widgets/kbgraphwidget.cpp \
-    api/noteapi.cpp \
-    api/notesubfolderapi.cpp \
-    api/tagapi.cpp \
     widgets/combobox.cpp \
     widgets/fontcolorwidget.cpp \
     dialogs/tabledialog.cpp \
@@ -132,9 +129,6 @@ HEADERS  += mainwindow.h \
     widgets/navigationwidget.h \
     widgets/notepreviewwidget.h \
     widgets/kbgraphwidget.h \
-    api/noteapi.h \
-    api/notesubfolderapi.h \
-    api/tagapi.h \
     widgets/combobox.h \
     widgets/fontcolorwidget.h \
     dialogs/tabledialog.h \

@@ -15,6 +15,7 @@
 #include "note.h"
 #include "notefolder.h"
 #include "notesubfolder.h"
+#include "notemap.h"
 
 Tag::Tag() noexcept
     : _parentId(0), _priority(0) {}
@@ -720,7 +721,7 @@ QVector<int> Tag::fetchAllLinkedNoteIds(int tagId, const bool fromAllSubfolders,
             int noteSubFolderId =
                 NoteSubFolder::fetchByPathData(noteSubFolderPathData, QStringLiteral("/"))
                     .getId();
-            int noteId = Note::fetchNoteIdByName(name, noteSubFolderId);
+            int noteId = NoteMap::getInstance()->fetchNoteIdByName(name);
             noteIdList.append(noteId);
         }
     }
@@ -777,7 +778,7 @@ QVector<int> Tag::fetchAllLinkedNoteIdsForFolder(int tagId,
             int noteSubFolderId =
                 NoteSubFolder::fetchByPathData(noteSubFolderPathData, QStringLiteral("/"))
                     .getId();
-            int noteId = Note::fetchNoteIdByName(name, noteSubFolderId);
+            int noteId = NoteMap::getInstance()->fetchNoteIdByName(name);
             noteIdList.append(noteId);
         }
     }

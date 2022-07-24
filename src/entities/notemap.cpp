@@ -2,8 +2,18 @@
 #include <QDir>
 #include <qtextstream.h>
 #include <QRegularExpression>
+#include "note.h"
 
-NoteMap::NoteMap() {
+NoteMap* NoteMap::_instance = NULL;
+QMap<Note*, QList<Note*>> NoteMap::_noteMap;
+
+NoteMap* NoteMap::getInstance()
+{
+    if (!_instance) {
+        _instance = new NoteMap();
+    }
+
+    return _instance;
 }
 
 void NoteMap::createNoteList(const QString noteFolder) {
@@ -29,6 +39,7 @@ void NoteMap::createNoteList(const QString noteFolder) {
         note->setFileCreated(fileInfo.birthTime());
         note->setFileLastModified(fileInfo.lastModified());
         note->setModified(QDateTime::currentDateTime());
+        note->setId(_noteMap.size() + 1);
 
         QList<Note*> listInit;
         listInit << note;
@@ -41,8 +52,6 @@ void NoteMap::createNoteList(const QString noteFolder) {
 //         scene()->addItem(node);
         noteFile.close();
     }
-
-    int i = _noteMap.size();
 }
 
 void NoteMap::updateNoteLinks(Note* note) {
@@ -60,23 +69,71 @@ void NoteMap::updateNoteLinks(Note* note) {
     }
 }
 
-
 void NoteMap::addNoteToMap(Note* note) {
-
 	_noteMap.insert(note, getLinkedNotes(note));
 }
 
-Note* NoteMap::findNoteFromName(QString name) {
+void NoteMap::removeNote(Note* note) {
+    QMapIterator<Note*, QList<Note*>> iterator(_noteMap);
+    while (iterator.hasNext()) {
+        iterator.next();
+        if (iterator.key()->getId() == note->getId())
+            _noteMap.remove(iterator.key());
+    }
+}
+
+Note NoteMap::fetchNoteByName(QString name) {
     QMapIterator<Note*, QList<Note*>> iterator(_noteMap);
     while (iterator.hasNext()) {
         iterator.next();
         if (iterator.key()->getName() == name)
-            return iterator.key();
+            return *iterator.key();
     }
 
-    return NULL;
+    return Note();
 }
 
+Note NoteMap::fetchNoteById(int _id) {
+    QMapIterator<Note*, QList<Note*>> iterator(_noteMap);
+    while (iterator.hasNext()) {
+        iterator.next();
+        if (iterator.key()->getId() == _id)
+            return *iterator.key();
+    }
+
+    return Note();
+}
+
+Note NoteMap::fetchNoteByFileName(const QString &fileName) {
+    Note note;
+
+    fillByFileName(fileName, &note);
+
+    return note;
+}
+
+int NoteMap::fetchNoteIdByName(const QString& name) {
+    return fetchNoteByFileName(name).getId();
+}
+
+
+bool NoteMap::fillByFileName(const QString& fileName, Note* note) {
+    QMapIterator<Note*, QList<Note*>> iterator(_noteMap);
+    while (iterator.hasNext()) {
+        iterator.next();
+        if (iterator.key()->getName() == fileName) {
+            note =  iterator.key();
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+QMap<Note*, QList<Note*>> NoteMap::getNoteMap() {
+    return _noteMap;
+}
 
 QList<Note*> NoteMap::getLinkedNotes(Note* note) {
 	/*
@@ -87,15 +144,18 @@ QList<Note*> NoteMap::getLinkedNotes(Note* note) {
 
     QList<Note*> linkedNotes;
 
+    if (_noteMap[note][0] == note)
+        _noteMap[note].removeFirst();
+
     QRegularExpression re = QRegularExpression(R"(\[([A-Za-zÀ-ÖØ-öø-ÿ_\s]*)\]\([AA-Za-zÀ-ÖØ-öø-ÿ_\s\d?%]*\.md\))");
     QRegularExpressionMatchIterator reIterator = re.globalMatch(note->getNoteText());
     while (reIterator.hasNext()) {
         QRegularExpressionMatch reMatch = reIterator.next();
         QString targetNoteName = reMatch.captured(1);
 
-        Note* linkedNote = findNoteFromName(targetNoteName);
-        if (linkedNote)
-            linkedNotes << linkedNote;
+        Note linkedNote = fetchNoteByName(targetNoteName);
+        if (linkedNote.getId() > 0)
+            linkedNotes << &linkedNote;
     }
 
     return linkedNotes;
