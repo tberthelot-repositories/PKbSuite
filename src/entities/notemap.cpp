@@ -121,8 +121,18 @@ bool NoteMap::fillByFileName(const QString& fileName, Note* note) {
     QMapIterator<Note*, QList<Note*>> iterator(_noteMap);
     while (iterator.hasNext()) {
         iterator.next();
-        if (iterator.key()->getName() == fileName) {
-            note =  iterator.key();
+        if (iterator.key()->getFileName() == fileName) {
+            note = iterator.key();
+            note->setName(iterator.key()->getName());
+            note->setFileName(iterator.key()->getFileName());
+            note->setFileSize(iterator.key()->getFileSize());
+            note->setNoteText(iterator.key()->getNoteText());
+            note->setHasDirtyData(iterator.key()->getHasDirtyData());
+            note->setFileCreated(iterator.key()->getFileCreated());
+            note->setFileLastModified(iterator.key()->getFileLastModified());
+            note->setModified(QDateTime::currentDateTime());
+            note->setId(_noteMap.size() + 1);
+        
             return true;
         }
     }
