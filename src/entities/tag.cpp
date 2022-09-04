@@ -811,8 +811,9 @@ QVector<Note> Tag::fetchAllLinkedNotes() const {
                 query.value(QStringLiteral("note_sub_folder_path")).toString();
             const auto noteSubFolder = NoteSubFolder::fetchByPathData(
                 std::move(noteSubFolderPath), QStringLiteral("/"));
+            NoteMap* noteMap = NoteMap::getInstance();
             const auto note =
-                Note::fetchByName(fileName, noteSubFolder.getId());
+                noteMap->fetchNoteByName(fileName);
 
             noteList << note;
         }
@@ -1203,7 +1204,8 @@ Note Tag::getNoteFromNoteTagLinkQuery(const QSqlQuery &query) {
     const NoteSubFolder noteSubFolder = NoteSubFolder::fetchByPathData(
         noteSubFolderPath, QStringLiteral("/"));
 
-    return Note::fetchByName(noteFileName, noteSubFolder.getId());
+    NoteMap* noteMap = NoteMap::getInstance();
+    return noteMap->fetchNoteByName(noteFileName);
 }
 
 /**

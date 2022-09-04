@@ -1779,7 +1779,8 @@ void MainWindow::loadNoteDirectoryList() {
         noteFolderItem->setExpanded(true);
     } else {
         // load all notes and add them to the note list widget
-        const QVector<Note> noteList = Note::fetchAll();
+        NoteMap* noteMap = NoteMap::getInstance();
+        const QVector<Note> noteList = noteMap->fetchAllNotes();
         for (const Note &note : noteList) {
             addNoteToNoteTreeWidget(note);
         }
@@ -1910,7 +1911,7 @@ QTreeWidgetItem *MainWindow::addNoteSubFolderToTreeWidget(
     const int id = noteSubFolder.getId();
     const QString name = noteSubFolder.getName();
     QSettings settings;
-    const int linkCount = Note::countByNoteSubFolderId(
+    const int linkCount = NoteMap::getInstance()->countByNoteSubFolderId(
         id,
         settings
             .value(QStringLiteral("noteSubfoldersPanelShowNotesRecursively"))
@@ -2740,7 +2741,8 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
         storeUpdatedNotesToDisk();
 
         // init the lists to check for removed items
-        _buildNotesIndexBeforeNoteIdList = Note::fetchAllIds();
+        NoteMap* noteMap = NoteMap::getInstance();
+        _buildNotesIndexBeforeNoteIdList = noteMap->fetchAllIds();
         _buildNotesIndexBeforeNoteSubFolderIdList =
             NoteSubFolder::fetchAllIds();
         _buildNotesIndexAfterNoteIdList.clear();
@@ -2820,7 +2822,7 @@ bool MainWindow::buildNotesIndex(int noteSubFolderId, bool forceRebuild) {
     if (!hasNoteSubFolder && forceRebuild) {
         // first delete all notes and note sub folders in the database if a
         // rebuild was forced
-        Note::deleteAll();
+        NoteMap::getInstance()->deleteAll();
         NoteSubFolder::deleteAll();
     }
 
@@ -3139,7 +3141,8 @@ void MainWindow::updateNoteDirectoryWatcher() {
     }
 
     int count = 0;
-    const QVector<Note> noteList = Note::fetchAll();
+    NoteMap* noteMap = NoteMap::getInstance();
+    const QVector<Note> noteList = noteMap->fetchAllNotes();
     for (const Note &note : noteList) {
 #ifdef Q_OS_LINUX
         // only add the last first 200 notes to the file watcher to
@@ -3857,7 +3860,7 @@ void MainWindow::searchInNoteTextEdit(QString str) {
         const QString queryStr =
             str.replace(QLatin1String("|"), QLatin1String("\\|"));
         const QStringList queryStrings =
-            Note::buildQueryStringList(queryStr, true);
+            NoteMap::buildQueryStringList(queryStr, true);
 
         if (queryStrings.count() > 0) {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
@@ -5083,7 +5086,8 @@ void MainWindow::filterNotesBySearchLineEditText() {
         // open search dialog
         doSearchInNote(searchText);
 
-        QVector<int> noteIdList = Note::searchInNotes(
+        NoteMap* noteMap = NoteMap::getInstance();
+        QVector<int> noteIdList = noteMap->searchInNotes(
             searchText,
             _showNotesFromAllNoteSubFolders ||
                 NoteSubFolder::isNoteSubfoldersPanelShowNotesRecursively());
@@ -5092,7 +5096,7 @@ void MainWindow::filterNotesBySearchLineEditText() {
         ui->noteTreeWidget->setColumnCount(2);
         int maxWidth = 0;
         const QStringList searchTextTerms =
-            Note::buildQueryStringList(searchText);
+            NoteMap::buildQueryStringList(searchText);
         const QSettings settings;
         const bool showMatches =
             settings.value(QStringLiteral("showMatches"), true).toBool();
@@ -5119,8 +5123,8 @@ void MainWindow::filterNotesBySearchLineEditText() {
                 int count = 0;
 
                 for (QString word : searchTextTerms) {
-                    if (Note::isNameSearch(word)) {
-                        word = Note::removeNameSearchPrefix(word);
+                    if (NoteMap::isNameSearch(word)) {
+                        word = NoteMap::removeNameSearchPrefix(word);
                     }
 
                     count += note.countSearchTextInNote(word);
@@ -5176,7 +5180,7 @@ void MainWindow::filterNotesBySearchLineEditText() {
  */
 void MainWindow::doSearchInNote(QString searchText) {
     const QStringList searchTextTerms =
-        Note::buildQueryStringList(searchText, true, true);
+        NoteMap::buildQueryStringList(searchText, true, true);
 
     if (searchTextTerms.count() > 1) {
         QString localSearchTerm = QStringLiteral("(") +
@@ -5185,8 +5189,8 @@ void MainWindow::doSearchInNote(QString searchText) {
         activeNoteTextEdit()->doSearch(
             localSearchTerm, QPlainTextEditSearchWidget::RegularExpressionMode);
     } else {
-        if (Note::isNameSearch(searchText)) {
-            searchText = Note::removeNameSearchPrefix(searchText);
+        if (NoteMap::isNameSearch(searchText)) {
+            searchText = NoteMap::removeNameSearchPrefix(searchText);
         }
 
         activeNoteTextEdit()->doSearch(searchText.remove(QStringLiteral("\"")));
@@ -5332,7 +5336,8 @@ void MainWindow::filterNotesByNoteSubFolders() {
     noteIdList.reserve(noteSubFolderIds.count());
     for (int noteSubFolderId : Utils::asConst(noteSubFolderIds)) {
         // get all notes of a note sub folder
-        noteIdList << Note::fetchAllIdsByNoteSubFolderId(noteSubFolderId);
+            NoteMap* noteMap = NoteMap::getInstance();
+            noteIdList << noteMap->fetchAllIdsByNoteSubFolderId(noteSubFolderId);
     }
 
     // omit the already hidden notes
@@ -5393,7 +5398,8 @@ void MainWindow::jumpToNoteOrCreateNew(bool disableLoadNoteDirectoryList) {
     ui->searchLineEdit->clear();
 
     // first let us search for the entered text
-    Note note = Note::fetchByName(text);
+    NoteMap* noteMap = NoteMap::getInstance();
+    Note note = noteMap->fetchNoteByName(text);
 
     // if we can't find a note we create a new one
     if (note.getId() == 0) {
@@ -5871,7 +5877,7 @@ void MainWindow::generateSystemTrayContextMenu() {
     connect(createNoteAction, &QAction::triggered, this,
             &MainWindow::on_action_New_note_triggered);
 
-    int maxNotes = Note::countAll();
+    int maxNotes = NoteMap::getInstance()->countAll();
 
     if (maxNotes > 0) {
         if (maxNotes > 9) {
@@ -5881,7 +5887,8 @@ void MainWindow::generateSystemTrayContextMenu() {
         // add a menu for recent notes
         QMenu *noteMenu = menu->addMenu(tr("Recent notes"));
 
-        const auto noteList = Note::fetchAll(maxNotes);
+        NoteMap* noteMap = NoteMap::getInstance();
+        const auto noteList = noteMap->fetchAllNotes(maxNotes);
 
         for (const Note &note : noteList) {
             QAction *action = noteMenu->addAction(note.getName());
@@ -7226,7 +7233,8 @@ void MainWindow::reloadTagTree() {
         for (int noteSubFolderId : Utils::asConst(noteSubFolderIds)) {
             // get all notes of a note sub folder
             untaggedNoteCount += Note::countAllNotTagged(noteSubFolderId);
-            noteIdList << Note::fetchAllIdsByNoteSubFolderId(noteSubFolderId);
+            NoteMap* noteMap = NoteMap::getInstance();
+            noteIdList << noteMap->fetchAllIdsByNoteSubFolderId(noteSubFolderId);
         }
     } else {
         untaggedNoteCount = Note::countAllNotTagged(0);
@@ -7235,7 +7243,7 @@ void MainWindow::reloadTagTree() {
     // create an item to view all notes
     int linkCount =
         _showNotesFromAllNoteSubFolders || !NoteFolder::isCurrentShowSubfolders() ?
-                Note::countAll() : noteIdList.count();
+                NoteMap::getInstance()->countAll() : noteIdList.count();
     QString toolTip = tr("show all notes (%1)").arg(QString::number(linkCount));
 
     auto *allItem = new QTreeWidgetItem();
@@ -7311,7 +7319,7 @@ void MainWindow::reloadNoteSubFolderTree() {
 
     // add the "all notes" item
     if (showAllNotesItem) {
-        int linkCount = Note::countAll();
+        int linkCount = NoteMap::getInstance()->countAll();
         QString toolTip = tr("show notes from all note subfolders (%1)")
                               .arg(QString::number(linkCount));
 
@@ -7331,7 +7339,7 @@ void MainWindow::reloadNoteSubFolderTree() {
 
     // add the "note folder" item
     QSettings settings;
-    const int linkCount = Note::countByNoteSubFolderId(
+    const int linkCount = NoteMap::getInstance()->countByNoteSubFolderId(
         0, settings
                .value(QStringLiteral("noteSubfoldersPanelShowNotesRecursively"))
                .toBool());
@@ -7443,8 +7451,9 @@ void MainWindow::buildNoteSubFolderTreeForParentItem(QTreeWidgetItem *parent) {
         if (isCurrentNoteTreeEnabled) {
             // load all notes of the subfolder and add them to the note list
             // widget
+            NoteMap* noteMap = NoteMap::getInstance();
             const QVector<Note> noteList =
-                Note::fetchAllByNoteSubFolderId(noteSubFolder.getId());
+                noteMap->fetchAllNotesByNoteSubFolderId(noteSubFolder.getId());
             for (const auto &note : noteList) {
                 addNoteToNoteTreeWidget(note, item);
             }
@@ -7479,8 +7488,9 @@ void MainWindow::buildNoteSubFolderTreeForParentItem(QTreeWidgetItem *parent) {
 
     // add the notes of the note folder root
     if (parentId == 0 && isCurrentNoteTreeEnabled) {
+        NoteMap* noteMap = NoteMap::getInstance();
         const QVector<Note> noteList =
-            Note::fetchAllByNoteSubFolderId(0);
+            noteMap->fetchAllNotesByNoteSubFolderId(0);
         for (const auto &note : noteList) {
             addNoteToNoteTreeWidget(note, parent);
         }
@@ -9454,7 +9464,8 @@ void MainWindow::openNotesContextMenu(const QPoint globalPos,
         // path will be taken into account in
         // Tag::fetchAllWithLinkToNoteNames
         const QString name = item->text(0);
-        const Note note = Note::fetchByName(name);
+        NoteMap* noteMap = NoteMap::getInstance();
+        const Note note = noteMap->fetchNoteByName(name);
         if (note.isFetched()) {
             noteNameList << note.getName();
         }

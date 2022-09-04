@@ -841,7 +841,8 @@ Note Utils::Gui::getTabWidgetNote(QTabWidget *tabWidget, int index,
         const QString &noteName = widget->property("note-name").toString();
         const QString &noteSubFolderPathData = widget->property(
                              "note-subfolder-path-data").toString();
-        return Note::fetchByName(noteName, noteSubFolderPathData);
+        NoteMap* noteMap = NoteMap::getInstance();
+        return noteMap->fetchNoteByName(noteName);
     } else {
         const int noteId = getTabWidgetNoteId(tabWidget, index);
         return NoteMap::getInstance()->fetchNoteById(noteId);
@@ -915,8 +916,9 @@ void Utils::Gui::restoreNoteTabs(QTabWidget *tabWidget, QVBoxLayout *layout) {
                     noteSubFolderPathDataList.at(i);
                 const bool isSticky = noteStickinessList.contains(
                     QString::number(i));
-                const Note note = Note::fetchByName(noteName,
-                                                    noteSubFolderPathData);
+
+                NoteMap* noteMap = NoteMap::getInstance();
+                const Note note = noteMap->fetchNoteByName(noteName);
 
                 // skip if note was not found any more
                 if (!note.isFetched()) {

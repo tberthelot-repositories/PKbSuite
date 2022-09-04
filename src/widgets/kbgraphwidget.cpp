@@ -60,15 +60,13 @@ void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
                 QList<Note*> targetNotes = noteMap.value(note);
                 foreach (Note* targetNote, targetNotes) {
                     for (int i = 0; i < _noteNodes.size(); i++) {
-                        QString notenodename = _noteNodes.at(i)->name(); //TODO
-                        QString targetnodename = targetNote->getName(); // TODO
-                        if (_noteNodes.at(i)->name() == targetNote->getName()) {
-//                            if ((!node->linkToNodeExists(_noteNodes.at(i))) && (!node->reverseLinkExists(_noteNodes.at(i)))) {
+                       if (_noteNodes.at(i)->name() == targetNote->getName()) {
+                            if ((!node->linkToNodeExists(_noteNodes.at(i))) && (!node->reverseLinkExists(_noteNodes.at(i)))) {
                                 kbGraphLink* link = new kbGraphLink(node, _noteNodes.at(i));
                                 node->addLink(link);
                                 link->adjust();
                                 scene()->addItem(link);
-//                            }
+                            }
 
                             break;
                         }
@@ -81,7 +79,7 @@ void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
             _maxLinkNumber = node->getNumberOfLinks();
         else
             _maxLinkNumber = 1;
-    }
+   }
 
     foreach (kbGraphNode* node, _noteNodes) {
         node->setPos((qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360), (qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360));
@@ -129,7 +127,8 @@ void kbGraphWidget::mouseReleaseEvent(QMouseEvent *mouseEvent) {
         QPointF newPt = mapToScene(mouseEvent->pos());
         if ((_pointedNode) && (_initialPos == newPt)) {
             if (!_pointedNode->name().isEmpty()) {
-                Note note = Note::fetchByName(_pointedNode->name());
+                NoteMap* noteMap = NoteMap::getInstance();
+                Note note = noteMap->fetchNoteByName(_pointedNode->name());
                 _mainWindow->setCurrentNote(std::move(note));
                 centerOn(_pointedNode);
                 _pointedNode = nullptr;

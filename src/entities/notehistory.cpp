@@ -10,6 +10,7 @@
 
 #include "note.h"
 #include "notesubfolder.h"
+#include "notemap.h"
 
 /*
  * NoteHistoryItem implementation
@@ -61,8 +62,10 @@ QString NoteHistoryItem::getNoteSubFolderPathData() const {
 
 Note NoteHistoryItem::getNote() const {
     NoteSubFolder noteSubFolder =
-        NoteSubFolder::fetchByPathData(_noteSubFolderPathData);
-    return Note::fetchByName(_noteName, noteSubFolder.getId());
+    NoteSubFolder::fetchByPathData(_noteSubFolderPathData);
+
+    NoteMap* noteMap = NoteMap::getInstance();
+    return noteMap->fetchNoteByName(_noteName);
 }
 
 int NoteHistoryItem::getCursorPosition() const { return _cursorPosition; }
@@ -106,6 +109,7 @@ bool NoteHistoryItem::operator==(const NoteHistoryItem &item) const {
     return _noteName == item.getNoteName() &&
            _noteSubFolderPathData == item.getNoteSubFolderPathData();
 }
+class NoteMap;
 
 QDebug operator<<(QDebug dbg, const NoteHistoryItem &item) {
     dbg.nospace() << "NoteHistoryItem: <noteName>" << item._noteName

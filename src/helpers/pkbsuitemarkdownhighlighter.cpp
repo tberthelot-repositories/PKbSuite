@@ -24,6 +24,7 @@
 #include <QRegularExpressionMatch>
 
 #include "qownspellchecker.h"
+#include <entities/notemap.h>
 
 /**
  * Markdown syntax highlighting
@@ -146,8 +147,11 @@ void PKbSuiteMarkdownHighlighter::highlightBrokenNotesLink(
                     return;
                 }
 
-                const Note note =
-                    _currentNote->fetchByRelativeFileName(fileName);
+//                 const Note note =                        TODO To remove
+//                     _currentNote->fetchByRelativeFileName(fileName);
+
+                NoteMap* noteMap = NoteMap::getInstance();
+                const Note note = noteMap->fetchNoteByFileName(fileName);
 
                 // if the note exists we don't need to do anything
                 if (note.isFetched()) {
