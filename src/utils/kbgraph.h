@@ -29,8 +29,8 @@ public:
 
     void adjust();
 
-    kbGraphNode* source() const;
-    kbGraphNode* dest() const;
+    inline kbGraphNode* source() const;
+    inline kbGraphNode* dest() const;
 
 protected:
     QRectF boundingRect() const override;
@@ -52,11 +52,13 @@ public:
     int type() const override { return Type; }
 
     void addLink(kbGraphLink* link);
+    QVector<kbGraphLink*> linkList();
     bool linkToNodeExists(kbGraphNode* toNode);
     bool reverseLinkExists(kbGraphNode* fromNode);
     QString name();
     int getNumberOfLinks() const;
-    float getCircleSize() const;
+    inline float getCircleSize() const;
+
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

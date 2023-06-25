@@ -16,8 +16,6 @@ class MasterDialog : public QDialog {
 
     virtual void open() override;
 
-    MainWindow* GetMainWindow();
-
    protected:
     bool _ignoreReturnKey = false;
 

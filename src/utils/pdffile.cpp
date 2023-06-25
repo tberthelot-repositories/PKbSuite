@@ -19,7 +19,6 @@
 
 #include "pdffile.h"
 #include <QMessageBox>
-#include "entities/notefolder.h"
 
 #include <poppler/PDFDoc.h>
 #include <poppler/Page.h>

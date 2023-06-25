@@ -15,8 +15,6 @@
 #include "gui.h"
 
 #include <libraries/qmarkdowntextedit/markdownhighlighter.h>
-#include <entities/notefolder.h>
-#include <entities/notesubfolder.h>
 
 #include <QApplication>
 #include <QCheckBox>
@@ -851,13 +849,12 @@ Note Utils::Gui::getTabWidgetNote(QTabWidget *tabWidget, int index,
 
 void Utils::Gui::storeNoteTabs(QTabWidget *tabWidget) {
     // check if we want to store note tabs
-    const QSettings settings;
+    QSettings settings;
     if (!settings.value(QStringLiteral("restoreNoteTabs"), true).toBool()) {
         return;
     }
 
     QStringList noteNameList;
-    QStringList noteSubFolderPathDataList;
     QStringList noteStickinessList;
 
     for (int i = 0; i < tabWidget->count(); i++) {
@@ -868,19 +865,15 @@ void Utils::Gui::storeNoteTabs(QTabWidget *tabWidget) {
         }
 
         noteNameList << note.getName();
-        noteSubFolderPathDataList << note.getNoteSubFolder().pathData();
 
         if (isTabWidgetTabSticky(tabWidget, i)) {
             noteStickinessList << QString::number(i);
         }
     }
 
-    NoteFolder noteFolder = NoteFolder::currentNoteFolder();
-    noteFolder.setSettingsValue(QStringLiteral("NoteTabNameList"),
+    settings.setValue(QStringLiteral("NoteTabNameList"),
                                 noteNameList);
-    noteFolder.setSettingsValue(QStringLiteral("NoteTabSubFolderPathDataList"),
-                                noteSubFolderPathDataList);
-    noteFolder.setSettingsValue(QStringLiteral("NoteTabStickinessList"),
+    settings.setValue(QStringLiteral("NoteTabStickinessList"),
                                 noteStickinessList);
 }
 
@@ -897,23 +890,17 @@ void Utils::Gui::restoreNoteTabs(QTabWidget *tabWidget, QVBoxLayout *layout) {
 
     // check if we want to restore note tabs
     if (settings.value(QStringLiteral("restoreNoteTabs"), true).toBool()) {
-        NoteFolder noteFolder = NoteFolder::currentNoteFolder();
-        const QStringList noteNameList = noteFolder.settingsValue(
+        const QStringList noteNameList = settings.value(
             QStringLiteral("NoteTabNameList")).toStringList();
-        const QStringList noteSubFolderPathDataList = noteFolder.settingsValue(
-            QStringLiteral("NoteTabSubFolderPathDataList")).toStringList();
-        const QStringList noteStickinessList = noteFolder.settingsValue(
+          const QStringList noteStickinessList = settings.value(
             QStringLiteral("NoteTabStickinessList")).toStringList();
         const int noteNameListCount = noteNameList.count();
 
         // only restore if there was more than one tab and
         // NoteTabSubFolderPathDataList has enough entries
-        if (noteNameListCount > 1 &&
-            noteSubFolderPathDataList.count() >= noteNameListCount) {
+        if (noteNameListCount > 1) {
             for (int i = 0; i < noteNameListCount; i++) {
                 const QString &noteName = noteNameList.at(i);
-                const QString &noteSubFolderPathData =
-                    noteSubFolderPathDataList.at(i);
                 const bool isSticky = noteStickinessList.contains(
                     QString::number(i));
 
@@ -953,8 +940,6 @@ void Utils::Gui::updateTabWidgetTabData(QTabWidget *tabWidget, int index,
 
     widget->setProperty("note-id", note.getId());
     widget->setProperty("note-name", note.getName());
-    widget->setProperty("note-subfolder-path-data",
-                        note.getNoteSubFolder().pathData());
 
     QString text = note.getName();
     const bool isSticky = isTabWidgetTabSticky(tabWidget, index);
@@ -1002,12 +987,6 @@ void Utils::Gui::setTreeWidgetItemToolTipForNote(
     QString toolTipText =
         QObject::tr("<strong>%1</strong><br />last modified: %2")
             .arg(note.getFileName(), fileLastModified->toString());
-
-    NoteSubFolder noteSubFolder = note.getNoteSubFolder();
-    if (noteSubFolder.isFetched()) {
-        toolTipText += QObject::tr("<br />path: %1").arg(
-            noteSubFolder.relativePath());
-    }
 
     item->setToolTip(0, toolTipText);
 

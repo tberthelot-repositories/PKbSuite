@@ -1,4 +1,3 @@
-#include <services/databaseservice.h>
 #include <utils/misc.h>
 #include <utils/schema.h>
 
@@ -12,7 +11,6 @@
 #include <QtQuickControls2/QQuickStyle>
 
 #include "dialogs/welcomedialog.h"
-#include "entities/notefolder.h"
 #include "libraries/singleapplication/singleapplication.h"
 #include "mainwindow.h"
 #include "release.h"
@@ -224,25 +222,16 @@ bool mainStartupMisc(const QStringList &arguments) {
         dir = QDir(notesPath);
     }
 
-    DatabaseService::createConnection();
-    DatabaseService::setupTables();
-
-
-
     // if the notes path is empty or doesn't exist open the welcome dialog
     if (notesPath.isEmpty() || !dir.exists()) {
         WelcomeDialog welcomeDialog;
         // exit PKbSuite if the welcome dialog was canceled
         if (welcomeDialog.exec() != QDialog::Accepted) {
             settings.clear();
-            DatabaseService::removeDiskDatabase();
 
             return false;
         }
     }
-
-    // try to create note folders if they are missing
-    NoteFolder::migrateToNoteFolders();
 
     return true;
 }
@@ -414,8 +403,6 @@ int main(int argc, char *argv[]) {
     if (clearSettings) {
         QSettings settings;
         settings.clear();
-
-        DatabaseService::removeDiskDatabase();
 
         qWarning("Your settings are now cleared!");
     }

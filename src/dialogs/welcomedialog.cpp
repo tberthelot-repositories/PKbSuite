@@ -134,8 +134,6 @@ void WelcomeDialog::storeNoteFolderSettings() {
     // portable mode
     settings.setValue(
         QStringLiteral("notesPath"),_notesPath);
-    settings.setValue(QStringLiteral("showNoteSubFolders"),
-                      ui->showNoteSubFoldersCheckBox->isChecked());
 }
 
 void WelcomeDialog::on_backButton_clicked() {

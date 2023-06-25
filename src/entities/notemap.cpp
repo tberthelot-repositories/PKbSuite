@@ -3,11 +3,11 @@
 #include <qtextstream.h>
 #include <QRegularExpression>
 #include "note.h"
-#include "notesubfolder.h"
 #include <QMapIterator>
+#include "tagmap.h"
 
 NoteMap* NoteMap::_instance = NULL;
-QMap<Note*, QList<Note*>> NoteMap::_noteMap;
+QMap<Note*, QSet<QString>> NoteMap::_noteMap;
 
 NoteMap* NoteMap::getInstance()
 {
@@ -43,10 +43,15 @@ void NoteMap::createNoteList(const QString noteFolder) {
         note->setId(++_lastID);
         note->setName(filename.left(lastPoint));
 
-        static QList<Note*> listInit;
+        static QSet<QString> listInit;
 
-        listInit << note;
+        //listInit << note->getName();
         _noteMap.insert(note, listInit);
+        getLinkedNotes(note);
+
+        // Process tags
+        TagMap* tagMap = TagMap::getInstance();
+        tagMap->updateTagList(note);
 
 // TODO     Check how to manage insertion in graph
 //
@@ -60,16 +65,14 @@ void NoteMap::createNoteList(const QString noteFolder) {
 void NoteMap::updateNoteLinks(Note* note) {
     if (note) {
         getLinkedNotes(note);
-        _noteMap.insert(note, _noteMap.value(note));
     }
     else {
-        QMapIterator<Note*, QList<Note*>> iterator(_noteMap);
+        QMapIterator<Note*, QSet<QString>> iterator(_noteMap);
         while (iterator.hasNext()) {
             iterator.next();
             note = iterator.key();
 
             getLinkedNotes(note);
-            _noteMap.insert(note, _noteMap.value(note));
         }
     }
 }
@@ -80,7 +83,8 @@ void NoteMap::addNoteToMap(Note* note) {
 }
 
 void NoteMap::removeNote(Note* note) {
-    QMapIterator<Note*, QList<Note*>> iterator(_noteMap);
+    QMapIterator<Note*, QSet<QString>> iterator(_noteMap);
+
     while (iterator.hasNext()) {
         iterator.next();
         if (iterator.key()->getId() == note->getId())
@@ -89,7 +93,8 @@ void NoteMap::removeNote(Note* note) {
 }
 
 Note NoteMap::fetchNoteByName(QString name) {
-    QMapIterator<Note*, QList<Note*>> iterator(_noteMap);
+    QMapIterator<Note*, QSet<QString>> iterator(_noteMap);
+
     while (iterator.hasNext()) {
         iterator.next();
         if (iterator.key()->getName() == name)
@@ -100,7 +105,8 @@ Note NoteMap::fetchNoteByName(QString name) {
 }
 
 Note NoteMap::fetchNoteById(int _id) {
-    QMapIterator<Note*, QList<Note*>> iterator(_noteMap);
+    QMapIterator<Note*, QSet<QString>> iterator(_noteMap);
+
     while (iterator.hasNext()) {
         iterator.next();
         if (iterator.key()->getId() == _id)
@@ -111,7 +117,15 @@ Note NoteMap::fetchNoteById(int _id) {
 }
 
 Note NoteMap::fetchNoteByFileName(const QString &fileName) {
-    return *fillByFileName(fileName);
+    QMapIterator<Note*, QSet<QString>> iterator(_noteMap);
+
+    while (iterator.hasNext()) {
+        iterator.next();
+        if (iterator.key()->getFileName() == fileName)
+            return *iterator.key();
+    }
+
+    return Note();
 }
 
 int NoteMap::fetchNoteIdByName(const QString& name) {
@@ -149,38 +163,6 @@ QVector<int> NoteMap::fetchAllIds(int limit, int offset) {
     return idList;
 }
 
-QVector<Note> NoteMap::fetchAllNotesByNoteSubFolderId(int noteSubFolderId) {
-    QVector<Note> noteList;
-
-    QList<Note*> noteMapKeys = _noteMap.keys();
-    std::sort(noteMapKeys.begin(), noteMapKeys.end(), [](Note* const x,Note* const y){ return x->getFileLastModified() < y->getFileLastModified(); });
-
-    QListIterator<Note*> iterator(noteMapKeys);
-    while (iterator.hasNext())
-        if (iterator.peekNext()->getNoteSubFolderId() == noteSubFolderId)
-            noteList.append(*iterator.next());
-        else
-            iterator.next();
-
-    return noteList;
-}
-
-QVector<int> NoteMap::fetchAllIdsByNoteSubFolderId(int noteSubFolderId) {
-    QVector<int> idList;
-
-    QList<Note*> noteMapKeys = _noteMap.keys();
-    std::sort(noteMapKeys.begin(), noteMapKeys.end(), [](Note* const x,Note* const y){ return x->getFileLastModified() < y->getFileLastModified(); });
-
-    QListIterator<Note*> iterator(noteMapKeys);
-    while (iterator.hasNext())
-        if (iterator.peekNext()->getNoteSubFolderId() == noteSubFolderId)
-            idList.append(iterator.next()->getId());
-        else
-            iterator.next();
-
-    return idList;
-}
-
 QVector<Note> NoteMap::search(const QString& text) {
     QVector<Note> noteList;
 
@@ -195,26 +177,6 @@ QVector<Note> NoteMap::search(const QString& text) {
             iterator.next();
 
     return noteList;
-}
-
-QVector<QString> NoteMap::searchAsNameListInCurrentNoteSubFolder(const QString& text, bool searchInNameOnly) {
-    QVector<QString> nameList;
-
-    QList<Note*> noteMapKeys = _noteMap.keys();
-    std::sort(noteMapKeys.begin(), noteMapKeys.end(), [](Note* const x,Note* const y){ return x->getFileLastModified() < y->getFileLastModified(); });
-
-    const int noteSubFolderId = NoteSubFolder::activeNoteSubFolderId();
-
-    QListIterator<Note*> iterator(noteMapKeys);
-    while (iterator.hasNext()) {
-        Note* nextNote = iterator.peekNext();
-        if ((nextNote->getNoteSubFolderId() == noteSubFolderId) && ((nextNote->getName().contains(text)) || (nextNote->getNoteText().contains(text))))
-            nameList.append(iterator.next()->getName());
-        else
-            iterator.next();
-    }
-
-    return nameList;
 }
 
 QVector<QString> NoteMap::searchAsNameList(const QString& text, bool searchInNameOnly)
@@ -247,13 +209,8 @@ QString NoteMap::removeNameSearchPrefix(QString searchTerm) {
     return searchTerm.remove(re);
 }
 
-QVector<int> NoteMap::searchInNotes(QString search, bool ignoreNoteSubFolder, int noteSubFolderId) {
+QVector<int> NoteMap::searchInNotes(QString search) {
     auto noteIdList = QVector<int>();
-
-    // get the active note subfolder _id if none was set
-    if ((noteSubFolderId == -1) && !ignoreNoteSubFolder) {
-        noteSubFolderId = NoteSubFolder::activeNoteSubFolderId();
-    }
 
     // build the string list of the search string
     const QStringList queryStrings = buildQueryStringList(std::move(search));
@@ -261,51 +218,19 @@ QVector<int> NoteMap::searchInNotes(QString search, bool ignoreNoteSubFolder, in
     QList<Note*> noteMapKeys = _noteMap.keys();
 
     QListIterator<Note*> iterator(noteMapKeys);
-    if (!ignoreNoteSubFolder) {
-        for (int i = 0; i < queryStrings.count(); i++) {
-            QString queryString = queryStrings[i];
-            while (iterator.hasNext()) {
-                Note* nextNote = iterator.peekNext();
-                if (isNameSearch(queryString)?((nextNote->getName().contains(removeNameSearchPrefix(queryString))) || (nextNote->getFileName().contains(removeNameSearchPrefix(queryString)))):(nextNote->getNoteText().contains(queryString)))
-                    noteIdList.append(iterator.next()->getId());
-                else
-                    iterator.next();
-            }
-        }
-    }
-    else {
-        for (int i = 0; i < queryStrings.count(); i++) {
-            QString queryString = queryStrings[i];
-            while (iterator.hasNext()) {
-                Note* nextNote = iterator.peekNext();
-                if ((nextNote->getNoteSubFolderId() == noteSubFolderId) && (isNameSearch(queryString)?((nextNote->getName().contains(removeNameSearchPrefix(queryString))) || (nextNote->getFileName().contains(removeNameSearchPrefix(queryString)))):(nextNote->getNoteText().contains(queryString))))
-                    noteIdList.append(iterator.next()->getId());
-                else
-                    iterator.next();
-            }
+
+    for (int i = 0; i < queryStrings.count(); i++) {
+        QString queryString = queryStrings[i];
+        while (iterator.hasNext()) {
+            Note* nextNote = iterator.peekNext();
+            if (isNameSearch(queryString)?((nextNote->getName().contains(removeNameSearchPrefix(queryString))) || (nextNote->getFileName().contains(removeNameSearchPrefix(queryString)))):(nextNote->getNoteText().contains(queryString)))
+                noteIdList.append(iterator.next()->getId());
+            else
+                iterator.next();
         }
     }
 
     return noteIdList;
-}
-
-QStringList NoteMap::fetchNoteNamesInCurrentNoteSubFolder() {
-    const int noteSubFolderId = NoteSubFolder::activeNoteSubFolderId();
-
-    QStringList nameList;
-    QList<Note*> noteMapKeys = _noteMap.keys();
-    std::sort(noteMapKeys.begin(), noteMapKeys.end(), [](Note* const x,Note* const y){ return x->getFileLastModified() < y->getFileLastModified(); });
-
-    QListIterator<Note*> iterator(noteMapKeys);
-    while (iterator.hasNext()) {
-        Note* nextNote = iterator.peekNext();
-        if ((nextNote->getNoteSubFolderId() == noteSubFolderId) && (!nextNote->getName().isEmpty()))
-            nameList.append(iterator.next()->getName());
-        else
-            iterator.next();
-    }
-
-    return nameList;
 }
 
 QStringList NoteMap::fetchNoteNames() {
@@ -361,6 +286,31 @@ QVector<int> NoteMap::fetchAllIdsByNoteTextPart(const QString& textPart) {
     return noteIdList;
 }
 
+Note NoteMap::fetchByFileUrl(const QUrl &url) {
+    QMapIterator<Note*, QSet<QString>> iterator(_noteMap);
+
+    while (iterator.hasNext()) {
+        iterator.next();
+        if (iterator.key()->fullNoteFilePath() == url.path())
+            return *iterator.key();
+    }
+
+    return Note();
+}
+
+Note NoteMap::fetchByRelativeFileName(const QString& fileName) const {
+    QMapIterator<Note*, QSet<QString>> iterator(_noteMap);
+
+    while (iterator.hasNext()) {
+        iterator.next();
+        if (iterator.key()->getFileName() == fileName)
+            return *iterator.key();
+    }
+
+    return Note();
+}
+
+
 bool NoteMap::deleteAll() {
     _noteMap.clear();
 
@@ -371,28 +321,21 @@ int NoteMap::countAll() {
     return _noteMap.size();
 }
 
-int NoteMap::countByNoteSubFolderId(int noteSubFolderId, bool recursive) {
-    QVector<int> noteSubFolderIdList;
-    int countNotesByNoteSubFolderId = 0;
+int NoteMap::countAllNotTagged() {
+    QVector<Note> noteList;
+    QString path;
 
-    if (recursive) {
-        noteSubFolderIdList =
-            NoteSubFolder::fetchIdsRecursivelyByParentId(noteSubFolderId);
-    } else {
-        noteSubFolderIdList << noteSubFolderId;
+    NoteMap* noteMap = NoteMap::getInstance();
+    noteList = noteMap->fetchAllNotes();
+
+    QVector<Note>::iterator i;
+    int count = 0;
+    for (i = noteList.begin(); i != noteList.end(); ++i) {
+        if (!i->hasTags()) {
+            count++;
+        }
     }
-
-    QList<Note*> noteMapKeys = _noteMap.keys();
-
-    QListIterator<Note*> iterator(noteMapKeys);
-
-    while (iterator.hasNext()) {
-        Note* nextNote = iterator.next();
-        if (noteSubFolderIdList.indexOf(nextNote->getNoteSubFolderId() != -1))
-            countNotesByNoteSubFolderId++;
-    }
-
-    return countNotesByNoteSubFolderId;
+    return count;
 }
 
 QStringList NoteMap::buildQueryStringList(QString searchString, bool escapeForRegularExpression, bool removeSearchPrefix) {
@@ -445,7 +388,7 @@ QStringList NoteMap::buildQueryStringList(QString searchString, bool escapeForRe
 }
 
 Note* NoteMap::fillByFileName(const QString& fileName) {
-    QMapIterator<Note*, QList<Note*>> iterator(_noteMap);
+    QMapIterator<Note*, QSet<QString>> iterator(_noteMap);
     while (iterator.hasNext()) {
         iterator.next();
         if (iterator.key()->getFileName() == fileName)
@@ -455,7 +398,7 @@ Note* NoteMap::fillByFileName(const QString& fileName) {
     return (Note*) false;
 }
 
-QMap<Note*, QList<Note*>> NoteMap::getNoteMap() {
+QMap<Note*, QSet<QString>> NoteMap::getNoteMap() {
     return _noteMap;
 }
 
@@ -466,8 +409,9 @@ void NoteMap::getLinkedNotes(Note* note) {
 	 * - Add the note to a QList
 	 */
 
-    if (_noteMap[note][0] == note)
-        _noteMap[note].removeFirst();
+    // TODO:
+    // if (_noteMap[note].first() == note->getName())
+    //     _noteMap[note].removeFirst();
 
     QRegularExpression re = QRegularExpression(R"(\[([A-Za-zÀ-ÖØ-öø-ÿ_\s]*)\]\([AA-Za-zÀ-ÖØ-öø-ÿ_\s\d?%]*\.md\))");
     QRegularExpressionMatchIterator reIterator = re.globalMatch(note->getNoteText());
@@ -477,6 +421,6 @@ void NoteMap::getLinkedNotes(Note* note) {
 
         Note linkedNote = fetchNoteByName(targetNoteName);
         if (linkedNote.getId() > 0)
-            _noteMap[note] << &linkedNote;
+            _noteMap[note] << linkedNote.getName();
     }
 }

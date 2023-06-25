@@ -23,18 +23,14 @@
 
 #include "libraries/md4c/md2html/render_html.h"
 #include "libraries/md4c/md4c/md4c.h"
-#include "notefolder.h"
-#include "notesubfolder.h"
-#include "tag.h"
-#include "trashitem.h"
 
 #include "notemap.h"
+#include "tagmap.h"
 
 Note::Note()
       : _id{0},
-      _noteSubFolderId{0},
-      _fileSize{0},
-      _hasDirtyData{false} {}
+      _hasDirtyData{false},
+      _fileSize{0} {}
 
 int Note::getId() const { return this->_id; }
 
@@ -61,29 +57,6 @@ void Note::setFileSize(int fileSize) { _fileSize = fileSize; }
 QString Note::getFileName() const { return this->_fileName; }
 
 void Note::setFileName(QString fileName) { this->_fileName = fileName; }
-
-NoteSubFolder Note::getNoteSubFolder() const {
-    return NoteSubFolder::fetch(this->_noteSubFolderId);
-}
-
-int Note::getNoteSubFolderId() const { return this->_noteSubFolderId; }
-
-bool Note::isInCurrentNoteSubFolder() const {
-    const int currentNoteSubFolderId = NoteSubFolder::activeNoteSubFolderId();
-
-    // beware: the special "All notes" note subfolder also uses the _id 0
-    if (currentNoteSubFolderId < 0) {
-        return true;
-    }
-
-    return this->_noteSubFolderId == currentNoteSubFolderId;
-}
-
-void Note::setNoteSubFolder(const NoteSubFolder &noteSubFolder) {
-    setNoteSubFolderId(noteSubFolder.getId());
-}
-
-void Note::setNoteSubFolderId(int _id) { this->_noteSubFolderId = _id; }
 
 QString Note::getNoteText() const { return this->_noteText; }
 
@@ -140,11 +113,9 @@ bool Note::updateRelativeAttachmentFileLinks() {
  * @param noteSubFolderId if not set all notes will be searched
  * @return
  */
-Note Note::fetchByName(const QRegularExpression &regExp, int noteSubFolderId) {
+Note Note::fetchByName(const QRegularExpression &regExp) {
     NoteMap* noteMap = NoteMap::getInstance();
-    const QVector<Note> noteList =
-        noteSubFolderId == -1 ? noteMap->fetchAllNotes()
-                              : noteMap->fetchAllNotesByNoteSubFolderId(noteSubFolderId);
+    const QVector<Note> noteList = noteMap->fetchAllNotes();
 
     // since there is no regular expression search in Qt's sqlite
     // implementation we have to iterate
@@ -158,44 +129,6 @@ Note Note::fetchByName(const QRegularExpression &regExp, int noteSubFolderId) {
     return Note();
 }
 
-/**
- * Fetches a note by its file path relative to the note folder it is in
- *
- * @brief Note::fetchByRelativeFilePath
- * @param relativePath
- * @return
- */
-Note Note::fetchByRelativeFilePath(const QString &relativePath) {
-    const QFileInfo &fileInfo{relativePath};
-
-    // load note subfolder and note from the relative path
-    // be aware that there must not be a ".." in the path, a canonical path must
-    // be presented!
-    const auto noteSubFolder =
-        NoteSubFolder::fetchByPathData(fileInfo.path(), QStringLiteral("/"));
-
-    if ((fileInfo.path() != ".") && !noteSubFolder.isFetched()) {
-        return Note();
-    }
-
-//    return Note::fetchByFileName(fileInfo.fileName(), noteSubFolder.getId()); // TODO Check if this function is called with a breakpoint within
-}
-
-/**
- * Fetches a note by its full file url
- *
- * @brief Note::fetchByFileUrl
- * @param url
- * @return
- */
-Note Note::fetchByFileUrl(const QUrl &url) {
-    const QString &relativePath =
-        Note::fileUrlInCurrentNoteFolderToRelativePath(url);
-
-    const Note note = Note::fetchByRelativeFilePath(relativePath);
-    return note;
-}
-
 bool Note::remove(bool withFile) {
     NoteMap::getInstance()->removeNote(this);
 
@@ -203,7 +136,7 @@ bool Note::remove(bool withFile) {
         this->removeNoteFile();
 
         // remove all links to tags
-        Tag::removeAllLinksToNote(*this);
+        this->removeAllTags();
     }
 
     return true;
@@ -444,9 +377,9 @@ QVector<int> Note::fetchAllNotTaggedIds() {
     QVector<int> untaggedNoteIdList;
     untaggedNoteIdList.reserve(noteList.size());
 
-    QVector<Note>::const_iterator it = noteList.constBegin();
-    for (; it != noteList.constEnd(); ++it) {
-        if (!Tag::noteHasTags(*it, QString())) {
+    QVector<Note>::iterator it = noteList.begin();
+    for (; it != noteList.end(); ++it) {
+        if (!it->hasTags()) {
             untaggedNoteIdList << it->getId();
         }
     }
@@ -454,29 +387,41 @@ QVector<int> Note::fetchAllNotTaggedIds() {
     return untaggedNoteIdList;
 }
 
-/**
- * Counts all notes that are not tagged
- */
-int Note::countAllNotTagged(int activeNoteSubFolderId) {
-    QVector<Note> noteList;
-    QString path;
-    if (activeNoteSubFolderId < 0) {
-        NoteMap* noteMap = NoteMap::getInstance();
-        noteList = noteMap->fetchAllNotes();
-    } else {
-        NoteMap* noteMap = NoteMap::getInstance();
-        noteList = noteMap->fetchAllNotesByNoteSubFolderId(activeNoteSubFolderId);
-        path = NoteSubFolder::fetch(activeNoteSubFolderId).relativePath();
-    }
+void Note::addTag(QString tag) {
+    _tagSet.insert(tag);
+    TagMap* tagMap = TagMap::getInstance();
+    tagMap->addTagToNote(tag, this);
+}
 
-    QVector<Note>::const_iterator i;
-    int count = 0;
-    for (i = noteList.constBegin(); i != noteList.constEnd(); ++i) {
-        if (!Tag::noteHasTags(*i, path)) {
-            count++;
-        }
+bool Note::isTagged(QString tag) {
+    if (_tagSet.contains(tag))
+        return true;
+
+    return false;
+}
+
+bool Note::hasTags() {
+    return (_tagSet.size() > 0);
+}
+
+void Note::removeTag(QString tag) {
+    QString currentNoteText = getNoteText();
+    currentNoteText.replace("#" + tag, "");         // TODO Take care of commas before or after #tags
+    setNoteText(currentNoteText);
+
+    _tagSet.remove(tag);
+    TagMap* tagMap = TagMap::getInstance();
+    tagMap->removeTagFromNote(tag, this);
+}
+
+void Note::removeAllTags() {
+    foreach (QString tag, _tagSet) {
+        removeTag(tag);
     }
-    return count;
+}
+
+const QSet<QString> Note::getTags() {
+    return _tagSet;
 }
 
 int Note::countSearchTextInNote(const QString &search) const {
@@ -504,28 +449,11 @@ QString Note::defaultNoteFileExtension() {
 }
 
 /**
- * Returns the a list of the custom note file extensions
- */
-QStringList Note::customNoteFileExtensionList(const QString &prefix) {
-    const QSettings settings;
-    QStringList list =
-        settings.value(QStringLiteral("customNoteFileExtensionList"))
-            .toStringList();
-    list.removeDuplicates();
-
-    if (!prefix.isEmpty()) {
-        list.replaceInStrings(QRegularExpression(QStringLiteral("^")), prefix);
-    }
-
-    return list;
-}
-
-/**
  * Checks if it is allowed to have a different note file name than the headline
  */
 bool Note::allowDifferentFileName() {
-    return NoteFolder::currentNoteFolder()
-        .settingsValue(QStringLiteral("allowDifferentNoteFileName"))
+    const QSettings settings;
+    return settings.value(QStringLiteral("allowDifferentNoteFileName"))
         .toBool();
 }
 
@@ -580,7 +508,6 @@ bool Note::storeNoteTextFileToDisk(bool &currentNoteTextChanged) {
     const Note oldNote = *this;
     const QString oldName = _name;
     const QString oldNoteFilePath = fullNoteFilePath();
-    TrashItem trashItem = TrashItem::prepare(this);
 
     handleNoteTextFileName();
 
@@ -627,17 +554,6 @@ bool Note::storeNoteTextFileToDisk(bool &currentNoteTextChanged) {
 
     // assign the tags to the new name if the name has changed
     if (oldName != newName) {
-        if (!noteFileWasRenamed && TrashItem::isLocalTrashEnabled()) {
-            qDebug() << __func__ << " - 'trashItem': " << trashItem;
-
-            // trash the old note
-            trashItem.doTrashing();
-        }
-
-        // rename the note file names of note tag links
-        Tag::renameNoteFileNamesOfLinks(oldName, newName,
-                                        this->getNoteSubFolder());
-
         // handle the replacing of all note urls if a note was renamed
         // (we couldn't make currentNoteTextChanged a pointer or the app would crash)
         currentNoteTextChanged = handleNoteMoving(oldNote);
@@ -1036,7 +952,7 @@ QString Note::urlDecodeNoteUrl(QString url) {
  * Returns the full path of the note file
  */
 QString Note::fullNoteFilePath() const {
-    return getFullFilePathForFile(relativeNoteFilePath());
+    return _fileName;
 }
 
 /**
@@ -1046,58 +962,6 @@ QString Note::fullNoteFileDirPath() const {
     QFileInfo fileInfo;
     fileInfo.setFile(fullNoteFilePath());
     return fileInfo.dir().path();
-}
-
-/**
- * Returns the relative path of the note file
- */
-QString Note::relativeNoteFilePath(QString separator) const {
-    QString fullFileName = _fileName;
-
-    if (separator.isEmpty()) {
-        separator = Utils::Misc::dirSeparator();
-    }
-
-    if (_noteSubFolderId > 0) {
-        const NoteSubFolder noteSubFolder = getNoteSubFolder();
-        if (noteSubFolder.isFetched()) {
-            fullFileName.prepend(noteSubFolder.relativePath() + separator);
-        }
-    }
-
-    return fullFileName;
-}
-
-/**
- * Returns the relative path of the note subfolder
- */
-QString Note::relativeNoteSubFolderPath() const {
-    QString path = QLatin1String("");
-
-    if (_noteSubFolderId > 0) {
-        const NoteSubFolder noteSubFolder = getNoteSubFolder();
-        if (noteSubFolder.isFetched()) {
-            path = noteSubFolder.relativePath();
-        }
-    }
-
-    return path;
-}
-
-/**
- * Returns the path-data of the note subfolder file
- */
-QString Note::noteSubFolderPathData() const {
-    QString path = QLatin1String("");
-
-    if (_noteSubFolderId > 0) {
-        const NoteSubFolder noteSubFolder = getNoteSubFolder();
-        if (noteSubFolder.isFetched()) {
-            path = noteSubFolder.pathData();
-        }
-    }
-
-    return path;
 }
 
 /**
@@ -1150,9 +1014,6 @@ int Note::storeDirtyNotesToDisk(Note &currentNote, bool *currentNoteChanged,
 
             // check if the file name has changed
             if (oldName != newName) {
-                // rename the note file names of note tag links
-                Tag::renameNoteFileNamesOfLinks(oldName, newName,
-                                                note->getNoteSubFolder());
                 *noteWasRenamed = true;
 
                 // overr_ide the current note because the file name has changed
@@ -1224,8 +1085,7 @@ QString Note::detectNewlineCharacters() {
     return QStringLiteral("\n");
 }
 
-void Note::createFromFile(QFile &file, int noteSubFolderId,
-                          bool withNoteNameHook) {
+void Note::createFromFile(QFile &file, bool withNoteNameHook) {
     if (file.open(QIODevice::ReadOnly)) {
         QTextStream in(&file);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -1247,7 +1107,6 @@ void Note::createFromFile(QFile &file, int noteSubFolderId,
 
         this->_name = std::move(name);
         this->_fileName = fileInfo.fileName();
-        this->_noteSubFolderId = noteSubFolderId;
         this->_noteText = _noteText;
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
@@ -1269,7 +1128,6 @@ void Note::createFromFile(QFile &file, int noteSubFolderId,
  * @return
  */
 Note Note::updateOrCreateFromFile(QFile &file,
-                                  const NoteSubFolder &noteSubFolder,
                                   bool withNoteNameHook) {
     const QFileInfo fileInfo(file);
     Note note = NoteMap::getInstance()->fetchNoteByFileName(fileInfo.fileName());
@@ -1280,7 +1138,7 @@ Note Note::updateOrCreateFromFile(QFile &file,
     if ((fileInfo.size() != note.getFileSize()) ||
         (fileInfo.lastModified() > note.getModified())) {
         // load file data and store note
-        note.createFromFile(file, noteSubFolder.getId());
+        note.createFromFile(file);
 
         //        qDebug() << __func__ << " - 'file modified': " <<
         //        file.fileName();
@@ -1375,12 +1233,6 @@ bool Note::renameNoteFile(QString newName) {
     QDir embedmendFolder(currentEmbedmentFolder());
 	if (embedmendFolder.exists())
 		embedmendFolder.rename(currentEmbedmentFolder(), fullNoteFileDirPath() + QDir::separator() + newName.replace(" ", "_"));
-	
-    if (TrashItem::isLocalTrashEnabled()) {
-        // add note to trash
-        bool trashResult = TrashItem::add(this);
-        qDebug() << __func__ << " - 'trashResult': " << trashResult;
-    }
 
     // get the note file to rename it
     QFile file(fullNoteFilePath());
@@ -1404,12 +1256,6 @@ bool Note::removeNoteFile() {
 		QDir embedmentFolder(currentEmbedmentFolder());
 		if (embedmentFolder.exists())
 			embedmentFolder.removeRecursively();
-		
-        if (TrashItem::isLocalTrashEnabled()) {
-            // add note to trash
-            bool trashResult = TrashItem::add(this);
-            qDebug() << __func__ << " - 'trashResult': " << trashResult;
-        }
 
         QFile file(fullNoteFilePath());
         qDebug() << __func__ << " - 'this->fileName': " << this->_fileName;
@@ -1684,19 +1530,6 @@ QString Note::textToMarkdownHtml(QString str, const QString &notesPath,
     // transform remote preview image tags
     Utils::Misc::transformRemotePreviewImages(result, maxImageWidth,
                                               externalImageHash());
-
-    // transform images without "file://" urls to file-urls
-    // Note: this is currently handled above in markdown
-    //       if we want to activate this code again we need to take care of
-    //       remote http(s) links to images! see:
-    //       https://github.com/pbek/PKbSuite/issues/1286
-    /*
-        const QString subFolderPath = getNoteSubFolder().relativePath("/");
-        const QString notePath = notesPath + (subFolderPath.isEmpty() ? "" : "/"
-       + subFolderPath); result.replace( QRegularExpression(R"((<img
-       src=\")((?!file:\/\/).+)\")"),
-                "\\1file://" + windowsSlash + notePath + "/\\2\"");
-    */
 
     const QString fontString = Utils::Misc::previewCodeFontString();
 
@@ -1992,8 +1825,7 @@ qint64 Note::qint64Hash(const QString &str) {
  * @return
  */
 bool Note::isSameFile(const Note &note) const {
-    return (_id == note.getId()) &&
-           (_noteSubFolderId == note.getNoteSubFolderId());
+    return (_fileName == note.getFileName());
 }
 
 /**
@@ -2009,18 +1841,17 @@ QVector<int> Note::findLinkedNoteIds() const {
     // search for legacy links
     const QString linkText = getNoteURL(_name);
     NoteMap* noteMap = NoteMap::getInstance();
-    noteIdList << noteMap->searchInNotes(QChar('<') + linkText + QChar('>'), true);
+    noteIdList << noteMap->searchInNotes(QChar('<') + linkText + QChar('>'));
     noteIdList << noteMap->searchInNotes(
-        QStringLiteral("](") + linkText + QStringLiteral(")"), true);
+        QStringLiteral("](") + linkText + QStringLiteral(")"));
 
     // search vor legacy links ending with "@"
     const QString altLinkText =
         Utils::Misc::appendIfDoesNotEndWith(linkText, QStringLiteral("@"));
     if (altLinkText != linkText) {
-        noteIdList << noteMap->searchInNotes(QChar('<') + altLinkText + QChar('>'),
-                                    true);
+        noteIdList << noteMap->searchInNotes(QChar('<') + altLinkText + QChar('>'));
         noteIdList << noteMap->searchInNotes(
-            QStringLiteral("](") + altLinkText + QChar(')'), true);
+            QStringLiteral("](") + altLinkText + QChar(')'));
     }
 
     const auto noteList = noteMap->fetchAllNotes();
@@ -2110,13 +1941,6 @@ QString Note::getFileURLFromFileName(QString fileName,
         fileName = urlDecodeNoteUrl(fileName);
     }
 
-    if (_noteSubFolderId > 0) {
-        const NoteSubFolder noteSubFolder = getNoteSubFolder();
-        if (noteSubFolder.isFetched()) {
-            fileName.prepend(noteSubFolder.relativePath());
-        }
-    }
-
     const QString path = this->getFullFilePathForFile(fileName);
     QString url = QUrl::fromLocalFile(path).toEncoded();
 
@@ -2132,78 +1956,6 @@ QString Note::getURLFragmentFromFileName(const QString& fileName) {
     const QString fragment = splitList.count() > 1 ? splitList.at(1) : "";
 
     return QUrl::fromPercentEncoding(fragment.toLocal8Bit());
-}
-
-/**
- * @brief Note::fetchByRelativeFileName fetches a note by a relative filename by
- * current note
- * @param fileName
- * @return
- */
-Note Note::fetchByRelativeFileName(const QString &fileName) const {
-    const QString url = getFileURLFromFileName(fileName);
-    return fetchByFileUrl(QUrl(url));
-}
-
-bool Note::fileUrlIsNoteInCurrentNoteFolder(const QUrl &url) {
-    if (url.scheme() != QStringLiteral("file")) {
-        return false;
-    }
-
-    const QString path = url.toLocalFile();
-
-    if (!path.startsWith(NoteFolder::currentLocalPath())) {
-        return false;
-    }
-
-    QListIterator<QString> itr(customNoteFileExtensionList(
-        QStringLiteral(".")));
-
-    while (itr.hasNext()) {
-        const auto fileExtension = itr.next();
-
-        if (path.endsWith(fileExtension, Qt::CaseInsensitive)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool Note::fileUrlIsExistingNoteInCurrentNoteFolder(const QUrl &url) {
-    if (url.scheme() != QStringLiteral("file")) {
-        return false;
-    }
-
-    const QString path = url.toLocalFile();
-    if (!QFile(path).exists()) {
-        return false;
-    }
-
-    return path.startsWith(NoteFolder::currentLocalPath()) &&
-           path.endsWith(QLatin1String(".md"), Qt::CaseInsensitive);
-}
-
-QString Note::fileUrlInCurrentNoteFolderToRelativePath(const QUrl &url) {
-    QString path = url.toLocalFile();
-    qDebug() << __func__ << " - 'path': " << path;
-
-    // translates the "a path/../another path" to "another path"
-    // needed for Note::fetchByRelativeFilePath!
-    const QFileInfo fileInfo(path);
-#ifdef Q_OS_WIN32
-    // Let's stay with "canonicalFilePath" on Windows in case there is any issue
-    // in portable mode
-    path = fileInfo.canonicalFilePath();
-#else
-    // Don't resolve symbolic links
-    path = fileInfo.absoluteFilePath();
-#endif
-
-    qDebug() << __func__ << " - 'canonicalFilePath': " << path;
-
-    return path.remove(Utils::Misc::appendIfDoesNotEndWith(
-        NoteFolder::currentLocalPath(), QStringLiteral("/")));
 }
 
 /**
@@ -2651,15 +2403,7 @@ Note Note::fetchByUrlString(const QString &urlString) {
 
     qDebug() << __func__ << " - 'regExp': " << regExp;
 
-    const int noteSubFolderId = NoteSubFolder::activeNoteSubFolderId();
     Note note;
-
-    qDebug() << __func__ << " - 'noteSubFolderId': " << noteSubFolderId;
-
-    if (noteSubFolderId > 0) {
-        note = Note::fetchByName(regExp, noteSubFolderId);
-        qDebug() << __func__ << " - 'note in sub folder': " << note;
-    }
 
     // if we haven't found a note we try searching in all note subfolders
     if (!note.isFetched()) {
@@ -2806,15 +2550,6 @@ QString Note::generateMultipleNotesPreviewText(const QVector<Note> &notes) {
 }
 
 /**
- * Returns the parsed bookmarks of the note for the WebSocketServerService
- *
- * @return
- */
-QString Note::getParsedBookmarksWebServiceJsonText() const {
-    return Bookmark::bookmarksWebServiceJsonText(getParsedBookmarks());
-}
-
-/**
  * Returns the parsed bookmarks of the note
  *
  * @return
@@ -2855,13 +2590,10 @@ QStringList Note::getHeadingList() {
 //}
 
 QDebug operator<<(QDebug dbg, const Note &note) {
-    const NoteSubFolder noteSubFolder =
-        NoteSubFolder::fetch(note._noteSubFolderId);
-    dbg.nospace() << "Note: <id>" << note._id << " <name>" << note._name
-                  << " <fileName>" << note._fileName << " <noteSubFolderId>"
-                  << note._noteSubFolderId << " <relativePath>"
-                  << noteSubFolder.relativePath() << " <_hasDirtyData>"
-                  << note._hasDirtyData;
+    dbg.nospace() << "Note: <id>" << note._id
+                  << " <name>" << note._name
+                  << " <fileName>" << note._fileName
+                  << " <_hasDirtyData>" << note._hasDirtyData;
     return dbg.space();
 }
 
@@ -2917,6 +2649,5 @@ void Note::updateReferencedNote(QString linkedNotePath, QString currentNotePath)
 }
 
 bool Note::operator==(const Note &note) const {
-    return _id == note.getId() && _fileName == note.getFileName() &&
-           _noteSubFolderId == note.getNoteSubFolderId();
+    return _id == note.getId() && _fileName == note.getFileName();
 }

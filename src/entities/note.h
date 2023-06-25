@@ -4,9 +4,9 @@
 #include <utils/misc.h>
 
 #include <QDateTime>
+#include <QSet>
 
 class Bookmark;
-class NoteSubFolder;
 class QRegularExpression;
 class QFile;
 class QUrl;
@@ -41,12 +41,21 @@ class Note {
 
     void setNoteText(QString text);
 
-    static Note fetchByName(const QRegularExpression &regExp,
-                            int noteSubFolderId = -1);
+    static Note fetchByName(const QRegularExpression &regExp);
 
     static QVector<int> fetchAllNotTaggedIds();
 
-    static int countAllNotTagged(int activeNoteSubFolderId = -1);
+    void addTag(QString tag);
+
+    bool isTagged(QString tag);
+
+    bool hasTags();
+
+    void removeTag(QString tag);
+
+    void removeAllTags();
+
+    const QSet<QString> getTags();
 
     bool store();
 
@@ -56,9 +65,6 @@ class Note {
     bool storeNoteTextFileToDisk();
 
     static QString defaultNoteFileExtension();
-
-    static QStringList customNoteFileExtensionList(
-        const QString &prefix = QString());
 
     static QString getFullFilePathForFile(const QString &fileName);
 
@@ -75,7 +81,7 @@ class Note {
 
     bool operator==(const Note &note) const;
 
-    void createFromFile(QFile &file, int noteSubFolderId = 0,
+    void createFromFile(QFile &file,
                         bool withNoteNameHook = false);
 
     bool fileExists() const;
@@ -140,25 +146,7 @@ class Note {
 
     QString fileBaseName(bool withFullName = false);
 
-    NoteSubFolder getNoteSubFolder() const;
-
-    void setNoteSubFolder(const NoteSubFolder &noteSubFolder);
-
-    void setNoteSubFolderId(int id);
-
-    int getNoteSubFolderId() {return _noteSubFolderId;}
-
     static QVector<int> noteIdListFromNoteList(const QVector<Note> &noteList);
-
-    int getNoteSubFolderId() const;
-
-    bool isInCurrentNoteSubFolder() const;
-
-    QString relativeNoteFilePath(QString separator = QString()) const;
-
-    QString relativeNoteSubFolderPath() const;
-
-    QString noteSubFolderPathData() const;
 
     bool isSameFile(const Note &note) const;
 
@@ -169,7 +157,6 @@ class Note {
     void setFileSize(int fileSize);
 
     static Note updateOrCreateFromFile(QFile &file,
-                                       const NoteSubFolder &noteSubFolder,
                                        bool withNoteNameHook = false);
 
     QVector<int> findLinkedNoteIds() const;
@@ -227,8 +214,6 @@ class Note {
 
     QVector<Bookmark> getParsedBookmarks() const;
 
-    QString getParsedBookmarksWebServiceJsonText() const;
-
     void resetNoteTextHtmlConversionHash();
 
     QString getFileURLFromFileName(QString fileName,
@@ -237,17 +222,7 @@ class Note {
 
     static QString getURLFragmentFromFileName(const QString& fileName);
 
-    static bool fileUrlIsNoteInCurrentNoteFolder(const QUrl &url);
-
-    static bool fileUrlIsExistingNoteInCurrentNoteFolder(const QUrl &url);
-
-    static QString fileUrlInCurrentNoteFolderToRelativePath(const QUrl &url);
-
     QString relativeFilePath(const QString &path) const;
-
-    static Note fetchByFileUrl(const QUrl &url);
-
-    static Note fetchByRelativeFilePath(const QString &relativePath);
 
     QString getNoteUrlForLinkingTo(const Note &note,
                                    bool forceLegacy = false) const;
@@ -255,8 +230,6 @@ class Note {
     QString embedmentUrlStringForFileName(const QString &fileName) const;
 
     bool updateRelativeAttachmentFileLinks();
-
-    Note fetchByRelativeFileName(const QString &fileName) const;
 
     static Utils::Misc::ExternalImageHash *externalImageHash();
 
@@ -276,7 +249,6 @@ class Note {
 
    protected:
     int _id;
-    int _noteSubFolderId;
     QString _name;
     QString _fileName;
     QString _noteTextHtml;
@@ -288,6 +260,7 @@ class Note {
     QDateTime _created;
     QDateTime _modified;
     int _fileSize;
+    QSet<QString> _tagSet;
 
     static const QString getNoteURL(const QString &baseName);
 

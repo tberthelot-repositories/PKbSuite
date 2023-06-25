@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1072</width>
-    <height>1230</height>
+    <height>1237</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -117,22 +117,10 @@
            </column>
            <item>
             <property name="text">
-             <string>Note folders</string>
-            </property>
-            <property name="whatsThis">
-             <string notr="true">0</string>
-            </property>
-            <property name="icon">
-             <iconset theme="folder" resource="../breeze-pkbsuite.qrc">
-              <normaloff>:/icons/breeze-pkbsuite/16x16/folder.svg</normaloff>:/icons/breeze-pkbsuite/16x16/folder.svg</iconset>
-            </property>
-           </item>
-           <item>
-            <property name="text">
              <string>Interface</string>
             </property>
             <property name="whatsThis">
-             <string notr="true">1</string>
+             <string notr="true">0</string>
             </property>
             <property name="icon">
              <iconset theme="edit-guides" resource="../breeze-pkbsuite.qrc">
@@ -143,7 +131,7 @@
               <string>Layout</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">10</string>
+              <string notr="true">8</string>
              </property>
              <property name="icon">
               <iconset theme="window-duplicate" resource="../breeze-pkbsuite.qrc">
@@ -155,7 +143,7 @@
               <string>Editor</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">7</string>
+              <string notr="true">6</string>
              </property>
              <property name="icon">
               <iconset theme="story-editor" resource="../breeze-pkbsuite.qrc">
@@ -166,7 +154,7 @@
                <string>Editor fonts &amp; colors</string>
               </property>
               <property name="whatsThis">
-               <string notr="true">4</string>
+               <string notr="true">3</string>
               </property>
               <property name="icon">
                <iconset theme="gtk-select-font" resource="../breeze-dark-pkbsuite.qrc">
@@ -179,7 +167,7 @@
               <string>Panels</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">8</string>
+              <string notr="true">7</string>
              </property>
              <property name="icon">
               <iconset theme="window-duplicate" resource="../breeze-pkbsuite.qrc">
@@ -191,7 +179,7 @@
               <string>Preview</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">5</string>
+              <string notr="true">4</string>
              </property>
              <property name="icon">
               <iconset theme="text-x-markdown" resource="../breeze-pkbsuite.qrc">
@@ -203,7 +191,7 @@
               <string>Toolbars</string>
              </property>
              <property name="whatsThis">
-              <string notr="true">6</string>
+              <string notr="true">5</string>
              </property>
              <property name="icon">
               <iconset theme="configure" resource="../breeze-pkbsuite.qrc">
@@ -216,7 +204,7 @@
              <string>Shortcuts</string>
             </property>
             <property name="whatsThis">
-             <string notr="true">2</string>
+             <string notr="true">1</string>
             </property>
             <property name="icon">
              <iconset theme="configure-shortcuts" resource="../breeze-pkbsuite.qrc">
@@ -225,51 +213,15 @@
            </item>
            <item>
             <property name="text">
-             <string>Browser extension</string>
-            </property>
-            <property name="whatsThis">
-             <string notr="true">11</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../breeze-pkbsuite.qrc">
-              <normaloff>:/icons/breeze-pkbsuite/16x16/text-html.svg</normaloff>:/icons/breeze-pkbsuite/16x16/text-html.svg</iconset>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Web application</string>
-            </property>
-            <property name="whatsThis">
-             <string notr="true">20</string>
-            </property>
-            <property name="icon">
-             <iconset>
-              <normaloff>:/icons/breeze-qownnotes/16x16/text-html.svg</normaloff>:/icons/breeze-qownnotes/16x16/text-html.svg</iconset>
-            </property>
-           </item>
-           <item>
-            <property name="text">
              <string>General</string>
             </property>
             <property name="whatsThis">
-             <string notr="true">3</string>
+             <string notr="true">2</string>
             </property>
             <property name="icon">
              <iconset resource="../breeze-pkbsuite.qrc">
               <normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</normaloff>:/icons/breeze-pkbsuite/16x16/configure.svg</iconset>
             </property>
-            <item>
-             <property name="text">
-              <string>Local trash</string>
-             </property>
-             <property name="whatsThis">
-              <string notr="true">9</string>
-             </property>
-             <property name="icon">
-              <iconset theme="trash-empty" resource="../breeze-pkbsuite.qrc">
-               <normaloff>:/icons/breeze-pkbsuite/16x16/trash-empty.svg</normaloff>:/icons/breeze-pkbsuite/16x16/trash-empty.svg</iconset>
-             </property>
-            </item>
            </item>
           </widget>
          </item>
@@ -313,328 +265,8 @@
          <item>
           <widget class="QStackedWidget" name="settingsStackedWidget">
            <property name="currentIndex">
-            <number>1</number>
+            <number>8</number>
            </property>
-           <widget class="QWidget" name="noteFoldersPage">
-            <layout class="QGridLayout" name="gridLayout_19">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QGroupBox" name="groupBox_13">
-               <property name="title">
-                <string>Your note folders</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_21">
-                <item row="0" column="0">
-                 <widget class="QFrame" name="noteFolderSelectFrame">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>2</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_20">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="spacing">
-                    <number>9</number>
-                   </property>
-                   <item row="0" column="0">
-                    <widget class="NoteFolderListWidget" name="noteFolderListWidget">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                       <horstretch>2</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="dragEnabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="dragDropMode">
-                      <enum>QAbstractItemView::InternalMove</enum>
-                     </property>
-                     <property name="defaultDropAction">
-                      <enum>Qt::TargetMoveAction</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QFrame" name="frame">
-                     <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Plain</enum>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_23">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item row="0" column="1">
-                       <widget class="QPushButton" name="noteFolderAddButton">
-                        <property name="text">
-                         <string>&amp;Add folder</string>
-                        </property>
-                        <property name="icon">
-                         <iconset theme="folder-new" resource="../breeze-pkbsuite.qrc">
-                          <normaloff>:/icons/breeze-pkbsuite/16x16/folder-new.svg</normaloff>:/icons/breeze-pkbsuite/16x16/folder-new.svg</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="0">
-                       <spacer name="horizontalSpacer">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item row="0" column="2">
-                       <widget class="QPushButton" name="noteFolderRemoveButton">
-                        <property name="text">
-                         <string>&amp;Remove folder</string>
-                        </property>
-                        <property name="icon">
-                         <iconset theme="edit-delete" resource="../breeze-pkbsuite.qrc">
-                          <normaloff>:/icons/breeze-pkbsuite/16x16/edit-delete.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-delete.svg</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item row="0" column="3">
-                 <widget class="QFrame" name="noteFolderEditFrame">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>3</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_22">
-                   <item row="2" column="0" colspan="2">
-                    <widget class="QCheckBox" name="noteFolderActiveCheckBox">
-                     <property name="text">
-                      <string>Use as active note folder</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="0" colspan="2">
-                    <widget class="QCheckBox" name="noteFolderShowSubfoldersCheckBox">
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>Use note sub-folders</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="1">
-                    <widget class="QPushButton" name="noteFolderLocalPathButton">
-                     <property name="toolTip">
-                      <string>Click here to select your local note path</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="icon">
-                      <iconset theme="document-open" resource="../breeze-pkbsuite.qrc">
-                       <normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</normaloff>:/icons/breeze-pkbsuite/16x16/document-open.svg</iconset>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="0" colspan="2">
-                    <widget class="QCheckBox" name="allowDifferentNoteFileNameCheckBox">
-                     <property name="toolTip">
-                      <string>Allow the note file name to be different from the headline.&lt;br&gt;Beware that ownCloud Notes needs the file name to be the same as the headline!</string>
-                     </property>
-                     <property name="text">
-                      <string>Allow note file name to be different from headline</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="0" colspan="2">
-                    <widget class="QLabel" name="label_13">
-                     <property name="text">
-                      <string>Note folder path:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0" colspan="2">
-                    <widget class="QLabel" name="label_12">
-                     <property name="text">
-                      <string>Name:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="7" column="0" colspan="2">
-                    <widget class="QFrame" name="noteFolderRemotePathTreeWidgetFrame">
-                     <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_25">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item row="0" column="0">
-                       <widget class="QFrame" name="frame_3">
-                        <property name="frameShape">
-                         <enum>QFrame::NoFrame</enum>
-                        </property>
-                        <layout class="QGridLayout" name="gridLayout_26">
-                         <property name="leftMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="topMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="rightMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="bottomMargin">
-                          <number>0</number>
-                         </property>
-                        </layout>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
-                    <widget class="QLineEdit" name="noteFolderLocalPathLineEdit">
-                     <property name="readOnly">
-                      <bool>true</bool>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Path where your notes are stored locally</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0" colspan="2">
-                    <widget class="QLineEdit" name="noteFolderNameLineEdit">
-                     <property name="toolTip">
-                      <string>This name will be viewed in all the menus.</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Note folder name</string>
-                     </property>
-                     <property name="clearButtonEnabled">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="8" column="0">
-                    <widget class="QFrame" name="noteFolderVerticalSpacerFrame">
-                     <property name="frameShape">
-                      <enum>QFrame::NoFrame</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Raised</enum>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_27">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item row="0" column="0">
-                       <spacer name="noteFolderVerticalSpacer">
-                        <property name="orientation">
-                         <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                         <enum>QSizePolicy::Expanding</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>20</width>
-                          <height>5</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </widget>
            <widget class="QWidget" name="interfacePage">
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <property name="leftMargin">
@@ -1160,7 +792,28 @@
                   <string>Notes</string>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_5">
-                  <item row="7" column="0" colspan="2">
+                  <item row="3" column="1">
+                   <widget class="QLabel" name="noteSaveIntervalTimeLabel">
+                    <property name="toolTip">
+                     <string>You might run into sync troubles with older versions of ownCloud sync when going far below 10 sec.
+Just test yourself if you get sync conflicts and set a higher value if so.</string>
+                    </property>
+                    <property name="text">
+                     <string>note save interval time [sec]</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="9" column="0" colspan="2">
+                   <widget class="QCheckBox" name="restoreCursorPositionCheckBox">
+                    <property name="toolTip">
+                     <string>When opening notes the cursor position inside the note will now be restored to the position when the note was last visited in the current session</string>
+                    </property>
+                    <property name="text">
+                     <string>Restore cursor position when opening a note</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="6" column="0" colspan="2">
                    <widget class="QCheckBox" name="newNoteAskHeadlineCheckBox">
                     <property name="toolTip">
                      <string>By default the headline will generated automatically</string>
@@ -1170,17 +823,46 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="11" column="0" colspan="2">
-                   <widget class="QCheckBox" name="automaticNoteFolderDatabaseClosingCheckBox">
+                  <item row="1" column="0" colspan="2">
+                   <widget class="QCheckBox" name="ignoreAllExternalModificationsCheckBox">
                     <property name="toolTip">
-                     <string>Automatically close the note folder database to prevent problems with sync tools</string>
+                     <string>Check this if you want to ignore all external modifications while you are editing the current note.</string>
                     </property>
                     <property name="text">
-                     <string>Automatically close the note folder database</string>
+                     <string>Ignore all external modifications of the current note</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="13" column="0" colspan="2">
+                  <item row="3" column="0">
+                   <widget class="QSpinBox" name="noteSaveIntervalTime">
+                    <property name="toolTip">
+                     <string/>
+                    </property>
+                    <property name="layoutDirection">
+                     <enum>Qt::LeftToRight</enum>
+                    </property>
+                    <property name="minimum">
+                     <number>1</number>
+                    </property>
+                    <property name="maximum">
+                     <number>999</number>
+                    </property>
+                    <property name="value">
+                     <number>10</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0" colspan="2">
+                   <widget class="QCheckBox" name="notifyAllExternalModificationsCheckBox">
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked you will always be notified about external modifications, even if current note wasn't edited in the last minute. Recommended is &lt;span style=&quot; font-style:italic;&quot;&gt;unchecked&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="text">
+                     <string>Notify about all external modifications of the current note</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="12" column="0" colspan="2">
                    <widget class="QFrame" name="imageScalingFrame">
                     <property name="frameShape">
                      <enum>QFrame::NoFrame</enum>
@@ -1245,27 +927,6 @@
                     </layout>
                    </widget>
                   </item>
-                  <item row="1" column="0" colspan="2">
-                   <widget class="QCheckBox" name="ignoreAllExternalModificationsCheckBox">
-                    <property name="toolTip">
-                     <string>Check this if you want to ignore all external modifications while you are editing the current note.</string>
-                    </property>
-                    <property name="text">
-                     <string>Ignore all external modifications of the current note</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="1">
-                   <widget class="QLabel" name="noteSaveIntervalTimeLabel">
-                    <property name="toolTip">
-                     <string>You might run into sync troubles with older versions of ownCloud sync when going far below 10 sec.
-Just test yourself if you get sync conflicts and set a higher value if so.</string>
-                    </property>
-                    <property name="text">
-                     <string>note save interval time [sec]</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item row="2" column="0" colspan="2">
                    <widget class="QCheckBox" name="acceptAllExternalModificationsCheckBox">
                     <property name="toolTip">
@@ -1276,14 +937,14 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                     </property>
                    </widget>
                   </item>
-                  <item row="12" column="0" colspan="2">
+                  <item row="11" column="0" colspan="2">
                    <widget class="QCheckBox" name="imageScaleDownCheckBox">
                     <property name="text">
                      <string>Scale images down when inserted into notes</string>
                     </property>
                    </widget>
                   </item>
-                  <item row="8" column="0" colspan="2">
+                  <item row="7" column="0" colspan="2">
                    <widget class="QCheckBox" name="useUNIXNewlineCheckBox">
                     <property name="toolTip">
                      <string>You can use this for example under Windows if you have troubles with newlines in the ownCloud / Nextcloud notes app</string>
@@ -1293,7 +954,7 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                     </property>
                    </widget>
                   </item>
-                  <item row="9" column="0" colspan="2">
+                  <item row="8" column="0" colspan="2">
                    <widget class="QCheckBox" name="restoreLastNoteAtStartupCheckBox">
                     <property name="toolTip">
                      <string>Disable this if you want to launch the application without opening a note</string>
@@ -1303,52 +964,13 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                     </property>
                    </widget>
                   </item>
-                  <item row="3" column="0" colspan="2">
-                   <widget class="QCheckBox" name="ignoreAllExternalNoteFolderChangesCheckBox">
-                    <property name="toolTip">
-                     <string>Do this at your own risk!</string>
-                    </property>
-                    <property name="text">
-                     <string>Ignore all external note folder changes</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="0">
-                   <widget class="QSpinBox" name="noteSaveIntervalTime">
-                    <property name="toolTip">
-                     <string/>
-                    </property>
-                    <property name="layoutDirection">
-                     <enum>Qt::LeftToRight</enum>
-                    </property>
-                    <property name="minimum">
-                     <number>1</number>
-                    </property>
-                    <property name="maximum">
-                     <number>999</number>
-                    </property>
-                    <property name="value">
-                     <number>10</number>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0" colspan="2">
-                   <widget class="QCheckBox" name="notifyAllExternalModificationsCheckBox">
-                    <property name="toolTip">
-                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked you will always be notified about external modifications, even if current note wasn't edited in the last minute. Recommended is &lt;span style=&quot; font-style:italic;&quot;&gt;unchecked&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                    </property>
-                    <property name="text">
-                     <string>Notify about all external modifications of the current note</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item row="10" column="0" colspan="2">
-                   <widget class="QCheckBox" name="restoreCursorPositionCheckBox">
+                   <widget class="QCheckBox" name="automaticNoteFolderDatabaseClosingCheckBox">
                     <property name="toolTip">
-                     <string>When opening notes the cursor position inside the note will now be restored to the position when the note was last visited in the current session</string>
+                     <string>Automatically close the note folder database to prevent problems with sync tools</string>
                     </property>
                     <property name="text">
-                     <string>Restore cursor position when opening a note</string>
+                     <string>Automatically close the note folder database</string>
                     </property>
                    </widget>
                   </item>
@@ -1603,48 +1225,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                    <widget class="QPushButton" name="exportSettingsButton">
                     <property name="text">
                      <string>Export settings</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <widget class="QGroupBox" name="groupBox_3">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="title">
-                  <string>Database</string>
-                 </property>
-                 <layout class="QGridLayout" name="gridLayout_76">
-                  <item row="1" column="0">
-                   <widget class="QPushButton" name="reinitializeDatabaseButton">
-                    <property name="text">
-                     <string>Reinitialize Database</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QPushButton" name="databaseIntegrityCheckButton">
-                    <property name="toolTip">
-                     <string>Checks the disk database integrity and fixes problems</string>
-                    </property>
-                    <property name="text">
-                     <string>Check integrity</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0" colspan="2">
-                   <widget class="QLabel" name="reinitializeDatabaseLabel">
-                    <property name="text">
-                     <string>Be warned that reinitializing the database will also remove your cached todo items and configured note folders and scripts!</string>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -2226,7 +1806,7 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                    <string notr="true">…</string>
                   </property>
                   <property name="icon">
-                   <iconset theme="edit-clear" resource="../breeze-qownnotes.qrc">
+                   <iconset theme="edit-clear">
                     <normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</normaloff>:/icons/breeze-qownnotes/16x16/edit-clear.svg</iconset>
                   </property>
                  </widget>
@@ -2319,214 +1899,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
             </property>
             <layout class="QGridLayout" name="gridLayout_63">
              <item row="2" column="0">
-              <widget class="QGroupBox" name="notesPanelGroupBox">
-               <property name="title">
-                <string>Note list panel</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_61">
-                <item row="2" column="1" colspan="2">
-                 <widget class="QCheckBox" name="noteListPreviewCheckBox">
-                  <property name="text">
-                   <string>Show notes in the note list with preview</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1" colspan="2">
-                 <widget class="QCheckBox" name="noteSubfoldersPanelShowNotesRecursivelyCheckBox">
-                  <property name="text">
-                   <string>Show all notes in a folder including their subfolders (only works if subfolders are turned on)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1" colspan="2">
-                 <widget class="QCheckBox" name="taggingShowNotesRecursivelyCheckBox">
-                  <property name="text">
-                   <string>Show all notes of a tag including the notes of their children-tags</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="1">
-                 <widget class="QGroupBox" name="notesPanelSortGroupBox">
-                  <property name="title">
-                   <string>Sort</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_16">
-                   <item>
-                    <widget class="QRadioButton" name="notesPanelSortAlphabeticalRadioButton">
-                     <property name="text">
-                      <string>Alphabetical</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="notesPanelSortByLastChangeRadioButton">
-                     <property name="text">
-                      <string>By last change</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item row="4" column="2">
-                 <widget class="QGroupBox" name="notesPanelOrderGroupBox">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="title">
-                   <string>Order</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_15">
-                   <item>
-                    <widget class="QRadioButton" name="notesPanelOrderAscendingRadioButton">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string>Ascending</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="notesPanelOrderDescendingRadioButton">
-                     <property name="text">
-                      <string>Descending</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item row="3" column="1" colspan="2">
-                 <widget class="QCheckBox" name="enableNoteTreeCheckBox">
-                  <property name="text">
-                   <string>Instead of a note list use a note tree with all the subfolders (if they are turned on for the note folder)</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QGroupBox" name="noteSubfoldersPanelGroupBox">
-               <property name="title">
-                <string>Note subfolders panel</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_56">
-                <item row="1" column="1">
-                 <widget class="QCheckBox" name="noteSubfoldersPanelShowFullPathCheckBox">
-                  <property name="text">
-                   <string>Show with full path</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <widget class="QGroupBox" name="noteSubfoldersPanelSortGroupBox">
-                  <property name="title">
-                   <string>Sort</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_17">
-                   <item>
-                    <widget class="QRadioButton" name="noteSubfoldersPanelSortAlphabeticalRadioButton">
-                     <property name="text">
-                      <string>Alphabetical</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="noteSubfoldersPanelSortByLastChangeRadioButton">
-                     <property name="text">
-                      <string>By last change</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QCheckBox" name="noteSubfoldersPanelShowRootFolderNameCheckBox">
-                  <property name="text">
-                   <string>Show root folder name</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="1">
-                 <widget class="QGroupBox" name="noteSubfoldersPanelOrderGroupBox">
-                  <property name="title">
-                   <string>Order</string>
-                  </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_18">
-                   <item>
-                    <widget class="QRadioButton" name="noteSubfoldersPanelOrderAscendingRadioButton">
-                     <property name="text">
-                      <string>Ascending</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="noteSubfoldersPanelOrderDescendingRadioButton">
-                     <property name="text">
-                      <string>Descending</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="noteSubfoldersPanelHideSearchCheckBox">
-                  <property name="text">
-                   <string>Hide 'Find or create note subfolder' search</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QCheckBox" name="noteSubfoldersPanelDisplayAsFullTreeCheckBox">
-                  <property name="text">
-                   <string>Display note subfolders as full tree</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="0" colspan="2">
-                 <widget class="QGroupBox" name="groupBox_30">
-                  <property name="toolTip">
-                   <string>Regular expressions of note subfolders to ignore, separated by &quot;;&quot;</string>
-                  </property>
-                  <property name="title">
-                   <string>Ignored subfolders</string>
-                  </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_10">
-                   <item>
-                    <widget class="QLineEdit" name="ignoreNoteSubFoldersLineEdit">
-                     <property name="placeholderText">
-                      <string>Regular expressions of note subfolders to ignore, separated by &quot;;&quot;</string>
-                     </property>
-                     <property name="clearButtonEnabled">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QToolButton" name="ignoreNoteSubFoldersResetButton">
-                     <property name="toolTip">
-                      <string>Reset ignored subfolders</string>
-                     </property>
-                     <property name="text">
-                      <string notr="true">…</string>
-                     </property>
-                     <property name="icon">
-                      <iconset theme="edit-clear" resource="../breeze-pkbsuite.qrc">
-                       <normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</normaloff>:/icons/breeze-pkbsuite/16x16/edit-clear.svg</iconset>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="3" column="0">
               <widget class="QGroupBox" name="noteEditPanelGroupBox">
                <property name="title">
                 <string>Note edit panel</string>
@@ -2552,23 +1924,7 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                </layout>
               </widget>
              </item>
-             <item row="6" column="0">
-              <widget class="QGroupBox" name="navigationPanelGroupBox">
-               <property name="title">
-                <string>Navigation panel</string>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_25">
-                <item>
-                 <widget class="QCheckBox" name="navigationPanelHideSearchCheckBox">
-                  <property name="text">
-                   <string>Hide navigation item search bar</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="5" column="0">
+             <item row="3" column="0">
               <widget class="QGroupBox" name="tagsPanelGroupBox">
                <property name="title">
                 <string>Tags panel</string>
@@ -2637,7 +1993,23 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
                </layout>
               </widget>
              </item>
-             <item row="7" column="0">
+             <item row="4" column="0">
+              <widget class="QGroupBox" name="navigationPanelGroupBox">
+               <property name="title">
+                <string>Navigation panel</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_25">
+                <item>
+                 <widget class="QCheckBox" name="navigationPanelHideSearchCheckBox">
+                  <property name="text">
+                   <string>Hide navigation item search bar</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="5" column="0">
               <spacer name="verticalSpacer_14">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -2674,125 +2046,82 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QGroupBox" name="noteFolderPanelGroupBox">
+              <widget class="QGroupBox" name="notesPanelGroupBox">
                <property name="title">
-                <string>Note folder panel</string>
+                <string>Note list panel</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_75">
-                <item row="0" column="1" colspan="2">
-                 <widget class="QCheckBox" name="noteFolderButtonsCheckBox">
+               <layout class="QGridLayout" name="gridLayout_61">
+                <item row="2" column="1" colspan="2">
+                 <widget class="QCheckBox" name="enableNoteTreeCheckBox">
                   <property name="text">
-                   <string>Show note folders as buttons instead of in a select box</string>
+                   <string>Instead of a note list use a note tree with all the subfolders (if they are turned on for the note folder)</string>
                   </property>
                  </widget>
                 </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="localTrashPage">
-            <layout class="QGridLayout" name="gridLayout_64">
-             <item row="1" column="0">
-              <widget class="QGroupBox" name="localTrashGroupBox">
-               <property name="title">
-                <string>Local trash settings</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_66">
-                <item row="1" column="0">
-                 <widget class="QFrame" name="localTrashClearFrame">
-                  <property name="frameShape">
-                   <enum>QFrame::NoFrame</enum>
+                <item row="0" column="1" colspan="2">
+                 <widget class="QCheckBox" name="taggingShowNotesRecursivelyCheckBox">
+                  <property name="text">
+                   <string>Show all notes of a tag including the notes of their children-tags</string>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Raised</enum>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="QGroupBox" name="notesPanelOrderGroupBox">
+                  <property name="enabled">
+                   <bool>true</bool>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_8">
-                   <property name="spacing">
-                    <number>0</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
+                  <property name="title">
+                   <string>Order</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_15">
                    <item>
-                    <widget class="QLabel" name="localTrashClearTimeLabel">
-                     <property name="toolTip">
-                      <string>You might run into sync troubles with older versions of ownCloud sync when going far below 10 sec.
-Just test yourself if you get sync conflicts and set a higher value if so.</string>
+                    <widget class="QRadioButton" name="notesPanelOrderAscendingRadioButton">
+                     <property name="enabled">
+                      <bool>true</bool>
                      </property>
                      <property name="text">
-                      <string>Remove trashed notes after:</string>
+                      <string>Ascending</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QSpinBox" name="localTrashClearTimeSpinBox">
-                     <property name="suffix">
-                      <string extracomment="seconds"> days</string>
-                     </property>
-                     <property name="minimum">
-                      <number>1</number>
-                     </property>
-                     <property name="maximum">
-                      <number>9999999</number>
-                     </property>
-                     <property name="value">
-                      <number>30</number>
+                    <widget class="QRadioButton" name="notesPanelOrderDescendingRadioButton">
+                     <property name="text">
+                      <string>Descending</string>
                      </property>
                     </widget>
                    </item>
                   </layout>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="localTrashClearCheckBox">
+                <item row="1" column="1" colspan="2">
+                 <widget class="QCheckBox" name="noteListPreviewCheckBox">
                   <property name="text">
-                   <string>Automatically remove trashed notes after a certain time</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
+                   <string>Show notes in the note list with preview</string>
                   </property>
                  </widget>
                 </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <spacer name="verticalSpacer_15">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="0" column="0">
-              <widget class="QGroupBox" name="groupBox_29">
-               <property name="title">
-                <string>Local trash support</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_65">
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="localTrashEnabledCheckBox">
-                  <property name="text">
-                   <string>Enable local trash to keep a copy of trashed notes</string>
+                <item row="3" column="1">
+                 <widget class="QGroupBox" name="notesPanelSortGroupBox">
+                  <property name="title">
+                   <string>Sort</string>
                   </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_16">
+                   <item>
+                    <widget class="QRadioButton" name="notesPanelSortAlphabeticalRadioButton">
+                     <property name="text">
+                      <string>Alphabetical</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QRadioButton" name="notesPanelSortByLastChangeRadioButton">
+                     <property name="text">
+                      <string>By last change</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                </layout>
@@ -2909,29 +2238,10 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
    <header location="global">widgets/layoutwidget.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>NoteFolderListWidget</class>
-   <extends>QListWidget</extends>
-   <header>widgets/notefolderlistwidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>QRCodeWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">widgets/qrcodewidget.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>searchLineEdit</tabstop>
   <tabstop>settingsTreeWidget</tabstop>
-  <tabstop>noteFolderListWidget</tabstop>
-  <tabstop>noteFolderAddButton</tabstop>
-  <tabstop>noteFolderRemoveButton</tabstop>
-  <tabstop>noteFolderLocalPathButton</tabstop>
-  <tabstop>noteFolderLocalPathLineEdit</tabstop>
-  <tabstop>noteFolderNameLineEdit</tabstop>
-  <tabstop>noteFolderActiveCheckBox</tabstop>
-  <tabstop>noteFolderShowSubfoldersCheckBox</tabstop>
   <tabstop>languageListWidget</tabstop>
   <tabstop>darkModeTrayIconCheckBox</tabstop>
   <tabstop>darkModeCheckBox</tabstop>
@@ -2952,7 +2262,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
   <tabstop>shortcutTreeWidget</tabstop>
   <tabstop>maximumImageHeightSpinBox</tabstop>
   <tabstop>maximumImageWidthSpinBox</tabstop>
-  <tabstop>ignoreAllExternalNoteFolderChangesCheckBox</tabstop>
   <tabstop>imageScaleDownCheckBox</tabstop>
   <tabstop>ignoreAllExternalModificationsCheckBox</tabstop>
   <tabstop>acceptAllExternalModificationsCheckBox</tabstop>
@@ -2973,7 +2282,6 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
   <tabstop>clearAppDataAndExitButton</tabstop>
   <tabstop>importSettingsButton</tabstop>
   <tabstop>exportSettingsButton</tabstop>
-  <tabstop>reinitializeDatabaseButton</tabstop>
   <tabstop>noteTextEditFontLabel</tabstop>
   <tabstop>noteTextEditButton</tabstop>
   <tabstop>noteTextEditResetButton</tabstop>
@@ -3007,27 +2315,13 @@ Just test yourself if you get sync conflicts and set a higher value if so.</stri
   <tabstop>tagsPanelOrderAscendingRadioButton</tabstop>
   <tabstop>tagsPanelOrderDescendingRadioButton</tabstop>
   <tabstop>tagsPanelHideSearchCheckBox</tabstop>
-  <tabstop>noteSubfoldersPanelShowFullPathCheckBox</tabstop>
-  <tabstop>noteSubfoldersPanelSortAlphabeticalRadioButton</tabstop>
-  <tabstop>noteSubfoldersPanelSortByLastChangeRadioButton</tabstop>
-  <tabstop>noteSubfoldersPanelShowRootFolderNameCheckBox</tabstop>
-  <tabstop>noteSubfoldersPanelOrderAscendingRadioButton</tabstop>
-  <tabstop>noteSubfoldersPanelOrderDescendingRadioButton</tabstop>
-  <tabstop>noteSubfoldersPanelHideSearchCheckBox</tabstop>
-  <tabstop>noteSubfoldersPanelDisplayAsFullTreeCheckBox</tabstop>
-  <tabstop>ignoreNoteSubFoldersLineEdit</tabstop>
-  <tabstop>ignoreNoteSubFoldersResetButton</tabstop>
   <tabstop>notesPanelOrderAscendingRadioButton</tabstop>
   <tabstop>notesPanelOrderDescendingRadioButton</tabstop>
-  <tabstop>noteSubfoldersPanelShowNotesRecursivelyCheckBox</tabstop>
   <tabstop>notesPanelSortAlphabeticalRadioButton</tabstop>
   <tabstop>notesPanelSortByLastChangeRadioButton</tabstop>
   <tabstop>taggingShowNotesRecursivelyCheckBox</tabstop>
   <tabstop>noteListPreviewCheckBox</tabstop>
   <tabstop>navigationPanelHideSearchCheckBox</tabstop>
-  <tabstop>localTrashClearTimeSpinBox</tabstop>
-  <tabstop>localTrashClearCheckBox</tabstop>
-  <tabstop>localTrashEnabledCheckBox</tabstop>
  </tabstops>
  <resources>
   <include location="../breeze-pkbsuite.qrc"/>
