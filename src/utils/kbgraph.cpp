@@ -71,7 +71,7 @@ QString kbGraphNode::name() {
 }
 
 int kbGraphNode::getNumberOfLinks() const {
-    return _noteLinkCount;
+    return (_noteLinkCount>0?_noteLinkCount:1);
 }
 
 float kbGraphNode::getCircleSize() const {
@@ -114,7 +114,7 @@ QVariant kbGraphNode::itemChange(GraphicsItemChange change, const QVariant &valu
         for (kbGraphLink *link : qAsConst(_noteLinks))
             link->adjust();
         _graph->itemMoved();
-        update();
+     //   update();
         break;
     default:
         break;
@@ -124,33 +124,76 @@ QVariant kbGraphNode::itemChange(GraphicsItemChange change, const QVariant &valu
 }
 
 void kbGraphNode::calculateForces() {
-    QPointF position = pos();
+    // if (!scene() || scene()->mouseGrabberItem() == this) {
+    //     _position = pos();
+    //     return;
+    // }
+    //
+    // // Sum up all forces pushing this item away
+    // qreal xvel = 0;
+    // qreal yvel = 0;
+    // const QList<QGraphicsItem *> items = scene()->items();
+    // for (QGraphicsItem *item : items) {
+    //     kbGraphNode* node = qgraphicsitem_cast<kbGraphNode*>(item);
+    //     if (node && node != this) {
+    //         QPointF vec = mapToItem(node, 0, 0);
+    //         qreal dx = vec.x();
+    //         qreal dy = vec.y();
+    //         double l2 = dx * dx + dy * dy;
+    //         xvel += (dx * 15) / l2;
+    //         yvel += (dy * 15) / l2;
+    //     }
+    // }
+    //
+    // // Now subtract all forces caused by links
+    // for (const kbGraphLink* edge : qAsConst(_noteLinks)) {
+    //     QPointF vec;
+    //     if (edge->source() == this)
+    //         vec = mapToItem(edge->dest(), 0, 0);
+    //     else
+    //         vec = mapToItem(edge->source(), 0, 0);
+    //     xvel -= vec.x() / (edge->weight() * 100);
+    //     yvel -= vec.y() / (edge->weight() * 100);
+    // }
+    //
+    // if (qAbs(xvel) < 1 && qAbs(yvel) < 1)
+    //     xvel = yvel = 0;
+    //
+    // _position = pos() + QPointF(xvel, yvel);
+ if (!scene() || scene()->mouseGrabberItem() == this) {
+        _position = pos();
+        return;
+    }
+
+    // Sum up all forces pushing this item away
     qreal xvel = 0;
     qreal yvel = 0;
-
-    // Calculate forces pushing each item away
-    const QList<QGraphicsItem*> items = scene()->items();
-    for (QGraphicsItem* item : items) {
+    const QList<QGraphicsItem *> items = scene()->items();
+    for (QGraphicsItem *item : items) {
         kbGraphNode* node = qgraphicsitem_cast<kbGraphNode*>(item);
-        if (node && node != this) {
-            QPointF vec = mapToItem(node, QPointF(0, 0)); //, position);
-            qreal dx = vec.x();
-            qreal dy = vec.y();
-            double l2 = 5 * (dx * dx + dy * dy);
-            // if (!linkToNodeExists(node))
-            //     l2 /= 1.5;
-            // if (l2 > 0) {
-                xvel += (dx * 150) / l2;
-                yvel += (dy * 150) / l2;
-//            }
+        if (!node)
+            continue;
+
+        QPointF vec = mapToItem(node, 0, 0);
+        qreal dx = vec.x();
+        qreal dy = vec.y();
+        double l2 = 10 * (dx * dx + dy * dy);
+        if (!linkToNodeExists(node))
+            l2 /= 1.5;
+        if (l2 > 0) {
+            xvel += (dx * 150) / l2;
+            yvel += (dy * 150) / l2;
         }
     }
 
-    // Calculate forces pulling items together
-    double weight2 = (_noteLinks.size() + 1) * 50;
+    // Now subtract all forces pulling items together
+    double weight2 = (_noteLinks.size() + 1) * 100;
     for (const kbGraphLink* edge : qAsConst(_noteLinks)) {
-        const kbGraphNode* otherNode = (edge->source() == this) ? edge->dest() : edge->source();
-        QPointF vec = mapToItem(otherNode, position); //, QPointF(0, 0));
+        QPointF vec;
+        if (edge->source() == this)
+            vec = mapToItem(edge->dest(), 0, 0);
+        else
+            vec = mapToItem(edge->source(), 0, 0);
         xvel -= vec.x() / weight2;
         yvel -= vec.y() / weight2;
     }
@@ -158,18 +201,23 @@ void kbGraphNode::calculateForces() {
     if (qAbs(xvel) < 1 && qAbs(yvel) < 1)
         xvel = yvel = 0;
 
-    _position = position + QPointF(xvel, yvel);
+    _position = pos() + QPointF(xvel, yvel);
 }
 
 bool kbGraphNode::advancePosition() {
-    if (_position * 100 == pos() * 100)
+    if (_position == pos())
         return false;
 //     if (QLineF(_position, pos()).length() < 5)
 //         return false;
 
-    setPos(_position);
+    if (!_fixedPos)
+        setPos(_position);
 
     return true;
+}
+
+void kbGraphNode::fix() {
+    _fixedPos = true;
 }
 
 /*
@@ -198,6 +246,11 @@ void kbGraphLink::adjust()
     _sourcePoint = line.p1();
     _destPoint = line.p2();
 }
+
+int kbGraphLink::weight() const {
+    return _source->getNumberOfLinks() + _dest->getNumberOfLinks();
+}
+
 
 QRectF kbGraphLink::boundingRect() const
 {

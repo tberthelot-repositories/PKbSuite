@@ -5435,7 +5435,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 noteText.append("**File:** " + embedmentLink + "  \n");
                 noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
                 noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
-                noteText.append("**Tags:** #REFERENCE_NOTE, #TODO\n");
+                noteText.append("**Tags:** #LECTURE, #TODO\n");
                 noteText.append("**Author:** " + pdfFile.author() + "  \n");
 				noteText.append("\n-----\n");
 
@@ -7416,7 +7416,7 @@ void MainWindow::on_noteTreeWidget_currentItemChanged(
 	while (reIterator.hasNext()) {
 		QRegularExpressionMatch reMatch = reIterator.next();
 		QString tag = reMatch.captured().right(reMatch.capturedLength() - 2);
-		
+
 		const QSignalBlocker blocker(noteDirectoryWatcher);
 		Q_UNUSED(blocker);
 

@@ -73,9 +73,19 @@ void kbGraphWidget::GenerateKBGraph() {
             _maxLinkNumber = 1;
     }
 
+    float nodesCount = _noteNodes.size();
+
+    // Initialize nodes positions on a circle
+    float a = 0.f;
+    float da = 2.f * M_PI / nodesCount;
     foreach (kbGraphNode* node, _noteNodes) {
-        node->setPos((qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360), (qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360));
+        node->setPos(nodesCount * cos(a) * node->getNumberOfLinks() / _maxLinkNumber, nodesCount * sin(a) * node->getNumberOfLinks() / _maxLinkNumber);
+        a += da;
     }
+
+    // foreach (kbGraphNode* node, _noteNodes) {
+    //     node->setPos((qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360), (qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360));
+    // }
 }
 
 // TODO Check if has to be modified to take note graph into acount
@@ -105,8 +115,6 @@ void kbGraphWidget::mousePressEvent(QMouseEvent *mouseEvent) {
         _panStartY = mouseEvent->y();
         setCursor(Qt::ClosedHandCursor);
         mouseEvent->accept();
-        mouseEvent->accept();
-        mouseEvent->accept();
     }
 
     update();
@@ -124,6 +132,13 @@ void kbGraphWidget::mouseReleaseEvent(QMouseEvent *mouseEvent) {
                 if (note.getId() > 0)
                     _mainWindow->setCurrentNote(std::move(note));
                 centerOn(_pointedNode);
+                _pointedNode = nullptr;
+            }
+        }
+        else {
+            if (_pointedNode) {
+                _pointedNode->setPos(newPt);
+                _pointedNode->fix();
                 _pointedNode = nullptr;
             }
         }
@@ -176,7 +191,7 @@ void kbGraphWidget::wheelEvent(QWheelEvent *event) {
 void kbGraphWidget::itemMoved()
 {
     if (!timerId)
-        timerId = startTimer(1000 / 500); // 25);
+        timerId = startTimer(1000 / 1000);
 }
 
 void kbGraphWidget::timerEvent(QTimerEvent *event) {
@@ -194,9 +209,13 @@ void kbGraphWidget::timerEvent(QTimerEvent *event) {
 
     bool itemsMoved = false;
     for (kbGraphNode *node : qAsConst(nodes)) {
-        if (node->advancePosition())
-            itemsMoved = true;
+        if (node != _pointedNode)     // TODO Check if it is needed to fix a node manually positionned
+            if (node->advancePosition())
+                itemsMoved = true;
     }
+
+    if (_pointedNode)
+        _pointedNode = nullptr;
 
     if (!itemsMoved) {
         killTimer(timerId);
@@ -214,7 +233,7 @@ kbGraphNode* kbGraphWidget::nodeFromNote(QString noteName) {
 }
 
 void kbGraphWidget::scalingTime(qreal x) {
-    qreal factor = 1.0+ qreal(_numScheduledScalings) / 300.0;
+    qreal factor = 1.0 + qreal(_numScheduledScalings) / 300.0;
     scale(factor, factor);
 }
 

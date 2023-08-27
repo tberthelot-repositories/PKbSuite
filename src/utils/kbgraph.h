@@ -28,12 +28,14 @@ public:
     kbGraphLink(kbGraphNode* source, kbGraphNode* dest);
 
     void adjust();
+    int weight() const;
 
     inline kbGraphNode* source() const;
     inline kbGraphNode* dest() const;
 
-protected:
     QRectF boundingRect() const override;
+
+protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
@@ -66,6 +68,8 @@ public:
     void calculateForces();
     bool advancePosition();
 
+    void fix();
+
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
@@ -76,4 +80,5 @@ private:
     int _noteLinkCount;
     QRect _rectText;
     kbGraphWidget* _graph;
+    bool _fixedPos = false;
 };
