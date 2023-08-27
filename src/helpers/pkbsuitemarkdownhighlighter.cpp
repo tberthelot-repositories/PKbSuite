@@ -24,6 +24,7 @@
 #include <QRegularExpressionMatch>
 
 #include "qownspellchecker.h"
+#include <entities/notemap.h>
 
 /**
  * Markdown syntax highlighting
@@ -127,7 +128,7 @@ void PKbSuiteMarkdownHighlighter::highlightBrokenNotesLink(
             }
 
             const Note note =
-                _currentNote->fetchByRelativeFileName(fileName);
+                NoteMap::getInstance()->fetchByRelativeFileName(fileName);
 
             // if the note exists we don't need to do anything
             if (note.isFetched()) {
@@ -146,8 +147,8 @@ void PKbSuiteMarkdownHighlighter::highlightBrokenNotesLink(
                     return;
                 }
 
-                const Note note =
-                    _currentNote->fetchByRelativeFileName(fileName);
+                NoteMap* noteMap = NoteMap::getInstance();
+                const Note note = noteMap->fetchNoteByFileName(fileName);
 
                 // if the note exists we don't need to do anything
                 if (note.isFetched()) {

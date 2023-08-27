@@ -15,9 +15,6 @@
 #include "misc.h"
 
 #include <entities/note.h>
-#include <entities/notefolder.h>
-#include <entities/notesubfolder.h>
-#include <services/databaseservice.h>
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -689,7 +686,7 @@ QString Utils::Misc::appDataPath() {
 	location = QStandardPaths::GenericDataLocation;
 #endif
 
-	// get the path to store the database
+	// get the path of storage
 	path = QStandardPaths::writableLocation(location);
 
 	QDir dir;

@@ -15,6 +15,9 @@ class NoteDialog : public MasterDialog {
    public:
     explicit NoteDialog(QWidget *parent = 0);
     ~NoteDialog();
+
+    MainWindow* getMainWindow();
+
     void setNote(Note &note);
 
 private slots:

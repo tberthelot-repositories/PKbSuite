@@ -1,8 +1,6 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include <entities/notefolder.h>
-
 #include "masterdialog.h"
 
 namespace Ui {
@@ -68,10 +66,6 @@ class SettingsDialog : public MasterDialog {
 
     void on_noteTextViewButton_clicked();
 
-    void on_reinitializeDatabaseButton_clicked();
-
-    void on_clearAppDataAndExitButton_clicked();
-
     void on_noteTextEditCodeButton_clicked();
 
     void on_noteTextEditResetButton_clicked();
@@ -86,19 +80,6 @@ class SettingsDialog : public MasterDialog {
 
     void on_setExternalEditorPathToolButton_clicked();
 
-    void on_noteFolderListWidget_currentItemChanged(QListWidgetItem *current,
-                                                    QListWidgetItem *previous);
-
-    void on_noteFolderAddButton_clicked();
-
-    void on_noteFolderRemoveButton_clicked();
-
-    void on_noteFolderNameLineEdit_editingFinished();
-
-    void on_noteFolderLocalPathButton_clicked();
-
-    void on_noteFolderActiveCheckBox_stateChanged(int arg1);
-
     void on_addCustomNoteFileExtensionButton_clicked();
 
     void on_removeCustomNoteFileExtensionButton_clicked();
@@ -107,8 +88,6 @@ class SettingsDialog : public MasterDialog {
         QListWidgetItem *item);
 
     void on_darkModeCheckBox_toggled();
-
-    void on_noteFolderShowSubfoldersCheckBox_toggled(bool checked);
 
     void on_shortcutSearchLineEdit_textChanged(const QString &arg1);
 
@@ -147,13 +126,7 @@ class SettingsDialog : public MasterDialog {
 
     void on_markdownHighlightingCheckBox_toggled(bool checked);
 
-    void on_localTrashEnabledCheckBox_toggled(bool checked);
-
-    void on_localTrashClearCheckBox_toggled(bool checked);
-
     void keySequenceEvent(const QString &objectName);
-
-    void on_ignoreNoteSubFoldersResetButton_clicked();
 
     void on_interfaceFontSizeSpinBox_valueChanged(int arg1);
 
@@ -169,8 +142,6 @@ class SettingsDialog : public MasterDialog {
 
     void on_noteTextViewUseEditorStylesCheckBox_toggled(bool checked);
 
-    void on_databaseIntegrityCheckButton_clicked();
-
 private:
     Ui::SettingsDialog *ui;
     QStatusBar *noteFolderRemotePathTreeStatusBar;
@@ -183,7 +154,6 @@ private:
     QString serverVersion;
     QString notesPathExistsText;
     QString connectionErrorMessage;
-    NoteFolder _selectedNoteFolder;
     static const int _defaultMarkdownHighlightingInterval = 200;
     QSplitter *_mainSplitter;
     QButtonGroup *_noteNotificationButtonGroup;
@@ -201,8 +171,6 @@ private:
                                       const QString &value);
 
     static QString getSelectedListWidgetValue(QListWidget *listWidget);
-
-    void setupNoteFolderPage();
 
     void addPathToNoteFolderRemotePathTreeWidget(QTreeWidgetItem *parent,
                                                  const QString &path);

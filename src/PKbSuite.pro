@@ -20,7 +20,7 @@ TRANSLATIONS = $$PWD/languages/PKbSuite_en.ts \
     $$PWD/languages/PKbSuite_fr.ts
 
 CODECFORTR = UTF-8
-CONFIG += c++17 with_aspell
+CONFIG += c++latest with_aspell
 
 INCLUDEPATH += $$PWD/libraries $$PWD/libraries/diff_match_patch /usr/include/poppler
 
@@ -40,19 +40,13 @@ SOURCES += main.cpp\
     dialogs/linkdialog.cpp \
     dialogs/notediffdialog.cpp \
     dialogs/settingsdialog.cpp \
-    dialogs/localtrashdialog.cpp \
     entities/note.cpp \
-    entities/trashitem.cpp \
-    entities/notesubfolder.cpp \
     entities/notehistory.cpp \
-    entities/notefolder.cpp \
-    entities/tag.cpp \
     entities/bookmark.cpp \
     helpers/htmlentities.cpp \
     helpers/toolbarcontainer.cpp \
     helpers/pkbsuitemarkdownhighlighter.cpp \
     helpers/flowlayout.cpp \
-    services/databaseservice.cpp \
     widgets/graphicsview.cpp \
     widgets/pkbsuitemarkdowntextedit.cpp \
     dialogs/masterdialog.cpp \
@@ -66,9 +60,6 @@ SOURCES += main.cpp\
     widgets/navigationwidget.cpp \
     widgets/notepreviewwidget.cpp \
     widgets/kbgraphwidget.cpp \
-    api/noteapi.cpp \
-    api/notesubfolderapi.cpp \
-    api/tagapi.cpp \
     widgets/combobox.cpp \
     widgets/fontcolorwidget.cpp \
     dialogs/tabledialog.cpp \
@@ -80,13 +71,14 @@ SOURCES += main.cpp\
     widgets/label.cpp \
     widgets/lineedit.cpp \
     widgets/qtexteditsearchwidget.cpp \
-    widgets/notefolderlistwidget.cpp \
     widgets/notetreewidgetitem.cpp \
     widgets/layoutwidget.cpp \
     dialogs/imagedialog.cpp \
     dialogs/commandbar.cpp \
     models/commandmodel.cpp \
-    libraries/fuzzy/kfuzzymatcher.cpp
+    libraries/fuzzy/kfuzzymatcher.cpp \
+    entities/notemap.cpp \
+    entities/tagmap.cpp
 
 HEADERS  += mainwindow.h \
     build_number.h \
@@ -102,21 +94,15 @@ HEADERS  += mainwindow.h \
     libraries/md4c/md2html/entity.h \
     entities/notehistory.h \
     entities/note.h \
-    entities/trashitem.h \
-    entities/notesubfolder.h \
-    entities/notefolder.h \
-    entities/tag.h \
     entities/bookmark.h \
     dialogs/aboutdialog.h \
     dialogs/linkdialog.h \
     dialogs/notediffdialog.h \
     dialogs/settingsdialog.h \
-    dialogs/localtrashdialog.h \
     helpers/htmlentities.h \
     helpers/toolbarcontainer.h \
     helpers/pkbsuitemarkdownhighlighter.h \
     helpers/flowlayout.h \
-    services/databaseservice.h \
     release.h \
     widgets/graphicsview.h \
     widgets/pkbsuitemarkdowntextedit.h \
@@ -131,9 +117,6 @@ HEADERS  += mainwindow.h \
     widgets/navigationwidget.h \
     widgets/notepreviewwidget.h \
     widgets/kbgraphwidget.h \
-    api/noteapi.h \
-    api/notesubfolderapi.h \
-    api/tagapi.h \
     widgets/combobox.h \
     widgets/fontcolorwidget.h \
     dialogs/tabledialog.h \
@@ -149,13 +132,14 @@ HEADERS  += mainwindow.h \
     widgets/label.h \
     widgets/lineedit.h \
     widgets/qtexteditsearchwidget.h \
-    widgets/notefolderlistwidget.h \
     widgets/notetreewidgetitem.h \
     widgets/layoutwidget.h \
     dialogs/imagedialog.h \
     dialogs/commandbar.h \
     models/commandmodel.h \
-    libraries/fuzzy/kfuzzymatcher.h
+    libraries/fuzzy/kfuzzymatcher.h \
+    entities/notemap.h \
+    entities/tagmap.h
 
 FORMS    += mainwindow.ui \
     dialogs/attachmentdialog.ui \
@@ -163,7 +147,6 @@ FORMS    += mainwindow.ui \
     dialogs/notediffdialog.ui \
     dialogs/aboutdialog.ui \
     dialogs/settingsdialog.ui \
-    dialogs/localtrashdialog.ui \
     dialogs/linkdialog.ui \
     dialogs/welcomedialog.ui \
     dialogs/tagadddialog.ui \

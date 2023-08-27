@@ -15,7 +15,6 @@ class NoteHistoryItem {
                              float relativeScrollBarPosition);
     friend QDebug operator<<(QDebug dbg, const NoteHistoryItem &item);
     QString getNoteName() const;
-    QString getNoteSubFolderPathData() const;
     int getCursorPosition() const;
     float getRelativeScrollBarPosition() const;
     Note getNote() const;
@@ -65,8 +64,8 @@ class NoteHistory {
     NoteHistoryItem getLastItemOfNote(const Note &note) const;
     QList<NoteHistoryItem> getNoteHistoryItems() const;
     void addNoteHistoryItem(const NoteHistoryItem &item);
-    void storeForCurrentNoteFolder();
-    void restoreForCurrentNoteFolder();
+    void store();
+    void restore();
 };
 
 // we want to store the class to the settings

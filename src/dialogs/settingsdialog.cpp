@@ -1,8 +1,6 @@
 #include "dialogs/settingsdialog.h"
 
 #include <QtNetwork/qnetworkproxy.h>
-#include <entities/notefolder.h>
-#include <entities/notesubfolder.h>
 #include <helpers/toolbarcontainer.h>
 #include <libraries/qkeysequencewidget/qkeysequencewidget/src/qkeysequencewidget.h>
 #include <utils/gui.h>
@@ -38,7 +36,6 @@
 #include "filedialog.h"
 #include "mainwindow.h"
 #include "release.h"
-#include "services/databaseservice.h"
 #include "ui_settingsdialog.h"
 #include "version.h"
 
@@ -104,11 +101,6 @@ SettingsDialog::SettingsDialog(int page, QWidget *parent)
     connect(_noteNotificationButtonGroup,
             SIGNAL(buttonPressed(QAbstractButton*)), this,
             SLOT(noteNotificationButtonGroupPressed(QAbstractButton*)));
-
-    if (!fromWelcomeDialog) {
-        // setup the note folder tab
-        setupNoteFolderPage();
-    }
 
     readSettings();
 
@@ -186,28 +178,20 @@ SettingsDialog::SettingsDialog(int page, QWidget *parent)
             this, SLOT(needRestart()));
     connect(ui->noteEditCentralWidgetCheckBox, SIGNAL(toggled(bool)), this,
             SLOT(needRestart()));
-    connect(ui->noteFolderButtonsCheckBox, SIGNAL(toggled(bool)), this,
-            SLOT(needRestart()));
     connect(ui->noteListPreviewCheckBox, SIGNAL(toggled(bool)), this,
             SLOT(needRestart()));
     connect(ui->vimModeCheckBox, SIGNAL(toggled(bool)), this,
             SLOT(needRestart()));
     connect(ui->disableCursorBlinkingCheckBox, SIGNAL(toggled(bool)), this,
             SLOT(needRestart()));
-    connect(ui->ignoreNoteSubFoldersLineEdit, SIGNAL(textChanged(QString)),
-            this, SLOT(needRestart()));
+
     //    connect(ui->layoutWidget, SIGNAL(settingsStored()),
     //            this, SLOT(needRestart()));
 
     // connect the panel sort radio buttons
     connect(ui->notesPanelSortAlphabeticalRadioButton, SIGNAL(toggled(bool)),
             ui->notesPanelOrderGroupBox, SLOT(setEnabled(bool)));
-    connect(ui->noteSubfoldersPanelShowRootFolderNameCheckBox,
-            SIGNAL(toggled(bool)), ui->noteSubfoldersPanelShowFullPathCheckBox,
-            SLOT(setEnabled(bool)));
-    connect(ui->noteSubfoldersPanelSortAlphabeticalRadioButton,
-            SIGNAL(toggled(bool)), ui->noteSubfoldersPanelOrderGroupBox,
-            SLOT(setEnabled(bool)));
+
     connect(ui->tagsPanelSortAlphabeticalRadioButton, SIGNAL(toggled(bool)),
             ui->tagsPanelOrderGroupBox, SLOT(setEnabled(bool)));
 
@@ -286,9 +270,6 @@ void SettingsDialog::storeSettings() {
                       ui->ignoreAllExternalModificationsCheckBox->isChecked());
     settings.setValue(QStringLiteral("acceptAllExternalModifications"),
                       ui->acceptAllExternalModificationsCheckBox->isChecked());
-    settings.setValue(
-        QStringLiteral("ignoreAllExternalNoteFolderChanges"),
-        ui->ignoreAllExternalNoteFolderChangesCheckBox->isChecked());
     settings.setValue(QStringLiteral("newNoteAskHeadline"),
                       ui->newNoteAskHeadlineCheckBox->isChecked());
     settings.setValue(QStringLiteral("useUNIXNewline"),
@@ -302,12 +283,6 @@ void SettingsDialog::storeSettings() {
     settings.setValue(
         QStringLiteral("defaultNoteFileExtension"),
         ui->defaultNoteFileExtensionListWidget->currentItem()->text());
-    settings.setValue(QStringLiteral("localTrash/supportEnabled"),
-                      ui->localTrashEnabledCheckBox->isChecked());
-    settings.setValue(QStringLiteral("localTrash/autoCleanupEnabled"),
-                      ui->localTrashClearCheckBox->isChecked());
-    settings.setValue(QStringLiteral("localTrash/autoCleanupDays"),
-                      ui->localTrashClearTimeSpinBox->value());
 
     // make the path relative to the portable data path if we are in
     // portable mode
@@ -334,8 +309,6 @@ void SettingsDialog::storeSettings() {
                       ui->noteEditCentralWidgetCheckBox->isChecked());
     settings.setValue(QStringLiteral("restoreNoteTabs"),
                       ui->restoreNoteTabsCheckBox->isChecked());
-    settings.setValue(QStringLiteral("useNoteFolderButtons"),
-                      ui->noteFolderButtonsCheckBox->isChecked());
     settings.setValue(QStringLiteral("MainWindow/noteTextView.rtl"),
                       ui->noteTextViewRTLCheckBox->isChecked());
     settings.setValue(
@@ -458,47 +431,12 @@ void SettingsDialog::storePanelSettings() {
         ? settings.setValue(QStringLiteral("notesPanelOrder"), ORDER_DESCENDING)
         : settings.setValue(QStringLiteral("notesPanelOrder"), ORDER_ASCENDING);
 
-    // Note Subfolders Panel Options
-    settings.setValue(QStringLiteral("noteSubfoldersPanelHideSearch"),
-                      ui->noteSubfoldersPanelHideSearchCheckBox->isChecked());
-
-    settings.setValue(
-        QStringLiteral("noteSubfoldersPanelDisplayAsFullTree"),
-        ui->noteSubfoldersPanelDisplayAsFullTreeCheckBox->isChecked());
-
-    settings.setValue(
-        QStringLiteral("noteSubfoldersPanelShowRootFolderName"),
-        ui->noteSubfoldersPanelShowRootFolderNameCheckBox->isChecked());
-
-    settings.setValue(
-        QStringLiteral("noteSubfoldersPanelShowNotesRecursively"),
-        ui->noteSubfoldersPanelShowNotesRecursivelyCheckBox->isChecked());
-
     settings.setValue(
         QStringLiteral("disableSavedSearchesAutoCompletion"),
         ui->disableSavedSearchesAutoCompletionCheckBox->isChecked());
 
     settings.setValue(QStringLiteral("showMatches"),
                       ui->showMatchesCheckBox->isChecked());
-
-    settings.setValue(QStringLiteral("noteSubfoldersPanelShowFullPath"),
-                      ui->noteSubfoldersPanelShowFullPathCheckBox->isChecked());
-
-    ui->noteSubfoldersPanelSortAlphabeticalRadioButton->isChecked()
-        ? settings.setValue(QStringLiteral("noteSubfoldersPanelSort"),
-                            SORT_ALPHABETICAL)
-        : settings.setValue(QStringLiteral("noteSubfoldersPanelSort"),
-                            SORT_BY_LAST_CHANGE);
-
-    ui->noteSubfoldersPanelOrderDescendingRadioButton->isChecked()
-        ? settings.setValue(QStringLiteral("noteSubfoldersPanelOrder"),
-                            ORDER_DESCENDING)
-        : settings.setValue(QStringLiteral("noteSubfoldersPanelOrder"),
-                            ORDER_ASCENDING);
-
-    const QSignalBlocker blocker(ui->ignoreNoteSubFoldersLineEdit);
-    settings.setValue(QStringLiteral("ignoreNoteSubFolders"),
-                      ui->ignoreNoteSubFoldersLineEdit->text());
 
     // Tags Panel Options
     settings.setValue(QStringLiteral("tagsPanelHideSearch"),
@@ -546,13 +484,6 @@ void SettingsDialog::storeFontSettings() {
 void SettingsDialog::readSettings() {
     QSettings settings;
 
-    // set current note folder list item
-    QListWidgetItem *noteFolderListItem = Utils::Gui::getListWidgetItemWithUserData(
-                ui->noteFolderListWidget, NoteFolder::currentNoteFolderId());
-    if (noteFolderListItem != nullptr) {
-        ui->noteFolderListWidget->setCurrentItem(noteFolderListItem);
-    }
-
     ui->externalEditorPathLineEdit->setText(QStringLiteral("externalEditorPath"));
 
 	ui->notifyAllExternalModificationsCheckBox->setChecked(
@@ -564,28 +495,12 @@ void SettingsDialog::readSettings() {
     ui->acceptAllExternalModificationsCheckBox->setChecked(
         settings.value(QStringLiteral("acceptAllExternalModifications"))
             .toBool());
-    ui->ignoreAllExternalNoteFolderChangesCheckBox->setChecked(
-        settings.value(QStringLiteral("ignoreAllExternalNoteFolderChanges"))
-            .toBool());
     ui->newNoteAskHeadlineCheckBox->setChecked(
         settings.value(QStringLiteral("newNoteAskHeadline")).toBool());
     ui->useUNIXNewlineCheckBox->setChecked(
         settings.value(QStringLiteral("useUNIXNewline")).toBool());
-    ui->localTrashEnabledCheckBox->setChecked(
-        settings.value(QStringLiteral("localTrash/supportEnabled"), true)
-            .toBool());
-    ui->localTrashClearCheckBox->setChecked(
-        settings.value(QStringLiteral("localTrash/autoCleanupEnabled"), true)
-            .toBool());
-    ui->localTrashClearTimeSpinBox->setValue(
-        settings.value(QStringLiteral("localTrash/autoCleanupDays"), 30)
-            .toInt());
 
-#ifdef Q_OS_MAC
-    bool restoreCursorPositionDefault = false;
-#else
     bool restoreCursorPositionDefault = true;
-#endif
 
     ui->restoreCursorPositionCheckBox->setChecked(
         settings
@@ -646,8 +561,6 @@ void SettingsDialog::readSettings() {
             .toBool());
     ui->restoreNoteTabsCheckBox->setChecked(
         settings.value(QStringLiteral("restoreNoteTabs"), true).toBool());
-    ui->noteFolderButtonsCheckBox->setChecked(
-        settings.value(QStringLiteral("useNoteFolderButtons")).toBool());
     ui->allowOnlyOneAppInstanceCheckBox->setChecked(
         settings.value(QStringLiteral("allowOnlyOneAppInstance")).toBool());
     ui->toolbarIconSizeSpinBox->setValue(
@@ -748,7 +661,7 @@ void SettingsDialog::readSettings() {
     setFontLabel(ui->noteTextViewCodeFontLabel, noteTextViewCodeFont);
 
     // loads the custom note file extensions
-    QListIterator<QString> itr(Note::customNoteFileExtensionList());
+    QListIterator<QString> itr(MainWindow::customNoteFileExtensionList());
     while (itr.hasNext()) {
         QString fileExtension = itr.next();
         addCustomNoteFileExtension(fileExtension);
@@ -881,57 +794,6 @@ void SettingsDialog::readPanelSettings() {
         ? ui->notesPanelOrderDescendingRadioButton->setChecked(true)
         : ui->notesPanelOrderAscendingRadioButton->setChecked(true);
 
-    // Note Subfoldes Panel Options
-    ui->noteSubfoldersPanelHideSearchCheckBox->setChecked(
-        settings.value(QStringLiteral("noteSubfoldersPanelHideSearch"))
-            .toBool());
-
-    ui->noteSubfoldersPanelDisplayAsFullTreeCheckBox->setChecked(
-        settings
-            .value(QStringLiteral("noteSubfoldersPanelDisplayAsFullTree"), true)
-            .toBool());
-
-    ui->noteSubfoldersPanelShowNotesRecursivelyCheckBox->setChecked(
-        settings
-            .value(QStringLiteral("noteSubfoldersPanelShowNotesRecursively"))
-            .toBool());
-
-    ui->disableSavedSearchesAutoCompletionCheckBox->setChecked(
-        settings.value(QStringLiteral("disableSavedSearchesAutoCompletion"))
-            .toBool());
-
-    ui->showMatchesCheckBox->setChecked(
-        settings.value(QStringLiteral("showMatches"), true).toBool());
-
-    if (settings
-            .value(QStringLiteral("noteSubfoldersPanelShowRootFolderName"),
-                   true)
-            .toBool()) {
-        ui->noteSubfoldersPanelShowRootFolderNameCheckBox->setChecked(true);
-        ui->noteSubfoldersPanelShowFullPathCheckBox->setEnabled(true);
-    } else {
-        ui->noteSubfoldersPanelShowRootFolderNameCheckBox->setChecked(false);
-        ui->noteSubfoldersPanelShowFullPathCheckBox->setEnabled(false);
-    }
-
-    ui->noteSubfoldersPanelShowFullPathCheckBox->setChecked(
-        settings.value(QStringLiteral("noteSubfoldersPanelShowFullPath"))
-            .toBool());
-
-    if (settings.value(QStringLiteral("noteSubfoldersPanelSort")).toInt() ==
-        SORT_ALPHABETICAL) {
-        ui->noteSubfoldersPanelSortAlphabeticalRadioButton->setChecked(true);
-        ui->noteSubfoldersPanelOrderGroupBox->setEnabled(true);
-    } else {
-        ui->noteSubfoldersPanelSortByLastChangeRadioButton->setChecked(true);
-        ui->noteSubfoldersPanelOrderGroupBox->setEnabled(false);
-    }
-
-    settings.value(QStringLiteral("noteSubfoldersPanelOrder")).toInt() ==
-            ORDER_DESCENDING
-        ? ui->noteSubfoldersPanelOrderDescendingRadioButton->setChecked(true)
-        : ui->noteSubfoldersPanelOrderAscendingRadioButton->setChecked(true);
-
     // Tags Panel Options
     ui->tagsPanelHideSearchCheckBox->setChecked(
         settings.value(QStringLiteral("tagsPanelHideSearch")).toBool());
@@ -955,13 +817,7 @@ void SettingsDialog::readPanelSettings() {
         ? ui->tagsPanelOrderDescendingRadioButton->setChecked(true)
         : ui->tagsPanelOrderAscendingRadioButton->setChecked(true);
 
-    ui->ignoreNoteSubFoldersLineEdit->setText(
-        settings
-            .value(QStringLiteral("ignoreNoteSubFolders"),
-                   IGNORED_NOTE_SUBFOLDERS_DEFAULT)
-            .toString());
-
-    // Navigation Panel Options
+        // Navigation Panel Options
     ui->navigationPanelHideSearchCheckBox->setChecked(
         settings.value(QStringLiteral("navigationPanelHideSearch")).toBool());
 
@@ -1386,45 +1242,6 @@ void SettingsDialog::on_noteTextViewCodeButton_clicked() {
     }
 }
 
-void SettingsDialog::on_reinitializeDatabaseButton_clicked() {
-    if (QMessageBox::information(
-            this, tr("Database"),
-            tr("Do you really want to clear the local database? "
-               "This will also remove your configured note "
-               "folders and your cached todo items!"),
-            tr("Clear &database"), tr("&Cancel"), QString(), 1) == 0) {
-        DatabaseService::reinitializeDiskDatabase();
-        NoteFolder::migrateToNoteFolders();
-
-        Utils::Gui::information(this, tr("Database"),
-                                tr("The Database was reinitialized. Please restart the application now!"),
-                                QStringLiteral("database-reinitialized"));
-    }
-}
-
-/**
- * Allows the user to clear all settings and the database and exit the app
- */
-void SettingsDialog::on_clearAppDataAndExitButton_clicked() {
-    if (QMessageBox::information(
-            this, tr("Clear app data and exit"),
-            tr("Do you really want to clear all settings, remove the "
-               "database and exit PKbSuite?\n\n"
-               "Your notes will stay intact!"),
-            tr("Clear and &exit"), tr("&Cancel"), QString(), 1) == 0) {
-        QSettings settings;
-        settings.clear();
-        DatabaseService::removeDiskDatabase();
-
-        // remove the log file
-        removeLogFile();
-
-        // make sure no settings get written after after are quitting
-        qApp->setProperty("clearAppDataAndExit", true);
-        qApp->quit();
-    }
-}
-
 /**
  * Removes the log file
  */
@@ -1534,192 +1351,6 @@ void SettingsDialog::on_setExternalEditorPathToolButton_clicked() {
 
         const QString &filePath(fileNames.at(0));
         ui->externalEditorPathLineEdit->setText(filePath);
-    }
-}
-
-/**
- * Does the note folder page setup
- */
-void SettingsDialog::setupNoteFolderPage() {
-//    const QSignalBlocker blocker(ui->noteFolderListWidget);
-    //Q_UNUSED(blocker)
-
-    QList<NoteFolder> noteFolders = NoteFolder::fetchAll();
-    int noteFoldersCount = noteFolders.count();
-
-    // populate the note folder list
-    if (noteFoldersCount > 0) {
-        Q_FOREACH (NoteFolder noteFolder, noteFolders) {
-            auto *item = new QListWidgetItem(noteFolder.getName());
-            item->setData(Qt::UserRole, noteFolder.getId());
-            ui->noteFolderListWidget->addItem(item);
-
-            // set the current row
-            if (noteFolder.getId() == NoteFolder::currentNoteFolderId()) {
-                ui->noteFolderListWidget->setCurrentItem(item);
-            }
-        }
-    }
-
-    // disable the remove button if there is only one item
-    ui->noteFolderRemoveButton->setEnabled(noteFoldersCount > 1);
-
-    // set local path placeholder text
-    ui->noteFolderLocalPathLineEdit->setPlaceholderText(
-        Utils::Misc::defaultNotesPath());
-
-    noteFolderRemotePathTreeStatusBar = new QStatusBar(this);
-    ui->noteFolderRemotePathTreeWidgetFrame->layout()->addWidget(
-        noteFolderRemotePathTreeStatusBar);
-}
-
-void SettingsDialog::on_noteFolderListWidget_currentItemChanged(
-    QListWidgetItem *current, QListWidgetItem *previous) {
-    Q_UNUSED(previous)
-
-    int noteFolderId = current->data(Qt::UserRole).toInt();
-    _selectedNoteFolder = NoteFolder::fetch(noteFolderId);
-    if (_selectedNoteFolder.isFetched()) {
-        ui->noteFolderNameLineEdit->setText(_selectedNoteFolder.getName());
-        ui->noteFolderLocalPathLineEdit->setText(
-            _selectedNoteFolder.getLocalPath());
-        ui->noteFolderShowSubfoldersCheckBox->setChecked(
-            _selectedNoteFolder.isShowSubfolders());
-        ui->allowDifferentNoteFileNameCheckBox->setChecked(
-            _selectedNoteFolder.settingsValue(QStringLiteral("allowDifferentNoteFileName")).toBool());
-
-        const QSignalBlocker blocker(ui->noteFolderActiveCheckBox);
-        Q_UNUSED(blocker)
-        ui->noteFolderActiveCheckBox->setChecked(
-            _selectedNoteFolder.isCurrent());
-    }
-}
-
-void SettingsDialog::on_noteFolderAddButton_clicked() {
-    const QString currentPath = _selectedNoteFolder.getLocalPath();
-
-    _selectedNoteFolder = NoteFolder();
-    _selectedNoteFolder.setName(tr("new folder"));
-    _selectedNoteFolder.setLocalPath(currentPath);
-    _selectedNoteFolder.setPriority(ui->noteFolderListWidget->count());
-    _selectedNoteFolder.store();
-
-    if (_selectedNoteFolder.isFetched()) {
-        auto *item = new QListWidgetItem(_selectedNoteFolder.getName());
-        item->setData(Qt::UserRole, _selectedNoteFolder.getId());
-        ui->noteFolderListWidget->addItem(item);
-
-        // set the current row
-        ui->noteFolderListWidget->setCurrentRow(
-            ui->noteFolderListWidget->count() - 1);
-
-        // enable the remove button
-        ui->noteFolderRemoveButton->setEnabled(true);
-
-        // focus the folder name edit and select the text
-        ui->noteFolderNameLineEdit->setFocus();
-        ui->noteFolderNameLineEdit->selectAll();
-    }
-}
-
-/**
- * Removes the current note folder
- */
-void SettingsDialog::on_noteFolderRemoveButton_clicked() {
-    if (ui->noteFolderListWidget->count() < 2) {
-        return;
-    }
-
-    if (Utils::Gui::question(
-            this, tr("Remove note folder"),
-            tr("Remove the current note folder <strong>%1</strong>?")
-                .arg(_selectedNoteFolder.getName()),
-            QStringLiteral("remove-note-folder")) == QMessageBox::Yes) {
-        bool wasCurrent = _selectedNoteFolder.isCurrent();
-
-        QSettings settings;
-
-        // remove saved searches
-        QString settingsKey = "savedSearches/noteFolder-" +
-                              QString::number(_selectedNoteFolder.getId());
-        settings.remove(settingsKey);
-
-        // remove tree widget expand state setting
-        settingsKey = NoteSubFolder::treeWidgetExpandStateSettingsKey(
-            _selectedNoteFolder.getId());
-        settings.remove(settingsKey);
-
-        // remove the note folder from the database
-        _selectedNoteFolder.remove();
-
-        // remove the list item
-        ui->noteFolderListWidget->takeItem(
-            ui->noteFolderListWidget->currentRow());
-
-        // disable the remove button if there is only one item left
-        ui->noteFolderRemoveButton->setEnabled(
-            ui->noteFolderListWidget->count() > 1);
-
-        // if the removed note folder was the current folder we set the first
-        // note folder as new current one
-        if (wasCurrent) {
-            QList<NoteFolder> noteFolders = NoteFolder::fetchAll();
-            if (noteFolders.count() > 0) {
-                noteFolders[0].setAsCurrent();
-            }
-        }
-    }
-}
-
-/**
- * Updates the name of the current note folder edit
- */
-void SettingsDialog::on_noteFolderNameLineEdit_editingFinished() {
-    QString text = ui->noteFolderNameLineEdit->text()
-                       .remove(QStringLiteral("\n"))
-                       .trimmed();
-    text.truncate(50);
-
-    // fallback to directory name in case name edit is empty
-    if (text.isEmpty()) {
-        const QString localPath = ui->noteFolderLocalPathLineEdit->text();
-        text = QDir(localPath).dirName();
-    }
-
-    _selectedNoteFolder.setName(text);
-    _selectedNoteFolder.store();
-
-    ui->noteFolderListWidget->currentItem()->setText(text);
-}
-
-void SettingsDialog::on_noteFolderLocalPathButton_clicked() {
-    QString dir = QFileDialog::getExistingDirectory(
-        this,
-        tr("Please select the folder where your notes will get stored to"),
-        _selectedNoteFolder.getLocalPath(), QFileDialog::ShowDirsOnly);
-
-    QDir d = QDir(dir);
-
-    if (d.exists() && (!dir.isEmpty())) {
-        ui->noteFolderLocalPathLineEdit->setText(dir);
-        _selectedNoteFolder.setLocalPath(dir);
-        _selectedNoteFolder.store();
-    }
-}
-
-/**
- * Sets the current note folder as active note folder
- */
-void SettingsDialog::on_noteFolderActiveCheckBox_stateChanged(int arg1) {
-    Q_UNUSED(arg1)
-
-    if (!ui->noteFolderActiveCheckBox->isChecked()) {
-        const QSignalBlocker blocker(ui->noteFolderActiveCheckBox);
-        Q_UNUSED(blocker)
-        ui->noteFolderActiveCheckBox->setChecked(true);
-    } else {
-        _selectedNoteFolder.setAsCurrent();
-        MainWindow::instance()->resetBrokenTagNotesLinkFlag();
     }
 }
 
@@ -1860,20 +1491,10 @@ void SettingsDialog::handleDarkModeCheckBoxToggled(bool updateCheckBoxes,
     }
 }
 
-void SettingsDialog::on_noteFolderShowSubfoldersCheckBox_toggled(bool checked) {
-    _selectedNoteFolder.setShowSubfolders(checked);
-
-    // reset the active note subfolder if showing subfolders was turned off
-    if (!checked) {
-        _selectedNoteFolder.resetActiveNoteSubFolder();
-    }
-
-    _selectedNoteFolder.store();
-}
-
 void SettingsDialog::on_allowDifferentNoteFileNameCheckBox_toggled(bool checked)
 {
-    _selectedNoteFolder.setSettingsValue(QStringLiteral("allowDifferentNoteFileName"),
+    QSettings settings;
+    settings.setValue(QStringLiteral("allowDifferentNoteFileName"),
                                          checked);
 }
 
@@ -2320,18 +1941,6 @@ void SettingsDialog::on_markdownHighlightingCheckBox_toggled(bool checked) {
     ui->markdownHighlightingFrame->setEnabled(checked);
 }
 
-void SettingsDialog::on_localTrashEnabledCheckBox_toggled(bool checked) {
-    ui->localTrashGroupBox->setEnabled(checked);
-}
-
-void SettingsDialog::on_localTrashClearCheckBox_toggled(bool checked) {
-    ui->localTrashClearFrame->setEnabled(checked);
-}
-
-void SettingsDialog::on_ignoreNoteSubFoldersResetButton_clicked() {
-    ui->ignoreNoteSubFoldersLineEdit->setText(IGNORED_NOTE_SUBFOLDERS_DEFAULT);
-}
-
 void SettingsDialog::on_interfaceFontSizeSpinBox_valueChanged(int arg1) {
     QSettings settings;
     settings.setValue(QStringLiteral("interfaceFontSize"), arg1);
@@ -2370,18 +1979,4 @@ void SettingsDialog::on_languageSearchLineEdit_textChanged(const QString &arg1) 
 
 void SettingsDialog::on_noteTextViewUseEditorStylesCheckBox_toggled(bool checked) {
     ui->previewFontsGroupBox->setDisabled(checked);
-}
-
-void SettingsDialog::on_databaseIntegrityCheckButton_clicked() {
-    if (DatabaseService::checkDiskDatabaseIntegrity()) {
-        Utils::Gui::information(
-            this, tr("Database"),
-            tr("The integrity of the disk database is valid."),
-            QStringLiteral("database-integrity-check-valid"));
-    } else {
-        Utils::Gui::warning(
-            this, tr("Database"),
-            tr("The integrity of the disk database is not valid!"),
-            QStringLiteral("database-integrity-check-not-valid"));
-    }
 }

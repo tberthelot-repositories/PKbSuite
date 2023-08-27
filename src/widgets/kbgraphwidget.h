@@ -25,8 +25,7 @@ class kbGraphWidget : public QGraphicsView {
 public:
     explicit kbGraphWidget(QWidget *parent = nullptr);
 
-    void GenerateKBGraph(const QString noteFolder);
-    void updateLinks(kbGraphNode* node, QString textNote);
+    void GenerateKBGraph();
     void addNoteToGraph(QString noteName);
     void itemMoved();
     void setMainWindowPtr(MainWindow* mainWindow);
@@ -41,7 +40,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
-    QVector<kbGraphNode*> _noteNodes;
+    static QVector<kbGraphNode*> _noteNodes;
     int _numScheduledScalings = 0;
     int timerId = 0;
     int _maxLinkNumber = 0;
@@ -51,6 +50,8 @@ private:
     bool _middleButtonPressed = false;
     int _panStartX;
     int _panStartY;
+
+    kbGraphNode* nodeFromNote(QString noteName);
 
 protected slots:
     void scalingTime(qreal x);

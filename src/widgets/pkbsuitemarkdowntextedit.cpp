@@ -11,8 +11,8 @@
 #include <QMimeData>
 #include <QRegularExpression>
 #include <QSettings>
+#include <QApplication>
 
-#include "entities/notefolder.h"
 #include "helpers/qownspellchecker.h"
 #include "mainwindow.h"
 #include "libraries/qmarkdowntextedit/linenumberarea.h"
@@ -52,6 +52,18 @@ PKbSuiteMarkdownTextEdit::PKbSuiteMarkdownTextEdit(QWidget *parent)
             _highlighter->initHighlightingRules();
         }
     }
+}
+
+MainWindow* PKbSuiteMarkdownTextEdit::getMainWindow() {
+    const QWidgetList &list = QApplication::topLevelWidgets();
+
+    for(QWidget * w : list){
+        MainWindow *mainWindow = qobject_cast<MainWindow*>(w);
+        if(mainWindow)
+            return mainWindow;
+    }
+
+    return NULL;
 }
 
 /**
@@ -280,13 +292,8 @@ void PKbSuiteMarkdownTextEdit::openUrl(QString urlString) {
     qDebug() << "PKbSuiteMarkdownTextEdit " << __func__
              << " - 'urlString': " << urlString;
 
-    QString notesPath = NoteFolder::currentLocalPath();
+    QString notesPath = getMainWindow()->getNotePath();
     QString windowsSlash = QString();
-
-#ifdef Q_OS_WIN32
-    // we need another slash for Windows
-    windowsSlash = QStringLiteral("/");
-#endif
 
     // parse for relative file urls and make them absolute
     urlString.replace(
@@ -690,41 +697,8 @@ bool PKbSuiteMarkdownTextEdit::eventFilter(QObject *obj, QEvent *event) {
                 _searchWidget->isVisible()) {
                 _searchWidget->deactivate();
                 return true;
-            } else if (!Utils::Misc::isNoteEditingAllowed()) {
-                auto keys = QList<int>()
-                            << Qt::Key_Return << Qt::Key_Enter << Qt::Key_Space
-                            << Qt::Key_Backspace << Qt::Key_Delete
-                            << Qt::Key_Tab << Qt::Key_Backtab << Qt::Key_Minus
-                            << Qt::Key_ParenLeft << Qt::Key_BraceLeft
-                            << Qt::Key_BracketLeft << Qt::Key_Plus
-                            << Qt::Key_Comma << Qt::Key_Period;
-
-                // show notification if user tries to edit a note while
-                // note editing is turned off
-                if ((keyEvent->key() < 128 || keys.contains(keyEvent->key())) &&
-                    keyEvent->modifiers().testFlag(Qt::NoModifier) &&
-                    isReadOnly()) {
-                    if (Utils::Gui::questionNoSkipOverride(
-                            this, tr("Note editing disabled"),
-                            tr("Note editing is currently disabled, do you "
-                               "want to allow it again?"),
-                            QStringLiteral("readonly-mode-allow")) ==
-                        QMessageBox::Yes) {
-                        if (mainWindow != Q_NULLPTR) {
-                            mainWindow->allowNoteEditing();
-                        }
-                    }
-
-                    return true;
-                }
             } else {
-                // disable note editing if escape key was pressed
-                if (keyEvent->key() == Qt::Key_Escape &&
-                    mainWindow != Q_NULLPTR) {
-                    mainWindow->disallowNoteEditing();
-
-                    return true;
-                } else if ((keyEvent->key() == Qt::Key_Tab) ||
+                if ((keyEvent->key() == Qt::Key_Tab) ||
                            (keyEvent->key() == Qt::Key_Backtab)) {
                     // handle entered tab and reverse tab keys
                     return handleTabEntered(keyEvent->key() == Qt::Key_Backtab,
