@@ -911,6 +911,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="separator"/>
     <addaction name="action_Settings"/>
     <addaction name="separator"/>
+    <addaction name="action_Quit"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -2387,6 +2388,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+Shift+N</string>
+   </property>
+  </action>
+  <action name="action_Quit">
+   <property name="icon">
+    <iconset theme="application-exit"/>
+   </property>
+   <property name="text">
+    <string>&amp;Quit</string>
    </property>
   </action>
  </widget>
