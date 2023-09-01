@@ -6232,10 +6232,10 @@ bool MainWindow::insertImage(QFile *file, QString title) {
 
 bool MainWindow::insertPDF(QFile *file) {
     PDFFile pdfFile(file->fileName());
-    
+
     if (pdfFile.hasAnnotations()) {
         DropPDFDialog* dialog = new DropPDFDialog(this);
-        
+
         int iResult = dialog->exec();
         if (iResult == DropPDFDialog::idLink) {
             // If the annotations have not been processed, we just add a link to the PDF file
@@ -6259,7 +6259,7 @@ bool MainWindow::insertPDF(QFile *file) {
         } else if (iResult == DropPDFDialog::idCreateNote) {
             QFileInfo pdfFileInfo(file->fileName());
 			NoteSubFolder noteSubFolder = NoteFolder::currentNoteFolder().getActiveNoteSubFolder();
-			
+
             QFileInfo noteFileInfo(noteSubFolder.fullPath() + "/" + pdfFileInfo.baseName() + ".md");
             if (noteFileInfo.exists()) {
                 QMessageBox::warning(this, QStringLiteral("Erreur"), QStringLiteral("Attention : la note existe déjà dans la KB. Supprimez la note existante ou renommez l'une des deux."));
@@ -6290,17 +6290,17 @@ bool MainWindow::insertPDF(QFile *file) {
                     noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
                 if (pdfFile.keywords().length() > 0)
                     noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
-                noteText.append("**Tags:** #LITERATURE, #TODO\n");
+                noteText.append("**Tags:** #LECTURE, #TODO\n");
                 if (pdfFile.author().length() > 0)
                     noteText.append("**Author:** " + pdfFile.author() + "  \n");
 				noteText.append("\n-----\n");
 
 				pdfFile.setDocumentFolder(noteSubFolderPath);
-				
+
                 noteText.append(pdfFile.markdownSummary());
                 noteText.append(pdfFile.markdownCitations(embedmentLink));
                 noteText.append(pdfFile.markdownComments(embedmentLink));
-				
+
                 note.setNoteText(noteText);
 
                 note.store();
@@ -6313,7 +6313,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 // note folder was modified
                 noteDirectoryWatcher.removePath(notesPath);
                 noteDirectoryWatcher.removePath(noteSubFolderPath);
-                
+
                 // store the note to disk
                 // if a tag is selected add the tag to the just created note
                 Tag tag = Tag::activeTag();
@@ -6348,7 +6348,7 @@ bool MainWindow::insertPDF(QFile *file) {
 
                 // turn on the method again
                 _isNotesDirectoryWasModifiedDisabled = false;
-                
+
                 // jump to the found or created note
                 setCurrentNote(note);
 
@@ -6377,7 +6377,7 @@ bool MainWindow::insertPDF(QFile *file) {
             c.insertText(text);
         }
     }
-    
+
     return true;
 }
 
