@@ -63,13 +63,13 @@ VersionControlSupport=kdevgit
 
 [QMake_Builder]
 Build_Folder=/home/thomas/1. Projects/_build/PKbSuite
-Build_Type=2
+Build_Type=0
 Extra_Arguments=
 Install_Prefix=
 QMake_Binary=/bin/qmake
 
 [QMake_Builder][/home/thomas/1. Projects/_build/PKbSuite]
-Build_Type=2
+Build_Type=0
 Extra_Arguments=
 Install_Prefix=
 QMake_Binary=/bin/qmake

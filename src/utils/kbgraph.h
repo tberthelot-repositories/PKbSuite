@@ -28,12 +28,14 @@ public:
     kbGraphLink(kbGraphNode* source, kbGraphNode* dest);
 
     void adjust();
+    int weight() const;
 
-    kbGraphNode* source() const;
-    kbGraphNode* dest() const;
+    inline kbGraphNode* source() const;
+    inline kbGraphNode* dest() const;
+
+    QRectF boundingRect() const override;
 
 protected:
-    QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
@@ -52,17 +54,21 @@ public:
     int type() const override { return Type; }
 
     void addLink(kbGraphLink* link);
+    QVector<kbGraphLink*> linkList();
     bool linkToNodeExists(kbGraphNode* toNode);
     bool reverseLinkExists(kbGraphNode* fromNode);
     QString name();
     int getNumberOfLinks() const;
-    float getCircleSize() const;
+    inline float getCircleSize() const;
+
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
     void calculateForces();
     bool advancePosition();
+
+    void fix();
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
@@ -74,4 +80,5 @@ private:
     int _noteLinkCount;
     QRect _rectText;
     kbGraphWidget* _graph;
+    bool _fixedPos = false;
 };

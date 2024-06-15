@@ -1,7 +1,6 @@
 #include "notedialog.h"
 
 #include <entities/note.h>
-#include <entities/notefolder.h>
 
 #include <QDesktopServices>
 #include <QSettings>
@@ -27,10 +26,22 @@ void NoteDialog::setNote(Note &note) {
     setWindowTitle(note.getName());
 
     ui->textEdit->setPlainText(note.getNoteText());
-    ui->noteTextView->setHtml(note.toMarkdownHtml(NoteFolder::currentLocalPath()));
+    ui->noteTextView->setHtml(note.toMarkdownHtml(getMainWindow()->getNotePath()));
 }
 
 NoteDialog::~NoteDialog() { delete ui; }
+
+MainWindow* NoteDialog::getMainWindow() {
+    const QWidgetList &list = QApplication::topLevelWidgets();
+
+    for(QWidget * w : list){
+        MainWindow *mainWindow = qobject_cast<MainWindow*>(w);
+        if(mainWindow)
+            return mainWindow;
+    }
+
+    return NULL;
+}
 
 void NoteDialog::on_noteTextView_anchorClicked(const QUrl &url) {
     qDebug() << __func__ << " - 'url': " << url;
@@ -40,7 +51,7 @@ void NoteDialog::on_noteTextView_anchorClicked(const QUrl &url) {
          scheme == QStringLiteral("noteid") ||
          scheme == QStringLiteral("checkbox")) ||
         (scheme == QStringLiteral("file") &&
-         Note::fileUrlIsNoteInCurrentNoteFolder(url))) {
+         MainWindow::fileUrlIsNoteInCurrentNoteFolder(url))) {
         return;
     }
 

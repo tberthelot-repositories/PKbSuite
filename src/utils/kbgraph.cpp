@@ -44,8 +44,12 @@ void kbGraphNode::addLink(kbGraphLink* link) {
     link->adjust();
 }
 
+QVector<kbGraphLink *> kbGraphNode::linkList() {
+    return _noteLinks;
+}
+
 bool kbGraphNode::linkToNodeExists(kbGraphNode* toNode) {
-    foreach(kbGraphLink* link, _noteLinks) {
+    foreach(kbGraphLink* link, linkList()) {
         if (link->dest() == toNode)
             return true;
     }
@@ -54,7 +58,7 @@ bool kbGraphNode::linkToNodeExists(kbGraphNode* toNode) {
 }
 
 bool kbGraphNode::reverseLinkExists(kbGraphNode* fromNode) {
-    foreach(kbGraphLink* link, fromNode->_noteLinks) {
+    foreach(kbGraphLink* link, fromNode->linkList()) {
         if (link->dest() == this)
             return true;
     }
@@ -67,11 +71,11 @@ QString kbGraphNode::name() {
 }
 
 int kbGraphNode::getNumberOfLinks() const {
-    return _noteLinkCount;
+    return (_noteLinkCount>0?_noteLinkCount:1);
 }
 
 float kbGraphNode::getCircleSize() const {
-    return 20 * (1 + getNumberOfLinks() / 20);
+    return 8 * (1 + getNumberOfLinks());
 }
 
 QRectF kbGraphNode::boundingRect() const
@@ -82,7 +86,8 @@ QRectF kbGraphNode::boundingRect() const
 void kbGraphNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     QFont font = painter->font();
-    QFontMetrics fontMetrics (font);
+    font.setPixelSize(24);
+    painter->setFont(font);    QFontMetrics fontMetrics (font);
     _rectText = fontMetrics.boundingRect(_noteName);
     _rectText.setWidth(fontMetrics.horizontalAdvance(_noteName));
     _rectText.setHeight(fontMetrics.height());
@@ -109,7 +114,7 @@ QVariant kbGraphNode::itemChange(GraphicsItemChange change, const QVariant &valu
         for (kbGraphLink *link : qAsConst(_noteLinks))
             link->adjust();
         _graph->itemMoved();
-        update();
+     //   update();
         break;
     default:
         break;
@@ -119,7 +124,43 @@ QVariant kbGraphNode::itemChange(GraphicsItemChange change, const QVariant &valu
 }
 
 void kbGraphNode::calculateForces() {
-    if (!scene() || scene()->mouseGrabberItem() == this) {
+    // if (!scene() || scene()->mouseGrabberItem() == this) {
+    //     _position = pos();
+    //     return;
+    // }
+    //
+    // // Sum up all forces pushing this item away
+    // qreal xvel = 0;
+    // qreal yvel = 0;
+    // const QList<QGraphicsItem *> items = scene()->items();
+    // for (QGraphicsItem *item : items) {
+    //     kbGraphNode* node = qgraphicsitem_cast<kbGraphNode*>(item);
+    //     if (node && node != this) {
+    //         QPointF vec = mapToItem(node, 0, 0);
+    //         qreal dx = vec.x();
+    //         qreal dy = vec.y();
+    //         double l2 = dx * dx + dy * dy;
+    //         xvel += (dx * 15) / l2;
+    //         yvel += (dy * 15) / l2;
+    //     }
+    // }
+    //
+    // // Now subtract all forces caused by links
+    // for (const kbGraphLink* edge : qAsConst(_noteLinks)) {
+    //     QPointF vec;
+    //     if (edge->source() == this)
+    //         vec = mapToItem(edge->dest(), 0, 0);
+    //     else
+    //         vec = mapToItem(edge->source(), 0, 0);
+    //     xvel -= vec.x() / (edge->weight() * 100);
+    //     yvel -= vec.y() / (edge->weight() * 100);
+    // }
+    //
+    // if (qAbs(xvel) < 1 && qAbs(yvel) < 1)
+    //     xvel = yvel = 0;
+    //
+    // _position = pos() + QPointF(xvel, yvel);
+ if (!scene() || scene()->mouseGrabberItem() == this) {
         _position = pos();
         return;
     }
@@ -164,14 +205,19 @@ void kbGraphNode::calculateForces() {
 }
 
 bool kbGraphNode::advancePosition() {
-    if (_position * 100 == pos() * 100)
+    if (_position == pos())
         return false;
 //     if (QLineF(_position, pos()).length() < 5)
 //         return false;
 
-    setPos(_position);
+    if (!_fixedPos)
+        setPos(_position);
 
     return true;
+}
+
+void kbGraphNode::fix() {
+    _fixedPos = true;
 }
 
 /*
@@ -201,6 +247,11 @@ void kbGraphLink::adjust()
     _destPoint = line.p2();
 }
 
+int kbGraphLink::weight() const {
+    return _source->getNumberOfLinks() + _dest->getNumberOfLinks();
+}
+
+
 QRectF kbGraphLink::boundingRect() const
 {
     if (!_source || !_dest)
@@ -229,10 +280,12 @@ void kbGraphLink::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     painter->drawLine(line);
 }
 
-kbGraphNode* kbGraphLink::source() const {
+kbGraphNode* kbGraphLink::source() const
+{
     return _source;
 }
 
-kbGraphNode* kbGraphLink::dest() const {
+kbGraphNode* kbGraphLink::dest() const
+{
     return _dest;
 }

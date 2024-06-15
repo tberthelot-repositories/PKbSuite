@@ -31,12 +31,13 @@ LinkDialog::LinkDialog(int page, const QString &dialogTitle, QWidget *parent)
         this->setWindowTitle(dialogTitle);
     }
 
-    QStringList nameList = Note::fetchNoteNames();
+    NoteMap* noteMap = NoteMap::getInstance();
+    QStringList nameList = noteMap->fetchNoteNames();
     ui->searchLineEdit->installEventFilter(this);
     ui->headingSearchLineEdit->installEventFilter(this);
     ui->notesListWidget->installEventFilter(this);
 
-    Q_FOREACH (Note note, Note::fetchAll()) {
+    Q_FOREACH (Note note, noteMap->fetchAllNotes()) {
         auto *item = new QListWidgetItem(note.getName());
         item->setData(Qt::UserRole, note.getId());
         ui->notesListWidget->addItem(item);
@@ -61,7 +62,8 @@ LinkDialog::~LinkDialog() { delete ui; }
 void LinkDialog::on_searchLineEdit_textChanged(const QString &arg1) {
     // search notes when at least 2 characters were entered
     if (arg1.count() >= 2) {
-        QVector<QString> noteNameList = Note::searchAsNameList(arg1, true);
+        NoteMap* noteMap = NoteMap::getInstance();
+        QVector<QString> noteNameList = noteMap->searchAsNameList(arg1, true);
         this->firstVisibleNoteListRow = -1;
 
         for (int i = 0; i < this->ui->notesListWidget->count(); ++i) {
@@ -99,7 +101,7 @@ Note LinkDialog::getSelectedNote() const {
     const int noteId =
         ui->notesListWidget->currentItem()->data(Qt::UserRole).toInt();
 
-    return Note::fetch(noteId);
+    return NoteMap::getInstance()->fetchNoteById(noteId);
 }
 
 QString LinkDialog::getSelectedHeading() const {

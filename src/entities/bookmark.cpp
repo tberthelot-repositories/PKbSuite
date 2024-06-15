@@ -11,8 +11,6 @@
 #include <QRegularExpressionMatchIterator>
 #include <utility>
 
-#include "notefolder.h"
-
 Bookmark::Bookmark() {
     url = QString();
     name = QString();
@@ -132,51 +130,6 @@ QVector<Bookmark> Bookmark::parseBookmarks(const QString &text,
     }
 
     return bookmarks;
-}
-
-/**
- * Returns json text of a bookmark list for the WebSocketServerService
- *
- * @return
- */
-QString Bookmark::bookmarksWebServiceJsonText(
-    const QVector<Bookmark> &bookmarks) {
-    QJsonArray bookmarkObjectList;
-    QJsonArray noteFolderObjectList;
-
-    for (const Bookmark &bookmark : bookmarks) {
-        bookmarkObjectList.push_back(bookmark.jsonObject());
-    }
-
-    const auto noteFolders = NoteFolder::fetchAll();
-    for (const NoteFolder &noteFolder : noteFolders) {
-        noteFolderObjectList.push_back(noteFolder.jsonObject());
-    }
-
-    QJsonObject bookmarkResultObject;
-    bookmarkResultObject.insert(QStringLiteral("type"),
-                                QJsonValue::fromVariant("bookmarks"));
-    bookmarkResultObject.insert(QStringLiteral("data"), bookmarkObjectList);
-    bookmarkResultObject.insert(QStringLiteral("noteFolderName"),
-                                NoteFolder::currentNoteFolder().getName());
-    bookmarkResultObject.insert(QStringLiteral("noteFolders"),
-                                noteFolderObjectList);
-    bookmarkResultObject.insert(QStringLiteral("noteFolderId"),
-                                NoteFolder::currentNoteFolderId());
-
-    QJsonDocument doc(bookmarkResultObject);
-
-    return doc.toJson(QJsonDocument::Compact);
-}
-
-/**
- * Returns json text parsed from links of a text for the WebSocketServerService
- *
- * @return
- */
-QString Bookmark::parsedBookmarksWebServiceJsonText(const QString &text,
-                                                    bool withBasicUrls) {
-    return bookmarksWebServiceJsonText(parseBookmarks(text, withBasicUrls));
 }
 
 /**

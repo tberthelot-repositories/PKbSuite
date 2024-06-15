@@ -24,6 +24,8 @@
 #include <QtMath>
 #include <QScrollBar>
 
+QVector<kbGraphNode*> kbGraphWidget::_noteNodes;
+
 kbGraphWidget::kbGraphWidget(QWidget *parent) : QGraphicsView(parent) {
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -40,78 +42,58 @@ void kbGraphWidget::setMainWindowPtr(MainWindow* mainWindow) {
     _mainWindow = mainWindow;
 }
 
-void kbGraphWidget::updateLinks(kbGraphNode* node, QString textNote) {
-    QRegularExpression re = QRegularExpression(R"(\[([A-Za-zÀ-ÖØ-öø-ÿ_\s]*)\]\([AA-Za-zÀ-ÖØ-öø-ÿ_\s\d?%]*\.md\))");
-    QRegularExpressionMatchIterator reIterator = re.globalMatch(textNote);
-    while (reIterator.hasNext()) {
-        QRegularExpressionMatch reMatch = reIterator.next();
-        QString targetNoteName = reMatch.captured(1);
+void kbGraphWidget::GenerateKBGraph() {
+    QMap<Note*, QSet<QString>> noteMap = NoteMap::getInstance()->getNoteMap();
 
-        for (int i = 0; i < _noteNodes.size(); i++) {
-            if (_noteNodes.at(i)->name() == targetNoteName) {
-                if ((!node->linkToNodeExists(_noteNodes.at(i))) & (!node->reverseLinkExists(_noteNodes.at(i)))) {
-                    kbGraphLink* link = new kbGraphLink(node, _noteNodes.at(i));
-                    node->addLink(link);
-                    link->adjust();
-                    scene()->addItem(link);
-                }
+    // Insert all nodes
+    QMapIterator<Note*, QSet<QString>> iterator(noteMap);
 
-                break;
-            }
-        }
-    }
-}
+    while (iterator.hasNext()) {
+        Note* note = iterator.next().key();
 
-kbGraphNode* kbGraphWidget::getNodeFromNote(Note* note) {
-    foreach (kbGraphNode* node, _noteNodes) {
-        if (node->name() == note->getName())
-            return node;
-    }
+        kbGraphNode* node = new kbGraphNode(note->getName(), this);
 
-    return NULL;
-}
-
-void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
-    QDir dir = QDir(noteFolder);
-
-    QStringList noteFiles = dir.entryList(QStringList() << "*.md" << "*.Md" << "*.MD", QDir::Files);
-    foreach (QString filename, noteFiles) {
-        QString fullFileName = noteFolder + "/" + filename;
-        QFile noteFile(fullFileName);
-        if (!noteFile.open(QIODevice::ReadOnly)) // | QIODevice::Text))
-            return;
-
-        kbGraphNode* node = new kbGraphNode(filename.left(filename.length() - 3), this);
         _noteNodes << node;
         scene()->addItem(node);
-        noteFile.close();
-    }
 
-    foreach (kbGraphNode* node, _noteNodes) {
-        QString fullFileName = noteFolder + "/" + node->name() + ".md";
-        QFile noteFile(fullFileName);
-        if (!noteFile.open(QIODevice::ReadOnly))
-            return;
-
-        QTextStream flux(&noteFile);
-        QString fluxText = flux.readAll();
-
-        updateLinks(node, fluxText);
+        // Insert links
+        foreach (QString targetNoteName, noteMap.value(note)) {
+            kbGraphNode* targetNode = nodeFromNote(targetNoteName);
+            if (targetNode && (targetNode->name() != node->name())) {
+                kbGraphLink* link = new kbGraphLink(node, targetNode);
+                node->addLink(link);
+                link->adjust();
+                scene()->addItem(link);
+            }
+        }
 
         if (node->getNumberOfLinks() > _maxLinkNumber)
             _maxLinkNumber = node->getNumberOfLinks();
-
-        noteFile.close();
+        else
+            _maxLinkNumber = 1;
     }
 
-    if (!_maxLinkNumber)
-        _maxLinkNumber = 1;
+    float nodesCount = _noteNodes.size();
 
+    // Initialize nodes positions on a circle
+    float a = 0.f;
+    float da = 2.f * M_PI / nodesCount;
     foreach (kbGraphNode* node, _noteNodes) {
+<<<<<<< HEAD
         node->setPos((qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360), (qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qSin((rand() %360) * 2 * M_PI / 360));
    }
+=======
+        node->setPos(nodesCount * cos(a) * node->getNumberOfLinks() / _maxLinkNumber, nodesCount * sin(a) * node->getNumberOfLinks() / _maxLinkNumber);
+        a += da;
+    }
+
+    // foreach (kbGraphNode* node, _noteNodes) {
+    //     node->setPos((qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360), (qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360));
+    // }
+>>>>>>> 61af3156e66a62c34c981f876e9c9eaac0b53471
 }
 
+// TODO Check if has to be modified to take note graph into acount
 void kbGraphWidget::addNoteToGraph(QString noteName) {
         kbGraphNode* node = new kbGraphNode(noteName, this);
         _noteNodes << node;
@@ -150,8 +132,18 @@ void kbGraphWidget::mouseReleaseEvent(QMouseEvent *mouseEvent) {
         QPointF newPt = mapToScene(mouseEvent->pos());
         if ((_pointedNode) && (_initialPos == newPt)) {
             if (!_pointedNode->name().isEmpty()) {
-                Note note = Note::fetchByName(_pointedNode->name());
-                _mainWindow->setCurrentNote(std::move(note));
+                NoteMap* noteMap = NoteMap::getInstance();
+                Note note = noteMap->fetchNoteByName(_pointedNode->name());
+                if (note.getId() > 0)
+                    _mainWindow->setCurrentNote(std::move(note));
+                centerOn(_pointedNode);
+                _pointedNode = nullptr;
+            }
+        }
+        else {
+            if (_pointedNode) {
+                _pointedNode->setPos(newPt);
+                _pointedNode->fix();
                 _pointedNode = nullptr;
             }
         }
@@ -215,7 +207,7 @@ void kbGraphWidget::centerOnNote(Note* note) {
 
 void kbGraphWidget::itemMoved() {
     if (!timerId)
-        timerId = startTimer(1000 / 500); // 25);
+        timerId = startTimer(1000 / 1000);
 }
 
 void kbGraphWidget::timerEvent(QTimerEvent *event) {
@@ -233,9 +225,13 @@ void kbGraphWidget::timerEvent(QTimerEvent *event) {
 
     bool itemsMoved = false;
     for (kbGraphNode *node : qAsConst(nodes)) {
-        if (node->advancePosition())
-            itemsMoved = true;
+        if (node != _pointedNode)     // TODO Check if it is needed to fix a node manually positionned
+            if (node->advancePosition())
+                itemsMoved = true;
     }
+
+    if (_pointedNode)
+        _pointedNode = nullptr;
 
     if (!itemsMoved) {
         killTimer(timerId);
@@ -243,8 +239,17 @@ void kbGraphWidget::timerEvent(QTimerEvent *event) {
     }
 }
 
+kbGraphNode* kbGraphWidget::nodeFromNote(QString noteName) {
+    foreach (kbGraphNode* node, _noteNodes) {
+        if (node->name() == noteName)
+            return node;
+    }
+
+    return nullptr;
+}
+
 void kbGraphWidget::scalingTime(qreal x) {
-    qreal factor = 1.0+ qreal(_numScheduledScalings) / 300.0;
+    qreal factor = 1.0 + qreal(_numScheduledScalings) / 300.0;
     scale(factor, factor);
 }
 

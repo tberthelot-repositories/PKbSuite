@@ -22,6 +22,8 @@ class PKbSuiteMarkdownTextEdit : public QMarkdownTextEdit {
 
     explicit PKbSuiteMarkdownTextEdit(QWidget *parent = nullptr);
 
+    MainWindow* getMainWindow();
+
     void setStyles();
     void openUrl(QString urlString);
     //    void setViewportMargins(int left, int top, int right, int bottom);

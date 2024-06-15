@@ -37,7 +37,6 @@ endif(CCACHE_FOUND)
 
 qt5_wrap_ui(dialogs/ui_settingsdialog.h settingsdialog.ui)
 qt5_wrap_ui(dialogs/ui_aboutdialog.h aboutdialog.ui)
-qt5_wrap_ui(dialogs/ui_localtrashdialog.h localtrashdialog.ui)
 qt5_wrap_ui(dialogs/ui_linkdialog.h linkdialog.ui)
 qt5_wrap_ui(dialogs/ui_welcomedialog.h welcomedialog.ui)
 qt5_wrap_ui(dialogs/ui_tagadddialog.h tagadddialog.ui)
@@ -85,12 +84,6 @@ set(SOURCE_FILES
     dialogs/settingsdialog.cpp
     dialogs/settingsdialog.h
     dialogs/settingsdialog.ui
-    dialogs/tododialog.cpp
-    dialogs/tododialog.h
-    dialogs/tododialog.ui
-    dialogs/localtrashdialog.cpp
-    dialogs/localtrashdialog.h
-    dialogs/localtrashdialog.ui
     dialogs/masterdialog.cpp
     dialogs/masterdialog.h
     dialogs/tagadddialog.cpp
@@ -131,8 +124,6 @@ set(SOURCE_FILES
     models/commandmodel.h
     entities/note.cpp
     entities/note.h
-    entities/trashitem.cpp
-    entities/trashitem.h
     entities/notesubfolder.cpp
     entities/notesubfolder.h
     entities/notehistory.cpp
@@ -236,8 +227,6 @@ set(SOURCE_FILES
     widgets/graphicsview.h
     widgets/scriptlistwidget.cpp
     widgets/scriptlistwidget.h
-    widgets/notefolderlistwidget.cpp
-    widgets/notefolderlistwidget.h
     widgets/fontcolorwidget.ui
     widgets/fontcolorwidget.cpp
     widgets/fontcolorwidget.h
