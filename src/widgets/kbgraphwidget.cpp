@@ -79,10 +79,6 @@ void kbGraphWidget::GenerateKBGraph() {
     float a = 0.f;
     float da = 2.f * M_PI / nodesCount;
     foreach (kbGraphNode* node, _noteNodes) {
-<<<<<<< HEAD
-        node->setPos((qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360), (qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qSin((rand() %360) * 2 * M_PI / 360));
-   }
-=======
         node->setPos(nodesCount * cos(a) * node->getNumberOfLinks() / _maxLinkNumber, nodesCount * sin(a) * node->getNumberOfLinks() / _maxLinkNumber);
         a += da;
     }
@@ -90,7 +86,6 @@ void kbGraphWidget::GenerateKBGraph() {
     // foreach (kbGraphNode* node, _noteNodes) {
     //     node->setPos((qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360), (qreal) (rand() %20 + 100 * (1 - node->getNumberOfLinks() / _maxLinkNumber)) * qCos((rand() %360) * 2 * M_PI / 360));
     // }
->>>>>>> 61af3156e66a62c34c981f876e9c9eaac0b53471
 }
 
 // TODO Check if has to be modified to take note graph into acount

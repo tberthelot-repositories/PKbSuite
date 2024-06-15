@@ -2244,7 +2244,7 @@ void MainWindow::storeUpdatedNotesToDisk() {
     }
 
     // Check if some links are not existing in the graph
-    ui->kbGraphView->updateLinks(ui->kbGraphView->getNodeFromNote(&_currentNote), currentNoteText);
+    //TODO ui->kbGraphView->updateLinks(ui->kbGraphView->getNodeFromNote(&_currentNote), currentNoteText);
 
     // _currentNote will be set by this method if the filename has changed
     const int count = Note::storeDirtyNotesToDisk(
