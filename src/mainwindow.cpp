@@ -5470,7 +5470,7 @@ bool MainWindow::insertPDF(QFile *file) {
 
                 const QString embedmentLink = note.getInsertEmbedmentMarkdown(file, mediaType::pdf, dialog->copyFileToKb(), false);
 
-                noteText.append("#LITERATURE #TODO" + "\n\n");
+                noteText.append("#LITERATURE #TODO\n\n");
                 noteText.append("*Source:* " + embedmentLink + "  \n");
 
                 if (pdfFile.subject().length() > 0)
@@ -5481,8 +5481,6 @@ bool MainWindow::insertPDF(QFile *file) {
                     noteText.append("**Author:** " + pdfFile.author() + "  \n");
                 noteText.append("\n-----\n");
                 noteText.append("*Notes*\n\n");
-
-				pdfFile.setDocumentFolder(noteSubFolderPath);
 
                 noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
                 noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
