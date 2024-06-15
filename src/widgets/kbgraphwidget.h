@@ -28,6 +28,7 @@ public:
     void GenerateKBGraph(const QString noteFolder);
     void updateLinks(kbGraphNode* node, QString textNote);
     void addNoteToGraph(QString noteName);
+    void removeNode(QString noteName);
     void itemMoved();
     void setMainWindowPtr(MainWindow* mainWindow);
     void centerOnNote(Note* note);

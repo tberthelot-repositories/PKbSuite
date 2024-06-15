@@ -113,12 +113,22 @@ void kbGraphWidget::GenerateKBGraph(const QString noteFolder) {
 }
 
 void kbGraphWidget::addNoteToGraph(QString noteName) {
-        kbGraphNode* node = new kbGraphNode(noteName, this);
-        _noteNodes << node;
-        scene()->addItem(node);
+    kbGraphNode* node = new kbGraphNode(noteName, this);
+    _noteNodes << node;
+    scene()->addItem(node);
 
-        itemMoved();
+    itemMoved();
 }
+
+void kbGraphWidget::removeNode(QString noteName) {
+    foreach (kbGraphNode* node, _noteNodes) {
+        if (node->name() == noteName) {
+            scene()->removeItem(node);
+            _noteNodes.removeAt(_noteNodes.indexOf(node));
+        }
+    }
+}
+
 
 void kbGraphWidget::mousePressEvent(QMouseEvent *mouseEvent) {
     _pointedNode = nullptr;
