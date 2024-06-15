@@ -2868,6 +2868,9 @@ void MainWindow::removeCurrentNote() {
             const QSignalBlocker blocker1(ui->noteTreeWidget);
             Q_UNUSED(blocker1)
 
+            // delete node from Note graph
+            ui->kbGraphView->removeNode(_currentNote.getName());
+
             // search and remove note from the note tree widget
             removeNoteFromNoteTreeWidget(_currentNote);
 
@@ -3371,6 +3374,9 @@ void MainWindow::removeSelectedNotes() {
 
                 // search and remove note from the note tree widget
                 removeNoteFromNoteTreeWidget(note);
+
+                // remove note from NoteMap
+
 
                 note.remove(true);
                 qDebug() << "Removed note " << note.getName();
@@ -5441,14 +5447,9 @@ bool MainWindow::insertPDF(QFile *file) {
             }
         } else if (iResult == DropPDFDialog::idCreateNote) {
             QFileInfo pdfFileInfo(file->fileName());
-<<<<<<< HEAD
-			NoteSubFolder noteSubFolder = NoteFolder::currentNoteFolder().getActiveNoteSubFolder();
-
-            QFileInfo noteFileInfo(noteSubFolder.fullPath() + "/" + pdfFileInfo.baseName() + ".md");
-=======
 			
             QFileInfo noteFileInfo(notesPath + "/" + pdfFileInfo.baseName() + ".md");
->>>>>>> 61af3156e66a62c34c981f876e9c9eaac0b53471
+
             if (noteFileInfo.exists()) {
                 QMessageBox::warning(this, QStringLiteral("Erreur"), QStringLiteral("Attention : la note existe déjà dans la KB. Supprimez la note existante ou renommez l'une des deux."));
             }
@@ -5462,29 +5463,27 @@ bool MainWindow::insertPDF(QFile *file) {
                 // check if a hook changed the text
                 if (noteText.isEmpty()) {
                     // fallback to the old text if no hook changed the text
-                    noteText = Note::createNoteHeader(pdfFileInfo.baseName());
+                    noteText = Note::createNoteHeader("Highlights for " + pdfFileInfo.baseName());
                 } else {
                     noteText.append("\n=====\n");
                 }
-				const QString embedmentLink = note.getInsertEmbedmentMarkdown(file, mediaType::pdf, dialog->copyFileToKb(), false);
 
-				noteText.append("\n-----\n");
-                noteText.append("**Title:** " + pdfFile.title() + "  \n");
-                noteText.append("**Creation date:** " + QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:sst") + "  \n");
-                noteText.append("**File:** " + embedmentLink + "  \n");
-<<<<<<< HEAD
+                const QString embedmentLink = note.getInsertEmbedmentMarkdown(file, mediaType::pdf, dialog->copyFileToKb(), false);
+
+                noteText.append("#LITERATURE #TODO" + "\n\n");
+                noteText.append("*Source:* " + embedmentLink + "  \n");
+
                 if (pdfFile.subject().length() > 0)
                     noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
                 if (pdfFile.keywords().length() > 0)
                     noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
-                noteText.append("**Tags:** #LECTURE, #TODO\n");
                 if (pdfFile.author().length() > 0)
                     noteText.append("**Author:** " + pdfFile.author() + "  \n");
-				noteText.append("\n-----\n");
+                noteText.append("\n-----\n");
+                noteText.append("*Notes*\n\n");
 
 				pdfFile.setDocumentFolder(noteSubFolderPath);
 
-=======
                 noteText.append("**Subject:** " + pdfFile.subject() + "  \n");
                 noteText.append("**Keywords:** " + pdfFile.keywords() + "  \n");
                 noteText.append("**Tags:** #LECTURE, #TODO\n");
@@ -5493,7 +5492,6 @@ bool MainWindow::insertPDF(QFile *file) {
 
 				pdfFile.setDocumentFolder(notesPath);
 				
->>>>>>> 61af3156e66a62c34c981f876e9c9eaac0b53471
                 noteText.append(pdfFile.markdownSummary());
                 noteText.append(pdfFile.markdownCitations(embedmentLink));
                 noteText.append(pdfFile.markdownComments(embedmentLink));
@@ -5509,12 +5507,7 @@ bool MainWindow::insertPDF(QFile *file) {
                 // we even need a 2nd workaround because something triggers that the
                 // note folder was modified
                 noteDirectoryWatcher.removePath(notesPath);
-<<<<<<< HEAD
-                noteDirectoryWatcher.removePath(noteSubFolderPath);
 
-=======
-                
->>>>>>> 61af3156e66a62c34c981f876e9c9eaac0b53471
                 // store the note to disk
                 // if a tag is selected add the tag to the just created note
                 TagMap* tagMap = TagMap::getInstance();

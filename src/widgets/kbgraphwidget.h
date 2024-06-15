@@ -27,6 +27,7 @@ public:
 
     void GenerateKBGraph();
     void addNoteToGraph(QString noteName);
+    void removeNode(QString noteName);
     void itemMoved();
     void setMainWindowPtr(MainWindow* mainWindow);
     void centerOnNote(Note* note);
